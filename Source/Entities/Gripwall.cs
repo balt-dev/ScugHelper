@@ -144,6 +144,5 @@ public class Gripwall : Entity
         cur.EmitLdcI4(Player.StClimb);
         cur.EmitRet();
         cur.MarkLabel(label);
-        Logger.Info(nameof(ScugHelperModule), il.ToString());
     }
 }
