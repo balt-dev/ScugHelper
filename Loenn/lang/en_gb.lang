@@ -1,0 +1,13 @@
+entities.ScugHelper/PinballBooster.placements.name.blue=Pinball Booster
+entities.ScugHelper/PinballBooster.placements.name.red=Red Pinball Booster
+entities.ScugHelper/Cycler.placements.name.cycler=Cycler
+entities.ScugHelper/BoosterField.placements.name.boosterfield=Booster Field
+entities.ScugHelper/Gripwall.placements.name.gripwall_left=Gripwall (Left)
+entities.ScugHelper/Gripwall.placements.name.gripwall_right=Gripwall (Right)
+entities.ScugHelper/ReboundBlock.placements.name.reboundBlockGrey=Rebound Block (Green)
+entities.ScugHelper/ReboundBlock.placements.name.reboundBlockGreen=Rebound Block (Green)
+entities.ScugHelper/ReboundBlock.placements.name.reboundBlockPink=Rebound Block (Pink)
+entities.ScugHelper/BrassBerry.placements.name.normal=Brass Berry
+entities.ScugHelper/BrassBerryBlock.placements.name.brassBerryBlock=Brass Berry Block
+triggers.ScugHelper/BrassBerryCollectTrigger.placements.name.trigger=Brass Berry Collect Trigger
+triggers.ScugHelper/DebugViewTrigger.placements.name.trigger=Debug View Trigger

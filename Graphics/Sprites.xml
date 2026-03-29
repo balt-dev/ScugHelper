@@ -1,0 +1,34 @@
+<Sprites>
+    <pinballBooster path="objects/pinballBooster/" start="loop">
+        <Justify x="0.5" y="0.5" />
+        <Loop id="loop" path="booster" delay="0.1" frames="0-4" />
+        <Loop id="inside" path="booster" delay="0.1" frames="5-8" />
+        <Loop id="spin" path="booster" delay="0.06" frames="18-25" />
+        <Anim id="pop" path="booster" delay="0.08" frames="9-17" />
+    </pinballBooster>
+    <pinballBoosterRed path="objects/pinballBooster/" start="loop">
+        <Justify x="0.5" y="0.5" />
+        <Anim id="appear" path="boosterRed" delay="0.08" frames="26-34" goto="loop" />
+        <Loop id="loop" path="boosterRed" delay="0.1" frames="0-4" />
+        <Loop id="inside" path="boosterRed" delay="0.1" frames="5-8" />
+        <Loop id="spin" path="boosterRed" delay="0.06" frames="18-25" />
+        <Anim id="pop" path="boosterRed" delay="0.08" frames="9-17" />
+    </pinballBoosterRed>
+    <gripwallTop path="objects/gripwall/" start="idle">
+        <Loop id="idle" path="bothTop" frames="0" delay="0.035" />
+    </gripwallTop>
+    <gripwallMid path="objects/gripwall/" start="idle">
+        <Loop id="idle" path="bothMid" frames="0" delay="0.035" />
+    </gripwallMid>
+    <gripwallBottom path="objects/gripwall/" start="idle">
+        <Loop id="idle" path="bothBottom" frames="0" delay="0.035" />
+    </gripwallBottom>
+    <brassBerry path="objects/brassBerry/" start="idle">
+        <Center />
+
+        <Loop id="idle" path="idle" delay=".08" frames="0-5,0-5,0-5,0-5,0-7" />
+        <Anim id="collect" path="idle" delay=".07" frames="7-11" />
+        <Loop id="idleGhost" path="idleGhost" delay=".08" frames="0-6,0-6,0-6,0-6,0-7" />
+        <Anim id="collectGhost" path="idleGhost" delay=".07" frames="7-11" />
+    </brassBerry>
+</Sprites>
