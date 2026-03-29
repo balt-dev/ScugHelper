@@ -18,9 +18,6 @@ return {
         AttachedEntityID = {
             fieldType = "integer"
         },
-        speed = {
-            fieldType = "number",
-        },
         accelX = {
             fieldType = "number",
         },
