@@ -286,7 +286,7 @@ public class PinballBooster : Booster
             self.MoveV(Calc.Clamp(fromY - self.CenterY, -4f, 4f));
             if (dir > 0) self.MoveH(fromX - self.Left);
             else if (dir < 0) self.MoveH(fromX - self.Right);
-            Vector2 normalized = Vector2.Normalize(self.Speed) * Player.DashSpeed;
+            Vector2 normalized = Vector2.Normalize(self.Speed + Vector2.UnitX * dir) * Player.DashSpeed;
             self.Speed.X = dir * Math.Max(Math.Abs(self.Speed.X), normalized.X);
             self.level.DirectionalShake(Vector2.UnitX * dir, 0.1f);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
@@ -302,8 +302,8 @@ public class PinballBooster : Booster
     }
 
     private static Vector2 smuggledLocal = new();
-    
-    
+
+
     private static Vector2 ExplodeLaunchOnHook(On.Celeste.Player.orig_ExplodeLaunch_Vector2_bool_bool orig, Player self, Vector2 from, bool snapUp, bool sidesOnly)
     {
         smuggledLocal = self.Speed;
