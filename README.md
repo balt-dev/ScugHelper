@@ -15,6 +15,8 @@ a few new entities to mess with :3
 - gripwall - attached to a wall, prevents all vertical movement when wall with it is grabbed but can give back dash/stamina (can give either, both, or neither, configurable)
 
 - debug view trigger - trigger that forces debug drawing (i.e. showing hitboxes) when the player stands in it
+ 
+- speedcheck gate - invisible entity that checks whether the player passes through it via line intersections and does something when they do
 
 
 uses some code from Spring Collab 2020, see `LICENSE-SC2020`

@@ -34,6 +34,7 @@ public class ScugHelperModule : EverestModule
         Gripwall.LoadHooks();
         BrassBerry.LoadHooks();
         DebugViewTrigger.LoadHooks();
+        SpeedcheckGate.LoadHooks();
     }
 
     public override void Unload()
@@ -44,5 +45,6 @@ public class ScugHelperModule : EverestModule
         Gripwall.UnloadHooks();
         BrassBerry.UnloadHooks();
         DebugViewTrigger.UnloadHooks();
+        SpeedcheckGate.UnloadHooks();
     }
 }
