@@ -266,8 +266,7 @@ public class PinballBooster : Booster
         if ((self.LastBooster?.BoostingPlayer ?? false) && (self.LastBooster is PinballBooster || ScugHelperModule.Settings.AllBoostersBounce))
         {
             self.MoveV(fromY - self.CenterY);
-            Vector2 normalized = Vector2.Normalize(self.Speed) * Player.DashSpeed;
-            self.Speed.Y = -Math.Max(Math.Abs(self.Speed.Y), normalized.Y);
+            self.Speed.Y = -Math.Max(Math.Abs(self.Speed.Y), Player.DashSpeed);
             self.level.DirectionalShake(-Vector2.UnitY, 0.1f);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBumperSquash, 1.0f / ScugHelperModule.Settings.PinballBumperSquash);
@@ -286,8 +285,7 @@ public class PinballBooster : Booster
             self.MoveV(Calc.Clamp(fromY - self.CenterY, -4f, 4f));
             if (dir > 0) self.MoveH(fromX - self.Left);
             else if (dir < 0) self.MoveH(fromX - self.Right);
-            Vector2 normalized = Vector2.Normalize(self.Speed + Vector2.UnitX * dir) * Player.DashSpeed;
-            self.Speed.X = dir * Math.Max(Math.Abs(self.Speed.X), normalized.X);
+            self.Speed.X = dir * Math.Max(Math.Abs(self.Speed.X), Player.DashSpeed);
             self.level.DirectionalShake(Vector2.UnitX * dir, 0.1f);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBumperSquash, ScugHelperModule.Settings.PinballBumperSquash);
