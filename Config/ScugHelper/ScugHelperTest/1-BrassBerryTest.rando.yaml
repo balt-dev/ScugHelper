@@ -1,0 +1,47 @@
+ASide:
+  - Room: "1"
+    Holes:
+    - Side: Right
+      Idx: 0
+      Kind: inout
+    - Side: Left
+      Idx: 0
+      Kind: inout
+    - Side: Up
+      Idx: 0
+      Kind: in
+  - Room: "2"
+    Holes:
+    - Side: Left
+      Idx: 0
+      Kind: inout
+      ReqOut:
+        Dashes: one
+    - Side: Up
+      Idx: 0
+      Kind: out
+      ReqOut:
+        Dashes: two
+        Difficulty: normal
+    - Side: Right
+      Idx: 0
+      Kind: inout
+      ReqOut:
+        Dashes: one
+  - Room: "3"
+    ReqEnd:
+      Difficulty: easy
+      Dashes: one
+    Holes:
+    - Side: Left
+      Idx: 0
+      Kind: inout
+    - Side: Up
+      Idx: 0
+      Kind: inout
+      ReqOut:
+        Or:
+        - Dashes: two
+          Difficulty: normal
+        - Dashes: one
+          Difficulty: hard

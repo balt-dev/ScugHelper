@@ -1,0 +1,85 @@
+ASide:
+  - Room: "dream_kevin"
+    Holes:
+    - Side: Left
+      Idx: 0
+      Kind: in
+    - Side: Right
+      Idx: 0
+      Kind: out
+    - Side: Up
+      Idx: 0
+      Kind: none
+    - Side: Down
+      Idx: 0
+      Kind: none
+  - Room: "rebound_blocks"
+    Holes:
+    - Side: Left
+      Idx: 0
+      Kind: inout
+      ReqBoth:
+        Dashes: one
+    - Side: Up
+      Idx: 0
+      Kind: none
+    - Side: Up
+      Idx: 2
+      Kind: none
+    - Side: Down
+      Idx: 0
+      Kind: none
+    - Side: Up
+      Idx: 1
+      Kind: out
+      ReqOut:
+        Dashes: one
+    - Side: Right
+      Idx: 0
+      Kind: none
+    - Side: Right
+      Idx: 1
+      Kind: inout
+  - Room: "gripwalls"
+    Holes:
+    - Side: Left
+      Idx: 1
+      Kind: inout
+    - Side: Up
+      Idx: 0
+      Kind: none
+    - Side: Down
+      Idx: 0
+      Kind: none
+    - Side: Right
+      Idx: 0
+      Kind: inout
+      ReqOut:
+        Or:
+        - Dashes: two
+          Difficulty: easy
+        - Dashes: one
+          Difficulty: normal
+  - Room: "heart"
+    ReqEnd:
+      Difficulty: easy
+      Dashes: one
+    Holes:
+    - Side: Left
+      Idx: 0
+      Kind: none
+    - Side: Up
+      Idx: 0
+      Kind: none
+    - Side: Down
+      Idx: 0
+      Kind: none
+    - Side: Down
+      Idx: 1
+      Kind: in
+    - Side: Down
+      Idx: 2
+      Kind: none
+    - Side: Right
+      Idx: 0
+      Kind: inout
