@@ -18,6 +18,7 @@ a few new entities to mess with :3
  
 - speedcheck gate - invisible entity that checks whether the player passes through it via line intersections and does something when they do
 
+also fixes player seekers not being able to hit dash switches
 
 uses some code from Spring Collab 2020, see `LICENSE-SC2020`
 

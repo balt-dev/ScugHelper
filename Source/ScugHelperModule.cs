@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.ScugHelper;
 
@@ -34,6 +35,7 @@ public class ScugHelperModule : EverestModule
         Gripwall.LoadHooks();
         BrassBerry.LoadHooks();
         DebugViewTrigger.LoadHooks();
+        On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
     public override void Unload()
@@ -44,5 +46,16 @@ public class ScugHelperModule : EverestModule
         Gripwall.UnloadHooks();
         BrassBerry.UnloadHooks();
         DebugViewTrigger.UnloadHooks();
+        On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
+    }
+
+    private void OnPlayerSeekerCollideHook(On.Celeste.PlayerSeeker.orig_OnCollide orig, PlayerSeeker self, CollisionData data)
+    {
+        orig(self, data);
+        if (data.Hit is DashSwitch dashSwitch) {
+            Logger.Info(nameof(ScugHelperModule), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
+            dashSwitch.OnDashed(null, Vector2.UnitX * Math.Sign(self.dashDirection.X));
+            dashSwitch.OnDashed(null, Vector2.UnitY * Math.Sign(self.dashDirection.Y));
+        }
     }
 }
