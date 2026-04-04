@@ -104,7 +104,7 @@ internal class TimeStringPart : StringPart
         var secs = (totalMsecs / 1000) % 60;
         var mins = (totalMsecs / (60 * 1000)) % 60;
         var hours = (totalMsecs / (60 * 60 * 1000));
-        return $"{hours:02}:{mins:02}:{secs:02}.{msecs:03}";
+        return $"{hours:00}:{mins:00}:{secs:00}.{msecs:000}";
     }
 }
 
