@@ -34,7 +34,7 @@ internal class CounterStringPart(string name) : StringPart
 internal class SliderStringPart(string name) : StringPart
 {
     public string Name = name;
-    internal override string Format(Level level, Player? player) => level.Session.GetSlider(Name).ToString();
+    internal override string Format(Level level, Player? player) => $"{(long) (level.Session.GetSlider(Name) * 100)}%";
 }
 internal class PlayerXStringPart : StringPart
 {
@@ -43,6 +43,20 @@ internal class PlayerXStringPart : StringPart
 internal class PlayerYStringPart : StringPart
 {
     internal override string Format(Level level, Player? player) => ((long?)player?.Y).ToString() ?? "?";
+}
+internal class PlayerXSubpixelStringPart : StringPart
+{
+    internal override string Format(Level level, Player? player) {
+        if (player == null) return "?";
+        return $"{player?.ExactPosition.X % 1.0:0.000}";
+    }
+}
+internal class PlayerYSubpixelStringPart : StringPart
+{
+    internal override string Format(Level level, Player? player) {
+        if (player == null) return "?";
+        return $"{player?.ExactPosition.Y % 1.0:0.000}";
+    }
 }
 internal class PlayerSpeedStringPart : StringPart
 {
@@ -174,6 +188,8 @@ public partial class Text : Entity
                 "slider" => new SliderStringPart(key),
                 "playerX" => new PlayerXStringPart(),
                 "playerY" => new PlayerYStringPart(),
+                "playerSubpixelX" => new PlayerXSubpixelStringPart(),
+                "playerSubpixelY" => new PlayerYSubpixelStringPart(),
                 "playerSpeed" => new PlayerSpeedStringPart(),
                 "playerSpeedX" => new PlayerXSpeedStringPart(),
                 "playerSpeedY" => new PlayerYSpeedStringPart(),
