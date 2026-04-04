@@ -13,3 +13,4 @@ triggers.ScugHelper/BrassBerryCollectTrigger.placements.name.trigger=Brass Berry
 triggers.ScugHelper/DebugViewTrigger.placements.name.trigger=Debug View Trigger
 entities.ScugHelper/SpeedcheckGate.placements.name.normal=Speedcheck Gate
 entities.ScugHelper/HoldableGate.placements.name.normal=Holdable Gate
+entities.ScugHelper/Text.placements.name.normal=Text

@@ -43,7 +43,7 @@ public abstract class AbstractGate : Entity
         var t = d1 / (d1 - d2);
         var crossPoint = prevPos + t * delta;
         var proj = Vector2.Dot(crossPoint - Position, lineDir);
-        return Math.Abs(proj) <= Size;
+        return Math.Abs(proj) <= Size / 2;
     }
     
     public override void Update() {
