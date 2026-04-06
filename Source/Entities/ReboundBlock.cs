@@ -53,19 +53,21 @@ public class ReboundBlock : Solid
             case ReboundBlockKind.Green:
                 renderImages = BuildSprite(GFX.Game["objects/reboundBlock/oneBlock"]);
                 renderSlot = new(GFX.Game["objects/reboundBlock/oneSlot"]);
-                renderRefill = GFX.SpriteBank.Create("refill");
+                renderRefill = new Sprite(GFX.Game, "objects/refill/idle");
                 break;
             case ReboundBlockKind.Pink:
                 renderImages = BuildSprite(GFX.Game["objects/reboundBlock/twoBlock"]);
                 renderSlot = new(GFX.Game["objects/reboundBlock/twoSlot"]);
-                renderRefill = GFX.SpriteBank.Create("refillTwo");
+                renderRefill = new Sprite(GFX.Game, "objects/refillTwo/idle");
                 break;
         }
+        renderRefill?.AddLoop("idle", "", 0.1f);
         renderRefill?.Play("idle");
-            Add(bloom = new BloomPoint(0.8f, 16f));
-            Add(light = new VertexLight(Color.White, 1f, 16, 48));
-            light.Alpha = 1;
-            light.InSolidAlphaMultiplier = 1;
+        renderRefill?.CenterOrigin();
+        Add(bloom = new BloomPoint(0.8f, 16f));
+        Add(light = new VertexLight(Color.White, 1f, 16, 48));
+        light.Alpha = 1;
+        light.InSolidAlphaMultiplier = 1;
 
         OnDashCollide = Dashed;
     }
