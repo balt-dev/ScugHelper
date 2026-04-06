@@ -31,4 +31,15 @@
         <Loop id="idleGhost" path="idleGhost" delay=".08" frames="0-6,0-6,0-6,0-6,0-7" />
         <Anim id="collectGhost" path="idleGhost" delay=".07" frames="7-11" />
     </brassBerry>
+    <squareGemFill path="objects/squareGem/" start="idle">
+        <Loop id="idle" path="gemBase" frames="0" />
+		<Loop id="spin" path="gemBase" frames="0*10,1-13" delay="0.1"/>
+		<Loop id="fastspin" path="gemBase" delay="0.1"/>
+    </squareGemFill>
+    <squareGemOutline path="objects/squareGem/" start="idle">
+        <Loop id="idle" path="gemOutline" frames="0" />
+		<Loop id="spin" path="gemOutline" frames="0*10,1-13" delay="0.1"/>
+		<Loop id="fastspin" path="gemOutline" delay="0.1"/>
+    </squareGemOutline>
+    <recoilBumper copy="bumper" path="objects/recoilBumper/"/>
 </Sprites>

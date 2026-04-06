@@ -14,3 +14,7 @@ triggers.ScugHelper/DebugViewTrigger.placements.name.trigger=Debug View Trigger
 entities.ScugHelper/SpeedcheckGate.placements.name.normal=Speedcheck Gate
 entities.ScugHelper/HoldableGate.placements.name.normal=Holdable Gate
 entities.ScugHelper/Text.placements.name.normal=Text
+entities.ScugHelper/SquareGem.placements.name.normal=Square Gem
+entities.ScugHelper/DashlessHeartGem.placements.name.crystal_heart=Crystal Heart (Dashless)
+entities.ScugHelper/DashlessSummitGem.placements.name.crystal_heart=Summit Gem (Dashless)
+entities.ScugHelper/RecoilBumper.placements.name.normal=Recoil Bumper

@@ -39,6 +39,7 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
 
     public override void Update()
     {
+        updatesSinceTrigger += 1;
         base.Update();
         if (updatesSinceTrigger < GrabFrameLeniency) {
             Player player = SceneAs<Level>().Tracker.GetEntity<Player>();
@@ -57,9 +58,9 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
                 return;
             }
         }
-        updatesSinceTrigger += 1;
         if (!Triggered) {
             holdable.Entity.Position = Position;
+            holdable.SpeedSetter?.Invoke(Vector2.Zero);
         }
     }
 
@@ -82,9 +83,4 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
             Draw.Point(pos + PlatformAdd(i), Color.White * (Math.Abs(i - Size / 2) < Math.Max(holdable.Entity.Width, holdable.Entity.Height) ? 0.8f : 0.4f));
         }
     }
-}
-
-
-internal interface ISpeed {
-    public Vector2 Speed { get; set; }
 }

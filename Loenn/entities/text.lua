@@ -13,7 +13,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Infill = "FFFFFF", Outline = "000000", DrawOutline = false, RequiresUpdate = false, Value = "Hello, world!"}
+            data = {Infill = "FFFFFF", Outline = "000000", DrawOutline = false, RequiresUpdate = false, Value = "Hello, world!", Depth = 10}
         },
     },
     sprite = function(room, entity)
@@ -23,6 +23,7 @@ return {
         return utils.rectangle(entity.x, entity.y, 8, 8)
     end,
     fieldInformation = {
+        Depth = { fieldType = "integer" },
         Infill = { fieldType = "color" },
         Outline = { fieldType = "color" }
     }

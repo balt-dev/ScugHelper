@@ -3,6 +3,11 @@ local utils = require("utils")
 
 local gripwall = {}
 
+local refillBothColor = {0xd6 / 0xff, 0xf2 / 0xff, 0x64 / 0xff}
+local refillDashColor = {0x88 / 0xff, 0xea / 0xff, 0xff / 0xff}
+local refillStaminaColor = {0xf2 / 0xff, 0xe7 / 0xff, 0x9b / 0xff}
+local refillNoneColor = {0xff / 0xff, 0x6e / 0xff, 0x54 / 0xff}
+
 gripwall.name = "ScugHelper/Gripwall"
 gripwall.depth = 1999
 gripwall.canResize = {false, true}
@@ -65,6 +70,22 @@ function gripwall.sprite(room, entity)
 
     table.insert(sprites, topSprite)
     table.insert(sprites, bottomSprite)
+    
+    for _, sprite in ipairs(sprites) do
+        if entity.refillDash then
+            if entity.refillStamina then
+                sprite:setColor(refillBothColor)
+            else
+                sprite:setColor(refillDashColor)
+            end
+        else
+            if entity.refillStamina then
+                sprite:setColor(refillStaminaColor)
+            else
+                sprite:setColor(refillNoneColor)
+            end
+        end
+    end
 
     return sprites
 end

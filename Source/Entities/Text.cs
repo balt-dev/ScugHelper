@@ -149,7 +149,7 @@ public partial class Text : Entity
 
     public Text(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
-        Depth = 10;
+        Depth = data.Int("Depth", 10);
         InfillColor = data.HexColor("Infill", Color.White);
         OutlineColor = data.HexColor("Outline", Color.Black);
         DrawOutline = data.Bool("DrawOutline", false);
