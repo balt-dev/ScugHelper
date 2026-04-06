@@ -33,9 +33,9 @@ public class ReboundBlock : Solid
     protected Sprite renderRefill;
     protected SoundSource firstHitSfx;
     protected BloomPoint bloom;
+    protected VertexLight light;
 
     internal Vector2 Anchor;
-    private VertexLight light;
     private static readonly float Displacement = 4.0f;
 
     public ReboundBlock(Vector2 position, float width, float height, ReboundBlockKind kind)
@@ -64,15 +64,12 @@ public class ReboundBlock : Solid
         renderRefill?.AddLoop("idle", "", 0.1f);
         renderRefill?.Play("idle");
         renderRefill?.CenterOrigin();
-        Add(bloom = new BloomPoint(0.8f, 16f));
-        Add(light = new VertexLight(Color.White, 1f, 16, 48));
-        light.Alpha = 1;
-        light.InSolidAlphaMultiplier = 1;
 
         OnDashCollide = Dashed;
     }
-    
-    public override void Render() {
+
+    public override void Render()
+    {
         foreach (Image image in renderImages)
             image.DrawSimpleOutline();
         base.Render();
@@ -90,6 +87,10 @@ public class ReboundBlock : Solid
     {
         base.Added(scene);
         RecenterImages();
+        Add(bloom = new BloomPoint(0.8f, 16f));
+        Add(light = new VertexLight(Color.White, 1f, 16, 48));
+        light.Alpha = 1;
+        light.InSolidAlphaMultiplier = 1;
     }
 
     private List<Image> BuildSprite(MTexture source)
@@ -201,6 +202,8 @@ public class ReboundBlock : Solid
     {
         base.Update();
         Vector2 target = Calc.Approach(Position, Anchor, 1);
+        light.Position = Center;
+        bloom.Position = Center;
         MoveTo(target);
         RecenterImages();
         foreach (Image image in renderImages)

@@ -4,6 +4,8 @@ using Celeste.Mod.Entities;
 using Monocle;
 using System;
 using Celeste.Mod.Helpers;
+using Celeste.Mod;
+using Celeste.Mod.ScugHelper;
 
 public class GridCircle : Circle {
     public GridCircle(float radius, float x = 0, float y = 0) : base(radius, x, y) {}
@@ -25,6 +27,7 @@ public class RecoilBumper : Actor
     public RecoilBumper(EntityData data, Vector2 offset)
         : base(data.Position + offset)
     {
+        LiftSpeedGraceTime = 1f / 30f;
         Mass = data.Float("Mass", 2f);
         Drag = data.Float("Drag", 200f);
         Depth = 20;
@@ -35,20 +38,46 @@ public class RecoilBumper : Actor
         Add(bloom = new BloomPoint(0.5f, 16f));
         onCollideH = OnCollideH;
         onCollideV = OnCollideV;
+        Add(new RecoilBumperCollider(OnOtherBumperCollide));
     }
 
-    public bool HitSpring(Spring spring) {
+    private void OnOtherBumperCollide(RecoilBumper bumper) {
+        if (bumper == this) return;
+        if (Center == bumper.Center) return; 
+        Vector2 delta_p = Center - bumper.Center;
+        Vector2 delta_v = Speed - bumper.Speed;
+        
+        // Move them out of each other
+        float overlap = 12f * 2 - delta_p.Length();
+        Vector2 norm = delta_p.SafeNormalize(Vector2.UnitY);
+        Vector2 movement = norm * overlap / 2;
+        MoveH(movement.X); MoveV(movement.Y);
+        bumper.MoveH(-movement.X); bumper.MoveV(-movement.Y);
+        
+        // Set the speeds
+        float m1 = Mass;
+        float m2 = bumper.Mass;
+        float mass_factor = 1f / (m1 + m2);
+        float dot_over_len2 = Vector2.Dot(delta_v, delta_p) / delta_p.LengthSquared();
+        Speed -= 2 * m2 * mass_factor * dot_over_len2 * delta_p;
+        bumper.Speed += 2 * m1 * mass_factor * dot_over_len2 * delta_p;
+    }
+
+    public bool HitSpring(Spring spring)
+    {
         switch (spring.Orientation)
         {
             default:
-                if (Speed.Y >= 0f) {
+                if (Speed.Y >= 0f)
+                {
                     Speed = 224f * -Vector2.UnitY;
                     MoveTowardsX(spring.CenterX, 4f);
                     return true;
                 }
                 return false;
             case Spring.Orientations.WallLeft:
-                if (Speed.X <= 60f) {
+                if (Speed.X <= 60f)
+                {
                     Speed = 224f * Vector2.UnitX;
                     MoveTowardsY(spring.CenterY, 4f);
                     return true;
@@ -56,7 +85,8 @@ public class RecoilBumper : Actor
 
                 return false;
             case Spring.Orientations.WallRight:
-                if (Speed.X >= -60f) {
+                if (Speed.X >= -60f)
+                {
                     Speed = 224f * Vector2.UnitX;
                     MoveTowardsY(spring.CenterY, 4f);
                     return true;
@@ -66,9 +96,15 @@ public class RecoilBumper : Actor
         }
     }
 
+    private Vector2 prevLiftSpeed;
+    
     public override void Update()
     {
         base.Update();
+        if (LiftSpeed.Length() < prevLiftSpeed.Length())
+            Speed += prevLiftSpeed;
+        prevLiftSpeed = LiftSpeed;
+
         foreach (RecoilBumperCollider component in Scene.Tracker.GetComponents<RecoilBumperCollider>())
             component.Check(this);
 
@@ -145,6 +181,8 @@ public class RecoilBumper : Actor
             SceneAs<Level>().Particles.Emit(Bumper.P_Launch, 12, Center + collisionNormal * 12f, Vector2.One * 3f, collisionNormal.Angle());
         }
     }
+    
+    
 
     public static void LoadHooks() {
         if (!HookUtils.TryDisableInlining(typeof(Monocle.Grid).GetMethod("Collide", [typeof(Circle)])))

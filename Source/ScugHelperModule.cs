@@ -37,6 +37,7 @@ public class ScugHelperModule : EverestModule
         DebugViewTrigger.LoadHooks();
         DashlessHeartGem.LoadHooks();
         RecoilBumper.LoadHooks();
+        SquareCrystal.LoadHooks();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
@@ -50,6 +51,7 @@ public class ScugHelperModule : EverestModule
         DebugViewTrigger.UnloadHooks();
         DashlessHeartGem.UnloadHooks();
         RecoilBumper.UnloadHooks();
+        SquareCrystal.UnloadHooks();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
     }
 

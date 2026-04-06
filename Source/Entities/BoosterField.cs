@@ -15,7 +15,7 @@ public class BoosterField : Solid
     private bool BouncedBooster;
     private bool Invisible;
     private float BounceTimer;
-    private static readonly float BouncePulseLength = 0.2f;
+    private static readonly float BouncePulseLength = 0.8f;
 
     public BoosterField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false)
     {
@@ -28,20 +28,22 @@ public class BoosterField : Solid
     public BoosterField(EntityData data, Vector2 offset)
         : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"))
     { }
+    
+    private static readonly float SineMovement = 2.0f;
 
     public override void Render()
     {
-        if (!Invisible) {
-            Draw.Rect(X, Y, Width, Height, Color.White * (BounceTimer / BouncePulseLength * 0.4f));
-            Draw.Rect(X, Y, Width, Height, Color.Coral * 0.3f);
+        if (!Invisible)
+        {
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f);
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * (BounceTimer / BouncePulseLength * 0.4f));
+            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.5f);
             foreach (Vector2 particle in particles)
                 Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
-            Draw.HollowRect(X, Y, Width, Height, Color.White * 0.5f);
         }
 
         base.Render();
     }
-
 
     public override void Added(Scene scene)
     {
@@ -49,8 +51,10 @@ public class BoosterField : Solid
         Add(new CustomBloom(OnRenderBloom));
     }
 
+    private float Elapsed = 0;
     public override void Update()
     {
+        Elapsed += Engine.DeltaTime;
         if (BouncedBooster) {
             BounceTimer = BouncePulseLength;
             BouncedBooster = false;
@@ -100,6 +104,6 @@ public class BoosterField : Solid
     public void OnRenderBloom()
     {
         if (Visible && !Invisible) // lol
-            Draw.Rect(X, Y, Width, Height, Color.Coral * 0.3f);
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }
 }

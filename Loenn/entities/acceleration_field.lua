@@ -1,0 +1,11 @@
+return {
+    name = "ScugHelper/AccelerationField",
+    depth = -10000,
+    placements = {
+        {
+            name = "normal",
+            data = {width = 32, height = 32, AccelX = 0, AccelY = -60, Drag = 10}
+        },
+    },
+    color = {0, 0.25, 0.25, 0.8}
+}

@@ -18,3 +18,4 @@ entities.ScugHelper/SquareGem.placements.name.normal=Square Gem
 entities.ScugHelper/DashlessHeartGem.placements.name.crystal_heart=Crystal Heart (Dashless)
 entities.ScugHelper/DashlessSummitGem.placements.name.crystal_heart=Summit Gem (Dashless)
 entities.ScugHelper/RecoilBumper.placements.name.normal=Recoil Bumper
+entities.ScugHelper/AccelerationField.placements.name.normal=Acceleration Field

@@ -34,11 +34,13 @@
     <squareGemFill path="objects/squareGem/" start="idle">
         <Loop id="idle" path="gemBase" frames="0" />
 		<Loop id="spin" path="gemBase" frames="0*10,1-13" delay="0.1"/>
+		<Loop id="glint" path="gemBase" frames="8*6,9,10,11,12,13,0*7,13,12,11,10,9" delay="0.1"/>
 		<Loop id="fastspin" path="gemBase" delay="0.1"/>
     </squareGemFill>
     <squareGemOutline path="objects/squareGem/" start="idle">
         <Loop id="idle" path="gemOutline" frames="0" />
 		<Loop id="spin" path="gemOutline" frames="0*10,1-13" delay="0.1"/>
+		<Loop id="glint" path="gemOutline" frames="8*6,9,10,11,12,13,0*7,13,12,11,10,9" delay="0.1"/>
 		<Loop id="fastspin" path="gemOutline" delay="0.1"/>
     </squareGemOutline>
     <recoilBumper copy="bumper" path="objects/recoilBumper/"/>

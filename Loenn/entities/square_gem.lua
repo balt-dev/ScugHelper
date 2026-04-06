@@ -11,7 +11,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = { Color = "a7fff2" },
+            data = { Color = "a7fff2", Gravity = false },
         }
     },
     sprite = function(room, entity)
