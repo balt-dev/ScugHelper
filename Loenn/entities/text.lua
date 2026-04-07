@@ -1,5 +1,4 @@
-local drawing = require("utils.drawing")
-local drawableSprite = require("structs.drawable_sprite")
+local utils = require("utils")
 local drawableText = require("structs.drawable_text")
 
 local function getTextColor(entity)
