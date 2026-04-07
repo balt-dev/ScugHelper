@@ -1,17 +1,17 @@
 using Microsoft.Xna.Framework;
 using Celeste;
 using Monocle;
-using System.Collections.Generic;
 using System.Reflection;
 using System;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod;
+using System.Collections.Concurrent;
 
 #nullable enable
 
 public static class SpeedHelper
 {
-    private static readonly Dictionary<Type, ReflectionSpeedAccessorFactory?> SpeedAccessorCache = [];
+    private static readonly ConcurrentDictionary<Type, ReflectionSpeedAccessorFactory?> SpeedAccessorCache = [];
     public static SpeedAccessor? GetSpeedOfEntity(Entity obj)
     {
         switch (obj)
@@ -42,7 +42,7 @@ public static class SpeedHelper
         if (speedProperty != null && speedProperty.PropertyType == typeof(Vector2))
         {
             var accessor = new ReflectionSpeedPropertyAccessorFactory(speedProperty);
-            SpeedAccessorCache.Add(type, accessor);
+            SpeedAccessorCache.TryAdd(type, accessor);
             return accessor.ForEntity(obj);
         }
 
@@ -53,12 +53,12 @@ public static class SpeedHelper
         if (speedField != null && speedField.FieldType == typeof(Vector2))
         {
             var accessor = new ReflectionSpeedFieldAccessorFactory(speedField);
-            SpeedAccessorCache.Add(type, accessor);
+            SpeedAccessorCache.TryAdd(type, accessor);
             return accessor.ForEntity(obj);
         }
         Logger.Warn(nameof(ScugHelperModule), $"Could not find speed for entity type {type}!");
 
-        SpeedAccessorCache.Add(type, null);
+        SpeedAccessorCache.TryAdd(type, null);
         return null;
     }
 }
