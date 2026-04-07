@@ -1,6 +1,6 @@
 - DLL: bin/ScugHelper.dll
   Name: ScugHelper
-  Version: 0.6.0
+  Version: 0.6.2
   Dependencies:
     - Name: EverestCore
       Version: 1.5935.0

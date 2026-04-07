@@ -48,11 +48,11 @@ public class AccelerationField : Entity
             {
                 if (entity is SolidTiles) break;
                 if (entity is Decal) break;
-                if (!CollideCheck(entity)) continue;
+                if (!Everywhere && !CollideCheck(entity)) continue;
                 SpeedAccessor? speedAccessor = SpeedHelper.GetSpeedOfEntity(entity);
                 if (speedAccessor is null) break;
                 SpeedAccessor accessor = (SpeedAccessor)speedAccessor;
-                accessor.Speed = Calc.Approach(accessor.Speed, Vector2.Zero, Drag * Engine.DeltaTime);
+                accessor.Speed *= MathF.Pow(1f - Drag, Engine.DeltaTime);
                 accessor.Speed += Acceleration * Engine.DeltaTime;
             }
         }
@@ -72,7 +72,7 @@ public class AccelerationField : Entity
         foreach (FieldParticle particle in FieldParticles)
             particle.Render();
     }
-    
+
     public void OnRenderBloom() => WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, Color.White * 0.3f);
 }
 
