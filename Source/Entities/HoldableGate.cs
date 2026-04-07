@@ -52,7 +52,7 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
                 var endPos = Position + lineDir * Size / 2;
                 for (int i = 0; i < Size; i++) {
                     var pos = Vector2.Lerp(startPos, endPos, i / Size);
-                    SceneAs<Level>().Particles.Emit(Glider.P_Platform, pos + PlatformAdd(i), Color.White * (Math.Abs(i - Size / 2) < Math.Max(holdable.Entity.Width, holdable.Entity.Height) ? 0.8f : 0.4f));
+                    SceneAs<Level>().Particles.Emit(new(Glider.P_Platform) { SpeedMin = 0, SpeedMax = player.Speed.Length() * 1.45f }, pos + PlatformAdd(i), Color.White * (Math.Abs(i - Size / 2) < Math.Max(holdable.Entity.Width, holdable.Entity.Height) ? 0.8f : 0.4f), player.Speed.Angle() + Calc.Random.Range(-0.1f, 0.1f));
                 }
                 RemoveSelf();
                 return;
