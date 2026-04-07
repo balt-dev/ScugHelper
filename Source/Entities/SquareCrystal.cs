@@ -95,13 +95,16 @@ public class SquareCrystal : Actor
     private static readonly float Gravity = 900f;
     private Vector2 prevLiftSpeed;
 
+    private bool WasOnGround = false;
+
     public override void Update()
     {
         base.Update();
         if (LiftSpeed.Length() < prevLiftSpeed.Length())
             Speed += prevLiftSpeed;
-        else if (OnGround() && DoGravity && Speed.Y > 0)
+        else if (OnGround() && DoGravity && WasOnGround && Speed.Y > 0f)
             Speed.Y = 0;
+        WasOnGround = OnGround();
         prevLiftSpeed = LiftSpeed;
         foreach (SquareCrystalCollider component in Scene.Tracker.GetComponents<SquareCrystalCollider>())
             component.Check(this);
@@ -124,8 +127,6 @@ public class SquareCrystal : Actor
     {
         if (data.Hit is DashSwitch button)
             button.OnDashCollide(null, Vector2.UnitY * Math.Sign(Speed.Y));
-        if (Math.Abs(Speed.Y) < 5f)
-            Speed.Y = 0;
         Speed.Y *= -0.8f;
         Audio.Play("event:/game/05_mirror_temple/crystaltheo_hit_ground", Position, "crystal_velocity", 0f);
     }
@@ -134,8 +135,6 @@ public class SquareCrystal : Actor
     {
         if (data.Hit is DashSwitch button)
             button.OnDashCollide(null, Vector2.UnitX * Math.Sign(Speed.X));
-        if (Math.Abs(Speed.X) < 5f)
-            Speed.X = 0;
         Speed.X *= -0.8f;
         Audio.Play("event:/game/05_mirror_temple/crystaltheo_hit_side", Position);
     }

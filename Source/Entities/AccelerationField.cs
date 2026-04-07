@@ -65,6 +65,7 @@ public class AccelerationField : Entity
     public override void Render()
     {
         base.Render();
+        if (Everywhere) return;
 
         WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2, FieldColor);
         WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, FieldOutlineColor);
@@ -73,7 +74,10 @@ public class AccelerationField : Entity
             particle.Render();
     }
 
-    public void OnRenderBloom() => WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, Color.White * 0.3f);
+    public void OnRenderBloom()
+    {
+        if (!Everywhere) WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, Color.White * 0.3f);
+    }
 }
 
 internal class FieldParticle(Vector2 pos)

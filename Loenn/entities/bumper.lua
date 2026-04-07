@@ -1,6 +1,6 @@
 return {
     name = "ScugHelper/RecoilBumper",
-    depth = 20,
+    depth = -20,
     placements = {
         {
             name = "normal",

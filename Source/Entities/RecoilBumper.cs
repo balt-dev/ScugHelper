@@ -30,7 +30,7 @@ public class RecoilBumper : Actor
         LiftSpeedGraceTime = 1f / 30f;
         Mass = data.Float("Mass", 2f);
         Drag = data.Float("Drag", 200f);
-        Depth = 20;
+        Depth = -20;
         Collider = new GridCircle(12f);
         Add(new PlayerCollider(OnPlayer));
         Add(sprite = GFX.SpriteBank.Create("recoilBumper"));
@@ -43,17 +43,17 @@ public class RecoilBumper : Actor
 
     private void OnOtherBumperCollide(RecoilBumper bumper) {
         if (bumper == this) return;
-        if (Center == bumper.Center) return; 
+        if (Center == bumper.Center) return;
         Vector2 delta_p = Center - bumper.Center;
         Vector2 delta_v = Speed - bumper.Speed;
-        
+
         // Move them out of each other
         float overlap = 12f * 2 - delta_p.Length();
         Vector2 norm = delta_p.SafeNormalize(Vector2.UnitY);
         Vector2 movement = norm * overlap / 2;
         MoveH(movement.X); MoveV(movement.Y);
         bumper.MoveH(-movement.X); bumper.MoveV(-movement.Y);
-        
+
         // Set the speeds
         float m1 = Mass;
         float m2 = bumper.Mass;
@@ -97,7 +97,7 @@ public class RecoilBumper : Actor
     }
 
     private Vector2 prevLiftSpeed;
-    
+
     public override void Update()
     {
         base.Update();
@@ -181,8 +181,8 @@ public class RecoilBumper : Actor
             SceneAs<Level>().Particles.Emit(Bumper.P_Launch, 12, Center + collisionNormal * 12f, Vector2.One * 3f, collisionNormal.Angle());
         }
     }
-    
-    
+
+
 
     public static void LoadHooks() {
         if (!HookUtils.TryDisableInlining(typeof(Monocle.Grid).GetMethod("Collide", [typeof(Circle)])))
