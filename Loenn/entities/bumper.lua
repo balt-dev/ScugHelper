@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 return {
     name = "ScugHelper/RecoilBumper",
     depth = -20,
