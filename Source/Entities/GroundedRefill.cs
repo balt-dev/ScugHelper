@@ -71,7 +71,6 @@ public class GroundedRefill : Refill {
             instr => instr.MatchPop()
         )) throw new InvalidOperationException("Grounded refills failed to match IL code for the Respawn hook.");
         cur.MarkLabel(label);
-        Logger.Info(nameof(ScugHelperModule), il.ToString());
     }
 }
 #nullable restore

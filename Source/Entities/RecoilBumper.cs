@@ -12,8 +12,10 @@ public class GridCircle : Circle {
 }
 
 [CustomEntity("ScugHelper/RecoilBumper")]
-public class RecoilBumper : Actor
-{
+public class RecoilBumper : Actor, IHasSpeed
+{ 
+    Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
+    
     private Sprite sprite;
     private VertexLight light;
     private BloomPoint bloom;

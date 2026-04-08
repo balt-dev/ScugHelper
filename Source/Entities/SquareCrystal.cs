@@ -6,8 +6,10 @@ using System;
 
 [Tracked]
 [CustomEntity("ScugHelper/SquareGem")]
-public class SquareCrystal : Actor
+public class SquareCrystal : Actor, IHasSpeed
 {
+    Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
+    
     public int GemID;
     public EntityID GID;
     public Color InfillColor { get; protected set; }

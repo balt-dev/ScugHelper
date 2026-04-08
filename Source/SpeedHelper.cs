@@ -3,11 +3,14 @@ using Celeste;
 using Monocle;
 using System.Reflection;
 using System;
-using Celeste.Mod.ScugHelper;
 using Celeste.Mod;
 using System.Collections.Concurrent;
 
 #nullable enable
+
+public interface IHasSpeed {
+    public abstract Vector2 Speed { get; set; }
+}
 
 public static class SpeedHelper
 {
@@ -22,6 +25,7 @@ public static class SpeedHelper
             case Seeker seeker: return new SpeedAccessor(seeker);
             case TheoCrystal crystal: return new SpeedAccessor(crystal);
             case Puffer puffer: return new SpeedAccessor(puffer);
+            case IHasSpeed speed: return new SpeedAccessor(speed);
             default:
                 var holdable = obj.Components.Get<Holdable>();
                 if (holdable != null && holdable.SpeedGetter != null && holdable.SpeedSetter != null)
@@ -33,7 +37,7 @@ public static class SpeedHelper
         if (SpeedAccessorCache.TryGetValue(type, out ReflectionSpeedAccessorFactory? value))
             return value?.ForEntity(obj);
 
-        Logger.Info(nameof(ScugHelperModule), $"Creating new reflection speed accessor for entity type {type}!");
+        Logger.Info(nameof(SpeedHelper), $"Creating new reflection speed accessor for entity type {type}!");
 
         PropertyInfo? speedProperty
             = type.GetProperty("Speed", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -56,7 +60,7 @@ public static class SpeedHelper
             SpeedAccessorCache.TryAdd(type, accessor);
             return accessor.ForEntity(obj);
         }
-        Logger.Warn(nameof(ScugHelperModule), $"Could not find speed for entity type {type}!");
+        Logger.Warn(nameof(SpeedHelper), $"Could not find speed for entity type {type}!");
 
         SpeedAccessorCache.TryAdd(type, null);
         return null;
@@ -69,7 +73,7 @@ public readonly struct SpeedAccessor
     private readonly Action<object, Vector2> Setter;
     private readonly object Object;
     public readonly Vector2 Speed { get => Getter(Object); set => Setter(Object, value); }
-    
+
     internal SpeedAccessor(Func<object, Vector2> getter, Action<object, Vector2> setter, object obj) {
         Getter = getter; Setter = setter; Object = obj;
     }
@@ -81,6 +85,7 @@ public readonly struct SpeedAccessor
     public SpeedAccessor(PlayerSeeker o) : this(static (o) => ((PlayerSeeker)o).speed, static (o, value) => ((PlayerSeeker)o).speed = value, o) { }
     public SpeedAccessor(TheoCrystal o) : this(static (o) => ((TheoCrystal)o).Speed, static (o, value) => ((TheoCrystal)o).Speed = value, o) { }
     public SpeedAccessor(Holdable o) : this(static (o) => ((Holdable)o).GetSpeed(), static (o, value) => ((Holdable)o).SetSpeed(value), o) { }
+    public SpeedAccessor(IHasSpeed o) : this(static (o) => ((IHasSpeed)o).Speed, static (o, value) => ((IHasSpeed)o).Speed = value, o) { }
 }
 
 internal abstract class ReflectionSpeedAccessorFactory {
