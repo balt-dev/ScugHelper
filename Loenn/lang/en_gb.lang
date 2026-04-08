@@ -21,3 +21,4 @@ entities.ScugHelper/AccelerationField.placements.name.normal=Acceleration Field
 entities.ScugHelper/GroundedRefill.placements.name.one_dash=Grounded Refill
 entities.ScugHelper/GroundedRefill.placements.name.two_dashes=Grounded Refill (Two Dashes)
 entities.ScugHelper/HiccupRefill.placements.name.normal=Hiccup Refill
+entities.ScugHelper/MidairRefill.placements.name.normal=Midair Refill
