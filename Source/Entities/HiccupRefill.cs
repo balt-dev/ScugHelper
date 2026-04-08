@@ -1,0 +1,84 @@
+using Microsoft.Xna.Framework;
+using Monocle;
+using Celeste.Mod.Entities;
+using Celeste;
+using MonoMod.Cil;
+using System;
+using Celeste.Mod.ScugHelper;
+using Celeste.Mod;
+using System.Collections;
+
+#nullable enable
+[Tracked]
+[CustomEntity("ScugHelper/HiccupRefill")]
+public class HiccupRefill : Refill
+{
+    public HiccupRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
+    {
+        Depth = -100;
+        Remove(outline);
+        Remove(sprite);
+        Remove(flash);
+        Add(sprite = new Sprite(GFX.Game, "objects/hiccupRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/hiccupRefill/outline"]));
+        sprite.AddLoop("idle", "", 0.1f);
+        sprite.Play("idle");
+        sprite.CenterOrigin();
+        outline.CenterOrigin();
+        outline.Visible = false;
+        Remove(wiggler);
+        Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
+        UpdateY();
+    }
+    public override void Added(Scene scene)
+    {
+        base.Added(scene);
+        if (Scene is not Level level) { RemoveSelf(); return; }
+        this.level = level;
+    }
+    public HiccupRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse")) { }
+
+    public override void Render()
+    {
+        if (sprite.Visible) sprite.DrawOutline();
+        base.Render();
+    }
+    public void NewOnPlayer(Player player)
+    {
+        Audio.Play("event:/game/general/diamond_touch", Position);
+        Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
+        Collidable = false;
+        Add(new Coroutine(NewRefillRoutine(player)));
+        respawnTimer = 2.5f;
+    }
+    public IEnumerator NewRefillRoutine(Player player)
+    {
+        Celeste.Celeste.Freeze(0.05f);
+        yield return null;
+        sprite.Visible = false;
+        if (!oneUse) outline.Visible = true;
+        Depth = 8999;
+        player.HiccupJump();
+        yield return 0.05f;
+        float num = player.Speed.Angle();
+        level.ParticlesFG.Emit(P_Shatter, 5, Position, Vector2.One * 4f, num - MathF.PI / 2f);
+        level.ParticlesFG.Emit(P_Shatter, 5, Position, Vector2.One * 4f, num + MathF.PI / 2f);
+        SlashFx.Burst(Position, num);
+        if (oneUse) RemoveSelf();
+    }
+    public static void LoadHooks() {
+        On.Celeste.Refill.OnPlayer += OnPlayerHook;
+    }
+
+    public static void UnloadHooks() {
+        On.Celeste.Refill.OnPlayer -= OnPlayerHook;
+    }
+
+    private static void OnPlayerHook(On.Celeste.Refill.orig_OnPlayer orig, Refill self, Player player) {
+        if (self is HiccupRefill hicRefill)
+            hicRefill.NewOnPlayer(player);
+        else
+            orig(self, player);
+    }
+}
+#nullable restore

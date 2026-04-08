@@ -28,7 +28,7 @@ public class BoosterField : Solid
     public BoosterField(EntityData data, Vector2 offset)
         : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"))
     { }
-    
+
     private static readonly float SineMovement = 2.0f;
 
     public override void Render()
@@ -100,7 +100,7 @@ public class BoosterField : Solid
         }
         return orig(a, b);
     }
-    
+
     public void OnRenderBloom()
     {
         if (Visible && !Invisible) // lol
