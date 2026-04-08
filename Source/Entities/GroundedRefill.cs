@@ -36,12 +36,18 @@ public class GroundedRefill : Refill {
     }
     public override void Awake(Scene scene) {
         base.Awake(scene);
-        LastRefillSound = 0f;
     }
-    public static float LastRefillSound = 0f;
-    private static readonly float RefillSoundCooldown = 0.02f;
+    public static long TimeSince = 0;
+    private static readonly long RefillSoundCooldown = 2;
     public static void LoadHooks() {
+        On.Celeste.Level.Update += LevelUpdateHook;
         IL.Celeste.Refill.Respawn += RespawnHook;
+    }
+
+    private static void LevelUpdateHook(On.Celeste.Level.orig_Update orig, Level self)
+    {
+        TimeSince += 1;
+        orig(self);
     }
 
     public static void UnloadHooks() {
@@ -57,9 +63,8 @@ public class GroundedRefill : Refill {
         var label = cur.DefineLabel();
         cur.EmitLdarg0();
         static bool Delegate(Refill refill) {
-            var delta = refill.Scene.TimeActive - LastRefillSound;
-            if (delta > RefillSoundCooldown) {
-                LastRefillSound = refill.Scene.TimeActive;
+            if (TimeSince > RefillSoundCooldown) {
+                TimeSince = 0;
                 return true;
             }
             return false;

@@ -35,12 +35,8 @@ public class AccelerationField : Entity
         Elapsed += Engine.DeltaTime;
 
         for (int i = 0; i < FieldParticles.Count; i++)
-        {
             if (!FieldParticles[i].Step(this))
-            {
                 FieldParticles[i] = new(Calc.Random.Range(TopLeft, BottomRight));
-            }
-        }
 
         foreach (var kvp in Scene.Tracker.Entities)
         {
@@ -49,9 +45,7 @@ public class AccelerationField : Entity
                 if (entity is SolidTiles) break;
                 if (entity is Decal) break;
                 if (!Everywhere && !CollideCheck(entity)) continue;
-                SpeedAccessor? speedAccessor = SpeedHelper.GetSpeedOfEntity(entity);
-                if (speedAccessor is null) break;
-                SpeedAccessor accessor = (SpeedAccessor)speedAccessor;
+                if (SpeedAccessor.For(entity) is not SpeedAccessor accessor) break;
                 accessor.Speed *= MathF.Pow(1f - Drag, Engine.DeltaTime);
                 accessor.Speed += Acceleration * Engine.DeltaTime;
             }
@@ -101,8 +95,7 @@ internal class FieldParticle(Vector2 pos)
             if (Position.Y > field.Bottom) Position.Y = field.Top;
         }
         Elapsed += Engine.DeltaTime;
-        if (Elapsed > Lifetime) return false;
-        return true;
+        return Elapsed <= Lifetime;
     }
     internal void Render()
     {
