@@ -21,3 +21,4 @@ uses some code from Spring Collab 2020, see `LICENSE-SC2020`
 ![Screencast_20260406_200714 webm](https://github.com/user-attachments/assets/117c83bb-2108-4a43-b2fc-6979ccbf715f)
 ![Screencast_20260406_200642 webm](https://github.com/user-attachments/assets/4c2be95a-60c7-485b-a95a-cb561e3788d8)
 ![Screencast_20260406_200624 webm](https://github.com/user-attachments/assets/79dfe1cf-efb2-4e40-be2a-f5e052775808)
+![midair](https://github.com/user-attachments/assets/41a90832-1a61-4dd4-b719-81188a41c2a4)
