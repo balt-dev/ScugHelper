@@ -9,7 +9,7 @@ using System;
 public class SquareCrystal : Actor, IHasSpeed
 {
     Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
-    
+
     public int GemID;
     public EntityID GID;
     public Color InfillColor { get; protected set; }
@@ -124,7 +124,7 @@ public class SquareCrystal : Actor, IHasSpeed
         fillSprite.Position = wiggleFac * moveWiggleDir * moveWiggler.Value * -8f;
         glareSprite.Position = wiggleFac * moveWiggleDir * moveWiggler.Value * -8f;
     }
-    
+
     private void OnCollideV(CollisionData data)
     {
         if (data.Hit is DashSwitch button)
@@ -140,7 +140,17 @@ public class SquareCrystal : Actor, IHasSpeed
         Speed.X *= -0.8f;
         Audio.Play("event:/game/05_mirror_temple/crystaltheo_hit_side", Position);
     }
-    
+
+    public override void OnSquish(CollisionData data) {
+        if (!TrySquishWiggle(data, 3, 3))
+        {
+            for (int i = 0; i < 5; i++)
+                Audio.Play("event:/game/06_reflection/fall_spike_smash", Position);
+            SceneAs<Level>().ParticlesFG.Emit(Refill.P_Shatter, 30, Position, Vector2.One * 8f, data.Direction.Angle());
+            RemoveSelf();
+        }
+    }
+
     public static void LoadHooks() {
         On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
         On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
@@ -162,7 +172,7 @@ public class SquareCrystal : Actor, IHasSpeed
         orig(self, position, orientation, playerCanUse);
         self.Add(new SquareCrystalCollider(crys => { if (crys.HitSpring(self)) self.BounceAnimate(); }));
     }
-    
+
     public bool HitSpring(Spring spring)
     {
         switch (spring.Orientation)

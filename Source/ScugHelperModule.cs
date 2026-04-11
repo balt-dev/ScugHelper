@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.ScugHelper;
@@ -6,6 +7,8 @@ namespace Celeste.Mod.ScugHelper;
 public class ScugHelperModule : EverestModule
 {
     internal bool ForceRenderDebug = false;
+    internal static readonly List<Action> LoadHooks;
+    internal static readonly List<Action> UnloadHooks;
 
     public static ScugHelperModule Instance { get; private set; }
 
@@ -31,16 +34,18 @@ public class ScugHelperModule : EverestModule
     {
         // TODO: apply any hooks that should always be active
         PinballBooster.LoadHooks();
-        BoosterField.LoadHooks();
         Gripwall.LoadHooks();
         BrassBerry.LoadHooks();
         DebugViewTrigger.LoadHooks();
         DashlessHeartGem.LoadHooks();
         RecoilBumper.LoadHooks();
         SquareCrystal.LoadHooks();
-        HiccupRefill.LoadHooks();
+        ICustomRefill.LoadHooks();
         MidairRefill.LoadHooks();
         GroundedRefill.LoadHooks();
+        FreezeRefill.LoadHooks();
+        TungstenCube.LoadHooks();
+        FastfallBlock.LoadHooks();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
@@ -48,16 +53,18 @@ public class ScugHelperModule : EverestModule
     {
         // TODO: unapply any hooks applied in Load()
         PinballBooster.UnloadHooks();
-        BoosterField.UnloadHooks();
         Gripwall.UnloadHooks();
         BrassBerry.UnloadHooks();
         DebugViewTrigger.UnloadHooks();
         DashlessHeartGem.UnloadHooks();
         RecoilBumper.UnloadHooks();
         SquareCrystal.UnloadHooks();
-        HiccupRefill.UnloadHooks();
+        ICustomRefill.UnloadHooks();
         MidairRefill.UnloadHooks();
         GroundedRefill.UnloadHooks();
+        FreezeRefill.UnloadHooks();
+        TungstenCube.UnloadHooks();
+        FastfallBlock.UnloadHooks();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
     }
 

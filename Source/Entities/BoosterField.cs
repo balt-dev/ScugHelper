@@ -9,6 +9,24 @@ using System;
 [CustomEntity("ScugHelper/BoosterField")]
 public class BoosterField : Solid
 {
+    internal class BoosterFieldColliderList : ColliderList
+    {
+        private readonly BoosterField field;
+        public BoosterFieldColliderList(BoosterField field) {
+            colliders = [field.Collider];
+            this.field = field;
+        }
+        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
+        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
+        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
+        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
+
+        private bool CheckEntity(Entity entity) {
+            bool res = entity is Player player && (player.LastBooster?.BoostingPlayer ?? false);
+            field.BouncedBooster |= res;
+            return res;
+        }
+    }
 
     protected float[] speeds = [12f, 20f, 40f];
     protected List<Vector2> particles = [];
@@ -19,6 +37,7 @@ public class BoosterField : Solid
 
     public BoosterField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false)
     {
+        Collider = new BoosterFieldColliderList(this);
         Collidable = true;
         Invisible = invis;
         for (int i = 0; i < Width * Height / 24f; i++)
@@ -71,34 +90,6 @@ public class BoosterField : Solid
             particles[i] = value;
         }
         base.Update();
-    }
-
-    public static void LoadHooks()
-    {
-        On.Monocle.Collide.Check_Entity_Entity += BoosterCollide;
-    }
-    public static void UnloadHooks()
-    {
-        On.Monocle.Collide.Check_Entity_Entity -= BoosterCollide;
-    }
-
-    private static bool BoosterCollide(On.Monocle.Collide.orig_Check_Entity_Entity orig, Entity a, Entity b)
-    {
-        if (a is BoosterField field)
-        {
-            if (b is not Player player) return false;
-            if (player.LastBooster?.BoostingPlayer ?? false) {
-                var result = orig(a, b);
-                field.BouncedBooster |= result;
-                return result;
-            }
-            return false;
-        }
-        else if (b is BoosterField)
-        {
-            return BoosterCollide(orig, b, a);
-        }
-        return orig(a, b);
     }
 
     public void OnRenderBloom()

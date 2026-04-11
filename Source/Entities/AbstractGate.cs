@@ -32,10 +32,10 @@ public abstract class AbstractGate : Entity
         Draw.Line(Position - lineDir * Size / 2, Position + lineDir * Size / 2, Color.Cyan);
     }
 
-    private bool CollideCheck(Player player)
+    private bool CheckLine(Vector2 a, Vector2 b)
     {
-        var prevPos = player.PreviousPosition;
-        var delta = player.Position - prevPos;
+        var prevPos = a;
+        var delta = b - prevPos;
         var d1 = Vector2.Dot(prevPos - Position, lineNorm);
         var d2 = Vector2.Dot(prevPos + delta - Position, lineNorm);
         if (d1 * d2 > 0)
@@ -50,7 +50,9 @@ public abstract class AbstractGate : Entity
         base.Update();
         Player player = SceneAs<Level>().Tracker.GetEntity<Player>();
         if (player == null) return;
-        if (CollideCheck(player))
+        if (CheckLine(player.PreviousPosition, player.Position))
+            OnTrigger(player);
+        else if (CheckLine(player.PreviousPosition + player.TopCenter - player.Position, player.TopCenter))
             OnTrigger(player);
     }
 }

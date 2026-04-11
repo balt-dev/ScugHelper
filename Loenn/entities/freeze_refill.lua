@@ -1,5 +1,5 @@
 return {
-    name = "ScugHelper/HiccupRefill",
+    name = "ScugHelper/FreezeRefill",
     depth = -100,
     placements = {
         {
@@ -9,7 +9,7 @@ return {
             }
         }
     },
-    texture = "objects/hiccupRefill/idle00",
+    texture = "objects/freezeRefill/idle00",
     selection = function(room, entity)
         return utils.rectangle(entity.x - 8, entity.y - 8, 16, 16)
     end,

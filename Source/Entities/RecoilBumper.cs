@@ -6,6 +6,7 @@ using System;
 using Celeste.Mod.Helpers;
 using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
+using System.Collections;
 
 public class GridCircle : Circle {
     public GridCircle(float radius, float x = 0, float y = 0) : base(radius, x, y) {}
@@ -155,7 +156,7 @@ public class RecoilBumper : Actor, IHasSpeed
     {
         if (respawnTimer <= 0f)
         {
-            Audio.Play("event:/game/06_reflection/pinballbumper_hit", Position);
+            Audio.Play("event:/game/09_core/pinballbumper_hit", Position);
 
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
             Celeste.Celeste.Freeze(0.1f);
@@ -184,6 +185,22 @@ public class RecoilBumper : Actor, IHasSpeed
         }
     }
 
+
+    public override void OnSquish(CollisionData data)
+    {
+        if (!TrySquishWiggle(data, 3, 3))
+        {
+            data.Hit.Add(new Coroutine(CrushSoundRoutine(Position)));
+            SceneAs<Level>().ParticlesFG.Emit(Bumper.P_Launch, 100, Position, Vector2.One * 16f, data.Direction.Angle());
+            RemoveSelf();
+        }
+    }
+    
+    private static IEnumerator CrushSoundRoutine(Vector2 pos) {
+        var evInstance = Audio.Play("event:/game/09_core/hotpinball_activate", pos);
+		yield return 0.5f;
+        evInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+    }
 
 
     public static void LoadHooks() {

@@ -19,7 +19,7 @@ internal static class Ext {
 
 [Tracked]
 [CustomEntity("ScugHelper/MidairRefill")]
-public class MidairRefill : Refill
+public class MidairRefill : Refill, ICustomRefill
 {
     public MidairRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
     {
@@ -51,7 +51,7 @@ public class MidairRefill : Refill
         if (sprite.Visible) sprite.DrawOutline();
         base.Render();
     }
-    public void NewOnPlayer(Player player)
+    public void CustomOnPlayer(Player player)
     {
         if (MidairDashCount == 0) {
             Audio.Play("event:/game/general/diamond_touch", Position);
@@ -79,9 +79,7 @@ public class MidairRefill : Refill
         if (oneUse) RemoveSelf();
     }
     public static void LoadHooks() {
-        On.Celeste.Refill.OnPlayer += OnPlayerHook;
         On.Celeste.Player.ctor += Player_ctor;
-        On.Celeste.Player.DashBegin += Player_DashBegin;
         On.Celeste.Player.CreateTrail += Player_CreateTrail;
         On.Celeste.Player.Update += Player_Update;
         IL.Celeste.Player.DashUpdate += DashUpdateHook;
@@ -89,12 +87,12 @@ public class MidairRefill : Refill
         IL.Celeste.Player.NormalUpdate += NormalUpdateHook;
         IL.Celeste.Player.DashUpdate += DashOrRedDashUpdateHook;
         IL.Celeste.Player.RedDashUpdate += DashOrRedDashUpdateHook;
+        On.Celeste.Level.Reload += Level_Reload;
+        On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
     }
 
     public static void UnloadHooks() {
-        On.Celeste.Refill.OnPlayer -= OnPlayerHook;
         On.Celeste.Player.ctor -= Player_ctor;
-        On.Celeste.Player.DashBegin -= Player_DashBegin;
         On.Celeste.Player.CreateTrail -= Player_CreateTrail;
         On.Celeste.Player.Update -= Player_Update;
         IL.Celeste.Player.DashUpdate -= DashUpdateHook;
@@ -102,28 +100,14 @@ public class MidairRefill : Refill
         IL.Celeste.Player.NormalUpdate -= NormalUpdateHook;
         IL.Celeste.Player.DashUpdate -= DashOrRedDashUpdateHook;
         IL.Celeste.Player.RedDashUpdate -= DashOrRedDashUpdateHook;
+        On.Celeste.Level.Reload -= Level_Reload;
+        On.Celeste.LevelLoader.StartLevel -= LevelLoader_StartLevel;
     }
 
-    private static void OnPlayerHook(On.Celeste.Refill.orig_OnPlayer orig, Refill self, Player player)
-    {
-        if (self is MidairRefill refill)
-            refill.NewOnPlayer(player);
-        else
-            orig(self, player);
-    }
-
-    private static bool MidairDashing;
     private static int MidairDashCount;
-    private static float MidairDashTimer;
 
     private static void Player_ctor(On.Celeste.Player.orig_ctor orig, Player player, Vector2 position, PlayerSpriteMode spriteMode) {
         orig(player, position, spriteMode);
-        MidairDashing = false;
-    }
-
-    private static void StartMidairDash(Player player) {
-        MidairDashing = true;
-        MidairDashTimer = player.GetData().Get<float>("dashAttackTimer");
     }
     private static bool UseMidairDash() {
         if (MidairDashCount > 0) {
@@ -133,21 +117,13 @@ public class MidairRefill : Refill
         return false;
     }
 
-    private static void Player_DashBegin(On.Celeste.Player.orig_DashBegin orig, Player self)
-    {
-        orig(self);
-
-        if (UseMidairDash())
-            StartMidairDash(self);
-    }
-
     private static void CreateBlueTrail(Player player) {
         Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
         TrailManager.Add(player, scale, Color.Blue);
     }
 
     private static void Player_CreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player) {
-        if (MidairDashCount > 0 || MidairDashing)
+        if (MidairDashCount > 0)
             CreateBlueTrail(player);
         else
             orig(player);
@@ -156,15 +132,6 @@ public class MidairRefill : Refill
     private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
-
-        float dashAttackTimer = self.GetData().Get<float>("dashAttackTimer");
-        if (dashAttackTimer < MidairDashTimer)
-            MidairDashTimer = dashAttackTimer;
-        else if (MidairDashTimer > 0)
-            MidairDashTimer -= Engine.DeltaTime;
-
-        if (MidairDashTimer <= 0f)
-            MidairDashing = false;
 
         if (MidairDashCount > 0 && self.Scene.OnInterval(0.1f))
             CreateBlueTrail(self);
@@ -175,20 +142,33 @@ public class MidairRefill : Refill
     {
         ILCursor cur = new(il);
 
-        ILLabel labelPastCheck = cur.DefineLabel();
+        ILLabel? label = null;
 
-        if (!cur.TryGotoNext(MoveType.AfterLabel,
+        if (!cur.TryGotoNext(MoveType.After,
             instr => instr.MatchLdarg(0),
             instr => instr.MatchLdfld<Player>("jumpGraceTimer")
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
-
-        cur.EmitDelegate(static () => MidairDashing);
-        cur.Emit(OpCodes.Brtrue, labelPastCheck);
-
-        if (!cur.TryGotoNext(MoveType.After, instr => instr.MatchBleUn(out _)
+        if (!cur.TryGotoNext(MoveType.After,
+            instr => instr.MatchLdcR4(0.0f),
+            instr => instr.MatchBleUn(out label)
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
 
-        cur.MarkLabel(labelPastCheck);
+        cur.GotoLabel(label);
+        cur.MoveAfterLabels();
+        cur.Emit(OpCodes.Ldarg_0);
+        cur.EmitDelegate(static (Player player) => {
+            if (Input.Jump.Pressed && UseMidairDash())
+            {
+                player.SuperJump();
+                return true;
+            }
+            return false;
+        });
+        ILLabel labelAfter = il.DefineLabel();
+        cur.Emit(OpCodes.Brfalse, labelAfter);
+        cur.Emit(OpCodes.Ldc_I4_0);
+        cur.Emit(OpCodes.Ret);
+        cur.MarkLabel(labelAfter);
     }
 
     private static readonly MethodInfo m_SuperWallJump = typeof(Player).GetMethod("SuperWallJump", BindingFlags.NonPublic | BindingFlags.Instance)!;
@@ -251,9 +231,10 @@ public class MidairRefill : Refill
     }
 
     private static bool WalllessWallbounceDashCheck(Player player) {
-        if (MidairDashing)
+        bool midairDashing = UseMidairDash();
+        if (midairDashing)
             DoWallbounce(player);
-        return MidairDashing;
+        return midairDashing;
     }
 
     private static bool WalllessWallbounceNormalCheck(Player player, bool canUnDuck) {
@@ -261,15 +242,26 @@ public class MidairRefill : Refill
             = canUnDuck
             && player.DashAttacking
             && player.SuperWallJumpAngleCheck
-            && MidairDashing;
+            && MidairDashCount > 0;
 
-        if (canWallbounce)
+        if (canWallbounce && UseMidairDash())
             DoWallbounce(player);
         return canWallbounce;
     }
 
     private static void DoWallbounce(Player player) {
         player.SuperWallJump((int) player.Facing);
+    }
+    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self)
+    {
+        MidairDashCount = 0;
+        orig(self);
+    }
+
+    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
+    {
+        MidairDashCount = 0;
+        orig(self);
     }
 }
 #nullable restore
