@@ -43,7 +43,7 @@ public class PinballBooster : Booster
         On.Celeste.Player.OnBoundsH += HBoundsHook;
         On.Celeste.Player.OnBoundsV += VBoundsHook;
         On.Celeste.Player.Update += UpdateHook;
-        On.Celeste.Booster.Render += RenderHook;
+        On.Celeste.Booster.Update += UpdateHook;
     }
 
     public static void UnloadHooks()
@@ -58,7 +58,7 @@ public class PinballBooster : Booster
         On.Celeste.Player.OnBoundsH -= HBoundsHook;
         On.Celeste.Player.OnBoundsV -= VBoundsHook;
         On.Celeste.Player.Update -= UpdateHook;
-        On.Celeste.Booster.Render -= RenderHook;
+        On.Celeste.Booster.Update -= UpdateHook;
     }
 
     private static void UpdateHook(On.Celeste.Player.orig_Update orig, Player self)
@@ -73,7 +73,7 @@ public class PinballBooster : Booster
         }
     }
 
-    private static void RenderHook(On.Celeste.Booster.orig_Render orig, Booster self)
+    private static void UpdateHook(On.Celeste.Booster.orig_Update orig, Booster self)
     {
         orig(self);
         if (self is PinballBooster || ScugHelperModule.Settings.AllBoostersBounce)

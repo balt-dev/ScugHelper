@@ -99,6 +99,7 @@ public class TungstenCube : Actor, IHasSpeed {
     }
 
     private static readonly float Gravity = 1200f;
+    private static readonly float TerminalVelocity = 1000f;
     private Vector2 prevLiftSpeed;
 
     private bool WasOnGround = false;
@@ -129,6 +130,7 @@ public class TungstenCube : Actor, IHasSpeed {
         Speed.Y = Calc.Approach(Speed.Y, 0, 400f * Engine.DeltaTime);
         if (!OnGround())
             Speed.Y += Gravity * Engine.DeltaTime;
+        Speed.Y = Math.Min(Speed.Y, TerminalVelocity);
         if (Hold.IsHeld)
             Speed = Vector2.Zero;
         var level = SceneAs<Level>();
