@@ -263,5 +263,9 @@ public class MidairRefill : Refill, ICustomRefill
         MidairDashCount = 0;
         orig(self);
     }
+    [Command("givemidair", "Gives the player a midair dash.")]
+    private static void GiveMidair() {
+        MidairDashCount = 1;
+    }
 }
 #nullable restore

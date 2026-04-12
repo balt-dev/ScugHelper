@@ -237,17 +237,21 @@ public partial class Text : Entity
         }
         RenderText(Vector2.Zero, InfillColor);
     }
+    
+    internal void RenderText(Vector2 offset, Color color) {
+        RenderText(renderedString, Position + offset, color);
+    }
 
-    private void RenderText(Vector2 offset, Color color) {
+    internal static void RenderText(string renderedString, Vector2 offset, Color color) {
         if (renderedString == null) return;
         Vector2 printHead = Vector2.Zero;
         foreach (var chr in renderedString.AsEnumerable()) {
-            if (chr == '\n') { printHead.X = 0; printHead.Y += (ScugHelperModule.Settings.AlternativeFont ? 6 : 5); continue; }
+            if (chr == '\n') { printHead.X = 0; printHead.Y += ScugHelperModule.Settings.AlternativeFont ? 6 : 5; continue; }
             int codepoint = chr;
             if (codepoint < 32) { continue; }
             var index = Math.Clamp(codepoint, 32, 127) - 32;
             var tex = (ScugHelperModule.Settings.AlternativeFont ? glyphTexturesSmall : glyphTexturesTiny)[index];
-            tex.Draw(offset + printHead + Position, Vector2.Zero, color);
+            tex.Draw(offset + printHead, Vector2.Zero, color);
             printHead.X += 4;
         }
     }

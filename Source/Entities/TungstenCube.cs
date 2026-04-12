@@ -13,6 +13,7 @@ public class TungstenCube : Actor, IHasSpeed {
     private Vector2 Speed;
     private readonly Holdable Hold;
     private readonly Image Image;
+    private readonly Collider CrushCollider;
 
     private Level Level { get => SceneAs<Level>(); }
     Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
@@ -22,6 +23,7 @@ public class TungstenCube : Actor, IHasSpeed {
     {
         Depth = -20;
         Collider = new Hitbox(8f, 6f, -4f, -2f);
+        CrushCollider = new Hitbox(8f, 16f, -4f, -2f);
         LiftSpeedGraceTime = 1f / 30f;
         Image = new Image(GFX.Game["objects/anvil"]);
         Image.Position = TopLeft;
@@ -36,7 +38,7 @@ public class TungstenCube : Actor, IHasSpeed {
             OnPickup = OnPickup,
             OnRelease = OnRelease
         });
-        Add(new PlayerCollider(OnPlayer, Collider));
+        Add(new PlayerCollider(OnPlayer, CrushCollider));
     }
     public void OnPickup()
     {
@@ -61,8 +63,16 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private void OnPlayer(Player player)
     {
-        if (player.wasOnGround && Speed.Y - player.Speed.Y > 240f && !Hold.IsHeld)
-            player.Die(Vector2.Zero);
+        if (Speed.Y - player.Speed.Y > 240f && !Hold.IsHeld) {
+            if (player.wasOnGround)
+                player.Die(Vector2.Zero);
+            else {
+                Audio.Play("event:/game/general/thing_booped");
+                player.Speed.Y = Speed.Y;
+                Celeste.Celeste.Freeze(0.1f);
+            }
+        }
+
     }
 
     public bool HitSpring(Spring spring)
@@ -112,11 +122,14 @@ public class TungstenCube : Actor, IHasSpeed {
         if (Hold.IsHeld)
             Image.Position.Y -= 4f;
         Image.Update();
-        if (Hold.IsHeld) {
-            Player player = Level.Tracker.GetEntity<Player>();
-            if (player != null && player.Holding == Hold) {
-                player.jumpGraceTimer = 0f;
+        if (!Hold.IsHeld) {
+            if (CollideFirst<HeartGem>() is HeartGem gem && gem != null) {
+                Player player = Level.Tracker.GetEntity<Player>();
+                if (player != null && !gem.collected) {
+                    gem.Collect(player);
+                }
             }
+
         }
         if (LiftSpeed.Length() < prevLiftSpeed.Length())
             Speed += prevLiftSpeed;
@@ -269,6 +282,33 @@ public class TungstenCube : Actor, IHasSpeed {
     {
         orig(self, particles, playSfx);
         if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+    }
+
+
+    [Command("givetheo", "Spawns a theo crystal on the player.")]
+    private static void SpawnTheo() {
+        Scene scene = Engine.Instance.scene;
+        if (scene is not Level level) return;
+        Player? player = level.Tracker.GetEntity<Player>();
+        if (player is not Player p) return;
+        scene.Add(new TheoCrystal(p.Position - Vector2.UnitY * 10f));
+    }
+    [Command("giveglider", "Spawns a jellyfish on the player.")]
+    private static void SpawnGlider() {
+        Scene scene = Engine.Instance.scene;
+        if (scene is not Level level) return;
+        Player? player = level.Tracker.GetEntity<Player>();
+        if (player is not Player p) return;
+        scene.Add(new Glider(p.Position - Vector2.UnitY * 10f, true, false));
+    }
+
+    [Command("givecube", "Spawns a cube on the player.")]
+    private static void SpawnCube() {
+        Scene scene = Engine.Instance.scene;
+        if (scene is not Level level) return;
+        Player? player = level.Tracker.GetEntity<Player>();
+        if (player is not Player p) return;
+        scene.Add(new TungstenCube(p.Position - Vector2.UnitY * 10f));
     }
 }
 

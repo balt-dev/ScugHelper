@@ -1,30 +1,88 @@
 entities.ScugHelper/PinballBooster.placements.name.blue=Pinball Booster
+entities.ScugHelper/PinballBooster.placements.description.blue=Booster that bounces when hitting walls.
+
 entities.ScugHelper/PinballBooster.placements.name.red=Red Pinball Booster
+entities.ScugHelper/PinballBooster.placements.description.red=Red booster that bounces when hitting walls.
+
 entities.ScugHelper/Cycler.placements.name.cycler=Cycler
+entities.ScugHelper/Cycler.placements.description.cycler=Moves entities in a circle. May break with modded entities that don't expect to be moved.
+
 entities.ScugHelper/BoosterField.placements.name.boosterfield=Booster Field
+entities.ScugHelper/BoosterField.placements.description.boosterfield=Field that is solid when touched by a Booster, and intangible otherwise.
+
 entities.ScugHelper/Gripwall.placements.name.gripwall_left=Gripwall (Left)
 entities.ScugHelper/Gripwall.placements.name.gripwall_right=Gripwall (Right)
+entities.ScugHelper/Gripwall.placements.description.gripwall_left=Wall that prevents climbing and may give back stamina/dashes.
+entities.ScugHelper/Gripwall.placements.description.gripwall_right=Wall that prevents climbing and may give back stamina/dashes.
+
 entities.ScugHelper/ReboundBlock.placements.name.reboundBlockGrey=Rebound Block (Grey)
 entities.ScugHelper/ReboundBlock.placements.name.reboundBlockGreen=Rebound Block (Green)
 entities.ScugHelper/ReboundBlock.placements.name.reboundBlockPink=Rebound Block (Pink)
+
+entities.ScugHelper/ReboundBlock.placements.description.reboundBlockGrey=Rebounds the player.
+entities.ScugHelper/ReboundBlock.placements.description.reboundBlockGreen=Rebounds the player, and gives back a dash.
+entities.ScugHelper/ReboundBlock.placements.description.reboundBlockPink=Rebounds the player, and gives back two dashes.
+
 entities.ScugHelper/BrassBerry.placements.name.normal=Brass Berry
+entities.ScugHelper/BrassBerry.placements.description.normal=Berry that stays with the player, between save and quits and between death.
+
 entities.ScugHelper/BrassBerryBlock.placements.name.brassBerryBlock=Brass Berry Block
 triggers.ScugHelper/BrassBerryCollectTrigger.placements.name.trigger=Brass Berry Collect Trigger
 triggers.ScugHelper/DebugViewTrigger.placements.name.trigger=Debug View Trigger
+entities.ScugHelper/DebugViewTrigger.placements.description.normal=Shows hitboxes while inside.
+
 entities.ScugHelper/SpeedcheckGate.placements.name.normal=Speedcheck Gate
+entities.ScugHelper/SpeedcheckGate.placements.description.normal=Checks the player's speed when crossed.
+
 entities.ScugHelper/HoldableGate.placements.name.normal=Holdable Gate
+entities.ScugHelper/HoldableGate.placements.description.normal=Extends the holdable's grab range to where the gate is crossed.
+
 entities.ScugHelper/Text.placements.name.normal=Text
+entities.ScugHelper/Text.placements.description.normal=Arbitrary in-game text.
+
 entities.ScugHelper/SquareGem.placements.name.normal=Square Gem
+entities.ScugHelper/SquareGem.placements.description.normal=Indestructible bouncy crystal.
+
 entities.ScugHelper/DashlessHeartGem.placements.name.crystal_heart=Crystal Heart (Dashless)
+entities.ScugHelper/DashlessHeartGem.placements.description.crystal_heart=Crystal Heart that's collected on touch.
+
 entities.ScugHelper/RecoilBumper.placements.name.normal=Recoil Bumper
+entities.ScugHelper/RecoilBumper.placements.description.normal=Bumper that bounces backwards when hit.
+
 entities.ScugHelper/AccelerationField.placements.name.normal=Acceleration Field
+entities.ScugHelper/AccelerationField.placements.description.normal=Accelerates any entites within.
+
 entities.ScugHelper/GroundedRefill.placements.name.one_dash=Grounded Refill
 entities.ScugHelper/GroundedRefill.placements.name.two_dashes=Grounded Refill (Two Dashes)
+entities.ScugHelper/GroundedRefill.placements.description.one_dash=One-dash refill that refills when on safe ground.
+entities.ScugHelper/GroundedRefill.placements.description.two_dashes=Two-dash refill that refills when on safe ground.
+
 entities.ScugHelper/HiccupRefill.placements.name.normal=Hiccup Refill
+entities.ScugHelper/HiccupRefill.placements.description.normal=Makes the player hiccup.
+
 entities.ScugHelper/MidairRefill.placements.name.normal=Midair Refill
+entities.ScugHelper/MidairRefill.placements.description.normal=Lets the player hyper, super, or wallbounce in midair. Consumed when used.
+
 entities.ScugHelper/FreezeRefill.placements.name.normal=Freeze Refill
+entities.ScugHelper/FreezeRefill.placements.description.normal=Freezes the game until a button is pressed.
+
 entities.ScugHelper/SpeedRefill.placements.name.normal=Speed Refill
+entities.ScugHelper/SpeedRefill.placements.description.normal=Sets the player's speed to a value.
+
 entities.ScugHelper/Anvil.placements.name.normal=Tungsten Cube
+entities.ScugHelper/Anvil.placements.description.normal=Extremely heavy holdable. Can crush Madeline, and activates Touch Switches, Dash Switches, and breaks Dash Blocks. Restricts movement while held.
+
 entities.ScugHelper/FastfallBlock.placements.name.normal=Fastfall Block
-entities.ScugHelper/FakeBlock.placements.name.normal=Fragile Block
+entities.ScugHelper/FastfallBlock.placements.description.normal=Broken when fastfalled through.
+
 entities.ScugHelper/FlagTempleEye.placements.name.normal=Flag-Controlled Temple Eye
+entities.ScugHelper/FlagTempleEye.placements.description.normal=Temple eye that is closed by default, only opening when a flag is set.
+
+entities.ScugHelper/RefillGate.placements.name.normal=Refill Gate
+entities.ScugHelper/RefillGate.placements.description.normal=Extends the range of a refill to where the gate is crossed.
+
+entities.ScugHelper/LevelEndController.placements.name.normal=Level End Controller
+entities.ScugHelper/LevelEndController.placements.description.normal=Ends the level when a flag is set.
+
+entities.ScugHelper/TeleportGate.placements.name.normal=Teleport Gate
+entities.ScugHelper/TeleportGate.placements.description.normal=Teleports the player when crossed.

@@ -203,7 +203,7 @@ class BrassBerry : Entity, IStrawberry
         self.level.Session.SetFlag("HasBrassBerry", ScugHelperModule.Session.BrassBerryFollowing != null);
         orig(self);
     }
-    
+
     private static void PlayerAddHook(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
     {
         orig(self, scene);
@@ -215,7 +215,8 @@ class BrassBerry : Entity, IStrawberry
             {
                 Logger.Info(nameof(ScugHelperModule), "Readding brass berry!");
                 var followID = (EntityID)following;
-                var data = new EntityData {
+                var data = new EntityData
+                {
                     ID = followID.ID,
                     Position = self.Position,
                     Level = self.SceneAs<Level>().Session.LevelData,
