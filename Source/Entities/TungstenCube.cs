@@ -6,6 +6,7 @@ using Celeste.Mod.ScugHelper;
 using MonoMod.Cil;
 using System;
 using Celeste.Mod;
+using Mono.Cecil.Cil;
 
 [Tracked]
 [CustomEntity("ScugHelper/Anvil")]
@@ -197,6 +198,8 @@ public class TungstenCube : Actor, IHasSpeed {
 
     public static void LoadHooks()
     {
+        IL.Celeste.Player.NormalBegin += ModNormalBegin;
+        IL.Celeste.Player.NormalUpdate += ModNormalUpdate;
         On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
         On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
         On.Celeste.Puffer.ctor_Vector2_bool += PufferCtorHook;
@@ -209,6 +212,8 @@ public class TungstenCube : Actor, IHasSpeed {
     }
 
     public static void UnloadHooks() {
+        IL.Celeste.Player.NormalBegin -= ModNormalBegin;
+        IL.Celeste.Player.NormalUpdate -= ModNormalUpdate;
         On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;
         On.Celeste.Spring.ctor_Vector2_Orientations_bool -= SpringCtorHook;
         On.Celeste.Puffer.ctor_Vector2_bool -= PufferCtorHook;
@@ -282,6 +287,30 @@ public class TungstenCube : Actor, IHasSpeed {
     {
         orig(self, particles, playSfx);
         if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+    }
+    
+    static float FloatMultiply (Player player) {
+        if (player.Holding?.Entity is TungstenCube)
+            return 500f / 160f;
+        else
+            return 1.0f;
+    }
+    
+    private static void ModNormalBegin(ILContext il) {
+        ILCursor cursor = new(il);
+        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float) instr.Operand == 160f)) {
+            cursor.EmitLdarg0();
+            cursor.EmitDelegate(FloatMultiply);
+            cursor.Emit(OpCodes.Mul);
+        }
+    }
+    private static void ModNormalUpdate(ILContext il) {
+        ILCursor cursor = new(il);
+        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && ((float) instr.Operand == 160f || (float) instr.Operand == 240f))) {
+            cursor.EmitLdarg0();
+            cursor.EmitDelegate(FloatMultiply);
+            cursor.Emit(OpCodes.Mul);
+        }
     }
 
 
