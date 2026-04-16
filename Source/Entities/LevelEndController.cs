@@ -12,7 +12,6 @@ public class LevelEndController(EntityData data, Vector2 offset) : Entity(data.P
     public bool showCompleteScreen = data.Bool("ShowCompleteScreen", true);
     public bool spotlightWipe = data.Bool("ShowSpotlight", true);
     public bool screenWipe = data.Bool("ScreenWipe", true);
-    
 
     public override void Update()
     {

@@ -7,7 +7,7 @@ return {
     placements = {
         {
             name = "cycler",
-            data = {Radius = 32, RPM = 30, Phase = 0, AttachedEntityID = 0}
+            data = {Radius = 32, RPM = 30, Phase = 0, AttachedEntityID = 0, KeepX = false, KeepY = false}
         },
     },
     draw = function(room, entity)

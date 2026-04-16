@@ -1,3 +1,6 @@
+local utils = require("utils")
+local drawableText = require("structs.drawable_text")
+
 return {
     name = "ScugHelper/HiccupRefill",
     depth = -100,

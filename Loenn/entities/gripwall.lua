@@ -20,6 +20,7 @@ gripwall.placements = {
             left = true,
             refillDash = true,
             refillStamina = true,
+            attach = false
         }
     },
     {
@@ -30,6 +31,7 @@ gripwall.placements = {
             left = false,
             refillDash = true,
             refillStamina = true,
+            attach = false
         }
     },
 }
@@ -70,7 +72,7 @@ function gripwall.sprite(room, entity)
 
     table.insert(sprites, topSprite)
     table.insert(sprites, bottomSprite)
-    
+
     for _, sprite in ipairs(sprites) do
         if entity.refillDash then
             if entity.refillStamina then

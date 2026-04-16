@@ -7,7 +7,7 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod;
 
-[Tracked]
+[Tracked(true)]
 public abstract class AbstractGate : Entity
 {
     public float Angle;
@@ -45,7 +45,7 @@ public abstract class AbstractGate : Entity
         var proj = Vector2.Dot(crossPoint - Position, lineDir);
         return Math.Abs(proj) <= Size / 2;
     }
-    
+
     public override void Update() {
         base.Update();
         Player player = SceneAs<Level>().Tracker.GetEntity<Player>();

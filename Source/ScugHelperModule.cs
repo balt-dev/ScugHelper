@@ -46,6 +46,7 @@ public class ScugHelperModule : EverestModule
         FreezeRefill.LoadHooks();
         TungstenCube.LoadHooks();
         FastfallBlock.LoadHooks();
+        Cycler.LoadHooks();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
@@ -65,6 +66,7 @@ public class ScugHelperModule : EverestModule
         FreezeRefill.UnloadHooks();
         TungstenCube.UnloadHooks();
         FastfallBlock.UnloadHooks();
+        Cycler.UnloadHooks();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
     }
 

@@ -27,3 +27,4 @@ Here is a list of all formatters:
 - `{deathCount:}` - The player's total death count in the level.
 - `{deathRoomCount:}` - The player's total death count in the current room.
 - `{time:}` - The current session time.
+- `{expr:}` - A FrostHelper Session Expression. Requires FrostHelper to use.

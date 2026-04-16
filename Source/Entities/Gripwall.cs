@@ -17,18 +17,18 @@ public class Gripwall : Entity
     private static readonly Color RefillStaminaColor = new(0xf2, 0xe7, 0x9b);
     private static readonly Color RefillNoneColor = new(0xff, 0x6e, 0x54);
 
-    public Facings Facing;
-    private List<Sprite> tiles;
+    public Facings Facing = Facings.Left;
+    private Vector2 imageOffset = Vector2.Zero;
 
     public bool RefillDash { get; protected set; }
     public bool RefillStamina { get; protected set; }
 
     public Gripwall(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Height, data.Bool("left"), data.Bool("refillDash"), data.Bool("refillStamina"))
+        : this(data.Position + offset, data.Height, data.Bool("left"), data.Bool("refillDash"), data.Bool("refillStamina"), data.Bool("attach", false))
         { }
 
 
-    public Gripwall(Vector2 position, float height, bool left, bool refillDash, bool refillStamina)
+    public Gripwall(Vector2 position, float height, bool left, bool refillDash, bool refillStamina, bool attach)
         : base(position)
     {
         RefillDash = refillDash;
@@ -45,9 +45,47 @@ public class Gripwall : Entity
             Facing = Facings.Right;
             Collider = new Hitbox(2f, height, 6f);
         }
-        tiles = BuildSprite(left);
+        BuildSprite(left);
+        if (attach)
+            Add(new StaticMover
+            {
+                SolidChecker = IsRiding,
+                OnShake = OnShake,
+                OnEnable = OnEnable,
+                OnDisable = OnDisable
+            });
+    }
+    public bool IsRiding(Solid solid)
+    {
+        return Facing switch
+        {
+            Facings.Left => CollideCheckOutside(solid, Position - Vector2.UnitX),
+            Facings.Right => CollideCheckOutside(solid, Position + Vector2.UnitX),
+            _ => false,
+        };
     }
 
+    public void OnEnable()
+    {
+        Active = Visible = Collidable = true;
+    }
+
+    public void OnDisable()
+    {
+        Active = Collidable = false;
+        Visible = false;
+    }
+    public void OnShake(Vector2 amount)
+    {
+        imageOffset += amount;
+    }
+    public override void Render()
+    {
+        Vector2 position = Position;
+        Position += imageOffset;
+        base.Render();
+        Position = position;
+    }
 
     private List<Sprite> BuildSprite(bool left)
     {

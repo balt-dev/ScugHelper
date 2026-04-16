@@ -107,6 +107,16 @@ internal class TimeStringPart : StringPart
         return $"{hours:00}:{mins:00}:{secs:00}.{msecs:000}";
     }
 }
+internal class SessionExpressionStringPart : StringPart
+{
+    public SessionExpressionStringPart(String raw) {
+        if (!FrostHelperImports.TryCreateSessionExpression(raw, out expr))
+            throw new Exception($"Session expression is invalid. {raw}");
+    }
+    public object? expr;
+    internal override string Format(Level level, Player? player)
+        => FrostHelperImports.GetSessionExpressionValue(expr, level.Session).ToString() ?? "";
+}
 
 [Tracked]
 [CustomEntity("ScugHelper/Text")]
@@ -200,6 +210,7 @@ public partial class Text : Entity
                 "deathCount" => new DeathsStringPart(),
                 "deathRoomCount" => new DeathsHereStringPart(),
                 "time" => new TimeStringPart(),
+                "expr" when FrostHelperImports.IsLoaded => new SessionExpressionStringPart(key),
                 _ => new RawStringPart($"{{{qualifier}:{key}}}")
             };
             partList.Add(newPart);
@@ -237,7 +248,7 @@ public partial class Text : Entity
         }
         RenderText(Vector2.Zero, InfillColor);
     }
-    
+
     internal void RenderText(Vector2 offset, Color color) {
         RenderText(renderedString, Position + offset, color);
     }

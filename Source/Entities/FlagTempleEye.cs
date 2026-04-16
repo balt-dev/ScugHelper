@@ -5,22 +5,19 @@ using Celeste;
 
 [TrackedAs(typeof(TempleEye))]
 [CustomEntity("ScugHelper/FlagTempleEye")]
-public class FlagTempleEye(EntityData data, Vector2 offset) : Entity(data.Position + offset)
+public class FlagTempleEye(EntityData data, Vector2 offset) : TempleEye(data, offset)
 {
-    private MTexture eyeTexture;
-    private MTexture pupilTexture;
-    private Sprite eyelid;
-    private Vector2 pupilPosition;
-    private Vector2 pupilTarget;
-    private float blinkTimer;
-    private bool bursting;
-    private bool isBG;
     private readonly bool trackPlayer = data.Bool("trackPlayer");
     private readonly string flagToCheck = data.String("flag");
 
     public override void Added(Scene scene)
     {
-        base.Added(scene);
+        Scene = scene;
+        if (Components != null)
+            foreach (Component component in Components)
+                component.EntityAdded(scene);
+        scene.SetActualDepth(this);
+        
         isBG = !scene.CollideCheck<Solid>(Position);
         if (isBG)
         {
@@ -36,29 +33,25 @@ public class FlagTempleEye(EntityData data, Vector2 offset) : Entity(data.Positi
             Add(eyelid = new Sprite(GFX.Game, "scenery/temple/eye/fg_lid"));
             Depth = -10001;
         }
-
-        eyelid.AddLoop("opened", "", 0f, [0]);
-        eyelid.Add("blink", "", 0.08f, "opened", 0, 1, 1, 2, 3, 0);
-        eyelid.AddLoop("closed", "", 0f, [1]);
-        eyelid.Add("open", "", 0.08f, "opened", 1, 2, 3, 0);
-        eyelid.Add("close", "", 0.08f, "closed", 0, 3, 2, 1);
+        
+        eyelid.AddLoop("open", "", 0f, [0]);
+        eyelid.Add("blink", "", 0.08f, "open", 0, 1, 1, 2, 3, 0);
+        eyelid.AddLoop("close", "", 0f, [1]);
+        eyelid.Add("toOpen", "", 0.08f, "open", 1, 3, 0);
+        eyelid.Add("toClose", "", 0.08f, "close", 0, 3, 1);
         if (SceneAs<Level>().Session.Flags.Contains(flagToCheck))
-            eyelid.Play("opened");
+            eyelid.Play("open");
         else
-            eyelid.Play("closed");
-
+            eyelid.Play("close");
         eyelid.CenterOrigin();
         SetBlinkTimer();
     }
 
-    private void SetBlinkTimer()
-    {
-        blinkTimer = Calc.Random.Range(1f, 15f);
-    }
-
     public override void Awake(Scene scene)
     {
-        base.Awake(scene);
+        foreach (Component component in Components)
+            component.EntityAwake();
+
         Entity entity = trackPlayer ? Scene.Tracker.GetEntity<Player>() : Scene.Tracker.GetEntity<TheoCrystal>();
         if (entity != null)
         {
@@ -71,10 +64,10 @@ public class FlagTempleEye(EntityData data, Vector2 offset) : Entity(data.Positi
     {
         if (!bursting)
         {
-            if (SceneAs<Level>().Session.Flags.Contains(flagToCheck) && eyelid.CurrentAnimationID == "closed")
-                eyelid.Play("open");
-            else if (!SceneAs<Level>().Session.Flags.Contains(flagToCheck) && (eyelid.CurrentAnimationID == "opened" || eyelid.CurrentAnimationID == "blink"))
-                eyelid.Play("close");
+            if (SceneAs<Level>().Session.Flags.Contains(flagToCheck) && eyelid.CurrentAnimationID == "close")
+                eyelid.Play("toOpen");
+            else if (!SceneAs<Level>().Session.Flags.Contains(flagToCheck) && (eyelid.CurrentAnimationID == "open" || eyelid.CurrentAnimationID == "blink"))
+                eyelid.Play("toClose");
 
             pupilPosition = Calc.Approach(pupilPosition, pupilTarget * 3f, Engine.DeltaTime * 16f);
             Entity entity = trackPlayer ? Scene.Tracker.GetEntity<Player>() : Scene.Tracker.GetEntity<TheoCrystal>();
@@ -92,25 +85,11 @@ public class FlagTempleEye(EntityData data, Vector2 offset) : Entity(data.Positi
                 TryBlink();
             }
         }
-
-        base.Update();
+        Components.Update();
     }
 
-    private void TryBlink()
-    {
-        if (eyelid.CurrentAnimationID == "opened") eyelid.Play("blink");
-    }
-
-    public void Burst()
-    {
-        bursting = true;
-        Sprite sprite = new(GFX.Game, isBG ? "scenery/temple/eye/bg_burst" : "scenery/temple/eye/fg_burst");
-        sprite.Add("burst", "", 0.08f);
-        sprite.Play("burst");
-        sprite.OnLastFrame = (_) => RemoveSelf();
-        sprite.CenterOrigin();
-        Add(sprite);
-        Remove(eyelid);
+    private void TryBlink() {
+        if (eyelid.CurrentAnimationID == "open") eyelid.Play("blink");
     }
 
     public override void Render()
@@ -120,7 +99,6 @@ public class FlagTempleEye(EntityData data, Vector2 offset) : Entity(data.Positi
             eyeTexture.DrawCentered(Position);
             pupilTexture.DrawCentered(Position + pupilPosition);
         }
-
-        base.Render();
+        Components.Render();
     }
 }
