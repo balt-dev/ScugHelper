@@ -13,7 +13,7 @@ return {
     fieldInformation = { Targets = {fieldType = "list"}, Groups = {fieldType = "list"}},
     sprite = function(room, entity)
         return drawableText.fromText(
-            ("Action: Forward\n%s (%ds)\nTargets: %s"):format(entity.Group, entity.Delay, entity.Targets),
+            ("Action: Forward\n%s (%.3fs)\nTargets: %s"):format(entity.Groups, entity.Delay, entity.Targets),
             entity.x, entity.y, entity.width, entity.height, nil, 0.25
         )
     end,

@@ -13,7 +13,7 @@ return {
     fieldInformation = { Groups = {fieldType = "list"}},
     sprite = function(room, entity)
         return drawableText.fromText(
-            ("Action: Player Kill\n%s (%.3fs)"):format(entity.Group, entity.Delay, entity.Targets),
+            ("Action: Player Kill\n%s (%.3fs)"):format(entity.Groups, entity.Delay, entity.Targets),
             entity.x, entity.y, entity.width, entity.height, nil, 0.25
         )
     end,
