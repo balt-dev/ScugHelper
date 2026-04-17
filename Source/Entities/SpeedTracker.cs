@@ -2,6 +2,7 @@ using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using Microsoft.Xna.Framework;
 using Monocle;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 internal class SpeedTracker() : Component(true, true)
 {

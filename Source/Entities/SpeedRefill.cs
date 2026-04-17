@@ -4,6 +4,7 @@ using Celeste.Mod.Entities;
 using Celeste;
 using System;
 using System.Collections;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
 [Tracked]
@@ -91,7 +92,7 @@ public class SpeedRefill : Refill, ICustomRefill
     }
     public IEnumerator NewRefillRoutine(Player player)
     {
-        Celeste.Celeste.Freeze(0.05f);
+        Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;
         Depth = 8999;

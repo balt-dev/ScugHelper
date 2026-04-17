@@ -9,6 +9,7 @@ using MonoMod.RuntimeDetour;
 using System.Reflection;
 using MonoMod.Utils;
 using MonoMod.Cil;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Cycler")]

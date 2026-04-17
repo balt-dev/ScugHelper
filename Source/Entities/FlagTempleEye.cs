@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Monocle;
 using Celeste.Mod.Entities;
 using Celeste;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [TrackedAs(typeof(TempleEye))]
 [CustomEntity("ScugHelper/FlagTempleEye")]

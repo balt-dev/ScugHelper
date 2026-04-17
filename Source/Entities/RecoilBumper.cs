@@ -7,6 +7,7 @@ using Celeste.Mod.Helpers;
 using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System.Collections;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 public class GridCircle : Circle {
     public GridCircle(float radius, float x = 0, float y = 0) : base(radius, x, y) {}
@@ -159,7 +160,7 @@ public class RecoilBumper : Actor, IHasSpeed
             Audio.Play("event:/game/09_core/pinballbumper_hit", Position);
 
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
-            Celeste.Celeste.Freeze(0.1f);
+            Celeste.Freeze(0.1f);
 
             Vector2 collisionNormal = (Center - player.Center).SafeNormalize(Vector2.UnitY);
 

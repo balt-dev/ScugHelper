@@ -11,6 +11,7 @@ using MonoMod.Utils;
 using Mono.Cecil.Cil;
 using System.Reflection;
 using Celeste.Mod.Helpers;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
 internal static class Ext {
@@ -63,7 +64,7 @@ public class MidairRefill : Refill, ICustomRefill
     }
     public IEnumerator NewRefillRoutine(Player player)
     {
-        Celeste.Celeste.Freeze(0.05f);
+        Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;
         if (!oneUse) outline.Visible = true;

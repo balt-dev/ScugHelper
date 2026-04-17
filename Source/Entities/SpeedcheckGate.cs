@@ -6,6 +6,7 @@ using Celeste.Mod.ScugHelper;
 using MonoMod.Cil;
 using System;
 using Celeste.Mod;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/SpeedcheckGate")]
 public class SpeedcheckGate(EntityData data, Vector2 offset) : AbstractGate(data, offset)

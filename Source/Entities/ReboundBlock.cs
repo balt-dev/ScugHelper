@@ -7,6 +7,7 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/ReboundBlock")]
@@ -129,7 +130,7 @@ public class ReboundBlock : Solid
         (Scene as Level).DirectionalShake(dir);
         MoveTo(Position + dir * Displacement);
         SmashParticles(-dir);
-        Celeste.Celeste.Freeze(0.1f);
+        Celeste.Freeze(0.1f);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
 
         switch (Kind) {

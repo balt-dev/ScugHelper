@@ -6,6 +6,7 @@ using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System;
 using MonoMod.Cil;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/PinballBooster")]

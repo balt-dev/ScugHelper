@@ -33,40 +33,42 @@ public class ScugHelperModule : EverestModule
     public override void Load()
     {
         // TODO: apply any hooks that should always be active
-        PinballBooster.LoadHooks();
-        Gripwall.LoadHooks();
-        BrassBerry.LoadHooks();
-        DebugViewTrigger.LoadHooks();
-        DashlessHeartGem.LoadHooks();
-        RecoilBumper.LoadHooks();
-        SquareCrystal.LoadHooks();
-        ICustomRefill.LoadHooks();
-        MidairRefill.LoadHooks();
-        GroundedRefill.LoadHooks();
-        FreezeRefill.LoadHooks();
-        TungstenCube.LoadHooks();
-        FastfallBlock.LoadHooks();
-        Cycler.LoadHooks();
+        Entities.PinballBooster.LoadHooks();
+        Entities.Gripwall.LoadHooks();
+        Entities.BrassBerry.LoadHooks();
+        Entities.DebugViewTrigger.LoadHooks();
+        Entities.DashlessHeartGem.LoadHooks();
+        Entities.RecoilBumper.LoadHooks();
+        Entities.SquareCrystal.LoadHooks();
+        Entities.ICustomRefill.LoadHooks();
+        Entities.MidairRefill.LoadHooks();
+        Entities.GroundedRefill.LoadHooks();
+        Entities.FreezeRefill.LoadHooks();
+        Entities.TungstenCube.LoadHooks();
+        Entities.FastfallBlock.LoadHooks();
+        Entities.Cycler.LoadHooks();
+        Entities.Actions.ActionManager.LoadHooks();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
     public override void Unload()
     {
         // TODO: unapply any hooks applied in Load()
-        PinballBooster.UnloadHooks();
-        Gripwall.UnloadHooks();
-        BrassBerry.UnloadHooks();
-        DebugViewTrigger.UnloadHooks();
-        DashlessHeartGem.UnloadHooks();
-        RecoilBumper.UnloadHooks();
-        SquareCrystal.UnloadHooks();
-        ICustomRefill.UnloadHooks();
-        MidairRefill.UnloadHooks();
-        GroundedRefill.UnloadHooks();
-        FreezeRefill.UnloadHooks();
-        TungstenCube.UnloadHooks();
-        FastfallBlock.UnloadHooks();
-        Cycler.UnloadHooks();
+        Entities.PinballBooster.UnloadHooks();
+        Entities.Gripwall.UnloadHooks();
+        Entities.BrassBerry.UnloadHooks();
+        Entities.DebugViewTrigger.UnloadHooks();
+        Entities.DashlessHeartGem.UnloadHooks();
+        Entities.RecoilBumper.UnloadHooks();
+        Entities.SquareCrystal.UnloadHooks();
+        Entities.ICustomRefill.UnloadHooks();
+        Entities.MidairRefill.UnloadHooks();
+        Entities.GroundedRefill.UnloadHooks();
+        Entities.FreezeRefill.UnloadHooks();
+        Entities.TungstenCube.UnloadHooks();
+        Entities.FastfallBlock.UnloadHooks();
+        Entities.Cycler.UnloadHooks();
+        Entities.Actions.ActionManager.UnloadHooks();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
     }
 

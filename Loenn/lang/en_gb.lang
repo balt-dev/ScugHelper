@@ -86,3 +86,18 @@ entities.ScugHelper/LevelEndController.placements.description.normal=Ends the le
 
 entities.ScugHelper/TeleportGate.placements.name.normal=Teleport Gate
 entities.ScugHelper/TeleportGate.placements.description.normal=Teleports the player when crossed.
+
+triggers.ScugHelper/ActionTrigger.placements.name.trigger=Action Trigger
+triggers.ScugHelper/ActionTrigger.placements.description.trigger=Alerts a set of action groups when touched.
+
+entities.ScugHelper/ActionGate.placements.name.normal=Action Gate
+entities.ScugHelper/ActionGate.placements.description.normal=Alerts a set of action groups when crossed.
+
+entities.ScugHelper/ForwardAction.placements.name.normal=Action - Forward
+entities.ScugHelper/ForwardAction.placements.description.normal=Alerts a set of action groups when alerted.
+
+entities.ScugHelper/PlayerKillAction.placements.name.normal=Action - Kill Player
+entities.ScugHelper/PlayerKillAction.placements.description.normal=Kills the player when alerted.
+
+entities.ScugHelper/SetFlagAction.placements.name.normal=Action - Set Flag
+entities.ScugHelper/SetFlagAction.placements.description.normal=Sets a flag to a certain value when alerted.

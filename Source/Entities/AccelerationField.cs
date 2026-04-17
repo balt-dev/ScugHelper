@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 
 #nullable enable
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/AccelerationField")]
 public class AccelerationField : Entity

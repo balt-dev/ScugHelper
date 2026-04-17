@@ -7,6 +7,7 @@ using System;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod;
 using System.Collections;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
 [Tracked]

@@ -1,6 +1,7 @@
 
 
 using Celeste;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 internal interface ICustomRefill
 {

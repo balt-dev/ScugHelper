@@ -7,6 +7,7 @@ using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System.Collections.Generic;
 using MonoMod.Cil;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Gripwall")]

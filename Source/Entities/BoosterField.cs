@@ -4,6 +4,7 @@ using Celeste.Mod.Entities;
 using Monocle;
 using System.Collections.Generic;
 using System;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/BoosterField")]

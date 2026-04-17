@@ -7,6 +7,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Celeste.Mod.ScugHelper;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
 

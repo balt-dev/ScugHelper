@@ -7,6 +7,7 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod;
 using System.Linq;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/RefillGate")]
 public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, offset) {

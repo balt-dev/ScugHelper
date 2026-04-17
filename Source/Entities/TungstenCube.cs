@@ -7,6 +7,7 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod;
 using Mono.Cecil.Cil;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Anvil")]
@@ -70,7 +71,7 @@ public class TungstenCube : Actor, IHasSpeed {
             else {
                 Audio.Play("event:/game/general/thing_booped");
                 player.Speed.Y = Speed.Y;
-                Celeste.Celeste.Freeze(0.1f);
+                Celeste.Freeze(0.1f);
             }
         }
 

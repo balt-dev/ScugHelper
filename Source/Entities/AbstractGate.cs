@@ -7,10 +7,21 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod;
 
+namespace Celeste.Mod.ScugHelper.Entities;
+
+/// <summary>
+/// Abstract class for all Gate entities. These gates run a callback when crossed by the player, using line intersection collision between their previous and current position.
+/// </summary>
 [Tracked(true)]
 public abstract class AbstractGate : Entity
 {
+    /// <summary>
+    /// The angle at which the gate points, in radians.
+    /// </summary>
     public float Angle;
+    /// <summary>
+    /// The diameter of the gate, in units.
+    /// </summary>
     public float Size;
 
     protected Vector2 lineDir;
@@ -24,6 +35,9 @@ public abstract class AbstractGate : Entity
         lineNorm = new Vector2((float)-Math.Sin(Angle), (float)Math.Cos(Angle));
     }
 
+    /// <summary>
+    /// The method to call when this gate is crossed.
+    /// </summary>
     public abstract void OnTrigger(Player player);
 
     public override void DebugRender(Camera camera)

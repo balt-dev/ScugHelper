@@ -3,6 +3,7 @@ using Monocle;
 using Celeste.Mod.Entities;
 using Celeste;
 using System;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/TeleportGate")]

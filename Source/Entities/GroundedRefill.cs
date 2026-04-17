@@ -6,6 +6,7 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
 [TrackedAs(typeof(Refill))]

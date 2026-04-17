@@ -6,6 +6,7 @@ using Celeste.Mod.Entities;
 using Celeste.Mod;
 using Celeste;
 using Celeste.Mod.ScugHelper;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [RegisterStrawberry(false, true)]

@@ -3,6 +3,7 @@ using Celeste;
 using Celeste.Mod.Entities;
 using Monocle;
 using System;
+namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/SquareGem")]
