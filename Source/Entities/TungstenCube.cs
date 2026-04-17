@@ -289,14 +289,14 @@ public class TungstenCube : Actor, IHasSpeed {
         orig(self, particles, playSfx);
         if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
     }
-    
+
     static float FloatMultiply (Player player) {
         if (player.Holding?.Entity is TungstenCube)
             return 500f / 160f;
         else
             return 1.0f;
     }
-    
+
     private static void ModNormalBegin(ILContext il) {
         ILCursor cursor = new(il);
         while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float) instr.Operand == 160f)) {

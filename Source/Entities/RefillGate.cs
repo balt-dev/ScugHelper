@@ -67,7 +67,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
         var particlePos = startPos + Calc.Random.NextFloat() * (endPos - startPos);
         SceneAs<Level>().ParticlesFG.Emit(pType, 1, particlePos, Vector2.Zero);
     }
-    
+
     public override void Render()
     {
         base.Render();

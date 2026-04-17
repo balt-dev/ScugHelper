@@ -22,7 +22,7 @@ public interface IAction
     /// <summary>
     /// Method to be called when this Action is updated every tick.
     /// </summary>
-    public virtual void Update() { }
+    public virtual void ActionUpdate(Level level) { }
     /// <summary>
     /// Helper method to get the groups of an action.
     /// </summary>
@@ -31,7 +31,7 @@ public interface IAction
     /// Helper method to get the targets of something that will trigger action groups.
     /// </summary>
     public static sealed string[] GetTargets(EntityData data) {
-        var res = data.String("Targets").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var res = data.String("Targets", "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (res.Any((str) => str.StartsWith("#")))
             throw new Exception($"Target of action with ID {data.ID} must not start with #, as those are reserved for builtin events.");
         return res;

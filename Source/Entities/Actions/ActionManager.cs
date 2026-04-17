@@ -15,16 +15,18 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
 using Callback = Action<Level>;
 
-readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null) {
+readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null) {
     public readonly Callback? Action = action;
     public readonly float? Delay = delay;
     public readonly EntityData? AssociatedData = data;
+    public readonly Action? Update = update;
 }
 
 public static class ActionManager
 {
     private static readonly Dictionary<string, List<ActionMapEntry>> actionMap = [];
     private static readonly HashSet<int> idSet = [];
+    internal static readonly List<Action<Level>> updaters = [];
 
     /// <summary>
     /// Triggers the callback of any actions with any of the given groups.
@@ -86,6 +88,7 @@ public static class ActionManager
         object action = takesData ? constructor.Invoke([data, Vector2.Zero]) : constructor.Invoke([]);
         if (action is not IAction iAction) throw new Exception($"Constructor for action type {ty} must return an implementer of IActor.");
         if (!idSet.Add(id)) return;
+        updaters.Add(iAction.ActionUpdate);
         foreach (string group in groups) {
             if (!actionMap.TryGetValue(group, out var actions))
                 actionMap.Add(group, actions = []);
@@ -134,12 +137,22 @@ public static class ActionManager
             }
         }
     }
+
+    internal static void LogError(string message)
+    {
+
+        Logger.Error(nameof(ScugHelperModule), $"Action error: {message}");
+        Engine.Commands.Open = true;
+        Engine.Commands.Log($"Action error: {message}", Color.Red);
+    }
 }
 
 [CustomEntity("ScugHelper/ActionDummy")]
 internal class ActionDummy(): Entity() {
     public override void Update() {
         base.Update();
-        ActionManager.AlertActions(["#Tick"], SceneAs<Level>());
+        Level lv = SceneAs<Level>();
+        ActionManager.AlertActions(["#Tick"], lv);
+        foreach (var updater in ActionManager.updaters) updater.Invoke(lv);
     }
 }

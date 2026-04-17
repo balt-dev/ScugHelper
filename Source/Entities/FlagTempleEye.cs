@@ -18,7 +18,7 @@ public class FlagTempleEye(EntityData data, Vector2 offset) : TempleEye(data, of
             foreach (Component component in Components)
                 component.EntityAdded(scene);
         scene.SetActualDepth(this);
-        
+
         isBG = !scene.CollideCheck<Solid>(Position);
         if (isBG)
         {
@@ -34,7 +34,7 @@ public class FlagTempleEye(EntityData data, Vector2 offset) : TempleEye(data, of
             Add(eyelid = new Sprite(GFX.Game, "scenery/temple/eye/fg_lid"));
             Depth = -10001;
         }
-        
+
         eyelid.AddLoop("open", "", 0f, [0]);
         eyelid.Add("blink", "", 0.08f, "open", 0, 1, 1, 2, 3, 0);
         eyelid.AddLoop("close", "", 0f, [1]);

@@ -15,9 +15,9 @@ public class GridCircle : Circle {
 
 [CustomEntity("ScugHelper/RecoilBumper")]
 public class RecoilBumper : Actor, IHasSpeed
-{ 
+{
     Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
-    
+
     private Sprite sprite;
     private VertexLight light;
     private BloomPoint bloom;
@@ -196,7 +196,7 @@ public class RecoilBumper : Actor, IHasSpeed
             RemoveSelf();
         }
     }
-    
+
     private static IEnumerator CrushSoundRoutine(Vector2 pos) {
         var evInstance = Audio.Play("event:/game/09_core/hotpinball_activate", pos);
 		yield return 0.5f;

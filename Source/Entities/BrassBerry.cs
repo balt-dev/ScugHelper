@@ -41,7 +41,7 @@ class BrassBerry : Entity, IStrawberry
         Add(new MirrorReflection());
         Add(Follower = new Follower(ID, null, null));
         Follower.FollowDelay = 0.3f;
-        
+
     }
 
     public override void Added(Scene scene)
@@ -198,7 +198,7 @@ class BrassBerry : Entity, IStrawberry
         On.Celeste.Player.Added -= PlayerAddHook;
         On.Celeste.Player.Update -= PlayerUpdateHook;
     }
-    
+
     private static void PlayerUpdateHook(On.Celeste.Player.orig_Update orig, Player self)
     {
         self.level.Session.SetFlag("HasBrassBerry", ScugHelperModule.Session.BrassBerryFollowing != null);
