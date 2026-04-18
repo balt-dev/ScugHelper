@@ -17,8 +17,6 @@ public class GlobalTriggerFlagListener(EntityData data, Vector2 _) : Entity(), I
             trigger.Update();
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
         bool flagState = level.Session.GetFlag(Flag) ^ Invert;
-        if (flagState != lastState)
-            Logger.Info(nameof(ScugHelperModule), $"Listening flag changed: {flagState} (triggering {triggers.Count})");
         if (flagState)
         {
             if (!lastState)
