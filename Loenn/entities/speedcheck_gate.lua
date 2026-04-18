@@ -1,6 +1,6 @@
 local utils = require("utils")
 local drawing = require("utils.drawing")
-local scughelper = require("scughelper")
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 
 return {
     name = "ScugHelper/SpeedcheckGate",
