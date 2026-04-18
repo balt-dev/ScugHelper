@@ -17,7 +17,10 @@ public class SessionExpressionAction : Entity, IAction
     private readonly string Expression;
     public SessionExpressionAction(EntityData data, Vector2 _): base() {
         if (!FrostHelperImports.IsLoaded)
-            throw new Exception("FrostHelper must be loaded to use session expression actions.");
+        {
+            ActionManager.LogError($"FrostHelper is not loaded! Session Expression actions won't work.");
+            return;
+        }
         Target = data.String("Target").Trim();
         Expression = data.String("Expression").Trim();
         if (!FrostHelperImports.TryCreateSessionExpression(Expression, out SessionExpression!))
@@ -28,15 +31,17 @@ public class SessionExpressionAction : Entity, IAction
     }
     public void Alert(Level level)
     {
+        if (!FrostHelperImports.IsLoaded) return;
         Player? player = level.Tracker.GetEntity<Player>();
         switch (Target) {
-            case "$player.x": player.X = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
-            case "$player.y": player.Y = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
+            case "$player.x": player.X = player.PreviousPosition.X = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
+            case "$player.y": player.Y = player.PreviousPosition.Y = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
             case "$subpixel.x": player.movementCounter.X = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session) % 1.0f; return;
             case "$subpixel.y": player.movementCounter.Y = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session) % 1.0f; return;
             case "$speed.x": player.Speed.X = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
             case "$speed.y": player.Speed.Y = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
             case "$stamina": player.Stamina = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;
+            case "$dashes": player.Dashes = FrostHelperImports.GetIntSessionExpressionValue(SessionExpression, level.Session); return;
             default:
                 if (Target.StartsWith("$")) {
                     ActionManager.LogError($"Cannot assign to {Target}");

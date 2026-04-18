@@ -1,3 +1,4 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local utils = require("utils")
 local drawing = require("utils.drawing")
 
@@ -12,18 +13,8 @@ return {
             data = {Angle = 0, Size = 32},
         },
     },
-    draw = function(room, entity)
-        drawing.callKeepOriginalColor(function()
-            local lineX = math.cos(entity.Angle * math.pi / 180)
-            local lineY = math.sin(entity.Angle * math.pi / 180)
-            love.graphics.setColor { 0, 1, 1 }
-            love.graphics.line(
-                entity.x - lineX * entity.Size / 2,
-                entity.y - lineY * entity.Size / 2,
-                entity.x + lineX * entity.Size / 2,
-                entity.y + lineY * entity.Size / 2
-            );
-        end)
+    sprite = function(room, entity)
+        return scughelper.drawableGate(entity.x, entity.y, entity.Angle, entity.Size, {0, 1, 1})
     end,
     nodeRectangle = function (room, entity, node, nodeIndex, viewport)
         local nodeX, nodeY = entity.nodes[1].x or entity.x, entity.nodes[1].y or entity.y

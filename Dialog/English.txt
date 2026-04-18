@@ -1,7 +1,10 @@
 ScugHelper_ScugHelperTest=Scug Helper
-ScugHelper_ScugHelperTest_1_BrassBerryTest=Brass Berry Test
-ScugHelper_ScugHelperTest_1_BrassBerryTest_2=Checkpoint
-ScugHelper_ScugHelperTest_2_ScugHelperTest=Showcase
-ScugHelper_ScugHelperTest_2_ScugHelperTest=Showcase
-poem_ScugHelper_ScugHelperTest_1_BrassBerryTest_A=shoutouts to simpleflips
-poem_ScugHelper_ScugHelperTest_2_ScugHelperTest_A=trans rights
+ScugHelper_ScugHelperTest_1_ScugHelperTest=Showcase
+poem_ScugHelper_ScugHelperTest_1_ScugHelperTest_A=trans rights
+ScugHelper_ScugHelperTest_2_Actions=Actions
+ScugHelper_ScugHelperTest_2_Actions_postcard=
+		{# F94A4A}Warning!{#}{n}{n}This level depends on {#a0a0FF}FrostHelper{#}.{n}It will not function without it.
+
+ScugHelper_ScugHelperTest_3_BrassBerryTest=Brass Berry Test
+ScugHelper_ScugHelperTest_3_BrassBerryTest_2=Checkpoint
+poem_ScugHelper_ScugHelperTest_3_BrassBerryTest_A=shoutouts to simpleflips

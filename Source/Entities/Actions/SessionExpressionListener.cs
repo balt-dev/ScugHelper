@@ -13,12 +13,17 @@ public class SessionExpressionListener : Entity, IAction
     private readonly object? SessionExpression;
     public readonly string[] Targets;
     private readonly string Expression;
+    private readonly bool Invert;
     private bool? stateLastTick;
     public SessionExpressionListener(EntityData data, Vector2 _): base() {
         if (!FrostHelperImports.IsLoaded)
-            throw new Exception("FrostHelper must be loaded to use session expression actions.");
+        {
+            ActionManager.LogError($"FrostHelper is not loaded! Session Expression actions won't work.");
+            return;
+        }
         Targets = IAction.GetTargets(data);
         Expression = data.String("Expression").Trim();
+        Invert = data.Bool("Invert");
         if (!FrostHelperImports.TryCreateSessionExpression(Expression, out SessionExpression))
         {
             ActionManager.LogError($"FrostHelper session expression failed to compile: {Expression}");
@@ -27,8 +32,9 @@ public class SessionExpressionListener : Entity, IAction
     }
     public void ActionUpdate(Level level)
     {
+        if (!FrostHelperImports.IsLoaded) return;
         var now = FrostHelperImports.GetBoolSessionExpressionValue(SessionExpression, level.Session);
-        if (stateLastTick is bool state && now && !state)
+        if (stateLastTick is bool state && (now ^ Invert) && !(state ^ Invert))
             ActionManager.AlertActions(Targets, level);
         stateLastTick = now;
     }

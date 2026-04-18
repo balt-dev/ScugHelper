@@ -4,22 +4,23 @@ local utils = require("utils")
 local drawableText = require("structs.drawable_text")
 
 return {
-    name = "ScugHelper/ForwardAction",
+    name = "ScugHelper/SessionExpressionListener",
     depth = -1e10,
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, Targets = "", width = 32, height = 24}
+            data = {Targets = "", Expression = "", Invert = false, width = 32, height = 24}
         },
     },
+    associatedMods = {"FrostHelper", "ScugHelper"},
     fieldInformation = { Targets = {fieldType = "list"}, Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}},
     sprite = function(room, entity)
         return {
             drawableText.fromText(
-                ("Action: Forward\n%s (%.3fs)\nTargets: %s"):format(entity.Groups, entity.Delay, entity.Targets),
+                ("Action: Session Expression Listener\nWhen: %s%s\n%s"):format((entity.Invert and "!") or "", entity.Expression, entity.Targets),
                 entity.x, entity.y, entity.width, entity.height, nil, 0.25
             ),
-            drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "metaAction")
+            drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "expressionAction")
         }
     end,
     rectangle = function(room, entity)

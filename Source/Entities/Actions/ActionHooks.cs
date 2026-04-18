@@ -20,6 +20,56 @@ public static class ActionHooks
         On.Celeste.Player.Update += OnUpdate;
         On.Celeste.CassetteBlockManager.SetActiveIndex += OnCassetteBlock;
         On.Celeste.Strawberry.OnCollect += OnBerryCollect;
+        On.Celeste.DashSwitch.OnDashed += OnDashSwitch;
+        On.Celeste.TouchSwitch.TurnOn += OnTouchSwitch;
+        On.Celeste.Torch.OnPlayer += OnTorch;
+    }
+
+    public static void UnloadHooks()
+    {
+        On.Celeste.Player.Jump -= OnJump;
+        On.Celeste.Player.WallJump -= OnWallJump;
+        On.Celeste.Player.SuperJump -= OnSuperJump;
+        On.Celeste.Player.SuperWallJump -= OnSuperWallJump;
+        On.Celeste.Player.ClimbJump -= OnClimbJump;
+        On.Celeste.Player.ClimbBegin -= OnGrab;
+        On.Celeste.Player.CallDashEvents -= OnDashEvents;
+        On.Celeste.Player.Die -= OnDie;
+        On.Celeste.Seeker.ctor_Vector2_Vector2Array -= OnSeekerCtor;
+        On.Celeste.Player.Update -= OnUpdate;
+        On.Celeste.CassetteBlockManager.SetActiveIndex -= OnCassetteBlock;
+        On.Celeste.Strawberry.OnCollect -= OnBerryCollect;
+        On.Celeste.DashSwitch.OnDashed -= OnDashSwitch;
+        On.Celeste.TouchSwitch.TurnOn -= OnTouchSwitch;
+        On.Celeste.Torch.OnPlayer -= OnTorch;
+    }
+    
+    private static void OnTorch(On.Celeste.Torch.orig_OnPlayer orig, Torch self, Player player)
+    {
+        var was = self.lit;
+        orig(self, player);
+        if (self.lit && !was)
+            ActionManager.AlertActions(["#TorchLit"], self.SceneAs<Level>());
+    }
+
+    private static void OnTouchSwitch(On.Celeste.TouchSwitch.orig_TurnOn orig, TouchSwitch self)
+    {
+        var wasActivated = self.Switch.Activated;
+        var wasFinished = self.Switch.Finished;
+        orig(self);
+        if (self.Switch.Activated && !wasActivated)
+            ActionManager.AlertActions(["#TouchSwitchActivated"], self.SceneAs<Level>());
+        if (self.Switch.Finished && !wasFinished)
+            ActionManager.AlertActions(["#TouchSwitchFinished"], self.SceneAs<Level>());
+    }
+
+    private static DashCollisionResults OnDashSwitch(On.Celeste.DashSwitch.orig_OnDashed orig, DashSwitch self, Player player, Vector2 direction)
+    {
+        var was = self.pressed;
+        var res = orig(self, player, direction);
+        if (self.pressed && !was)
+            ActionManager.AlertActions(["#DashSwitchHit"], self.SceneAs<Level>());
+        return res;
     }
 
     private static void OnBerryCollect(On.Celeste.Strawberry.orig_OnCollect orig, Strawberry self)
@@ -37,8 +87,11 @@ public static class ActionHooks
     private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
-        if (!self.wasOnGround && self.OnGround())
+        bool onGround = self.OnGround();
+        if (!self.wasOnGround && onGround)
              ActionManager.AlertActions(["#PlayerLand"], self.level);
+        else if (self.wasOnGround && !onGround)
+            ActionManager.AlertActions(["#PlayerAirborne"], self.level);
     }
 
     private static void OnSeekerCtor(On.Celeste.Seeker.orig_ctor_Vector2_Vector2Array orig, Seeker self, Vector2 position, Vector2[] patrolPoints)
@@ -67,17 +120,6 @@ public static class ActionHooks
         orig(self);
         if (self.calledDashEvents && !was)
             ActionManager.AlertActions(["#PlayerDash"], self.level);
-    }
-
-    public static void UnloadHooks()
-    {
-        On.Celeste.Player.Jump -= OnJump;
-        On.Celeste.Player.WallJump -= OnWallJump;
-        On.Celeste.Player.SuperJump -= OnSuperJump;
-        On.Celeste.Player.SuperWallJump -= OnSuperWallJump;
-        On.Celeste.Player.ClimbJump -= OnClimbJump;
-        On.Celeste.Player.ClimbBegin -= OnGrab;
-        On.Celeste.Player.CallDashEvents -= OnDashEvents;
     }
 
     private static void OnGrab(On.Celeste.Player.orig_ClimbBegin orig, Player self)

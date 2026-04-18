@@ -1,14 +1,10 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local utils = require("utils")
 local drawableText = require("structs.drawable_text")
 
-local function getTextColor(entity)
-    local success, r, g, b = utils.parseHexColor(entity.Infill)
-    return success and {r, g, b} or {1, 1, 1}
-end
-
 return {
     name = "ScugHelper/Text",
-    depth = 10,
+    depth = function(room, entity) return entity.Depth end,
     placements = {
         {
             name = "normal",
@@ -16,7 +12,7 @@ return {
         },
     },
     sprite = function(room, entity)
-        return drawableText.fromText(entity.Value:gsub("\\\\", "\0"):gsub("\\{", "{"):gsub("\\}", "}"):gsub("\\n", "\n"):gsub("\0", "\\"), entity.x, entity.y, nil, nil, nil, 1, getTextColor(entity))
+        return drawableText.fromText(entity.Value:gsub("\\\\", "\0"):gsub("\\{", "{"):gsub("\\}", "}"):gsub("\\n", "\n"):gsub("\0", "\\"), entity.x, entity.y, nil, nil, nil, 1, scughelper.parseColor(entity.Infill))
     end,
     rectangle = function(room, entity)
         return utils.rectangle(entity.x, entity.y, 8, 8)

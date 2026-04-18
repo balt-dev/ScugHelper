@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using MonoMod.ModInterop;
 
 namespace Celeste.Mod.ScugHelper;
 
@@ -33,6 +34,7 @@ public class ScugHelperModule : EverestModule
     public override void Load()
     {
         // TODO: apply any hooks that should always be active
+        typeof(FrostHelperImports).ModInterop();
         Entities.PinballBooster.LoadHooks();
         Entities.Gripwall.LoadHooks();
         Entities.BrassBerry.LoadHooks();

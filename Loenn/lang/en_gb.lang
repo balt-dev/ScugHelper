@@ -99,5 +99,44 @@ entities.ScugHelper/ForwardAction.placements.description.normal=Alerts a set of 
 entities.ScugHelper/PlayerKillAction.placements.name.normal=Action - Kill Player
 entities.ScugHelper/PlayerKillAction.placements.description.normal=Kills the player when alerted.
 
-entities.ScugHelper/SetFlagAction.placements.name.normal=Action - Set Flag
-entities.ScugHelper/SetFlagAction.placements.description.normal=Sets a flag to a certain value when alerted.
+entities.ScugHelper/SessionExpressionAction.placements.name.normal=Action - Session Expression
+entities.ScugHelper/SessionExpressionAction.placements.description.normal=Sets a value to the result of a session expression when alerted.
+
+entities.ScugHelper/SessionExpressionConditionAction.placements.name.normal=Action - Session Expression Condition
+entities.ScugHelper/SessionExpressionConditionAction.placements.description.normal=Alerts a set of action groups when alerted if a session expression is true.
+
+entities.ScugHelper/SessionExpressionListener.placements.name.normal=Action - Session Expression Listener
+entities.ScugHelper/SessionExpressionListener.placements.description.normal=Alerts a set of action groups when a session expression becomes true.
+
+entities.ScugHelper/GlobalTriggerFlagListener.placements.name.normal=Global Trigger Flag Listener
+entities.ScugHelper/GlobalTriggerFlagListener.placements.description.normal=Converts a trigger to a map-global flag listener. The trigger will be considered as containing the player when the corresponding flag is set.
+
+entities.ScugHelper/GiveKeyAction.placements.name.normal=Action - Give Key
+entities.ScugHelper/GiveKeyAction.placements.description.normal=Gives a key to the player when alerted.
+
+entities.ScugHelper/LevelEndAction.placements.name.normal=Action - End Level
+entities.ScugHelper/LevelEndAction.placements.description.normal=Ends the level when alerted.
+
+entities.ScugHelper/SetInventoryAction.placements.name.normal=Action - Set Player Inventory
+entities.ScugHelper/SetInventoryAction.placements.description.normal=Sets the player's inventory when alerted.
+
+entities.ScugHelper/PauseAction.placements.name.normal=Action - Pause Game
+entities.ScugHelper/PauseAction.placements.description.normal=Pauses the game when alerted.
+
+entities.ScugHelper/PlaySoundAction.placements.name.normal=Action - Play Sound
+entities.ScugHelper/PlaySoundAction.placements.description.normal=Plays a sound when alerted.
+
+entities.ScugHelper/FreezeAction.placements.name.normal=Action - Freezeframe
+entities.ScugHelper/FreezeAction.placements.description.normal=Applies a certain amount of freezeframes when alerted.
+
+entities.ScugHelper/PlayerStateAction.placements.name.normal=Action - Set Player State
+entities.ScugHelper/PlayerStateAction.placements.description.normal=Sets the player's state when alerted.
+
+triggers.ScugHelper/TeleportTrigger.placements.name.trigger=Teleport
+triggers.ScugHelper/TeleportTrigger.placements.description.trigger=Teleports the player when entered.
+
+entities.ScugHelper/ActionListenerCollider.placements.name.normal=Action Listener Controller
+entities.ScugHelper/ActionListenerCollider.placements.description.normal=Runs a player collision when any specified action group is alerted. This is NOT an action.
+
+entities.ScugHelper/Outline.placements.name.normal=Outline
+entities.ScugHelper/Outline.placements.description.normal=Customizable block outline.

@@ -4,22 +4,22 @@ local utils = require("utils")
 local drawableText = require("structs.drawable_text")
 
 return {
-    name = "ScugHelper/ForwardAction",
+    name = "ScugHelper/LevelEndAction",
     depth = -1e10,
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, Targets = "", width = 32, height = 24}
+            data = {Groups = "", Delay = 0, width = 32, height = 24, ShowCompleteScreen = true, ShowSpotlight = true, ScreenWipe = true}
         },
     },
-    fieldInformation = { Targets = {fieldType = "list"}, Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}},
+    fieldInformation = { Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}},
     sprite = function(room, entity)
         return {
             drawableText.fromText(
-                ("Action: Forward\n%s (%.3fs)\nTargets: %s"):format(entity.Groups, entity.Delay, entity.Targets),
+                ("Action: End Level\n%s (%.3fs)"):format(entity.Groups, entity.Delay),
                 entity.x, entity.y, entity.width, entity.height, nil, 0.25
             ),
-            drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "metaAction")
+            drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "playerAction")
         }
     end,
     rectangle = function(room, entity)

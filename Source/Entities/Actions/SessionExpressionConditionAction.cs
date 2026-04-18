@@ -13,11 +13,16 @@ public class SessionExpressionConditionAction : Entity, IAction
     private readonly object SessionExpression;
     private readonly string[] Targets;
     private readonly string Expression;
+    private readonly bool Invert;
     public SessionExpressionConditionAction(EntityData data, Vector2 _): base() {
         if (!FrostHelperImports.IsLoaded)
-            throw new Exception("FrostHelper must be loaded to use session expression actions.");
+        {
+            ActionManager.LogError($"FrostHelper is not loaded! Session Expression actions won't work.");
+            return;
+        }
         Targets = IAction.GetTargets(data);
-        Expression = data.String("Expression").Trim();
+        Invert = data.Bool("Invert");
+        Expression = data.String("Expression", "").Trim();
         if (!FrostHelperImports.TryCreateSessionExpression(Expression, out SessionExpression!))
         {
             ActionManager.LogError($"FrostHelper session expression failed to compile: {Expression}");
@@ -26,7 +31,8 @@ public class SessionExpressionConditionAction : Entity, IAction
     }
     public void Alert(Level level)
     {
-        if (FrostHelperImports.GetBoolSessionExpressionValue(SessionExpression, level.Session))
+        if (!FrostHelperImports.IsLoaded) return;
+        if (FrostHelperImports.GetBoolSessionExpressionValue(SessionExpression, level.Session) ^ Invert)
             ActionManager.AlertActions(Targets, level);
     }
 }

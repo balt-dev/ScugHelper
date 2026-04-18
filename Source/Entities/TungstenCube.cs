@@ -65,7 +65,7 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private void OnPlayer(Player player)
     {
-        if (Speed.Y - player.Speed.Y > 240f && !Hold.IsHeld) {
+        if (Speed.Y - player.Speed.Y >= 300 && !Hold.IsHeld) {
             if (player.wasOnGround)
                 player.Die(Vector2.Zero);
             else {

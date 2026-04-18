@@ -4,19 +4,22 @@ local utils = require("utils")
 local drawableText = require("structs.drawable_text")
 
 return {
-    name = "ScugHelper/PlayerKillAction",
+    name = "ScugHelper/PlayerStateAction",
     depth = -1e10,
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, width = 32, height = 24}
+            data = {Groups = "", Delay = 0, width = 32, height = 24, State = 0}
         },
     },
-    fieldInformation = { Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}},
+    fieldInformation = {
+        Groups = { fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = "" },
+        State = {fieldType = "integer", options = scughelper.playerStates, editable = true, searchable = true }
+    },
     sprite = function(room, entity)
         return {
             drawableText.fromText(
-                ("Action: Player Kill\n%s (%.3fs)"):format(entity.Groups, entity.Delay),
+                ("Action: Set Player State\n%s (%.3fs)\n%s"):format(entity.Groups, entity.Delay, scughelper.playerStateNames[entity.State] or tostring(entity.State)),
                 entity.x, entity.y, entity.width, entity.height, nil, 0.25
             ),
             drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "playerAction")
