@@ -6,6 +6,9 @@ local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 return {
     name = "ScugHelper/Outline",
     depth = function(room, entity) return entity.Depth end,
+        fieldInformation = {
+            Color = { fieldType = "color" },
+        },
     placements = {
         {
             name = "normal",
