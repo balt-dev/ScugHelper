@@ -7,13 +7,13 @@ using System;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
-[CustomEntity("ScugHelper/BoosterField")]
-public class BoosterField : Solid
+[CustomEntity("ScugHelper/CustomField")]
+public class CustomField : Solid
 {
-    internal class BoosterFieldColliderList : ColliderList
+    internal class CustomFieldColliderList : ColliderList
     {
-        private readonly BoosterField field;
-        public BoosterFieldColliderList(BoosterField field) {
+        private readonly CustomField field;
+        public CustomFieldColliderList(CustomField field) {
             colliders = [field.Collider];
             this.field = field;
         }
@@ -23,41 +23,46 @@ public class BoosterField : Solid
         public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
 
         private bool CheckEntity(Entity entity) {
-            bool res = entity is Player player && (player.LastBooster?.BoostingPlayer ?? false);
-            field.BouncedBooster |= res;
+            bool res = field.Types.Contains(entity.GetType().FullName ?? "") ^ field.Invert;
+            field.HitEntity |= res;
             return res;
         }
     }
 
-    protected float[] speeds = [12f, 20f, 40f];
-    protected List<Vector2> particles = [];
-    private bool BouncedBooster;
-    private bool Invisible;
-    private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
+    protected static readonly float[] speeds = [12f, 20f, 40f];
+    private static readonly float SineMovement = 2.0f;
 
-    public BoosterField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false)
+    internal readonly bool Invert;
+    internal readonly bool Invisible;
+    internal readonly string[] Types;
+    internal readonly Color Color;
+
+    protected List<Vector2> particles = [];
+    internal bool HitEntity;
+    internal float BounceTimer;
+
+    public CustomField(EntityData data, Vector2 offset)
+        : base(data.Position + offset, data.Width, data.Height, false)
     {
         Depth = -20000;
-        Collider = new BoosterFieldColliderList(this);
+        Types = data.String("Types").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Invert = data.Bool("Invert");
+        Color = data.HexColor("Color", new(0.7f, 0.85f, 1.0f));
+        Collider = new CustomFieldColliderList(this);
         Collidable = true;
-        Invisible = invis;
+        Invisible = data.Bool("Invisible");
         for (int i = 0; i < Width * Height / 24f; i++)
             particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
     }
 
-    public BoosterField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"))
-    { }
-
-    private static readonly float SineMovement = 2.0f;
 
     public override void Render()
     {
         if (!Invisible)
         {
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f);
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * (BounceTimer / BouncePulseLength * 0.4f));
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color * 0.3f);
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * (BounceTimer / BouncePulseLength * 0.1f));
             WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.5f);
             foreach (Vector2 particle in particles)
                 Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
@@ -73,12 +78,13 @@ public class BoosterField : Solid
     }
 
     private float Elapsed = 0;
+
     public override void Update()
     {
         Elapsed += Engine.DeltaTime;
-        if (BouncedBooster) {
+        if (HitEntity) {
             BounceTimer = BouncePulseLength;
-            BouncedBooster = false;
+            HitEntity = false;
         } else {
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
         }
@@ -97,6 +103,6 @@ public class BoosterField : Solid
     public void OnRenderBloom()
     {
         if (Visible && !Invisible) // lol
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.1f);
     }
 }

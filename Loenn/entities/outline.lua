@@ -36,6 +36,10 @@ return {
         entity.CornerSize = entity.CornerSize or 2
         entity.InnerMargin = entity.InnerMargin or 4
         entity.CornerSpace = entity.CornerSpace or 1
+        if entity.SpaceSize + entity.LineSize <= 0 then
+            entity.LineSize = 0
+            entity.SpaceSize = 1
+        end
         return drawableFunc.fromFunction(function()
             drawing.callKeepOriginalColor(function()
                 local left   = entity.x

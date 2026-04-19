@@ -49,6 +49,7 @@ internal class SpeedTracker() : Component(true, true)
     internal static void TrackSpeed() {
         Scene scene = Engine.Instance.scene;
         foreach (Entity entity in scene.Entities)
-            entity.Add(new SpeedTracker());
+            if (entity.Components.Get<SpeedTracker>() == null)
+                entity.Add(new SpeedTracker());
     }
 }

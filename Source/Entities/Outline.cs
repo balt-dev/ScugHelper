@@ -22,40 +22,63 @@ public class Outline : Entity
     private readonly int CornerSize;
     private readonly int CornerSpace;
     private readonly int InnerMargin;
+    private readonly EntityID ID;
+    private VirtualRenderTarget? bakedTexture;
 
-    public Outline(EntityData data, Vector2 offset) : base(data.Position + offset)
+    public Outline(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
     {
+        ID = id;
         Collidable = false;
         Collider = new Hitbox(data.Width, data.Height);
         Depth = data.Int("Depth", 10);
         Color = data.HexColor("Color", Color.White);
         InnerOpacity = data.Float("InnerOpacity", 0.25f);
-        LineSize = data.Int("LineSize", 2);
-        SpaceSize = data.Int("SpaceSize", 1);
+        LineSize = Math.Max(data.Int("LineSize", 2), 0);
+        SpaceSize = Math.Max(data.Int("SpaceSize", 1), 0);
+        if (SpaceSize + LineSize <= 0) {
+            LineSize = 0;
+            SpaceSize = 1;
+        }
         CornerSize = data.Int("CornerSize", 2);
         CornerSpace = data.Int("CornerSpace", 1);
         InnerMargin = data.Int("InnerMargin", 4);
+        Add(new BeforeRenderHook(BakeTexture));
+    }
+    
+    internal void BakeTexture() {
+        if (bakedTexture is null) {
+            var oldTargets = Engine.Graphics.GraphicsDevice.GetRenderTargets();
+
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(bakedTexture = VirtualContent.CreateRenderTarget($"outlinePrerender_{ID}", (int)Width, (int)Height));
+
+            Draw.SpriteBatch.Begin();
+                    
+            Draw.Rect(InnerMargin, InnerMargin, Width - InnerMargin * 2, Height - InnerMargin * 2, Color * InnerOpacity);
+            for (int x = CornerSize + CornerSpace; x <= Width - (CornerSize + CornerSpace + LineSize); x += LineSize + SpaceSize)
+            {
+                Draw.Line(x, 0, x + LineSize, 0, Color);
+                Draw.Line(x, Height - 1, x + LineSize, Height - 1, Color);
+            }
+    
+            for (int y = CornerSize + CornerSpace; y + LineSize <= Height - (CornerSize + CornerSpace); y += LineSize + SpaceSize)
+            {
+                Draw.Line(1, y, 1, y + LineSize, Color);
+                Draw.Line(Width, y, Width, y + LineSize, Color);
+            }
+    
+            Draw.Rect(0, 0, CornerSize, CornerSize, Color);
+            Draw.Rect(Width - CornerSize, 0, CornerSize, CornerSize, Color);
+            Draw.Rect(0, Height - CornerSize, CornerSize, CornerSize, Color);
+            Draw.Rect(Width - CornerSize, Height - CornerSize, CornerSize, CornerSize, Color);
+            Draw.SpriteBatch.End();
+            
+            Engine.Graphics.GraphicsDevice.SetRenderTargets(oldTargets);
+        }
     }
 
     public override void Render() {
         base.Render();
-        Draw.Rect(Left + InnerMargin, Top + InnerMargin, Width - InnerMargin * 2, Height - InnerMargin * 2, Color * InnerOpacity);
-        for (int x = (int)Left + CornerSize + CornerSpace; x <= Right - (CornerSize + CornerSpace + LineSize); x += LineSize + SpaceSize)
-        {
-            Draw.Line(x, Top, x + LineSize, Top, Color);
-            Draw.Line(x, Bottom - 1, x + LineSize, Bottom - 1, Color);
-        }
-
-        for (int y = (int)Top + CornerSize + CornerSpace; y + LineSize <= Bottom - (CornerSize + CornerSpace); y += LineSize + SpaceSize)
-        {
-            Draw.Line(Left + 1, y, Left + 1, y + LineSize, Color);
-            Draw.Line(Right, y, Right, y + LineSize, Color);
-        }
-
-        Draw.Rect(Left, Top, CornerSize, CornerSize, Color);
-        Draw.Rect(Right - CornerSize, Top, CornerSize, CornerSize, Color);
-        Draw.Rect(Left, Bottom - CornerSize, CornerSize, CornerSize, Color);
-        Draw.Rect(Right - CornerSize, Bottom - CornerSize, CornerSize, CornerSize, Color);
+        if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White);   
     }
 }
 #nullable restore

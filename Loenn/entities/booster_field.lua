@@ -1,12 +1,17 @@
+local drawableRect = require("structs.drawable_rectangle")
 return {
     name = "ScugHelper/BoosterField",
-    depth = 100,
+    depth = -20000,
     placements = {
         {
             name = "boosterfield",
             data = {width = 32, height = 32, invisible = false}
         },
     },
-    fillColor = { 0.6, 0.2, 0.2, 0.6 },
-    outlineColor = {1, 1, 1}
+    sprite = function(room, entity)
+        return {
+            drawableRect.fromRectangle("fill", entity.x, entity.y, entity.width, entity.height, {0.6, 0.2, 0.2, 0.3}),
+            drawableRect.fromRectangle("line", entity.x, entity.y, entity.width, entity.height, {1, 1, 1, 0.5})
+        }
+    end,
 }

@@ -140,3 +140,12 @@ entities.ScugHelper/ActionListenerCollider.placements.description.normal=Runs a 
 
 entities.ScugHelper/Outline.placements.name.normal=Outline
 entities.ScugHelper/Outline.placements.description.normal=Customizable block outline.
+
+entities.ScugHelper/CustomField.placements.name.normal=Entity Field
+entities.ScugHelper/CustomField.placements.description.normal=Field that is solid only for the a customizable list of entities, and intangible otherwise. Entities are specified via their namespaced type.
+
+entities.ScugHelper/ExtremelyFragileBlock.placements.name.normal=Extremely Fragile Block
+entities.ScugHelper/ExtremelyFragileBlock.placements.description.normal=Broken when collided with in any way.
+
+entities.ScugHelper/ControllableFallingBlock.placements.name.falling_block=Controllable Falling Block
+entities.ScugHelper/ControllableFallingBlock.placements.description.falling_block=Falling block that switches gravity depending on which direction the player climbs.

@@ -74,7 +74,7 @@ public class RecoilBumper : Actor, IHasSpeed
             default:
                 if (Speed.Y >= 0f)
                 {
-                    Speed = 224f * -Vector2.UnitY;
+                    Speed.Y = -MathF.Max(MathF.Abs(Speed.Y), 224f);
                     MoveTowardsX(spring.CenterX, 4f);
                     return true;
                 }
@@ -82,7 +82,7 @@ public class RecoilBumper : Actor, IHasSpeed
             case Spring.Orientations.WallLeft:
                 if (Speed.X <= 60f)
                 {
-                    Speed = 224f * Vector2.UnitX;
+                    Speed.X = -MathF.Max(MathF.Abs(Speed.X), 224f);
                     MoveTowardsY(spring.CenterY, 4f);
                     return true;
                 }
@@ -91,7 +91,7 @@ public class RecoilBumper : Actor, IHasSpeed
             case Spring.Orientations.WallRight:
                 if (Speed.X >= -60f)
                 {
-                    Speed = 224f * Vector2.UnitX;
+                    Speed.X = MathF.Max(MathF.Abs(Speed.X), 224f);
                     MoveTowardsY(spring.CenterY, 4f);
                     return true;
                 }
