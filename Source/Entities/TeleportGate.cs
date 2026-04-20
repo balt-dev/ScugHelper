@@ -27,8 +27,8 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
         LifeMax = 3f,
     };
 
-    public override void Render() {
-        base.Render();
+    public override void Update() {
+        base.Update();
         if (Invisible) return;
         var startPos = Position - lineDir * Size / 2;
         var endPos = Position + lineDir * Size / 2;
