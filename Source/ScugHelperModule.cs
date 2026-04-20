@@ -48,6 +48,7 @@ public class ScugHelperModule : EverestModule
         Entities.FreezeRefill.LoadHooks();
         Entities.TungstenCube.LoadHooks();
         Entities.FastfallBlock.LoadHooks();
+        Entities.NeutrallessWallBooster.LoadHooks();
         Entities.Cycler.LoadHooks();
         Entities.Actions.ActionManager.LoadHooks();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
@@ -69,6 +70,7 @@ public class ScugHelperModule : EverestModule
         Entities.FreezeRefill.UnloadHooks();
         Entities.TungstenCube.UnloadHooks();
         Entities.FastfallBlock.UnloadHooks();
+        Entities.NeutrallessWallBooster.UnloadHooks();
         Entities.Cycler.UnloadHooks();
         Entities.Actions.ActionManager.UnloadHooks();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;

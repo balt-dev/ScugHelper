@@ -44,4 +44,20 @@
 		<Loop id="fastspin" path="gemOutline" delay="0.1"/>
     </squareGemOutline>
     <recoilBumper copy="bumper" path="objects/recoilBumper/"/>
+
+      <neutrallessWallBoosterTop path="objects/neutrallessWallBooster/" start="hot">
+        <Loop id="hot" path="fireTop" frames="0-7" delay="0.035"/>
+        <Anim id="ice" path="iceTop" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
+        <Anim id="iceShine" path="iceTop" frames="0-4" delay="0.08" goto="ice"/>
+      </neutrallessWallBoosterTop>
+      <neutrallessWallBoosterMid path="objects/neutrallessWallBooster/" start="hot">
+        <Loop id="hot" path="fireMid" frames="0-7" delay="0.035"/>
+        <Anim id="ice" path="iceMid" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
+        <Anim id="iceShine" path="iceMid" frames="0-4" delay="0.08" goto="ice"/>
+      </neutrallessWallBoosterMid>
+      <neutrallessWallBoosterBottom path="objects/neutrallessWallBooster/" start="hot">
+        <Loop id="hot" path="fireBottom" frames="0-7" delay="0.035"/>
+        <Anim id="ice" path="iceBottom" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
+        <Anim id="iceShine" path="iceBottom" frames="0-4" delay="0.08" goto="ice"/>
+      </neutrallessWallBoosterBottom>
 </Sprites>

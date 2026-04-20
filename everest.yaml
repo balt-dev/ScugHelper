@@ -1,9 +1,11 @@
 - DLL: bin/ScugHelper.dll
   Name: ScugHelper
-  Version: 2.2.0
+  Version: 2.2.3
   Dependencies:
     - Name: EverestCore
       Version: 1.5935.0
   OptionalDependencies:
     - Name: FrostHelper
       Version: 1.78.0
+    - Name: ExtendedVariantMode
+      Version: 0.48.2

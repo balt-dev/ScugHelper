@@ -149,3 +149,8 @@ entities.ScugHelper/ExtremelyFragileBlock.placements.description.normal=Broken w
 
 entities.ScugHelper/ControllableFallingBlock.placements.name.falling_block=Controllable Falling Block
 entities.ScugHelper/ControllableFallingBlock.placements.description.falling_block=Falling block that switches gravity depending on which direction the player climbs.
+
+entities.ScugHelper/NeutrallessWallBooster.placements.name.booster_right=Neutralless Wall Booster (Right)
+entities.ScugHelper/NeutrallessWallBooster.placements.name.booster_left=Neutralless Wall Booster (Left)
+entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_right=Neutralless Ice Wal (Right)
+entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_left=Neutralless Ice Wal (Left)

@@ -1,11 +1,6 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 using Celeste.Mod.Entities;
-using Celeste;
-using MonoMod.Cil;
-using System;
-using System.Reflection;
-using MonoMod.RuntimeDetour;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
