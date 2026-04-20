@@ -12,7 +12,8 @@ function fallingBlock.placements()
             climbFall = true,
             behind = false,
             width = 8,
-            height = 8
+            height = 8,
+            AllowChangeInMidair = true
         }
     }
 end

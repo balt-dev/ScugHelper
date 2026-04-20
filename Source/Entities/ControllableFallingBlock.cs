@@ -14,10 +14,12 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/ControllableFallingBlock")]
 public class ControllableFallingBlock : FallingBlock
 {
-    public int FallDirection = 1;
+    protected int FallDirection = 1;
+    protected bool AllowChangeInMidair = true;
 
     public ControllableFallingBlock(EntityData data, Vector2 offset) : base(data, offset)
     {
+        AllowChangeInMidair = data.Bool("AllowChangeInMidair");
         Remove(Get<Coroutine>());
         Add(new Coroutine(MySequence()));
     }
@@ -25,7 +27,7 @@ public class ControllableFallingBlock : FallingBlock
     public override void Update()
     {
         base.Update();
-        if (HasPlayerClimbing())
+        if (HasPlayerClimbing() && (AllowChangeInMidair || !HasStartedFalling))
             FallDirection = Input.MoveY.Value == 0 ? FallDirection : Input.MoveY.Value;
     }
     
@@ -104,6 +106,7 @@ public class ControllableFallingBlock : FallingBlock
             if (CollideCheck<SolidTiles>(Position + new Vector2(0f, FallDirection)))
                 Safe = true;
 
+            HasStartedFalling = false;
             while (CollideCheck<Platform>(Position + new Vector2(0f, FallDirection)))
                 yield return 0.1f;
         }
