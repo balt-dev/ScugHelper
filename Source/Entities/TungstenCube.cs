@@ -7,6 +7,8 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod;
 using Mono.Cecil.Cil;
+using MonoMod.RuntimeDetour;
+using System.Reflection;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -196,6 +198,7 @@ public class TungstenCube : Actor, IHasSpeed {
             RemoveSelf();
         }
     }
+    private static ILHook? getCameraTargetHook;
 
     public static void LoadHooks()
     {
@@ -210,9 +213,11 @@ public class TungstenCube : Actor, IHasSpeed {
         On.Celeste.Player.SuperWallJump += CanSuperWallJumpHook;
         On.Celeste.Player.SuperBounce += BounceHook;
         On.Celeste.Player.SideBounce += SideBounceHook;
+        getCameraTargetHook = new(typeof(Player).GetProperty("CameraTarget", BindingFlags.Public | BindingFlags.Instance).GetGetMethod(), GetCameraTargetHook);
     }
 
-    public static void UnloadHooks() {
+    public static void UnloadHooks()
+    {
         IL.Celeste.Player.NormalBegin -= ModNormalBegin;
         IL.Celeste.Player.NormalUpdate -= ModNormalUpdate;
         On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;
@@ -224,6 +229,21 @@ public class TungstenCube : Actor, IHasSpeed {
         On.Celeste.Player.SuperWallJump -= CanSuperWallJumpHook;
         On.Celeste.Player.SuperBounce -= BounceHook;
         On.Celeste.Player.SideBounce -= SideBounceHook;
+        getCameraTargetHook.Dispose();
+    }
+        
+    private static void GetCameraTargetHook(ILContext il) {
+        ILCursor cur = new(il);
+        if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)]))))
+            throw new Exception("Tungsten cube failed to match code for camera target offset hook.");
+        cur.EmitLdarg0();
+        cur.EmitLdloc1();
+        cur.EmitDelegate(static (Player self, Vector2 vector) =>
+        {
+            if (self.Holding?.Entity is not TungstenCube) return vector;
+            return vector + Vector2.UnitY * Math.Clamp((self.Speed.Y - 240f) * 0.24f, 0f, 240f);
+        });
+        cur.EmitStloc1();
     }
 
     private static bool SideBounceHook(On.Celeste.Player.orig_SideBounce orig, Player self, int dir, float fromX, float fromY)

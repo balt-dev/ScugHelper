@@ -7,6 +7,8 @@ using System;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Celeste.Mod.ScugHelper;
+using System.Text.Json;
+using System.IO;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -254,10 +256,12 @@ public partial class Text : Entity
         RenderText(renderedString, Position + offset, color);
     }
 
-    internal static void RenderText(string renderedString, Vector2 offset, Color color) {
+    internal static void RenderText(string renderedString, Vector2 offset, Color color)
+    {
         if (renderedString == null) return;
         Vector2 printHead = Vector2.Zero;
-        foreach (var chr in renderedString.AsEnumerable()) {
+        foreach (var chr in renderedString.AsEnumerable())
+        {
             if (chr == '\n') { printHead.X = 0; printHead.Y += ScugHelperModule.Settings.AlternativeFont ? 6 : 5; continue; }
             int codepoint = chr;
             if (codepoint < 32) { continue; }
@@ -266,6 +270,27 @@ public partial class Text : Entity
             tex.Draw(offset + printHead, Vector2.Zero, color);
             printHead.X += 4;
         }
+    }
+    
+    
+    [Command("dumptext", "Dumps the raw strings of all text entities in the map to Celeste/textdump.json")]
+    internal static void DumpText() {
+        Scene scene = Engine.Instance.scene;
+        if (scene is not Level level) return;
+        MapData data = level.Session.MapData;
+        using var stream = new FileStream("textdump.json", FileMode.Create);
+        var writer = new Utf8JsonWriter(stream);
+        writer.WriteStartObject();
+        foreach (var room in data.Levels)
+        {
+            writer.WriteStartArray(room.Name);
+            foreach (var entData in room.Entities)
+                if (entData.Name == "ScugHelper/Text")
+                    writer.WriteStringValue(entData.String("Value") ?? "");
+            writer.WriteEndArray();
+        }
+        writer.WriteEndObject();
+        writer.Flush();
     }
 }
 

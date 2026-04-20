@@ -40,9 +40,9 @@ public class ControllableFallingBlock : FallingBlock
             FallDelay -= Engine.DeltaTime;
             yield return null;
 
-        HasStartedFalling = true;
         while (true)
         {
+            HasStartedFalling = true;
             ShakeSfx();
             StartShaking();
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
