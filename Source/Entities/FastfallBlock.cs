@@ -34,8 +34,11 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
         static void PlayerCheck(Player player) {
             if (
                 player.CollideFirst<FastfallBlock>(player.Position + player.Speed * Engine.DeltaTime) is FastfallBlock block
-                && player.StateMachine.State == Player.StNormal
-                && Input.MoveY.Value == 1
+                && (
+                    (player.StateMachine.State == Player.StNormal && Input.MoveY.Value == 1) ||
+                    (player.StateMachine.State == Player.StTempleFall) ||
+                    (player.StateMachine.State == Player.StReflectionFall)
+                )
             )
                 block.Break(player.Position);
         }

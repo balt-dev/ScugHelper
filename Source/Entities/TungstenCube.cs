@@ -112,7 +112,7 @@ public class TungstenCube : Actor, IHasSpeed {
         }
     }
 
-    private static readonly float Gravity = 1200f;
+    private static readonly float Gravity = 1500f;
     private static readonly float TerminalVelocity = 1000f;
     private Vector2 prevLiftSpeed;
 
@@ -185,7 +185,7 @@ public class TungstenCube : Actor, IHasSpeed {
             block.Break(Position, Vector2.UnitX * Math.Sign(Speed.X), true, true);
         if (data.Hit is FastfallBlock fblock)
             fblock.Break(Vector2.UnitX * Math.Sign(Speed.X), true, true);
-        Speed.X *= -0.5f;
+        Speed.X *= -0.8f;
         Audio.Play("event:/game/04_cliffside/arrowblock_side_depress", Position);
     }
 
