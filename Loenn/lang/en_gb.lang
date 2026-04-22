@@ -152,5 +152,8 @@ entities.ScugHelper/ControllableFallingBlock.placements.description.falling_bloc
 
 entities.ScugHelper/NeutrallessWallBooster.placements.name.booster_right=Neutralless Wall Booster (Right)
 entities.ScugHelper/NeutrallessWallBooster.placements.name.booster_left=Neutralless Wall Booster (Left)
-entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_right=Neutralless Ice Wal (Right)
-entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_left=Neutralless Ice Wal (Left)
+entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_right=Neutralless Ice Wall (Right)
+entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_left=Neutralless Ice Wall (Left)
+
+entities.ScugHelper/FlagGate.placements.name.normal=Flag Gate
+entities.ScugHelper/FlagGate.placements.description.normal=Sets a flag to a given state when crossed.

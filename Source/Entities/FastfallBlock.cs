@@ -13,8 +13,9 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/FastfallBlock")]
 public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : AbstractBreakableBlock(data, offset, id)
 {
+    private readonly int SpeedMinimum = data.Int("SpeedMinimum", 0);
     private static ILHook? hook_Player_orig_Update;
-    
+
     internal static void LoadHooks()
     {
         hook_Player_orig_Update = new ILHook(typeof(Player).GetMethod("orig_Update", BindingFlags.Public | BindingFlags.Instance)!, PlayerUpdateHook);
@@ -23,7 +24,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
     internal static void UnloadHooks() {
         hook_Player_orig_Update?.Dispose();
     }
-    
+
     private static void PlayerUpdateHook(ILContext il)
     {
         ILCursor cur = new(il);
@@ -35,7 +36,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
             if (
                 player.CollideFirst<FastfallBlock>(player.Position + player.Speed * Engine.DeltaTime) is FastfallBlock block
                 && (
-                    (player.StateMachine.State == Player.StNormal && Input.MoveY.Value == 1) ||
+                    (player.StateMachine.State == Player.StNormal && Input.MoveY.Value == 1 && player.Speed.Y >= block.SpeedMinimum) ||
                     (player.StateMachine.State == Player.StTempleFall) ||
                     (player.StateMachine.State == Player.StReflectionFall)
                 )

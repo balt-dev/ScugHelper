@@ -8,7 +8,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Infill = "FFFFFF", Outline = "000000", DrawOutline = false, RequiresUpdate = false, Value = "Hello, world!", Depth = 10}
+            data = {Infill = "FFFFFF", Outline = "000000", DrawOutline = false, RequiresUpdate = false, Value = "Hello, world!", Depth = 10, Flag = "", InvertFlag = false}
         },
     },
     sprite = function(room, entity)

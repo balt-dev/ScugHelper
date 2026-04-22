@@ -13,7 +13,8 @@ function fastfallBlock.placements()
             blendin = true,
             permanent = true,
             width = 8,
-            height = 8
+            height = 8,
+            SpeedMinimum = 240
         }
     }
 end

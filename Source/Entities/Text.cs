@@ -153,6 +153,8 @@ public partial class Text : Entity
     }
 
     private readonly Color InfillColor;
+    private readonly string? Flag;
+    private readonly bool InvertFlag;
     private readonly Color OutlineColor;
     private readonly bool DrawOutline;
     public readonly string FormatString;
@@ -168,6 +170,9 @@ public partial class Text : Entity
         DrawOutline = data.Bool("DrawOutline", false);
         FormatString = data.String("Value", "<string unset>");
         RequiresUpdate = data.Bool("RequiresUpdate", false);
+        Flag = data.String("Flag")?.Trim();
+        InvertFlag = data.Bool("InvertFlag", false);
+        if (Flag is string flag && flag.Length == 0) Flag = null;
         CompileStringParts();
     }
 
@@ -238,6 +243,7 @@ public partial class Text : Entity
     public override void Render()
     {
         base.Render();
+        if (Flag is string flag && (!SceneAs<Level>().Session.GetFlag(flag) ^ InvertFlag)) return;
         if (DrawOutline)
         {
             RenderText(new Vector2(-1, -1), OutlineColor);
@@ -271,8 +277,8 @@ public partial class Text : Entity
             printHead.X += 4;
         }
     }
-    
-    
+
+
     [Command("dumptext", "Dumps the raw strings of all text entities in the map to Celeste/textdump.json")]
     internal static void DumpText() {
         Scene scene = Engine.Instance.scene;
