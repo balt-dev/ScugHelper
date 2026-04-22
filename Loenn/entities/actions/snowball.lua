@@ -4,19 +4,19 @@ local utils = require("utils")
 local drawableText = require("structs.drawable_text")
 
 return {
-    name = "ScugHelper/PlaySoundAction",
+    name = "ScugHelper/SnowballAction",
     depth = -1e10,
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, width = 32, height = 24, Path = ""}
+            data = {Groups = "", Delay = 0, width = 32, height = 24}
         },
     },
     fieldInformation = { Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}},
     sprite = function(room, entity)
         return {
             drawableText.fromText(
-                ("Action: PlaySound\n%s (%.3fs)\n%s"):format(entity.Groups, entity.Delay, entity.Path),
+                ("Action: Snowball\n%s (%.3fs)"):format(entity.Groups, entity.Delay),
                 entity.x, entity.y, entity.width, entity.height, nil, 0.25
             ),
             scughelper.unfuckedRect(entity, scughelper.colors "playerAction")

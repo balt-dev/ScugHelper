@@ -97,4 +97,18 @@ for state, id in pairs(T.playerStates) do
     T.playerStateNames[id] = state
 end
 
+T.unfuckedRect = function(entity, color)
+    return drawableFunc.fromFunction(function()
+        drawing.callKeepOriginalColor(function()
+            love.graphics.setColor(color)
+            love.graphics.rectangle("line",
+                entity.x,
+                entity.y,
+                entity.width,
+                entity.height
+            )
+        end)
+    end)
+end
+
 return T

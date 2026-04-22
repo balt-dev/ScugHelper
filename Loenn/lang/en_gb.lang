@@ -157,3 +157,6 @@ entities.ScugHelper/NeutrallessWallBooster.placements.name.ice_left=Neutralless 
 
 entities.ScugHelper/FlagGate.placements.name.normal=Flag Gate
 entities.ScugHelper/FlagGate.placements.description.normal=Sets a flag to a given state when crossed.
+
+entities.ScugHelper/SnowballAction.placements.name.normal=Action - Snowball
+entities.ScugHelper/SnowballAction.placements.description.normal=Summons a oneshot snowball when alerted.

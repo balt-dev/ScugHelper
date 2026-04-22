@@ -36,7 +36,7 @@ return {
                 ("Action: Session Expression\n%s (%.3fs)\n%s <- %s"):format(entity.Groups, entity.Delay, entity.Target, entity.Expression),
                 entity.x, entity.y, entity.width, entity.height, nil, 0.25
             ),
-            drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "expressionAction")
+            scughelper.unfuckedRect(entity, scughelper.colors "expressionAction")
         }
     end,
     rectangle = function(room, entity)

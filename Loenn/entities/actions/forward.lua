@@ -19,7 +19,7 @@ return {
                 ("Action: Forward\n%s (%.3fs)\nTargets: %s"):format(entity.Groups, entity.Delay, entity.Targets),
                 entity.x, entity.y, entity.width, entity.height, nil, 0.25
             ),
-            drawableRect.fromRectangle("line", entity.x - 1, entity.y - 1, entity.width + 2, entity.height + 2, scughelper.colors "metaAction")
+            scughelper.unfuckedRect(entity, scughelper.colors "metaAction")
         }
     end,
     rectangle = function(room, entity)
