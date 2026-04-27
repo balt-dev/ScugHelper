@@ -139,17 +139,24 @@ public static class ActionManager
 
     internal static void LoadHooks() {
         Everest.Events.Level.OnLoadLevel += OnLoadLevel;
+        On.Celeste.Level.Update += OnLevelUpdate;
         ActionHooks.LoadHooks();
     }
+
     internal static void UnloadHooks() {
         Everest.Events.Level.OnLoadLevel -= OnLoadLevel;
+        On.Celeste.Level.Update -= OnLevelUpdate;
         ActionHooks.UnloadHooks();
+    }
+    
+    private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
+        orig(self);
+        dummy.Scene = self;
+        dummy.Update();
     }
 
     private static void OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
     {
-        dummy.RemoveSelf();
-        level.Add(dummy = []);
         if (isFromLoader) {
             actionMap.Clear();
             idSet.Clear();

@@ -20,6 +20,7 @@ local builtins = {
     "#PlayerSuperJump",
     "#PlayerWallJump",
     "#PlayerJump",
+    "#PlayerSideflip",
     "#SeekerDie",
     "#InitActions",
     "#LoadLevel",

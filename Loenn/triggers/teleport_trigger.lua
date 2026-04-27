@@ -8,7 +8,7 @@ return {
     placements = {
         {
             name = "trigger",
-            data = {width = 32, height = 32, Silent = false, KeepX = false, KeepY = false, TeleportCamera = true, Flag = ""},
+            data = {width = 32, height = 32, Silent = false, KeepX = false, KeepY = false, TeleportCamera = true, Flag = "", FlipFacing = false},
         },
     },
     fillColor = {0, 0, 0, 0},

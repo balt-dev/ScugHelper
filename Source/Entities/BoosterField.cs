@@ -23,7 +23,7 @@ public class BoosterField : Solid
         public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
 
         private bool CheckEntity(Entity entity) {
-            bool res = entity is Player player && (player.LastBooster?.BoostingPlayer ?? false);
+            bool res = entity is Player player && ((player.LastBooster?.BoostingPlayer ?? false) ^ field.Invert);
             field.BouncedBooster |= res;
             return res;
         }
@@ -32,22 +32,24 @@ public class BoosterField : Solid
     protected float[] speeds = [12f, 20f, 40f];
     protected List<Vector2> particles = [];
     private bool BouncedBooster;
-    private bool Invisible;
+    private readonly bool Invisible;
+    private readonly bool Invert;
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
-    public BoosterField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false)
+    public BoosterField(Vector2 position, float width, float height, bool invis, bool invert) : base(position, width, height, false)
     {
         Depth = -20000;
         Collider = new BoosterFieldColliderList(this);
         Collidable = true;
         Invisible = invis;
+        Invert = invert;
         for (int i = 0; i < Width * Height / 24f; i++)
             particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
     }
 
     public BoosterField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"))
+        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"), data.Bool("invert"))
     { }
 
     private static readonly float SineMovement = 2.0f;
@@ -57,10 +59,11 @@ public class BoosterField : Solid
         if (!Invisible)
         {
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f);
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * (BounceTimer / BouncePulseLength * 0.4f));
-            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.5f);
+            var outlineColor = Invert ? Color.Black : Color.White;
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * (BounceTimer / BouncePulseLength * 0.4f));
+            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * 0.5f);
             foreach (Vector2 particle in particles)
-                Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
+                Draw.Pixel.Draw(Position + particle, Vector2.Zero, outlineColor * 0.7f);
         }
 
         base.Render();

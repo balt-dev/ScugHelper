@@ -81,8 +81,8 @@ entities.ScugHelper/FlagTempleEye.placements.description.normal=Temple eye that 
 entities.ScugHelper/RefillGate.placements.name.normal=Refill Gate
 entities.ScugHelper/RefillGate.placements.description.normal=Extends the range of a refill to where the gate is crossed.
 
-entities.ScugHelper/LevelEndController.placements.name.normal=Level End Controller
-entities.ScugHelper/LevelEndController.placements.description.normal=Ends the level when a flag is set.
+triggers.ScugHelper/LevelEndTrigger.placements.name.trigger=Level End Trigger
+triggers.ScugHelper/LevelEndTrigger.placements.description.trigger=Ends the level when triggered.
 
 entities.ScugHelper/TeleportGate.placements.name.normal=Teleport Gate
 entities.ScugHelper/TeleportGate.placements.description.normal=Teleports the player when crossed.

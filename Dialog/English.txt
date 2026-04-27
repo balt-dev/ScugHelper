@@ -8,3 +8,4 @@ ScugHelper_ScugHelperTest_2_Actions_postcard=
 ScugHelper_ScugHelperTest_3_BrassBerryTest=Brass Berry Test
 ScugHelper_ScugHelperTest_3_BrassBerryTest_2=Checkpoint
 poem_ScugHelper_ScugHelperTest_3_BrassBerryTest_A=shoutouts to simpleflips
+ScugHelper_TUTORIAL_SIDEFLIP=SIDEFLIP

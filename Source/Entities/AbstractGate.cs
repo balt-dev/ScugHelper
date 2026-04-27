@@ -60,10 +60,12 @@ public abstract class AbstractGate : Entity
         return Math.Abs(proj) <= Size / 2;
     }
 
-    public override void Update() {
+    public override void Update()
+    {
         base.Update();
         Player player = SceneAs<Level>().Tracker.GetEntity<Player>();
         if (player == null) return;
+
         if (CheckLine(player.PreviousPosition, player.Position))
             OnTrigger(player);
         else if (CheckLine(player.PreviousPosition + player.TopCenter - player.Position, player.TopCenter))

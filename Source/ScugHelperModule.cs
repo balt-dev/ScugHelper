@@ -51,6 +51,7 @@ public class ScugHelperModule : EverestModule
         Entities.NeutrallessWallBooster.LoadHooks();
         Entities.Cycler.LoadHooks();
         Entities.Actions.ActionManager.LoadHooks();
+        Sideflip.LoadHooks();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
@@ -73,6 +74,7 @@ public class ScugHelperModule : EverestModule
         Entities.NeutrallessWallBooster.UnloadHooks();
         Entities.Cycler.UnloadHooks();
         Entities.Actions.ActionManager.UnloadHooks();
+        Sideflip.UnloadHooks();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
     }
 
