@@ -9,6 +9,7 @@ using MonoMod.RuntimeDetour;
 using System.Reflection;
 using MonoMod.Utils;
 using MonoMod.Cil;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -142,13 +143,14 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
 
     private static ILHook ZipMoverSequenceHook = null;
     private bool frozen;
-
+    
+    [OnLoad]
     internal static void LoadHooks()
     {
         ZipMoverSequenceHook = new(ZipMoverSequenceTarget, ZipMoverFix);
         On.Celeste.SwapBlock.Update += OnSwapBlockUpdate;
     }
-
+    [OnUnload]
     internal static void UnloadHooks()
     {
         ZipMoverSequenceHook?.Dispose();

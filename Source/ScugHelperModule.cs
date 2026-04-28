@@ -35,46 +35,14 @@ public class ScugHelperModule : EverestModule
     {
         // TODO: apply any hooks that should always be active
         typeof(FrostHelperImports).ModInterop();
-        Entities.PinballBooster.LoadHooks();
-        Entities.Gripwall.LoadHooks();
-        Entities.BrassBerry.LoadHooks();
-        Entities.DebugViewTrigger.LoadHooks();
-        Entities.DashlessHeartGem.LoadHooks();
-        Entities.RecoilBumper.LoadHooks();
-        Entities.SquareCrystal.LoadHooks();
-        Entities.ICustomRefill.LoadHooks();
-        Entities.MidairRefill.LoadHooks();
-        Entities.GroundedRefill.LoadHooks();
-        Entities.FreezeRefill.LoadHooks();
-        Entities.TungstenCube.LoadHooks();
-        Entities.FastfallBlock.LoadHooks();
-        Entities.NeutrallessWallBooster.LoadHooks();
-        Entities.Cycler.LoadHooks();
-        Entities.Actions.ActionManager.LoadHooks();
-        Sideflip.LoadHooks();
+        LifecycleMethods.OnLoad();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
     }
 
     public override void Unload()
     {
         // TODO: unapply any hooks applied in Load()
-        Entities.PinballBooster.UnloadHooks();
-        Entities.Gripwall.UnloadHooks();
-        Entities.BrassBerry.UnloadHooks();
-        Entities.DebugViewTrigger.UnloadHooks();
-        Entities.DashlessHeartGem.UnloadHooks();
-        Entities.RecoilBumper.UnloadHooks();
-        Entities.SquareCrystal.UnloadHooks();
-        Entities.ICustomRefill.UnloadHooks();
-        Entities.MidairRefill.UnloadHooks();
-        Entities.GroundedRefill.UnloadHooks();
-        Entities.FreezeRefill.UnloadHooks();
-        Entities.TungstenCube.UnloadHooks();
-        Entities.FastfallBlock.UnloadHooks();
-        Entities.NeutrallessWallBooster.UnloadHooks();
-        Entities.Cycler.UnloadHooks();
-        Entities.Actions.ActionManager.UnloadHooks();
-        Sideflip.UnloadHooks();
+        LifecycleMethods.OnUnload();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
     }
 

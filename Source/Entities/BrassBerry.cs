@@ -6,6 +6,7 @@ using Celeste.Mod.Entities;
 using Celeste.Mod;
 using Celeste;
 using Celeste.Mod.ScugHelper;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -188,12 +189,14 @@ class BrassBerry : Entity, IStrawberry
         }
     }
 
+    [OnLoad]
     internal static void LoadHooks()
     {
         On.Celeste.Player.Added += PlayerAddHook;
         On.Celeste.Player.Update += PlayerUpdateHook;
     }
-
+    
+    [OnUnload]
     internal static void UnloadHooks() {
         On.Celeste.Player.Added -= PlayerAddHook;
         On.Celeste.Player.Update -= PlayerUpdateHook;

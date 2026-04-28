@@ -3,6 +3,7 @@ using Celeste;
 using Celeste.Mod.Entities;
 using Monocle;
 using System;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -151,12 +152,12 @@ public class SquareCrystal : Actor, IHasSpeed
             RemoveSelf();
         }
     }
-
+    [OnLoad]
     public static void LoadHooks() {
         On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
         On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
         On.Celeste.Spring.ctor_Vector2_Orientations_bool -= SpringCtorHook;
         On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;

@@ -9,6 +9,7 @@ using Celeste.Mod;
 using Mono.Cecil.Cil;
 using MonoMod.RuntimeDetour;
 using System.Reflection;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -199,7 +200,7 @@ public class TungstenCube : Actor, IHasSpeed {
         }
     }
     private static ILHook? getCameraTargetHook;
-
+    [OnLoad]
     public static void LoadHooks()
     {
         IL.Celeste.Player.NormalBegin += ModNormalBegin;
@@ -215,7 +216,7 @@ public class TungstenCube : Actor, IHasSpeed {
         On.Celeste.Player.SideBounce += SideBounceHook;
         getCameraTargetHook = new(typeof(Player).GetProperty("CameraTarget", BindingFlags.Public | BindingFlags.Instance).GetGetMethod(), GetCameraTargetHook);
     }
-
+    [OnUnload]
     public static void UnloadHooks()
     {
         IL.Celeste.Player.NormalBegin -= ModNormalBegin;
@@ -231,7 +232,7 @@ public class TungstenCube : Actor, IHasSpeed {
         On.Celeste.Player.SideBounce -= SideBounceHook;
         getCameraTargetHook.Dispose();
     }
-        
+
     private static void GetCameraTargetHook(ILContext il) {
         ILCursor cur = new(il);
         if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)]))))

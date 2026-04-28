@@ -7,16 +7,19 @@ using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System.Collections.Generic;
 using MonoMod.Cil;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [TrackedAs(typeof(HeartGem))]
 [CustomEntity("ScugHelper/DashlessHeartGem")]
 public class DashlessHeartGem(EntityData data, Vector2 offset) : HeartGem(data, offset)
 {
+    [OnLoad]
     public static void LoadHooks()
     {
         On.Celeste.HeartGem.OnPlayer += OnPlayerHook;
     }
+    [OnUnload]
     public static void UnloadHooks()
     {
         On.Celeste.HeartGem.OnPlayer -= OnPlayerHook;

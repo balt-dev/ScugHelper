@@ -6,6 +6,7 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -40,6 +41,7 @@ public class GroundedRefill : Refill {
     }
     public static long TimeSince = 0;
     private static readonly long RefillSoundCooldown = 2;
+    [OnLoad]
     public static void LoadHooks() {
         On.Celeste.Level.Update += LevelUpdateHook;
         IL.Celeste.Refill.Respawn += RespawnHook;
@@ -50,8 +52,9 @@ public class GroundedRefill : Refill {
         TimeSince += 1;
         orig(self);
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
+        On.Celeste.Level.Update -= LevelUpdateHook;
         IL.Celeste.Refill.Respawn -= RespawnHook;
     }
 

@@ -160,3 +160,11 @@ entities.ScugHelper/FlagGate.placements.description.normal=Sets a flag to a give
 
 entities.ScugHelper/SnowballAction.placements.name.normal=Action - Snowball
 entities.ScugHelper/SnowballAction.placements.description.normal=Summons a oneshot snowball when alerted.
+
+entities.ScugHelper/FragileSeeker.placements.name.seeker=Seeker (Fragile)
+entities.ScugHelper/FragileSeeker.placements.description.seeker=Killed when bounced on.
+
+entities.ScugHelper/ActionDashSwitch.placements.name.up=Action Dash Switch (Up)
+entities.ScugHelper/ActionDashSwitch.placements.name.down=Action Dash Switch (Down)
+entities.ScugHelper/ActionDashSwitch.placements.name.left=Action Dash Switch (Left)
+entities.ScugHelper/ActionDashSwitch.placements.name.right=Action Dash Switch (Right)

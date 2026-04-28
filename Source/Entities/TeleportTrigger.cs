@@ -3,6 +3,7 @@ using Monocle;
 using Celeste.Mod.Entities;
 using Celeste;
 using System;
+using System.Collections.Generic;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -44,7 +45,7 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
         bool crossedLevels = level.Session.LevelData.Name != LevelTPName;
 
         Vector2 oldPos = player.Position;
-        
+
         Vector2 cameraPos = level.Camera.Position;
         if (!KeepX || crossedLevels) {
             cameraPos.X += TeleportPosition.X - player.Position.X;
@@ -82,13 +83,19 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
             player.Facing = (Facings)(-(int)player.Facing);
             player.Speed.X *= -1;
         }
-        
+
         if (crossedLevels) {
             player.PreviousPosition = player.Position = oldPos;
             string name = LevelTPName;
             level.OnEndOfFrame += () =>
             {
                 Vector2 trueCameraOffset = level.Camera.Position - level.LevelOffset;
+                List<Follower> ents = [];
+                foreach (Follower follower in player.Leader.Followers)
+                {
+                    level.Remove(follower.Entity);
+                    ents.Add(follower);
+                }
                 level.Remove(player);
                 level.UnloadLevel();
                 level.Session.Level = name;
@@ -97,7 +104,7 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
                 level.LoadLevel(Player.IntroTypes.Transition);
                 level.Camera.Position = level.LevelOffset + trueCameraOffset;
                 level.Add(player);
-                foreach (Follower follower in player.Leader.Followers) {
+                foreach (Follower follower in ents) {
                     level.Add(follower.Entity);
                 }
                 player.Position = TeleportPosition;

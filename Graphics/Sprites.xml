@@ -60,4 +60,26 @@
         <Anim id="ice" path="iceBottom" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
         <Anim id="iceShine" path="iceBottom" frames="0-4" delay="0.08" goto="ice"/>
       </neutrallessWallBoosterBottom>
+
+      <fragileSeeker path="objects/fragileSeeker/" start="idle">
+        <Justify x="0.5" y="0.5"/>
+        <Loop id="idle" path="predator" delay="0.08" frames="0-19"/>
+        <Loop id="search" path="predator" delay="0.08" frames="0-19,20-39"/>
+        <Anim id="spot" path="predator" delay="0.07" frames="40-43" goto="spotted"/>
+        <Loop id="spotted" path="predator" delay="0.07" frames="44-48"/>
+        <Anim id="windUp" path="predator" delay="0.07" frames="103-107" goto="attacking"/>
+        <Loop id="attacking" path="predator" delay="0.07" frames="49-53"/>
+        <Anim id="takeHit" path="predator" delay="0.07" frames="108-121" goto="stunned"/>
+        <Loop id="stunned" path="predator" delay="0.07" frames="122,123" />
+        <Loop id="pulse" path="predator" delay="0.04" frames="144-151" />
+        <Anim id="recover" path="rebirth" delay="0.07"/>
+        <Anim id="skid" path="predator" delay="0.07" frames="129-133" goto="attacking"/>
+        <Loop id="dazed" path="predator" delay="0.07" frames="134-143" />
+
+        <Anim id="hatch" path="predator" delay="0.05" frames="75-102" goto="idle"/>
+        <Loop id="statue" path="predator" delay="0.07" frames="75" />
+
+        <Anim id="flipMouth" path="predator" delay="0.05" frames="61-63" goto="spotted"/>
+        <Anim id="flipEyes" path="predator" delay="0.05" frames="68-74" goto="search"/>
+      </fragileSeeker>
 </Sprites>

@@ -11,6 +11,7 @@ using MonoMod.Utils;
 using Mono.Cecil.Cil;
 using System.Reflection;
 using Celeste.Mod.Helpers;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -79,6 +80,7 @@ public class MidairRefill : Refill, ICustomRefill
         SlashFx.Burst(Position, num);
         if (oneUse) RemoveSelf();
     }
+    [OnLoad]
     public static void LoadHooks() {
         On.Celeste.Player.ctor += Player_ctor;
         On.Celeste.Player.CreateTrail += Player_CreateTrail;
@@ -91,7 +93,7 @@ public class MidairRefill : Refill, ICustomRefill
         On.Celeste.Level.Reload += Level_Reload;
         On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
         On.Celeste.Player.ctor -= Player_ctor;
         On.Celeste.Player.CreateTrail -= Player_CreateTrail;

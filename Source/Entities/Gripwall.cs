@@ -7,6 +7,8 @@ using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System.Collections.Generic;
 using MonoMod.Cil;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -26,7 +28,7 @@ public class Gripwall : Entity
 
     public Gripwall(EntityData data, Vector2 offset)
         : this(data.Position + offset, data.Height, data.Bool("left"), data.Bool("refillDash"), data.Bool("refillStamina"), data.Bool("attach", false))
-        { }
+    { }
 
 
     public Gripwall(Vector2 position, float height, bool left, bool refillDash, bool refillStamina, bool attach)
@@ -134,12 +136,14 @@ public class Gripwall : Entity
         return list;
     }
 
+    [OnLoad]
     internal static void LoadHooks()
     {
         IL.Celeste.Player.ClimbUpdate += ClimbUpdateHook;
     }
 
 
+    [OnUnload]
     internal static void UnloadHooks()
     {
         IL.Celeste.Player.ClimbUpdate -= ClimbUpdateHook;

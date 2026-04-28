@@ -7,6 +7,7 @@ using Celeste.Mod.Helpers;
 using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System.Collections;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 public class GridCircle : Circle {
@@ -203,7 +204,7 @@ public class RecoilBumper : Actor, IHasSpeed
         evInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
-
+    [OnLoad]
     public static void LoadHooks() {
         if (!HookUtils.TryDisableInlining(typeof(Monocle.Grid).GetMethod("Collide", [typeof(Circle)])))
             throw new Exception("Failed to disable inlining on Monocle.Collide(Circle).");
@@ -211,7 +212,7 @@ public class RecoilBumper : Actor, IHasSpeed
         On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
         On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
         On.Monocle.Grid.Collide_Circle -= CircleCollide;
         On.Celeste.Spring.ctor_Vector2_Orientations_bool -= SpringCtorHook;

@@ -6,6 +6,8 @@ using Celeste.Mod;
 using Celeste.Mod.ScugHelper;
 using System;
 using MonoMod.Cil;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -31,7 +33,7 @@ public class PinballBooster : Booster
 
     // ----------
 
-
+    [OnLoad]
     public static void LoadHooks()
     {
         On.Celeste.Player.Bounce += BounceHook;
@@ -46,7 +48,8 @@ public class PinballBooster : Booster
         On.Celeste.Player.Update += UpdateHook;
         On.Celeste.Booster.Update += UpdateHook;
     }
-
+    
+    [OnUnload]
     public static void UnloadHooks()
     {
         On.Celeste.Player.Bounce -= BounceHook;
@@ -65,7 +68,9 @@ public class PinballBooster : Booster
     private static void UpdateHook(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
-        if (self.LastBooster != null && self.LastBooster is PinballBooster booster && booster.BoostingPlayer) {
+        if (self.LastBooster != null && self.LastBooster is PinballBooster booster && booster.BoostingPlayer)
+        
+        {
             booster.cannotUseTimer = 0.45f;
             booster.respawnTimer = Booster.RespawnTime;
             self.Speed += booster.Acceleration * Engine.DeltaTime;
@@ -93,7 +98,7 @@ public class PinballBooster : Booster
                 "event:/game/05_mirror_temple/redbooster_end", // works better for both verison
                 self.LastBooster.sprite.RenderPosition
             );
-            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBumperSquash, ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
         }
         else
             orig(self);
@@ -108,7 +113,7 @@ public class PinballBooster : Booster
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
-            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBumperSquash, 1.0f / ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBoosterSquash, 1.0f / ScugHelperModule.Settings.PinballBoosterSquash);
         }
         else
             orig(self);
@@ -155,7 +160,7 @@ public class PinballBooster : Booster
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
-            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBumperSquash, ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
         }
         else
             orig(self, data);
@@ -240,7 +245,7 @@ public class PinballBooster : Booster
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
-            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBumperSquash, 1.0f / ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBoosterSquash, 1.0f / ScugHelperModule.Settings.PinballBoosterSquash);
         }
         else
             orig(self, data);
@@ -254,7 +259,7 @@ public class PinballBooster : Booster
             Vector2 normalized = Vector2.Normalize(self.Speed) * Player.DashSpeed;
             self.Speed.Y = -Math.Max(Math.Abs(self.Speed.Y), normalized.Y);
             Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
-            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBumperSquash, 1.0f / ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBoosterSquash, 1.0f / ScugHelperModule.Settings.PinballBoosterSquash);
         }
         else
         {
@@ -270,7 +275,7 @@ public class PinballBooster : Booster
             self.Speed.Y = -Math.Max(Math.Abs(self.Speed.Y), Player.DashSpeed);
             self.level.DirectionalShake(-Vector2.UnitY, 0.1f);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
-            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBumperSquash, 1.0f / ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBoosterSquash, 1.0f / ScugHelperModule.Settings.PinballBoosterSquash);
         }
         else
         {
@@ -289,7 +294,7 @@ public class PinballBooster : Booster
             self.Speed.X = dir * Math.Max(Math.Abs(self.Speed.X), Player.DashSpeed);
             self.level.DirectionalShake(Vector2.UnitX * dir, 0.1f);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
-            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBumperSquash, ScugHelperModule.Settings.PinballBumperSquash);
+            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
             return true;
         }
 
@@ -318,10 +323,12 @@ public class PinballBooster : Booster
         ))
             throw new InvalidOperationException("Pinball bumpers failed to match IL code for the ExplodeLaunch hook.");
         cur.EmitLdarg0();
-        static bool Delegate (Player self) {
+        static bool Delegate(Player self)
+        
+        {
             if ((self.LastBooster?.BoostingPlayer ?? false) && (self.LastBooster is PinballBooster || ScugHelperModule.Settings.AllBoostersBounce))
             {
-                self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBumperSquash, ScugHelperModule.Settings.PinballBumperSquash);
+                self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
                 self.Speed = Vector2.Normalize(self.Speed) * Math.Max(self.Speed.Length(), smuggledLocal.Length());
                 return true;
             }

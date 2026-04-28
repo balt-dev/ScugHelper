@@ -8,6 +8,7 @@ using Celeste.Mod.Entities;
 using Celeste.Mod.Registry;
 using Microsoft.Xna.Framework;
 using Monocle;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 
 namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
@@ -130,25 +131,27 @@ public static class ActionManager
             ConstructorCache.TryAdd(ty, (constr, kind));
             constructor = constr;
         }
-        return (Entity) (kind switch {
+        return (Entity)(kind switch
+        {
             ConstructorKind.Bare => constructor.Invoke([]),
             ConstructorKind.TwoArg => constructor.Invoke([data, room.Position]),
             ConstructorKind.ThreeArg => constructor.Invoke([data, room.Position, new EntityID(room.Name, data.ID)]),
         });
     }
 
+    [OnLoad]
     internal static void LoadHooks() {
         Everest.Events.Level.OnLoadLevel += OnLoadLevel;
         On.Celeste.Level.Update += OnLevelUpdate;
         ActionHooks.LoadHooks();
     }
-
+    [OnUnload]
     internal static void UnloadHooks() {
         Everest.Events.Level.OnLoadLevel -= OnLoadLevel;
         On.Celeste.Level.Update -= OnLevelUpdate;
         ActionHooks.UnloadHooks();
     }
-    
+
     private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
         orig(self);
         dummy.Scene = self;

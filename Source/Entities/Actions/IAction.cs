@@ -26,7 +26,8 @@ public interface IAction
     /// <summary>
     /// Helper method to get the groups of an action.
     /// </summary>
-    public static sealed string[] GetGroups(EntityData data) => data.String("Groups", "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    public static sealed string[] GetGroups(EntityData data) => GetGroups(data.String("Groups", ""));
+    public static sealed string[] GetGroups(string str) => (str ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     /// <summary>
     /// Helper method to get the targets of something that will trigger action groups.
     /// </summary>

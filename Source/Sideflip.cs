@@ -1,4 +1,5 @@
 using System;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod.ScugHelper.Entities.Actions;
 using Microsoft.Xna.Framework;
@@ -29,13 +30,16 @@ public static class Sideflip
     internal static int FramesSinceNonZero = 100;
     internal static int FramesSinceSwap = 100;
 
-    internal static void LoadHooks() {
+    [OnLoad]
+    internal static void LoadHooks()
+    {
         On.Celeste.Player.Update += OnUpdate;
-        On.Celeste.Player.Jump += OnJump;
+        On.Celeste.Player.Jump += OnJump_Sideflip;
     }
+    [OnUnload]
     internal static void UnloadHooks() {
         On.Celeste.Player.Update -= OnUpdate;
-        On.Celeste.Player.Jump -= OnJump;
+        On.Celeste.Player.Jump -= OnJump_Sideflip;
     }
 
     private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self)
@@ -54,7 +58,7 @@ public static class Sideflip
         }
     }
 
-    private static void OnJump(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx)
+    private static void OnJump_Sideflip(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx)
     {
         bool wasNormal = self.StateMachine.State == Player.StNormal;
         if (Enabled && wasNormal && FramesSinceSwap <= JumpFrameLeniency) {

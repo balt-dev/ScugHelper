@@ -21,6 +21,10 @@
         <PackageReference Include="MonoMod.Patcher" Version="25.0.0-prerelease.2" />
         <PackageReference Include="CelesteAnalyzer" Version="*" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="CelesteMod.Roslyn.ModLifecycleAttributes" Version="*" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="CelesteMod.Publicizer" Version="*" CelesteAssembly="$(CelestePrefix)\Celeste.dll" />

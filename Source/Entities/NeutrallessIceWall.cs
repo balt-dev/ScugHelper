@@ -7,6 +7,7 @@ using MonoMod.Cil;
 using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using System;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -86,11 +87,11 @@ public class NeutrallessWallBooster : WallBooster
 
         return list;
     }
-
+    [OnLoad]
     public static void LoadHooks() {
         wallJumpHook = new ILHook(typeof(Player).GetMethod("orig_WallJump", BindingFlags.Instance | BindingFlags.NonPublic)!, ModWallJump);
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
         wallJumpHook?.Dispose();
     }

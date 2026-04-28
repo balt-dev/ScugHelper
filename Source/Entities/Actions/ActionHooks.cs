@@ -1,5 +1,6 @@
 using System;
 using Celeste.Mod.Entities;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.ScugHelper.Entities.Actions;
@@ -7,8 +8,9 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
 public static class ActionHooks
 {
+    [OnLoad]
     public static void LoadHooks() {
-        On.Celeste.Player.Jump += OnJump;
+        On.Celeste.Player.Jump += OnJump_Action;
         On.Celeste.Player.WallJump += OnWallJump;
         On.Celeste.Player.SuperJump += OnSuperJump;
         On.Celeste.Player.SuperWallJump += OnSuperWallJump;
@@ -24,10 +26,10 @@ public static class ActionHooks
         On.Celeste.TouchSwitch.TurnOn += OnTouchSwitch;
         On.Celeste.Torch.OnPlayer += OnTorch;
     }
-
+    [OnUnload]
     public static void UnloadHooks()
     {
-        On.Celeste.Player.Jump -= OnJump;
+        On.Celeste.Player.Jump -= OnJump_Action;
         On.Celeste.Player.WallJump -= OnWallJump;
         On.Celeste.Player.SuperJump -= OnSuperJump;
         On.Celeste.Player.SuperWallJump -= OnSuperWallJump;
@@ -43,7 +45,7 @@ public static class ActionHooks
         On.Celeste.TouchSwitch.TurnOn -= OnTouchSwitch;
         On.Celeste.Torch.OnPlayer -= OnTorch;
     }
-    
+
     private static void OnTorch(On.Celeste.Torch.orig_OnPlayer orig, Torch self, Player player)
     {
         var was = self.lit;
@@ -152,7 +154,7 @@ public static class ActionHooks
         ActionManager.AlertActions(["#PlayerWallJump"], self.level);
     }
 
-    private static void OnJump(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx)
+    private static void OnJump_Action(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx)
     {
         orig(self, particles, playSfx);
         ActionManager.AlertActions(["#PlayerJump"], self.level);

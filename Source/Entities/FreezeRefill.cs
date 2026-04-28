@@ -7,6 +7,7 @@ using System;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod;
 using System.Collections;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -65,10 +66,11 @@ public class FreezeRefill : Refill, ICustomRefill
         SlashFx.Burst(Position, num);
         if (oneUse) RemoveSelf();
     }
+    [OnLoad]
     public static void LoadHooks() {
         IL.Monocle.Engine.Update += EngineUpdateHook;
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
         IL.Monocle.Engine.Update -= EngineUpdateHook;
     }

@@ -1,6 +1,7 @@
 
 
 using Celeste;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 internal interface ICustomRefill
@@ -14,11 +15,11 @@ internal interface ICustomRefill
         else
             orig(self, player);
     }
-    
+    [OnLoad]
     public static void LoadHooks() {
         On.Celeste.Refill.OnPlayer += OnPlayerHook;
     }
-
+    [OnUnload]
     public static void UnloadHooks() {
         On.Celeste.Refill.OnPlayer -= OnPlayerHook;
     }

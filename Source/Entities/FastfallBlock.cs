@@ -6,6 +6,7 @@ using MonoMod.Cil;
 using System;
 using System.Reflection;
 using MonoMod.RuntimeDetour;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -15,12 +16,12 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
 {
     private readonly int SpeedMinimum = data.Int("SpeedMinimum", 0);
     private static ILHook? hook_Player_orig_Update;
-
+    [OnLoad]
     internal static void LoadHooks()
     {
         hook_Player_orig_Update = new ILHook(typeof(Player).GetMethod("orig_Update", BindingFlags.Public | BindingFlags.Instance)!, PlayerUpdateHook);
     }
-
+    [OnUnload]
     internal static void UnloadHooks() {
         hook_Player_orig_Update?.Dispose();
     }

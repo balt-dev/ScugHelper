@@ -6,6 +6,7 @@ using Celeste.Mod.ScugHelper;
 using MonoMod.Cil;
 using System;
 using Celeste.Mod;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/DebugViewTrigger")]
@@ -21,9 +22,12 @@ public class DebugViewTrigger(EntityData e, Vector2 offset) : Trigger(e, offset)
         base.OnLeave(player);
         ScugHelperModule.Instance.ForceRenderDebug = false;
     }
-    public static void LoadHooks() {
+    [OnLoad]
+    public static void LoadHooks()
+    {
         IL.Celeste.GameplayRenderer.Render += RenderHook;
     }
+    [OnUnload]
     public static void UnloadHooks() {
         IL.Celeste.GameplayRenderer.Render -= RenderHook;
     }
