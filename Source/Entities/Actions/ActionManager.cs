@@ -143,13 +143,11 @@ public static class ActionManager
     internal static void LoadHooks() {
         Everest.Events.Level.OnLoadLevel += OnLoadLevel;
         On.Celeste.Level.Update += OnLevelUpdate;
-        ActionHooks.LoadHooks();
     }
     [OnUnload]
     internal static void UnloadHooks() {
         Everest.Events.Level.OnLoadLevel -= OnLoadLevel;
         On.Celeste.Level.Update -= OnLevelUpdate;
-        ActionHooks.UnloadHooks();
     }
 
     private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
