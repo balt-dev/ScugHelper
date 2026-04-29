@@ -6,10 +6,10 @@ local T = {}
 
 local builtins = {
     "#BerryCollect",
+    "#CassetteBlock0",
     "#CassetteBlock1",
     "#CassetteBlock2",
     "#CassetteBlock3",
-    "#CassetteBlock4",
     "#PlayerAirborne",
     "#PlayerLand",
     "#PlayerDie",

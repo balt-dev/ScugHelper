@@ -36,7 +36,9 @@ public class FragileSeeker : Seeker
             sprite.OnLastFrame(last);
         };
     }
-    
+
+    public FragileSeeker(EntityData data, Vector2 offset) : this(data.Position + offset, data.NodesOffset(offset)) {}
+
     [OnLoad]
     public static void LoadHooks() {
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
