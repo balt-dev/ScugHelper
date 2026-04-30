@@ -181,3 +181,11 @@ entities.ScugHelper/SeekerTempleGate.placements.description.normal=Opens when no
 
 entities.ScugHelper/OverchargeRefill.placements.name.normal=Overcharge Refill
 entities.ScugHelper/OverchargeRefill.placements.description.normal=Retains speed after a super or at the end of a dash. Gives 1.2x speed when performing a super. Consumed when a super is performed.
+
+entities.ScugHelper/StarjumpRailing.placements.name.normal=Starjump Railing
+
+entities.ScugHelper/LimboRefill.placements.name.normal=Limbo Refill
+entities.ScugHelper/LimboRefill.placements.description.normal=Prevents the player from colliding with anything other than a Platform, Trigger, or Gate when held. Consumed when no inputs are pressed or held for more than 30 frames. 
+
+entities.ScugHelper/LimboField.placements.name.normal=Limbo Field
+entities.ScugHelper/LimboField.placements.description.normal=Field that is solid for the player when they are under the effect of a Limbo Refill, and intangible otherwise.

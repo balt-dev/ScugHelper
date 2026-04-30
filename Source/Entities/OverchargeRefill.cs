@@ -54,7 +54,7 @@ public class OverchargeRefill : Refill, ICustomRefill
     public void CustomOnPlayer(Player player)
     {
         if (OverchargeDashCount == 0) {
-            Audio.Play("event:/game/general/diamond_touch", Position);
+            Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_touch", Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             Collidable = false;
             Add(new Coroutine(NewRefillRoutine(player)));
