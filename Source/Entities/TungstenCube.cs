@@ -296,7 +296,12 @@ public class TungstenCube : Actor, IHasSpeed {
     private static void CanWallJumpHook(On.Celeste.Player.orig_WallJump orig, Player self, int dir)
     {
         orig(self, dir);
-        if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+        if (self.Holding?.Entity is TungstenCube)
+        {
+            var mult = self.OnGround() ? JumpMultiplier : 0.4f;
+            self.Speed.Y *= mult; 
+            self.varJumpSpeed *= mult;
+        }
     }
 
     private static void CanSuperJumpHook(On.Celeste.Player.orig_SuperJump orig, Player self)

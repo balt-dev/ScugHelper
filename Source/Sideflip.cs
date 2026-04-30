@@ -72,9 +72,10 @@ public static class Sideflip
             self.wallBoostTimer = 0f;
             self.Speed.X = BackflipXMult * Math.Abs(self.Speed.X) * LastNonZeroX;
             self.Speed.Y = -float.Lerp(BackflipYBoostLow, BackflipYBoostHigh, Math.Max(0, (Math.Abs(self.Speed.X) - BackflipXLow) / (BackflipXHigh - BackflipXLow)));
+            if (self.Holding?.Entity is Entities.TungstenCube)
+                self.Speed.Y *= 0.3f;
             self.Speed += self.LiftBoost;
             self.varJumpSpeed = self.Speed.Y;
-
             if (particles) {
                 int index = -1;
                 Platform platformByPriority = SurfaceIndex.GetPlatformByPriority(self.CollideAll<Platform>(self.Position + Vector2.UnitY, self.temp));
