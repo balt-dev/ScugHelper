@@ -89,7 +89,6 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
             string name = LevelTPName;
             level.OnEndOfFrame += () =>
             {
-                Vector2 trueCameraOffset = level.Camera.Position - level.LevelOffset;
                 List<Follower> ents = [];
                 foreach (Follower follower in player.Leader.Followers)
                 {
@@ -102,7 +101,10 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
                 level.Session.RespawnPoint = level.GetSpawnPoint(TeleportPosition);
                 level.Session.FirstLevel = false;
                 level.LoadLevel(Player.IntroTypes.Transition);
-                level.Camera.Position = level.LevelOffset + trueCameraOffset;
+                level.Camera.Position = TeleportPosition;
+                level.Camera.X = Math.Clamp(level.Camera.X, level.Bounds.Left, level.Bounds.Right - (level.Camera.Right - level.Camera.Left));
+                level.Camera.Y = Math.Clamp(level.Camera.Y, level.Bounds.Top, level.Bounds.Bottom - (level.Camera.Bottom - level.Camera.Top));
+                StarJumpBlock _;
                 level.Add(player);
                 foreach (Follower follower in ents) {
                     level.Add(follower.Entity);

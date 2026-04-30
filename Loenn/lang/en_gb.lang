@@ -178,3 +178,6 @@ entities.ScugHelper/ActionTempleGate.placements.description.normal=Opens when so
 
 entities.ScugHelper/SeekerTempleGate.placements.name.normal=Seeker Temple Gate
 entities.ScugHelper/SeekerTempleGate.placements.description.normal=Opens when no seekers are left in the room (i.e. when all have been killed).
+
+entities.ScugHelper/OverchargeRefill.placements.name.normal=Overcharge Refill
+entities.ScugHelper/OverchargeRefill.placements.description.normal=Retains speed after a super or at the end of a dash. Gives 1.2x speed when performing a super. Consumed when a super is performed.
