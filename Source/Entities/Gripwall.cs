@@ -8,6 +8,7 @@ using Celeste.Mod.ScugHelper;
 using System.Collections.Generic;
 using MonoMod.Cil;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Celeste.Mod.Helpers;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -152,7 +153,7 @@ public class Gripwall : Entity
     private static void ClimbUpdateHook(ILContext il)
     {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNext(MoveType.Before,
+        if (!cur.TryGotoNextBestFit(MoveType.Before,
             instr => instr.MatchLdarg0(),
             instr => instr.MatchCallvirt<Player>("WallBoosterCheck")
         )) throw new InvalidOperationException("Gripwalls failed to match IL code for the ClimbUpdate hook.");

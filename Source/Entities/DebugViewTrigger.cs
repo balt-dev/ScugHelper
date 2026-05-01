@@ -7,6 +7,7 @@ using MonoMod.Cil;
 using System;
 using Celeste.Mod;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Celeste.Mod.Helpers;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/DebugViewTrigger")]

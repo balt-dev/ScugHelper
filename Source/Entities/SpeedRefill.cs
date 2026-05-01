@@ -98,7 +98,7 @@ public class SpeedRefill : Refill, ICustomRefill
         Depth = 8999;
         player.Speed = SpeedToSet;
         player.Position = Center + (player.Position - player.Center);
-        if (!(player.LastBooster is PinballBooster pinball && pinball.BoostingPlayer)) player.StateMachine.State = Player.StLaunch;
+        if (!(player.LastBooster is PinballBooster pinball && pinball.BoostingPlayer && pinball.Bounce)) player.StateMachine.State = Player.StLaunch;
         yield return 0.05f;
         float num = player.Speed.Angle();
         level.ParticlesFG.Emit(P_Shatter, 5, Position, Vector2.One * 4f, num - MathF.PI / 2f);

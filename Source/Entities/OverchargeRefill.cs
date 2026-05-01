@@ -103,11 +103,11 @@ public class OverchargeRefill : Refill, ICustomRefill
         PlayerDashCoroHook?.Dispose();
     }
 
-    private static int OverchargeDashCount;
+    public static int OverchargeDashCount { get; internal set; }
 
     private static bool HasOverchargeDash() => OverchargeDashCount > 0;
 
-    private static readonly Color TrailColor = Calc.HexToColor("a5adff");
+    internal static readonly Color TrailColor = Calc.HexToColor("a5adff");
 
     private static void CreateTrail(Player player) {
         Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
@@ -161,7 +161,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         ILCursor cur = new(il);
         ILLabel label = null!;
 
-        cur.GotoNext(MoveType.Before,
+        cur.GotoNextBestFit(MoveType.Before,
             static instr => instr.MatchLdloc1(),
             static instr => instr.MatchLdloc3(),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
@@ -177,11 +177,11 @@ public class OverchargeRefill : Refill, ICustomRefill
         cur.EmitDelegate(MultiplyOvercharge);
         cur.EmitStloc3();
         
-        cur.GotoNext(MoveType.After,
+        cur.GotoNextBestFit(MoveType.After,
             static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)),
             static instr => instr.MatchLdcR4(160)
         );
-        cur.GotoNext(MoveType.After,
+        cur.GotoNextBestFit(MoveType.After,
             static instr => instr.MatchCall<Vector2>("op_Multiply"),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
         );

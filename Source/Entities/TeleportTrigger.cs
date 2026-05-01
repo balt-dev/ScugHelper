@@ -101,14 +101,16 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
                 level.Session.RespawnPoint = level.GetSpawnPoint(TeleportPosition);
                 level.Session.FirstLevel = false;
                 level.LoadLevel(Player.IntroTypes.Transition);
-                level.Camera.Position = TeleportPosition;
+                if (!KeepX) level.Camera.Position = new(TeleportPosition.X, level.Camera.Position.Y);
+                if (!KeepY) level.Camera.Position = new(level.Camera.Position.X, TeleportPosition.Y);
                 level.Camera.X = Math.Clamp(level.Camera.X, level.Bounds.Left, level.Bounds.Right - (level.Camera.Right - level.Camera.Left));
                 level.Camera.Y = Math.Clamp(level.Camera.Y, level.Bounds.Top, level.Bounds.Bottom - (level.Camera.Bottom - level.Camera.Top));
                 level.Add(player);
                 foreach (Follower follower in ents) {
                     level.Add(follower.Entity);
                 }
-                player.Position = TeleportPosition;
+                if (!KeepX) player.Position.X = TeleportPosition.X;
+                if (!KeepY) player.Position.Y = TeleportPosition.Y;
                 level.Wipe?.Cancel();
                 crossedLevels = true;
             };

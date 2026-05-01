@@ -185,7 +185,32 @@ entities.ScugHelper/OverchargeRefill.placements.description.normal=Retains speed
 entities.ScugHelper/StarjumpRailing.placements.name.normal=Starjump Railing
 
 entities.ScugHelper/LimboRefill.placements.name.normal=Limbo Refill
-entities.ScugHelper/LimboRefill.placements.description.normal=Prevents the player from colliding with anything other than a Platform, Trigger, or Gate when held. Consumed when no inputs are pressed or held for more than 30 frames. 
+entities.ScugHelper/LimboRefill.placements.description.normal=Prevents the player from colliding with anything other than a Platform, Trigger, or Gate when held. Consumed when no inputs are pressed or held for more than 30 frames.
 
 entities.ScugHelper/LimboField.placements.name.normal=Limbo Field
 entities.ScugHelper/LimboField.placements.description.normal=Field that is solid for the player when they are under the effect of a Limbo Refill, and intangible otherwise.
+
+entities.ScugHelper/SeekerRefill.placements.name.normal=Seeker Refill
+entities.ScugHelper/SeekerRefill.placements.description.normal=Turns the player into a custom-implemented player seeker. This is not the vanilla player seeker, and is instead an ad-hoc implementation to keep compatibility with vanilla entities.
+
+triggers.ScugHelper/SeekerTrigger.placements.name.trigger=Seeker Trigger
+triggers.ScugHelper/SeekerTrigger.placements.description.trigger=Turns the player into a custom-implemented player seeker. This is not the vanilla player seeker, and is instead an ad-hoc implementation to keep compatibility with vanilla entities.
+
+entities.ScugHelper/DeSeekerField.placements.name.normal=De-Seeker Field
+entities.ScugHelper/DeSeekerField.placements.description.normal=Kills any seekers inside it, and turns a ScugHelper player seeker back to a normal player.
+
+entities.ScugHelper/SubpixelKillField.placements.name.normal=Subpixel Kill Field
+entities.ScugHelper/SubpixelKillField.placements.description.normal=Player killbox that has precision to the subpixel level.
+
+entities.ScugHelper/RefillField.placements.name.midairOn=Refill Field (Midair On)
+entities.ScugHelper/RefillField.placements.name.midairOff=Refill Field (Midair Off)
+entities.ScugHelper/RefillField.placements.name.overchargeOn=Refill Field (Overcharge On)
+entities.ScugHelper/RefillField.placements.name.overchargeOff=Refill Field (Overcharge Off)
+entities.ScugHelper/RefillField.placements.name.limboOn=Refill Field (Limbo On)
+entities.ScugHelper/RefillField.placements.name.limboOff=Refill Field (Limbo Off)
+entities.ScugHelper/RefillField.placements.description.midairOn=Forces the midair refill state on.
+entities.ScugHelper/RefillField.placements.description.midairOff=Forces the midair refill state off.
+entities.ScugHelper/RefillField.placements.description.overchargeOn=Forces the overcharge refill state on.
+entities.ScugHelper/RefillField.placements.description.overchargeOff=Forces the overcharge refill state off.
+entities.ScugHelper/RefillField.placements.description.limboOn=Forces the limbo refill state on.
+entities.ScugHelper/RefillField.placements.description.limboOff=Forces the limbo refill state off.

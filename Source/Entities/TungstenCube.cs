@@ -10,6 +10,7 @@ using Mono.Cecil.Cil;
 using MonoMod.RuntimeDetour;
 using System.Reflection;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Celeste.Mod.Helpers;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -235,7 +236,7 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private static void GetCameraTargetHook(ILContext il) {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)]))))
+        if (!cur.TryGotoNextBestFit(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)]))))
             throw new Exception("Tungsten cube failed to match code for camera target offset hook.");
         cur.EmitLdarg0();
         cur.EmitLdloc1();

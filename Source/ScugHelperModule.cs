@@ -37,6 +37,7 @@ public class ScugHelperModule : EverestModule
         typeof(FrostHelperImports).ModInterop();
         LifecycleMethods.OnLoad();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
+        On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
     }
 
     public override void Unload()
@@ -44,15 +45,40 @@ public class ScugHelperModule : EverestModule
         // TODO: unapply any hooks applied in Load()
         LifecycleMethods.OnUnload();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
+        On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int -= OnSquishWiggle;
     }
 
     private static void OnPlayerSeekerCollideHook(On.Celeste.PlayerSeeker.orig_OnCollide orig, PlayerSeeker self, CollisionData data)
     {
         orig(self, data);
-        if (Settings.PlayerSeekerDashSwitchFix && data.Hit is DashSwitch dashSwitch) {
+        if (Settings.PlayerSeekerDashSwitchFix && data.Hit is DashSwitch dashSwitch)
+        {
             Logger.Info(nameof(ScugHelperModule), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
             dashSwitch.OnDashed(null, Vector2.UnitX * Math.Sign(self.dashDirection.X));
             dashSwitch.OnDashed(null, Vector2.UnitY * Math.Sign(self.dashDirection.Y));
         }
+    }
+    
+    private static bool OnSquishWiggle(On.Celeste.Actor.orig_TrySquishWiggle_CollisionData_int_int orig, Actor self, CollisionData data, int wiggleX, int wiggleY)
+    {
+        if (KillingSeeker) return false;
+        return orig(self, data, wiggleX, wiggleY);
+    }
+    
+    
+    static bool KillingSeeker;
+    
+    public static void KillSeeker(Seeker self)
+    {
+        KillingSeeker = true;
+        var solid = new Solid(Vector2.Zero, 0, 0, false);
+        self.SquishCallback(new CollisionData() {
+            Direction = Vector2.Zero,
+            Moved = Vector2.Zero,
+            TargetPosition = self.Position,
+            Hit = solid,
+            Pusher = solid
+        });
+        KillingSeeker = false;
     }
 }

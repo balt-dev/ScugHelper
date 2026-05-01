@@ -8,6 +8,7 @@ using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using System;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Celeste.Mod.Helpers;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -101,12 +102,12 @@ public class NeutrallessWallBooster : WallBooster
     {
         ILCursor cursor = new(il);
 
-        if (!cursor.TryGotoNext(MoveType.After,
+        if (!cursor.TryGotoNextBestFit(MoveType.After,
             instr => instr.OpCode == OpCodes.Ldarg_0,
             instr => instr.MatchLdfld<Player>("moveX"))
         ) throw new Exception("Neutralless wall boosters failed to match IL for Player orig_WallJump hook.");
         ILCursor cursorAfterBranch = cursor.Clone();
-        if (!cursorAfterBranch.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Brfalse_S))
+        if (!cursorAfterBranch.TryGotoNextBestFit(MoveType.After, instr => instr.OpCode == OpCodes.Brfalse_S))
             throw new Exception("Neutralless wall boosters failed to match IL for Player orig_WallJump hook.");
         cursor.Emit(OpCodes.Pop);
         cursor.Emit(OpCodes.Ldarg_0);

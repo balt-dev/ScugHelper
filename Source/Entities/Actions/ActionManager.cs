@@ -154,11 +154,13 @@ public static class ActionManager
         orig(self);
         dummy.Scene = self;
         dummy.Update();
+        UpdateVariables(self);
     }
 
     private static void OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
     {
-        if (isFromLoader) {
+        if (isFromLoader)
+        {
             actionMap.Clear();
             idSet.Clear();
             updaters.Clear();
@@ -174,6 +176,34 @@ public static class ActionManager
         if (isFromLoader)
             AlertActions(["#InitActions"], level);
         AlertActions(["#LoadLevel"], level);
+    }
+
+    internal static void UpdateVariables(Level level) {
+        Session session = level.Session;
+        if (level.Tracker.GetEntity<Player>() is Player player)
+        {
+            session.SetSlider("ScugHelper.PlayerX", player.Position.X);
+            session.SetSlider("ScugHelper.PlayerY", player.Position.Y);
+            session.SetSlider("ScugHelper.PlayerSpeedX", player.Speed.X);
+            session.SetSlider("ScugHelper.PlayerSpeedY", player.Speed.Y);
+            session.SetSlider("ScugHelper.PlayerSubpixelX", player.movementCounter.X);
+            session.SetSlider("ScugHelper.PlayerSubpixelY", player.movementCounter.Y);
+            session.SetSlider("ScugHelper.PlayerStamina", player.Stamina);
+            session.SetCounter("ScugHelper.PlayerDashes", player.Dashes);
+            session.SetCounter("ScugHelper.PlayerState", player.StateMachine.State);
+            session.SetFlag("ScugHelper.PlayerDead", player.Dead);
+            session.SetFlag("ScugHelper.PlayerOnGround", player.OnGround());
+            session.SetFlag("ScugHelper.PlayerOnSafeGround", player.OnSafeGround);
+            session.SetFlag("ScugHelper.PlayerDashAttacking", player.DashAttacking);
+            session.SetFlag("ScugHelper.IsPlayerSeeker", player.Get<PlayerSeekerComponent>() is not null);
+        }
+        session.SetFlag("ScugHelper.HasMidair", MidairRefill.MidairDashCount > 0);
+        session.SetFlag("ScugHelper.HasOvercharge", OverchargeRefill.OverchargeDashCount > 0);
+        session.SetFlag("ScugHelper.InLimbo", LimboRefill.LimboTimer > 0);
+        session.SetCounter("ScugHelper.LevelX", level.Bounds.X);
+        session.SetCounter("ScugHelper.LevelY", level.Bounds.Y);
+        session.SetCounter("ScugHelper.LevelWidth", level.Bounds.Width);
+        session.SetCounter("ScugHelper.LevelHeight", level.Bounds.Height);
     }
 
     [Command("alert", "Alerts a specified action group.")]

@@ -20,7 +20,7 @@ public class LimboRefill : Refill, ICustomRefill
 {
     private static readonly float InitialLimboLength = 2f;
     private static readonly float RefreshLimboLength = 0.5f;
-    
+
     public LimboRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
     {
         Depth = -100;
@@ -101,13 +101,13 @@ public class LimboRefill : Refill, ICustomRefill
         On.Celeste.LevelLoader.StartLevel -= LevelLoader_StartLevel;
         On.Monocle.Collider.Collide_Entity -= OnCollide_HACK;
     }
-    
+
     // WARNING
     // DO NOT DO THIS.
     // I normally would not do this, however a ColliderList doesn't work here.
     private static bool OnCollide_HACK(On.Monocle.Collider.orig_Collide_Entity orig, Collider self, Entity entity)
     {
-        return (!(self.Entity is Player && LimboTimer > 0f) || entity is Platform or Trigger or InvisibleBarrier) && orig(self, entity);
+        return (!(self.Entity is Player && LimboTimer > 0f) || entity is Platform or Trigger or InvisibleBarrier or RefillField) && orig(self, entity);
     }
 
     private static void Player_Render(On.Celeste.Player.orig_Render orig, Player self)
@@ -116,7 +116,7 @@ public class LimboRefill : Refill, ICustomRefill
             orig(self);
     }
 
-    public static float LimboTimer { get; private set; }
+    public static float LimboTimer { get; internal set; }
 
     private static void CreateTrail(Player player) {
         Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
@@ -130,18 +130,25 @@ public class LimboRefill : Refill, ICustomRefill
         else
             orig(player);
     }
-    
+    static float oldTimer;
+
     private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
-    {   
+    {
         orig(self);
 
         if (LimboTimer > 0 && self.Scene.OnInterval(0.05f))
             CreateTrail(self);
-        
-        if (LimboTimer > 0 && (Input.MoveX != 0 || Input.MoveY != 0 || Input.Jump.Check || Input.Dash.Check || Input.Grab.Check || Input.CrouchDash.Check)) {
+
+        if (LimboTimer > 0 && (Input.MoveX != 0 || Input.MoveY != 0 || Input.Jump.Check || Input.Dash.Check || Input.Grab.Check || Input.CrouchDash.Check))
+        {
             LimboTimer = Math.Max(LimboTimer, RefreshLimboLength);
         }
         LimboTimer -= Engine.DeltaTime;
+        if (oldTimer > 0 && LimboTimer <= 0)
+        {
+            self.Play("event:/game/06_reflection/feather_state_end");
+        }
+        oldTimer = LimboTimer;
     }
 
     private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self)

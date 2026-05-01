@@ -107,7 +107,7 @@ public class MidairRefill : Refill, ICustomRefill
         On.Celeste.LevelLoader.StartLevel -= LevelLoader_StartLevel;
     }
 
-    private static int MidairDashCount;
+    public static int MidairDashCount { get; internal set; }
 
     private static void Player_ctor(On.Celeste.Player.orig_ctor orig, Player player, Vector2 position, PlayerSpriteMode spriteMode) {
         orig(player, position, spriteMode);
@@ -147,11 +147,11 @@ public class MidairRefill : Refill, ICustomRefill
 
         ILLabel? label = null;
 
-        if (!cur.TryGotoNext(MoveType.After,
+        if (!cur.TryGotoNextBestFit(MoveType.After,
             instr => instr.MatchLdarg(0),
             instr => instr.MatchLdfld<Player>("jumpGraceTimer")
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
-        if (!cur.TryGotoNext(MoveType.After,
+        if (!cur.TryGotoNextBestFit(MoveType.After,
             instr => instr.MatchLdcR4(0.0f),
             instr => instr.MatchBleUn(out label)
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
@@ -213,7 +213,7 @@ public class MidairRefill : Refill, ICustomRefill
         ILCursor cursor = new(il);
 
         // we want to favor vanilla wallbounce behavior, so we append our own to the end
-        if (!cursor.TryGotoNext(MoveType.After,
+        if (!cursor.TryGotoNextBestFit(MoveType.After,
             static instr => instr.MatchLdarg(0),
             static instr => instr.MatchLdcI4(1),
             static instr => instr.MatchCallvirt(m_WallJump))

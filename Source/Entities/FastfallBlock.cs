@@ -7,6 +7,7 @@ using System;
 using System.Reflection;
 using MonoMod.RuntimeDetour;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Celeste.Mod.Helpers;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
@@ -29,7 +30,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
     private static void PlayerUpdateHook(ILContext il)
     {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNext(MoveType.After,
+        if (!cur.TryGotoNextBestFit(MoveType.After,
             static instr => instr.MatchLdcI4(22),
             static instr => instr.MatchBeq(out _)
         )) throw new Exception("Fastfall blocks failed to match IL for Player orig_Update hook.");

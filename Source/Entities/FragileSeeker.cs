@@ -12,8 +12,6 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/FragileSeeker")]
 public class FragileSeeker : Seeker
 {
-    bool Crushing = false;
-
     public FragileSeeker(Vector2 position, Vector2[] patrolPoints) : base(position, patrolPoints)
     {
         sprite.RemoveSelf();
@@ -41,13 +39,11 @@ public class FragileSeeker : Seeker
 
     [OnLoad]
     public static void LoadHooks() {
-        On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
         On.Celeste.Seeker.GotBouncedOn += OnBounce;
         On.Celeste.Seeker.CreateTrail += OnTrail;
     }
     [OnUnload]
     public static void UnloadHooks() {
-        On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int -= OnSquishWiggle;
         On.Celeste.Seeker.GotBouncedOn -= OnBounce;
         On.Celeste.Seeker.CreateTrail -= OnTrail;
     }
@@ -67,20 +63,12 @@ public class FragileSeeker : Seeker
         else orig(self);
     }
 
-    private static bool OnSquishWiggle(On.Celeste.Actor.orig_TrySquishWiggle_CollisionData_int_int orig, Actor self, CollisionData data, int wiggleX, int wiggleY)
-    {
-        if (self is FragileSeeker fragSeeker && fragSeeker.Crushing) return false;
-        return orig(self, data, wiggleX, wiggleY);
-    }
-
     private static void OnBounce(On.Celeste.Seeker.orig_GotBouncedOn orig, Seeker self, Entity entity)
     {
         if (self is FragileSeeker fragSeeker) {
             IEnumerator Coro() {
                 yield return 0.3f;
-                fragSeeker.Crushing = true;
-                self.SquishCallback(new CollisionData());
-                fragSeeker.Crushing = false;
+                ScugHelperModule.KillSeeker(fragSeeker);
             }
             self.Add(new Coroutine(Coro()));
         }
