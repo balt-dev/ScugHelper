@@ -223,3 +223,31 @@ entities.ScugHelper/GlobalEntityActionListener.placements.description.normal=Con
 
 entities.ScugHelper/EntityGlobalizer.placements.name.normal=Entity Globalizer
 entities.ScugHelper/EntityGlobalizer.placements.description.normal=Makes an entity map-global. May be unstable with entities that expect to be in a level. May fail for some vanilla entities with weird constructors.
+
+entities.ScugHelper/SeekerSpinner.placements.name.normal=Seeker Spinner
+entities.ScugHelper/SeekerSpinner.placements.description.normal=Kills Seekers and ScugHelper Player Seekers.
+
+entities.ScugHelper/SeekerSpikes-Up.placements.name.up_default=Seeker Spikes (Up, Default)
+entities.ScugHelper/SeekerSpikes-Up.placements.name.up_outline=Seeker Spikes (Up, Outline)
+entities.ScugHelper/SeekerSpikes-Up.placements.name.up_cliffside=Seeker Spikes (Up, Cliffside)
+entities.ScugHelper/SeekerSpikes-Up.placements.name.up_reflection=Seeker Spikes (Up, Reflection)
+entities.ScugHelper/SeekerSpikes-Up.placements.name.up_tentacles=Seeker Spikes (Up, Tentacles)
+
+entities.ScugHelper/SeekerSpikes-Right.placements.name.right_default=Seeker Spikes (Right, Default)
+entities.ScugHelper/SeekerSpikes-Right.placements.name.right_outline=Seeker Spikes (Right, Outline)
+entities.ScugHelper/SeekerSpikes-Right.placements.name.right_cliffside=Seeker Spikes (Right, Cliffside)
+entities.ScugHelper/SeekerSpikes-Right.placements.name.right_reflection=Seeker Spikes (Right, Reflection)
+entities.ScugHelper/SeekerSpikes-Right.placements.name.right_tentacles=Seeker Spikes (Right, Tentacles)
+
+entities.ScugHelper/SeekerSpikes-Down.placements.name.down_default=Seeker Spikes (Down, Default)
+entities.ScugHelper/SeekerSpikes-Down.placements.name.down_outline=Seeker Spikes (Down, Outline)
+entities.ScugHelper/SeekerSpikes-Down.placements.name.down_cliffside=Seeker Spikes (Down, Cliffside)
+entities.ScugHelper/SeekerSpikes-Down.placements.name.down_reflection=Seeker Spikes (Down, Reflection)
+entities.ScugHelper/SeekerSpikes-Down.placements.name.down_tentacles=Seeker Spikes (Down, Tentacles)
+
+entities.ScugHelper/SeekerSpikes-Left.placements.name.left_default=Seeker Spikes (Left, Default)
+entities.ScugHelper/SeekerSpikes-Left.placements.name.left_outline=Seeker Spikes (Left, Outline)
+entities.ScugHelper/SeekerSpikes-Left.placements.name.left_cliffside=Seeker Spikes (Left, Cliffside)
+entities.ScugHelper/SeekerSpikes-Left.placements.name.left_reflection=Seeker Spikes (Left, Reflection)
+entities.ScugHelper/SeekerSpikes-Left.placements.name.left_tentacles=Seeker Spikes (Left, Tentacles)
+

@@ -143,8 +143,8 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
     float trailTimerA;
     float trailTimerB;
-    bool disableDeath;
-    Seeker dummySeeker = new(Vector2.Zero, []);
+    internal bool disableDeath;
+    readonly Seeker dummySeeker = new(Vector2.Zero, []);
 
     bool dreamDashing;
     bool wasDreamDashing;
@@ -163,9 +163,12 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         sprite.Scale = scale;
     }
 
+    private static readonly FieldInfo FramesAlive = typeof(Player).GetField("framesAlive", BindingFlags.NonPublic | BindingFlags.Instance);
+
     private void Update(Player self)
     {
         if (!added) return;
+        if (!self.Dead) FramesAlive.SetValue(self, (int)FramesAlive.GetValue(self) + 1);
         self.JustRespawned = false;
         self.noWindTimer = 0f;
         wasDreamDashing = dreamDashing;
