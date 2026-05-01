@@ -14,7 +14,10 @@ public class GlobalTriggerFlagListener(EntityData data, Vector2 _) : Entity(), I
     public void ActionUpdate(Level level)
     {
         foreach (Trigger trigger in triggers)
+        {
+            trigger.Scene = level;
             trigger.Update();
+        }
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
         bool flagState = level.Session.GetFlag(Flag) ^ Invert;
         if (flagState)

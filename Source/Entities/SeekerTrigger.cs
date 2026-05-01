@@ -11,20 +11,26 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class SeekerTrigger(EntityData data, Vector2 offset) : Trigger(data, offset)
 {
     bool Global = data.Bool("Global");
+    bool State = data.Bool("State", true);
     public override void Awake(Scene scene) {
         if (!Global) return;
         if (scene.Tracker.GetEntity<Player>() is not Player player) return;
-        if (player.Get<PlayerSeekerComponent>() is null)
-            player.Add(new PlayerSeekerComponent(playSound: false));
+        Apply(player);
         
     }
     public override void OnEnter(Player player)
     {
         if (Global) return;
-        if (player.Get<PlayerSeekerComponent>() is null)
-        {
-            player.Add(new PlayerSeekerComponent());
-        }
+        Apply(player);
+    }
+
+    private void Apply(Player player)
+    {
+        var comp = player.Get<PlayerSeekerComponent>();
+        if (State && comp is null)
+            player.Add(new PlayerSeekerComponent(playSound: false));
+        else if (!State && comp is PlayerSeekerComponent pleeker)
+            player.Remove(pleeker);
     }
 }
 #nullable restore

@@ -6,7 +6,7 @@ return {
     placements = {
         {
             name = "trigger",
-            data = {width = 32, height = 32, Global = false},
+            data = {width = 32, height = 32, Global = false, State = true},
         },
     },
     fillColor = {0, 0, 0, 0},

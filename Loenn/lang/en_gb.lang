@@ -108,9 +108,6 @@ entities.ScugHelper/SessionExpressionConditionAction.placements.description.norm
 entities.ScugHelper/SessionExpressionListener.placements.name.normal=Action - Session Expression Listener
 entities.ScugHelper/SessionExpressionListener.placements.description.normal=Alerts a set of action groups when a session expression becomes true.
 
-entities.ScugHelper/GlobalTriggerFlagListener.placements.name.normal=Global Trigger Flag Listener
-entities.ScugHelper/GlobalTriggerFlagListener.placements.description.normal=Converts a trigger to a map-global flag listener. The trigger will be considered as containing the player when the corresponding flag is set.
-
 entities.ScugHelper/GiveKeyAction.placements.name.normal=Action - Give Key
 entities.ScugHelper/GiveKeyAction.placements.description.normal=Gives a key to the player when alerted.
 
@@ -214,3 +211,15 @@ entities.ScugHelper/RefillField.placements.description.overchargeOn=Forces the o
 entities.ScugHelper/RefillField.placements.description.overchargeOff=Forces the overcharge refill state off.
 entities.ScugHelper/RefillField.placements.description.limboOn=Forces the limbo refill state on.
 entities.ScugHelper/RefillField.placements.description.limboOff=Forces the limbo refill state off.
+
+entities.ScugHelper/GlobalTriggerFlagListener.placements.name.normal=Global Trigger Flag Listener
+entities.ScugHelper/GlobalTriggerFlagListener.placements.description.normal=Converts a trigger to a map-global flag listener. The trigger will be considered as containing the player when the corresponding flag is set. May be unstable with triggers that expect to be in a level.
+
+entities.ScugHelper/GlobalTriggerActionListener.placements.name.normal=Global Trigger Action Listener
+entities.ScugHelper/GlobalTriggerActionListener.placements.description.normal=Converts a trigger to a map-global action listener. The trigger will contain the player on only the instant the action group is alerted. May be unstable with triggers that expect to be in a level.
+
+entities.ScugHelper/GlobalEntityActionListener.placements.name.normal=Global Entity Action Listener
+entities.ScugHelper/GlobalEntityActionListener.placements.description.normal=Converts an entity to a map-global action listener. The entity's player collision function will run the instant the action group is alerted. May be unstable with entities that expect to be in a level. May fail for some vanilla entities with weird constructors.
+
+entities.ScugHelper/EntityGlobalizer.placements.name.normal=Entity Globalizer
+entities.ScugHelper/EntityGlobalizer.placements.description.normal=Makes an entity map-global. May be unstable with entities that expect to be in a level. May fail for some vanilla entities with weird constructors.

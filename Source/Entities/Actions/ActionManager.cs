@@ -28,7 +28,7 @@ public static class ActionManager
     private static readonly Dictionary<string, List<ActionMapEntry>> actionMap = [];
     private static readonly HashSet<int> idSet = [];
     internal static readonly List<Callback> updaters = [];
-    internal static readonly List<Trigger> globalTriggers = [];
+    internal static readonly List<Entity> globalEnts = [];
 
     /// <summary>
     /// Triggers the callback of any actions with any of the given groups.
@@ -84,11 +84,50 @@ public static class ActionManager
         }
         if (action is GlobalTriggerFlagListener listener) {
             foreach (var entData in room.Triggers) {
-                if (TryConstructEntity(entData, room, out _) is not Trigger trigger) continue;
+                if (TryConstructEntity(entData, room, out _) is not Trigger trigger) {
+                    Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
+                    continue;
+                }
                 if (trigger.Collider.Collide(data.Position + room.Position)) {
                     session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     listener.triggers.Add(trigger);
-                    globalTriggers.Add(trigger);
+                    globalEnts.Add(trigger);
+                }
+            }
+        }
+        if (action is GlobalTriggerActionListener actListener) {
+            foreach (var entData in room.Triggers) {
+                if (TryConstructEntity(entData, room, out _) is not Trigger trigger) {
+                    Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
+                    continue;
+                }
+                if (trigger.Collider.Collide(data.Position + room.Position)) {
+                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    actListener.triggers.Add(trigger);
+                    globalEnts.Add(trigger);
+                }
+            }
+        }
+        if (action is GlobalEntityActionListener entActListener) {
+            foreach (var entData in room.Entities) {
+                if (TryConstructEntity(entData, room, out _) is not Entity entity) {
+                    Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
+                    continue;
+                }
+                if (entity.Get<PlayerCollider>() is not PlayerCollider collider) continue;
+                if (entActListener.Collider.Collide(entData.Position + room.Position)) {
+                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    entActListener.colliders.Add(collider);
+                    globalEnts.Add(entity);
+                }
+            }
+        }
+        if (action is EntityGlobalizer entGlobalizer) {
+            foreach (var entData in room.Entities) {
+                if (TryConstructEntity(entData, room, out _) is not Entity entity) continue;
+                if (entGlobalizer.Collider.Collide(entData.Position + room.Position)) {
+                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    globalEnts.Add(entity);
                 }
             }
         }
@@ -164,14 +203,14 @@ public static class ActionManager
             actionMap.Clear();
             idSet.Clear();
             updaters.Clear();
-            globalTriggers.Clear();
+            globalEnts.Clear();
             MapData data = level.Session.MapData;
             foreach (var room in data.Levels)
                 foreach (var entData in room.Entities)
                     RegisterAction(level.Session, entData, room);
         }
 
-        foreach (var trigger in globalTriggers)
+        foreach (var trigger in globalEnts)
             trigger.Added(level);
         if (isFromLoader)
             AlertActions(["#InitActions"], level);
@@ -251,6 +290,14 @@ public static class ActionManager
         Logger.Error(nameof(ScugHelperModule), $"Action error: {message}");
         Engine.Commands.Open = true;
         Engine.Commands.Log($"Action error: {message}", Color.Red);
+    }
+
+    [Command("globalents", "Shows all global entities")]
+    internal static void CmdShowGlobalEnts() {
+        Engine.Commands.Log($"Global Entities:");
+        foreach (Entity ent in globalEnts) {
+            Engine.Commands.Log($"  {ent.SourceId}: {ent}");
+        }
     }
 }
 

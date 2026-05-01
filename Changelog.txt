@@ -1,0 +1,10 @@
+Subpixel Kill Field, Addition
+Seeker Refill, Addition
+Seeker Trigger, Addition
+De-Seeker Field, Addition
+Set Refill Field, Addition
+Builtin Session Variables, Addition
+Global Trigger Action Listener, Addition
+Global Entity Action Listener, Addition
+Entity Globalizer, Addition
+Pinball Boosters now can customize their speed, Improvement
