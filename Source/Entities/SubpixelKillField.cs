@@ -25,7 +25,9 @@ public class SubpixelKillField : Entity
         Depth = 100;
         Collidable = true;
         Collider = new Hitbox(Math.Max(data.Width, 2f), Math.Max(data.Height, 2f));
+        var innerCollider = new Hitbox(Math.Max(data.Width, 2f) - 2, Math.Max(data.Height, 2f) - 2, 1, 1);
         Add(new PlayerCollider(OnPlayer));
+        Add(new PlayerCollider((player) => player.Die(Vector2.Zero), innerCollider));
     }
 
     private void OnPlayer(Player player)
