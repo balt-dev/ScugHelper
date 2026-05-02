@@ -1,2 +1,1 @@
-Seeker Spinner, Addition
-Seeker Spikes, Addition
+Save Touch Switches Trigger, Addition

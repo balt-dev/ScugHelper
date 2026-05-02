@@ -251,3 +251,5 @@ entities.ScugHelper/SeekerSpikes-Left.placements.name.left_cliffside=Seeker Spik
 entities.ScugHelper/SeekerSpikes-Left.placements.name.left_reflection=Seeker Spikes (Left, Reflection)
 entities.ScugHelper/SeekerSpikes-Left.placements.name.left_tentacles=Seeker Spikes (Left, Tentacles)
 
+triggers.ScugHelper/SaveTouchSwitchesTrigger.placements.name.normal=Save Touch Switches
+triggers.ScugHelper/SaveTouchSwitchesTrigger.placements.description.normal=Saves which touch switches are currently turned on, making them permanently on for the rest of the session.
