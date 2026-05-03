@@ -66,7 +66,7 @@ public static class ActionManager
 
     internal static void RegisterAction(Session session, EntityData data, LevelData room)
     {
-        var ty = GetTypeOfEntity(data);
+        var ty = ScugHelperModule.GetTypeOfEntity(data);
         if (!ty?.GetInterfaces().Contains(typeof(IAction)) ?? true) return;
         int id = data.ID;
         session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = id });
@@ -133,20 +133,10 @@ public static class ActionManager
         }
     }
 
-    private static Type? GetTypeOfEntity(EntityData data)
-    {
-        var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
-        if (type is not Type ty)
-        {
-            Logger.Warn(nameof(ScugHelperModule), $"SID {data.Name} of entity with ID {data.ID} does not correspond to any known types.");
-        }
-        return type;
-    }
-
     private static object? TryConstructEntity(EntityData data, LevelData room, out Type? type)
     {
         type = null;
-        if (GetTypeOfEntity(data) is not Type ty) return null;
+        if (ScugHelperModule.GetTypeOfEntity(data) is not Type ty) return null;
         if (!ty.IsSubclassOf(typeof(Entity))) return null;
         type = ty;
         ConstructorKind kind = ConstructorKind.Bare;
