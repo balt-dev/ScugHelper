@@ -253,3 +253,13 @@ entities.ScugHelper/SeekerSpikes-Left.placements.name.left_tentacles=Seeker Spik
 
 triggers.ScugHelper/SaveTouchSwitchesTrigger.placements.name.normal=Save Touch Switches
 triggers.ScugHelper/SaveTouchSwitchesTrigger.placements.description.normal=Saves which touch switches are currently turned on, making them permanently on for the rest of the session.
+
+entities.ScugHelper/MovingSeekerBarrier.placements.name.normal=Moving Seeker Barrier
+entities.ScugHelper/MovingSeekerBarrier.placements.name.jelly=Moving Jellyfish Barrier
+
+entities.ScugHelper/SeekerRotateSpinner.placements.name.clockwise=Rotating Seeker Spinner (Clockwise)
+entities.ScugHelper/SeekerRotateSpinner.placements.name.counter_clockwise=Rotating Seeker Spinner (Counter-Clockwise)
+
+entities.ScugHelper/SeekerTrackSpinner.placements.name.slow=Track Seeker Spinner (Slow)
+entities.ScugHelper/SeekerTrackSpinner.placements.name.normal=Track Seeker Spinner (Normal)
+entities.ScugHelper/SeekerTrackSpinner.placements.name.fast=Track Seeker Spinner (Fast)

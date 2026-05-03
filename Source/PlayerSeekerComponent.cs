@@ -24,6 +24,14 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         On.Celeste.Seeker.CanSeePlayer += OnCanSeePlayer;
         On.Celeste.Seeker.OnAttackPlayer += OnAttackPlayer;
         On.Celeste.Seeker.OnBouncePlayer += OnBouncePlayer;
+        On.Celeste.Solid.HasPlayerRider += OnHasPlayerRider;
+    }
+
+    private static bool OnHasPlayerRider(On.Celeste.Solid.orig_HasPlayerRider orig, Solid self)
+    {
+        if (self is MoveBlock block && self.Scene.Tracker.GetEntity<Player>()?.Get<PlayerSeekerComponent>() is not null)
+            return block.triggered;
+        return orig(self);
     }
 
     private static PlayerDeadBody OnDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
@@ -169,16 +177,17 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     {
         if (!added) return;
         if (!self.Dead) FramesAlive.SetValue(self, (int)FramesAlive.GetValue(self) + 1);
+        var scene = self.Scene;
+        foreach (var barrier in scene.Tracker.GetEntities<SeekerBarrier>())
+            barrier.Collidable = true;
         self.JustRespawned = false;
         self.noWindTimer = 0f;
         wasDreamDashing = dreamDashing;
-        var scene = self.Scene;
         self.OnSafeGround = true;
         self.Components.Update();
         self.starFlyTimer = 0f;
         self.starFlyLoopSfx?.Stop();
         LimboRefill.LimboTimer = 0f;
-        self.LiftSpeed = Vector2.Zero;
 
         Vector2 cameraPos = self.level.Camera.Position;
         Vector2 cameraTarget = self.CameraTarget;
@@ -212,8 +221,6 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         }
 
         self.PreviousPosition = self.Position;
-        foreach (var barrier in scene.Tracker.GetEntities<SeekerBarrier>())
-            barrier.Collidable = true;
 
         Level level = scene as Level;
         self.StateMachine.state = Player.StNormal;
@@ -336,9 +343,6 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             self.MoveV(self.Speed.Y * Engine.DeltaTime, OnCollideV);
         }
 
-        foreach (var barrier in scene.Tracker.GetEntities<SeekerBarrier>())
-            barrier.Collidable = false;
-
         // Actor.Update
         self.LiftSpeed = Vector2.Zero;
         if (self.liftSpeedTimer > 0f)
@@ -352,6 +356,9 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
         level.EnforceBounds(self);
         self.wasOnGround = false;
+        
+        foreach (var barrier in scene.Tracker.GetEntities<SeekerBarrier>())
+            barrier.Collidable = false;
     }
 
     static readonly Color[] colors = [Calc.HexToColor("FFEF11"), Calc.HexToColor("FF00D0"), Calc.HexToColor("08a310"), Calc.HexToColor("5fcde4"), Calc.HexToColor("7fb25e"), Calc.HexToColor("E0564C"), Calc.HexToColor("5b6ee1"), Calc.HexToColor("CC3B3B"), Calc.HexToColor("7daa64")];
@@ -380,6 +387,8 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         }
 
         data.Hit.OnDashCollide?.Invoke(player, data.Direction);
+        if (data.Hit is MoveBlock block)
+            block.triggered = true;
 
         if (player.DreamDashCheck(data.Direction)) {
             dreamDashing = true;

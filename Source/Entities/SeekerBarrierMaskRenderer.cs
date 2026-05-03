@@ -45,7 +45,7 @@ public class SeekerBarrierMaskRenderer : Entity
     public SeekerBarrierMaskRenderer() : base()
     {
         Tag = (int)Tags.Global | (int)Tags.TransitionUpdate;
-        Depth = 0;
+        Depth = -8500;
         Add(new BeforeRenderHook(BeforeRender));
         Add(new CustomBloom(OnRenderBloom));
     }
