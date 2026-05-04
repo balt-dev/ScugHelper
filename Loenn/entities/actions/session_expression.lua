@@ -9,7 +9,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, Expression = "", Target = "", width = 32, height = 24}
+            data = {Groups = "", Delay = 0, Expression = "", Target = "", width = 32, height = 24, Immediate = false}
         },
     },
     associatedMods = {"FrostHelper", "ScugHelper"},

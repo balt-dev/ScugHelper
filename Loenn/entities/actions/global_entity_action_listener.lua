@@ -9,7 +9,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Groups = "", width = 32, height = 32}
+            data = {Groups = "", width = 32, height = 32, Immediate = false}
         },
     },
     sprite = function(room, entity)

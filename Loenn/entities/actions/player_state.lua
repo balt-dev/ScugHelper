@@ -9,7 +9,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, width = 32, height = 24, State = 0}
+            data = {Groups = "", Delay = 0, width = 32, height = 24, State = 0, Immediate = false}
         },
     },
     fieldInformation = {

@@ -46,8 +46,6 @@ public class MinimapMenu {
     [SettingSubText("Whether to show the minimap.")]
     public bool Minimap { get; set; } = false;
 
-    public MinimapBindBehavior ButtonBehavior { get; set; } = MinimapBindBehavior.Toggle;
-
     [SettingNumberInput(allowNegatives: false, maxLength: 4)]
     public float UnfocusedOpacity { get; set; } = 0.3f;
     [SettingNumberInput(allowNegatives: false, maxLength: 4)]

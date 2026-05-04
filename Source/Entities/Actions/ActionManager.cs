@@ -16,11 +16,12 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
 using Callback = Action<Level>;
 
-readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null) {
+readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null, bool immediate = false) {
     public readonly Callback? Action = action;
     public readonly float? Delay = delay;
     public readonly EntityData? AssociatedData = data;
     public readonly Action? Update = update;
+    public readonly bool Immediate = immediate;
 }
 
 public static class ActionManager
@@ -55,7 +56,8 @@ public static class ActionManager
             if (Engine.Scene is not Level lv) yield break;
             level = lv;
         }
-        yield return entry.Delay != null && entry.Delay > 0.01f ? entry.Delay : null;
+        if (!entry.Immediate)
+            yield return entry.Delay != null && entry.Delay > 0.01f ? entry.Delay : null;
         entry.Action?.Invoke(level);
     }
 
@@ -80,7 +82,7 @@ public static class ActionManager
         foreach (string group in groups) {
             if (!actionMap.TryGetValue(group, out var actions))
                 actionMap.Add(group, actions = []);
-            actions.Add(new(iAction.Alert, delay, data));
+            actions.Add(new(iAction.Alert, delay, data, immediate: data?.Bool("Immediate") ?? false));
         }
         if (action is GlobalTriggerFlagListener listener) {
             foreach (var entData in room.Triggers) {

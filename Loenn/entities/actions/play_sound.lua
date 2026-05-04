@@ -9,7 +9,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Groups = "", Delay = 0, width = 32, height = 24, Path = ""}
+            data = {Groups = "", Delay = 0, width = 32, height = 24, Path = "", Immediate = false}
         },
     },
     fieldInformation = { Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}},

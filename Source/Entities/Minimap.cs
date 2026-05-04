@@ -54,12 +54,7 @@ public class MinimapEntity : Entity
     private static float unfocusedTimer = 100f;
     internal static bool Focused
     {
-        get => ScugHelperModule.Settings.Minimap.Minimap && ScugHelperModule.Settings.Minimap.ButtonBehavior switch
-        {
-            MinimapBindBehavior.Toggle => focusToggle,
-            MinimapBindBehavior.Hold => ScugHelperModule.Settings.MinimapBind.Check,
-            MinimapBindBehavior.Invert => !ScugHelperModule.Settings.MinimapBind.Check,
-        };
+        get => ScugHelperModule.Settings.Minimap.Minimap && focusToggle;
     }
     public MinimapEntity() : base()
     {
@@ -82,7 +77,7 @@ public class MinimapEntity : Entity
         var levelCam = SceneAs<Level>().Camera;
         if (ScugHelperModule.Settings.Minimap is null) throw new Exception("Minimap null!?");
         if (ScugHelperModule.Settings.MinimapBind is null) throw new Exception("Minimap bind null!?");
-        if (ScugHelperModule.Settings.Minimap.ButtonBehavior == MinimapBindBehavior.Toggle && ScugHelperModule.Settings.MinimapBind.Pressed)
+        if (ScugHelperModule.Settings.MinimapBind.Pressed)
         {
             ScugHelperModule.Settings.MinimapBind.ConsumePress();
             focusToggle = !focusToggle;
