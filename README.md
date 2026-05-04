@@ -7,10 +7,7 @@ also fixes player seekers not being able to hit dash switches
 
 ## Attribution
 
-uses some code from:
-- Spring Collab 2020, see `LICENSE-SC2020`
-- Communal Helper, see `LICENSE-COMMUNAL`
-- Extended Variants, see `LICENSE-EXTVAR`
+uses some code from various mods! see the `Attribution/` folder for their code licenses.
 
 uses [the Bytesized font](https://github.com/balt-dev/bytesized-gf)
 

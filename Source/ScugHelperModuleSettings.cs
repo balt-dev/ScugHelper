@@ -28,26 +28,14 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
 
     [SettingName("Focus Minimap")]
-    [DefaultButtonBinding([], [Keys.NumPad0])]
+    [DefaultButtonBinding([], [Keys.M])]
     public ButtonBinding MinimapBind { get; set; } = new();
     [SettingName("Zoom Minimap In")]
-    [DefaultButtonBinding([], [Keys.NumPad4])]
+    [DefaultButtonBinding([], [Keys.OemMinus])]
     public ButtonBinding MinimapZoomIn { get; set; } = new();
     [SettingName("Zoom Minimap Out")]
-    [DefaultButtonBinding([], [Keys.NumPad6])]
+    [DefaultButtonBinding([], [Keys.OemPlus])]
     public ButtonBinding MinimapZoomOut { get; set; } = new();
-    [SettingName("Pan Minimap Left")]
-    [DefaultButtonBinding([], [Keys.NumPad1])]
-    public ButtonBinding MinimapLeft { get; set; } = new();
-    [SettingName("Pan Minimap Right")]
-    [DefaultButtonBinding([], [Keys.NumPad3])]
-    public ButtonBinding MinimapRight { get; set; } = new();
-    [SettingName("Pan Minimap Up")]
-    [DefaultButtonBinding([], [Keys.NumPad5])]
-    public ButtonBinding MinimapUp { get; set; } = new();
-    [SettingName("Pan Minimap Down")]
-    [DefaultButtonBinding([], [Keys.NumPad2])]
-    public ButtonBinding MinimapDown { get; set; } = new();
 
     public MinimapMenu Minimap { get; set; } = new();
 }

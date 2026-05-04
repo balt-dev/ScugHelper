@@ -7,6 +7,8 @@ using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework.Graphics;
 using Celeste.Editor;
+using MonoMod.RuntimeDetour;
+using System.Reflection;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -42,8 +44,6 @@ public class MinimapEntity : Entity
         level.Add(new MinimapEntity());
     }
 
-    internal static VirtualJoystick MinimapAim = new(ScugHelperModule.Settings.MinimapUp.Binding, ScugHelperModule.Settings.MinimapDown.Binding, ScugHelperModule.Settings.MinimapLeft.Binding, ScugHelperModule.Settings.MinimapRight.Binding, 0, 0.3f);
-
     internal Camera Camera;
     internal Vector2 Speed;
     internal float Opacity = ScugHelperModule.Settings.Minimap.UnfocusedOpacity;
@@ -54,7 +54,7 @@ public class MinimapEntity : Entity
     private static float unfocusedTimer = 100f;
     internal static bool Focused
     {
-        get => ScugHelperModule.Settings.Minimap.ButtonBehavior switch
+        get => ScugHelperModule.Settings.Minimap.Minimap && ScugHelperModule.Settings.Minimap.ButtonBehavior switch
         {
             MinimapBindBehavior.Toggle => focusToggle,
             MinimapBindBehavior.Hold => ScugHelperModule.Settings.MinimapBind.Check,
@@ -78,6 +78,7 @@ public class MinimapEntity : Entity
     public override void Update()
     {
         base.Update();
+        if (!ScugHelperModule.Settings.Minimap.Minimap) { focusToggle = false; return; }
         var levelCam = SceneAs<Level>().Camera;
         if (ScugHelperModule.Settings.Minimap is null) throw new Exception("Minimap null!?");
         if (ScugHelperModule.Settings.MinimapBind is null) throw new Exception("Minimap bind null!?");
@@ -89,7 +90,7 @@ public class MinimapEntity : Entity
 
         if (Focused)
         {
-            Speed = Calc.Approach(Speed, MinimapAim.Value * CameraSpeed / Camera.Zoom, CameraAcceleration / Camera.Zoom * Engine.RawDeltaTime);
+            Speed = Calc.Approach(Speed, Input.Aim.Value * CameraSpeed / Camera.Zoom, CameraAcceleration / Camera.Zoom * Engine.RawDeltaTime);
             if (ScugHelperModule.Settings.MinimapZoomIn.Pressed)
             {
                 ScugHelperModule.Settings.MinimapZoomIn.ConsumePress();
@@ -124,6 +125,7 @@ public class MinimapEntity : Entity
 
     public void BeforeRender()
     {
+        if (!ScugHelperModule.Settings.Minimap.Minimap) return;
         var level = SceneAs<Level>();
         var settings = ScugHelperModule.Settings.Minimap;
         buffer ??= VirtualContent.CreateRenderTarget("minimap-renderer", settings.MinimapWidth, settings.MinimapHeight);
@@ -156,8 +158,72 @@ public class MinimapEntity : Entity
     public override void Render()
     {
         base.Render();
+        if (!ScugHelperModule.Settings.Minimap.Minimap) return;
 
         Draw.SpriteBatch.Draw(buffer.Target, new(ScugHelperModule.Settings.Minimap.MinimapX, ScugHelperModule.Settings.Minimap.MinimapY), null, Color.White * Opacity, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
     }
+
+    private static Hook hookButtonCheck;
+    private static Hook hookButtonPressed;
+    private static Hook hookButtonReleased;
+    private static Hook hookGrabCheck;
+    private static Hook hookDashPressed;
+    private static Hook hookCrouchDashPressed;
+
+    [OnLoad]
+    public static void Load() {
+        // break directions
+        On.Celeste.Player.Update += BreakTheControls;
+
+        // break Input.X.Check, Input.X.Pressed, Input.X.Released with X being Jump, Dash, Grab or CrouchDash
+        hookButtonCheck = new Hook(typeof(VirtualButton).GetMethod("get_Check"), HookOnButton);
+        hookButtonPressed = new Hook(typeof(VirtualButton).GetMethod("get_Pressed"), HookOnButton);
+        hookButtonReleased = new Hook(typeof(VirtualButton).GetMethod("get_Released"), HookOnButton);
+
+        // break Input.GrabCheck and Input.DashPressed
+        hookGrabCheck = new Hook(typeof(Input).GetMethod("get_GrabCheck"), ModGrabResult);
+        hookDashPressed = new Hook(typeof(Input).GetMethod("get_DashPressed"), ModDashResult);
+        hookCrouchDashPressed = new Hook(typeof(Input).GetMethod("get_CrouchDashPressed"), ModDashResult);
+    }
+
+    [OnUnload]
+    public static void Unload() {
+        On.Celeste.Player.Update -= BreakTheControls;
+
+        hookButtonCheck?.Dispose();
+        hookButtonPressed?.Dispose();
+        hookButtonReleased?.Dispose();
+        hookGrabCheck?.Dispose();
+        hookDashPressed?.Dispose();
+        hookCrouchDashPressed?.Dispose();
+    }
+
+    private static void BreakTheControls(On.Celeste.Player.orig_Update orig, Player self) {
+        if (!Focused) {
+            orig(self);
+            return;
+        }
+
+        Vector2 oldAim = Input.Aim;
+        int oldMoveX = Input.MoveX.Value;
+        int oldMoveY = Input.MoveY.Value;
+
+        Input.Aim.Value = Vector2.Zero;
+        Input.MoveX.Value = 0;
+        Input.MoveY.Value = 0;
+
+        orig(self);
+
+        Input.Aim.Value = oldAim;
+        Input.MoveX.Value = oldMoveX;
+        Input.MoveY.Value = oldMoveY;
+    }
+
+    private static bool HookOnButton(Func<VirtualButton, bool> orig, VirtualButton self)
+        => (!Focused || !(self == Input.Dash || self == Input.CrouchDash || self == Input.Jump || self == Input.Grab)) && orig(self);
+
+    private static bool ModGrabResult(Func<bool> orig) => !Focused && orig();
+
+    private static bool ModDashResult(Func<bool> orig) => !Focused && orig();
 }
