@@ -177,10 +177,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         cur.EmitDelegate(MultiplyOvercharge);
         cur.EmitStloc3();
         
-        cur.GotoNextBestFit(MoveType.After, 256,
-            static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)),
-            static instr => instr.MatchLdcR4(160)
-        );
+        cur.GotoNext(MoveType.After, static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)));
         cur.GotoNextBestFit(MoveType.After, 256,
             static instr => instr.MatchCall<Vector2>("op_Multiply"),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
