@@ -138,6 +138,7 @@ public class MinimapEntity : Entity
             DynamicData.For(ed).Set("CurrentSession", level.Session);
             ed.Render();
             ScugHelperModule.Session.RenderedEditorOnce = true;
+            scratchBuffer.Dispose();
         }
         buffer ??= VirtualContent.CreateRenderTarget("minimap-renderer", settings.MinimapWidth, settings.MinimapHeight);
 
