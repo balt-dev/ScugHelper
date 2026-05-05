@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Celeste.Editor;
 using MonoMod.RuntimeDetour;
 using System.Reflection;
+using MonoMod.Utils;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -121,14 +122,26 @@ public class MinimapEntity : Entity
     public void BeforeRender()
     {
         if (!ScugHelperModule.Settings.Minimap.Minimap) return;
+        
         var level = SceneAs<Level>();
         var settings = ScugHelperModule.Settings.Minimap;
+        
+        Vector2 viewportOffset = new(Camera.Viewport.Width / Camera.Zoom / 2, Camera.Viewport.Height / Camera.Zoom / 2);
+        Camera.Position -= viewportOffset;
+        
+        if (!ScugHelperModule.Session.RenderedEditorOnce)
+        {
+            // GameHelper compat
+            VirtualRenderTarget scratchBuffer = VirtualContent.CreateRenderTarget("minimap-scratch", settings.MinimapWidth, settings.MinimapHeight);
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(scratchBuffer);
+            MapEditor ed = new(level.Session.Area, false);
+            DynamicData.For(ed).Set("CurrentSession", level.Session);
+            ed.Render();
+            ScugHelperModule.Session.RenderedEditorOnce = true;
+        }
         buffer ??= VirtualContent.CreateRenderTarget("minimap-renderer", settings.MinimapWidth, settings.MinimapHeight);
 
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
-
-        Vector2 viewportOffset = new(Camera.Viewport.Width / Camera.Zoom / 2, Camera.Viewport.Height / Camera.Zoom / 2);
-        Camera.Position -= viewportOffset;
 
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, null, Camera.Matrix);
 
@@ -149,6 +162,8 @@ public class MinimapEntity : Entity
 
         Camera.Position += viewportOffset;
     }
+
+
 
     public override void Render()
     {
