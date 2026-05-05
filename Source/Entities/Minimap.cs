@@ -159,6 +159,11 @@ public class MinimapEntity : Entity
 
     }
 
+    public override void Removed(Scene scene) {
+        base.Removed(scene);
+        buffer?.Dispose();
+    }
+
     private static Hook hookButtonCheck;
     private static Hook hookButtonPressed;
     private static Hook hookButtonReleased;

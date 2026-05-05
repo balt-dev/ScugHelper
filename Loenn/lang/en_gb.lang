@@ -263,3 +263,8 @@ entities.ScugHelper/SeekerRotateSpinner.placements.name.counter_clockwise=Rotati
 entities.ScugHelper/SeekerTrackSpinner.placements.name.slow=Track Seeker Spinner (Slow)
 entities.ScugHelper/SeekerTrackSpinner.placements.name.normal=Track Seeker Spinner (Normal)
 entities.ScugHelper/SeekerTrackSpinner.placements.name.fast=Track Seeker Spinner (Fast)
+
+entities.ScugHelper/StaticFloatySpaceBlock.placements.name.floaty_space_block=Static Floaty Space Block
+entities.ScugHelper/StaticFloatySpaceBlock.placements.description.floaty_space_block=Like a normal floating block, but doesn't oscillate.
+
+entities.ScugHelper/AngleBumper.placements.name.normal=Angle Bumper

@@ -174,7 +174,7 @@ public class RecoilBumper : Actor, IHasSpeed
             SlashFx.Burst(Center, collisionNormal.Angle());
 
 
-            if (player.LastBooster == null || player.LastBooster is not PinballBooster booster || !booster.Bounce)
+            if (player.LastBooster == null || player.LastBooster is not PinballBooster booster || !booster.ConsumeBounce())
                 player.StateMachine.State = Player.StLaunch;
 
             respawnTimer = 0.6f;

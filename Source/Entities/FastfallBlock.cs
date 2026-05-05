@@ -30,7 +30,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
     private static void PlayerUpdateHook(ILContext il)
     {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNextBestFit(MoveType.After,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
             static instr => instr.MatchLdcI4(22),
             static instr => instr.MatchBeq(out _)
         )) throw new Exception("Fastfall blocks failed to match IL for Player orig_Update hook.");

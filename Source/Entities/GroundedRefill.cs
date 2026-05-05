@@ -61,7 +61,7 @@ public class GroundedRefill : Refill {
 
     private static void RespawnHook(ILContext il) {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNextBestFit(MoveType.Before,
+        if (!cur.TryGotoNextBestFit(MoveType.Before, 256,
             instr => instr.MatchLdarg0(),
             instr => instr.MatchLdfld<Refill>("twoDashes")
         )) throw new InvalidOperationException("Grounded refills failed to match IL code for the Respawn hook.");
@@ -76,7 +76,7 @@ public class GroundedRefill : Refill {
         }
         cur.EmitDelegate(Delegate);
         cur.EmitBrfalse(label);
-        if (!cur.TryGotoNextBestFit(MoveType.After,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
             instr => instr.MatchCall(typeof(Audio), nameof(Audio.Play)),
             instr => instr.MatchPop()
         )) throw new InvalidOperationException("Grounded refills failed to match IL code for the Respawn hook.");

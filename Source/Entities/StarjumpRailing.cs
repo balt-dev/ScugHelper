@@ -35,18 +35,19 @@ public class StarjumpRailing : Entity
         List<MTexture> leftTextures = GFX.Game.GetAtlasSubtextures("objects/starjumpBlock/leftrailing");
         List<MTexture> middleTextures = GFX.Game.GetAtlasSubtextures("objects/starjumpBlock/railing");
         List<MTexture> rightTextures = GFX.Game.GetAtlasSubtextures("objects/starjumpBlock/rightrailing");
+        static MTexture wrap(float x, List<MTexture> tex) => tex[(((int)(x / 8) % tex.Count) + tex.Count) % tex.Count];
         if (Width < 8) {
-            Image middle = new(middleTextures[((int)X / 8) % middleTextures.Count]) { Position = new Vector2(0, -8f) };
+            Image middle = new(wrap(X, middleTextures)) { Position = new Vector2(0, -8f) };
             Add(middle);
             return;
         }
-        Image left = new(leftTextures[((int)X / 8) % leftTextures.Count]) { Position = new Vector2(0, -8f) };
+        Image left = new(wrap(X, leftTextures)) { Position = new Vector2(0, -8f) };
         Add(left);
         for (int i = 8; i < Width - 8; i += 8) {
-            Image middle = new(middleTextures[((int)(X + i) / 8) % middleTextures.Count]) { Position = new Vector2(i, -8f) };
+            Image middle = new(wrap(X + i * 8, middleTextures)) { Position = new Vector2(i, -8f) };
             Add(middle);
         }
-        Image right = new(rightTextures[((int)(X + Width - 8) / 8) % rightTextures.Count]) { Position = new Vector2(Width - 8, -8f) };
+        Image right = new(wrap(X + Width - 8, rightTextures)) { Position = new Vector2(Width - 8, -8f) };
         Add(right);
     }
     public bool IsRiding(Solid solid) => CollideCheckOutside(solid, Position + Vector2.UnitY);

@@ -5,7 +5,7 @@ return {
     placements = {
         {
             name = "boosterfield",
-            data = {width = 32, height = 32, invisible = false, invert = false}
+            data = {width = 32, height = 32, invisible = false, invert = false, BounceLimit=-1}
         },
     },
     sprite = function(room, entity)

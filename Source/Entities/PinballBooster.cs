@@ -19,20 +19,26 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/PinballBooster")]
 public class PinballBooster : Booster
 {
-    private EntityID ID;
     private Vector2 Acceleration;
     private Vector2 SpeedLimit;
-    private float LaunchSpeed;
-    public bool Bounce { get; internal set;  } = true;
+    private readonly float LaunchSpeed;
+    private int BounceLimit = -1;
+    public bool Bounce { get; internal set; } = true;
+
+    public bool ConsumeBounce() {
+        if (BounceLimit == 0 || !Bounce) return false;
+        BounceLimit--;
+        return true;
+    }
 
     public PinballBooster(EntityData data, Vector2 offset, EntityID gid)
         : base(data, offset)
     {
-        ID = gid;
         LaunchSpeed = data.Float("speed", 240);
         Bounce = data.Bool("Bounce", true);
         Acceleration = new(data.Float("accelX", 0), data.Float("accelY", 0));
         SpeedLimit = new(data.Float("limitX", 500), data.Float("limitY", 500));
+        BounceLimit = data.Int("BounceLimit", -1);
         Remove(wiggler);
         if (Bounce) {
             Remove(sprite);
@@ -88,7 +94,7 @@ public class PinballBooster : Booster
     private static void UpdateHook(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
-        if (self.LastBooster != null && self.LastBooster is PinballBooster booster && booster.BoostingPlayer && booster.Bounce)
+        if (self.LastBooster != null && self.LastBooster is PinballBooster booster && booster.BoostingPlayer && booster.ConsumeBounce())
 
         {
             booster.cannotUseTimer = 0.45f;
@@ -111,7 +117,7 @@ public class PinballBooster : Booster
 
     public static void HBoundsHook(On.Celeste.Player.orig_OnBoundsH orig, Player self)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             self.Speed.X = -self.Speed.X;
             Audio.Play(
@@ -126,7 +132,7 @@ public class PinballBooster : Booster
 
     public static void VBoundsHook(On.Celeste.Player.orig_OnBoundsV orig, Player self)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             self.Speed.Y = -self.Speed.Y;
             Audio.Play(
@@ -141,7 +147,7 @@ public class PinballBooster : Booster
 
     public static void HCollideHook(On.Celeste.Player.orig_OnCollideH orig, Player self, CollisionData data)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             if (self.StateMachine.State == Player.StDash || self.StateMachine.State == Player.StRedDash)
             {
@@ -188,7 +194,7 @@ public class PinballBooster : Booster
 
     public static void VCollideHook(On.Celeste.Player.orig_OnCollideV orig, Player self, CollisionData data)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             if (self.Speed.Y > 0)
             {
@@ -273,7 +279,7 @@ public class PinballBooster : Booster
 
     public static void BounceHook(On.Celeste.Player.orig_Bounce orig, Player self, float fromY)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             self.MoveV(fromY - self.CenterY);
             Vector2 normalized = Vector2.Normalize(self.Speed) * Player.DashSpeed;
@@ -289,7 +295,7 @@ public class PinballBooster : Booster
 
     public static void SuperBounceHook(On.Celeste.Player.orig_SuperBounce orig, Player self, float fromY)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             self.MoveV(fromY - self.CenterY);
             self.Speed.Y = -Math.Max(Math.Abs(self.Speed.Y), Player.DashSpeed);
@@ -305,7 +311,7 @@ public class PinballBooster : Booster
 
     public static bool SideBounceHook(On.Celeste.Player.orig_SideBounce orig, Player self, int dir, float fromX, float fromY)
     {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+        if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
             if (Math.Abs(self.Speed.X) > 240f && Math.Sign(self.Speed.X) == dir) return false;
             self.MoveV(Calc.Clamp(fromY - self.CenterY, -4f, 4f));
@@ -337,7 +343,7 @@ public class PinballBooster : Booster
     private static void ExplodeLaunchILHook(ILContext ctx)
     {
         ILCursor cur = new(ctx);
-        if (!cur.TryGotoNextBestFit(MoveType.After,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
             instr => instr.MatchCall<SlashFx>("Burst"),
             instr => instr.MatchPop()
         ))
@@ -346,7 +352,7 @@ public class PinballBooster : Booster
         static bool Delegate(Player self)
 
         {
-            if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.Bounce) || ScugHelperModule.Settings.AllBoostersBounce))
+            if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
             {
                 self.LastBooster.sprite.Scale = new Vector2(ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
                 self.Speed = Vector2.Normalize(self.Speed) * Math.Max(self.Speed.Length(), smuggledLocal.Length());
@@ -375,5 +381,5 @@ public class PinballBooster : Booster
             cursor.EmitDelegate(ReplaceFloat);
         }
     }
-    
+
 }
