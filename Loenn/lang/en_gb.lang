@@ -269,5 +269,17 @@ entities.ScugHelper/StaticFloatySpaceBlock.placements.description.floaty_space_b
 
 entities.ScugHelper/AngleBumper.placements.name.normal=Angle Bumper
 
-entities.ScugHelper/Hangrail.placements.name.normal=Hangrail
+entities.ScugHelper/Hangrail.placements.name.normal=Hang Rail
 entities.ScugHelper/Hangrail.placements.description.normal=Grabbable rail that inherits momentum.
+entities.ScugHelper/Hangrail.attributes.description.StartWithGravity=Whether the hang rail should start with gravity.
+entities.ScugHelper/Hangrail.attributes.description.Position=The point along the line between the endpoints that the hang rail starts at. Ranges on [0, 1].
+entities.ScugHelper/Hangrail.attributes.description.TakesStamina=Whether holding the hang rail depletes stamina.
+entities.ScugHelper/Hangrail.attributes.description.PlayerMaxSpeed=The player's max speed via movement inputs while on the rail, in px/sec.
+entities.ScugHelper/Hangrail.attributes.description.Friction=The rail's friction, in px/sec^2.
+entities.ScugHelper/Hangrail.attributes.description.MaxFall=The bar's max fall speed, in px/sec.
+entities.ScugHelper/Hangrail.attributes.description.Gravity=The bar's gravity, in px/sec^2
+entities.ScugHelper/Hangrail.attributes.description.HoldSpeedLimit=The amount of speed required to kick the player off of the rail when it hits an endpoint, in px/sec.
+entities.ScugHelper/Hangrail.attributes.description.TiltSpriteThreshold=The amount of speed required to change the bar to the tilted sprite while moving, in px/sec.
+entities.ScugHelper/Hangrail.attributes.description.GrabCooldown=The amount of time the player has to wait after grabbing the bar to grab it again, in seconds.
+entities.ScugHelper/Hangrail.attributes.description.StaminaCost=The amount of stamina per second it takes to hold onto the bar.
+entities.ScugHelper/Hangrail.attributes.description.JumpStaminaCost=The amount of stamina it takes to jump on the bar.

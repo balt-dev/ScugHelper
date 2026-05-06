@@ -1,17 +1,9 @@
+using System;
+using System.Collections;
+using Celeste.Mod.Entities;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 using Monocle;
-using Celeste.Mod.Entities;
-using Celeste;
-using MonoMod.Cil;
-using System;
-using Celeste.Mod.ScugHelper;
-using Celeste.Mod;
-using System.Collections;
-using MonoMod.Utils;
-using Mono.Cecil.Cil;
-using System.Reflection;
-using Celeste.Mod.Helpers;
-using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -79,17 +71,23 @@ public class LimboRefill : Refill, ICustomRefill
         SlashFx.Burst(Position, num);
         if (oneUse) RemoveSelf();
     }
+
+    [Command("givelimbo", "Gives the player a limbo refill.")]
+    private static void GiveLimbo() => LimboTimer = 2f;
+
+
     [OnLoad]
-    public static void LoadHooks() {
+    public static void LoadHooks()
+    {
         On.Celeste.Player.CreateTrail += Player_CreateTrail;
         On.Celeste.Player.Update += Player_Update;
         On.Celeste.Player.Render += Player_Render;
         On.Celeste.Level.Reload += Level_Reload;
         On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
 
-        if (!HookUtils.TryDisableInlining(typeof(Collider).GetMethod("Collide", [typeof(Entity)])))
-            throw new Exception("Failed to disable inlining for collision for limbo refills.");
-        On.Monocle.Collider.Collide_Entity += OnCollide_HACK;
+        On.Celeste.PlayerCollider.Check += OnPlayerColliderCheck;
+        On.Celeste.Actor.MoveH += OnActorMoveH;
+        On.Celeste.Actor.MoveV += OnActorMoveV;
     }
     [OnUnload]
     public static void UnloadHooks()
@@ -99,16 +97,39 @@ public class LimboRefill : Refill, ICustomRefill
         On.Celeste.Player.Render -= Player_Render;
         On.Celeste.Level.Reload -= Level_Reload;
         On.Celeste.LevelLoader.StartLevel -= LevelLoader_StartLevel;
-        On.Monocle.Collider.Collide_Entity -= OnCollide_HACK;
+
+        On.Celeste.PlayerCollider.Check -= OnPlayerColliderCheck;
+        On.Celeste.Actor.MoveH -= OnActorMoveH;
+        On.Celeste.Actor.MoveV -= OnActorMoveV;
+    }
+    
+    private static bool OnActorMoveH(On.Celeste.Actor.orig_MoveH orig, Actor self, float move, Collision onCollide, Solid pusher)
+    {
+        if (self is Player player && LimboTimer > 0f) {
+            LimboColliderList collList;
+            player.Collider = collList = new LimboColliderList(player.Collider);
+            var res = orig(self, move, onCollide, pusher);
+            player.Collider = collList.OriginalCollider;
+            return res;
+        } else { return orig(self, move, onCollide, pusher); }
     }
 
-    // WARNING
-    // DO NOT DO THIS.
-    // I normally would not do this, however a ColliderList doesn't work here.
-    private static bool OnCollide_HACK(On.Monocle.Collider.orig_Collide_Entity orig, Collider self, Entity entity)
+    private static bool OnActorMoveV(On.Celeste.Actor.orig_MoveV orig, Actor self, float move, Collision onCollide, Solid pusher)
     {
-        return (!(self.Entity is Player && LimboTimer > 0f) || entity is Platform or Trigger or InvisibleBarrier or RefillField) && orig(self, entity);
+        if (self is Player player && LimboTimer > 0f) {
+            LimboColliderList collList;
+            player.Collider = collList = new LimboColliderList(player.Collider);
+            var res = orig(self, move, onCollide, pusher);
+            player.Collider = collList.OriginalCollider;
+            return res;
+        } else { return orig(self, move, onCollide, pusher); }
     }
+
+    internal static bool DenyEntityCollisions(Entity ent)
+        =>  (LimboTimer > 0f) && !(ent is Platform or Trigger or InvisibleBarrier or RefillField);
+
+    private static bool OnPlayerColliderCheck(On.Celeste.PlayerCollider.orig_Check orig, PlayerCollider self, Player player)
+        => !DenyEntityCollisions(self.Entity) && orig(self, player);
 
     private static void Player_Render(On.Celeste.Player.orig_Render orig, Player self)
     {
@@ -118,7 +139,8 @@ public class LimboRefill : Refill, ICustomRefill
 
     public static float LimboTimer { get; internal set; }
 
-    private static void CreateTrail(Player player) {
+    private static void CreateTrail(Player player)
+    {
         Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
         TrailManager.Add(player, scale, player.Hair.GetHairColor(0) * (0.4f + Math.Clamp(1.0f - LimboTimer / RefreshLimboLength, 0.0f, 1.0f) * 0.6f));
     }
@@ -162,9 +184,17 @@ public class LimboRefill : Refill, ICustomRefill
         LimboTimer = 0f;
         orig(self);
     }
-    [Command("givelimbo", "Gives the player a limbo refill.")]
-    private static void GiveLimbo() {
-        LimboTimer = 2f;
-    }
+}
+
+internal class LimboColliderList: ColliderList
+{
+    public Collider OriginalCollider { get => colliders[0]; }
+
+    public LimboColliderList(Collider collider) => colliders = [collider];
+
+    public override bool Collide(Circle o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+    public override bool Collide(Hitbox o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+    public override bool Collide(ColliderList o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+    public override bool Collide(Grid o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
 }
 #nullable restore

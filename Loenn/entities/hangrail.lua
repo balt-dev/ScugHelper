@@ -7,16 +7,31 @@ return {
     name = "ScugHelper/Hangrail",
     depth = 100,
     nodeLineRenderType = "none",
-    nodeLimits = {2, 2},
+    nodeLimits = { 2, 2 },
     placements = {
         {
             name = "normal",
-            data = {Sprite = "hangrail", TieSprite = "objects/hangrail/tie", RopeSprite = "objects/hangrail/rope", StartWithGravity = false, Position = 0, TakesStamina = true},
+            data = {
+                Sprite = "hangrail",
+                TieSprite = "objects/hangrail/tie",
+                RopeSprite = "objects/hangrail/rope",
+                StartWithGravity = false,
+                Position = 0,
+                TakesStamina = true,
+                PlayerMaxSpeed = 30,
+                Friction = 80,
+                MaxFall = 160,
+                Gravity = 400,
+                HoldSpeedLimit = 60,
+                TiltSpriteThreshold = 20,
+                StaminaCost = 12,
+                JumpStaminaCost = 27.5
+            },
         },
     },
     sprite = function(room, entity)
         entity.nodes = entity.nodes or {}
-        entity.nodes[1] = entity.nodes[1] or {x = entity.x, y = entity.y}
+        entity.nodes[1] = entity.nodes[1] or { x = entity.x, y = entity.y }
         entity.nodes[2] = entity.nodes[2] or { x = entity.x, y = entity.y }
         local s = entity.nodes[1]; local e = entity.nodes[2]
         local bar = drawableSprite.fromTexture("objects/hangrail/bar03", entity)
@@ -25,7 +40,7 @@ return {
         return {
             drawableFunc.fromFunction(function()
                 drawing.callKeepOriginalColor(function()
-                    love.graphics.setColor({0.8, 0.7, 0.75, 1})
+                    love.graphics.setColor({ 0.8, 0.7, 0.75, 1 })
                     love.graphics.line(
                         s.x, s.y, e.x, e.y
                     );
@@ -37,7 +52,7 @@ return {
     selection = function(room, entity)
         entity.Position = entity.Position or 0
         entity.nodes = entity.nodes or {}
-        entity.nodes[1] = entity.nodes[1] or {x = entity.x, y = entity.y}
+        entity.nodes[1] = entity.nodes[1] or { x = entity.x, y = entity.y }
         entity.nodes[2] = entity.nodes[2] or { x = entity.x, y = entity.y }
         local s = entity.nodes[1]; local e = entity.nodes[2]
         local bx = s.x + (e.x - s.x) * entity.Position
@@ -47,29 +62,20 @@ return {
             utils.rectangle(e.x - 2, e.y - 2, 4, 4),
         }
     end,
-    nodeTexture = function (room, entity) return entity.TieSprite end,
+    nodeTexture = function(room, entity) return entity.TieSprite end,
     onMove = function(room, entity, nodeIndex, offsetX, offsetY)
         if (nodeIndex ~= 0) then return true end
-        local newX = entity.x + offsetX / 2
-        local newY = entity.y + offsetY / 2
+        local newX = entity.x + offsetX
+        local newY = entity.y + offsetY
 
         entity.nodes = entity.nodes or {}
-        entity.nodes[1] = entity.nodes[1] or {x = entity.x, y = entity.y}
+        entity.nodes[1] = entity.nodes[1] or { x = entity.x, y = entity.y }
         entity.nodes[2] = entity.nodes[2] or { x = entity.x, y = entity.y }
         local s = entity.nodes[1]; local e = entity.nodes[2]
-
-        local dx = e.x - s.x; local dy = e.y - s.y
-        local len_squared = dx * dx + dy * dy
-        if len_squared ~= 0 then
-            local px = newX - s.x
-            local py = newY - s.y
-            local dot = px * dx + py * dy
-            local progress = dot / len_squared
-            progress = math.min(math.max(0, progress), 1)
-            entity.x = math.floor(s.x + dx * progress + 0.5)
-            entity.y = math.floor(s.y + dy * progress + 0.5)
-            entity.Position = progress
-        end
+        s.x = s.x + offsetX
+        s.y = s.y + offsetY
+        e.x = e.x + offsetX
+        e.y = e.y + offsetY
         return true
     end
 }

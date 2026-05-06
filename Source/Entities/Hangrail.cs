@@ -21,27 +21,42 @@ public class HangRail : Entity
     internal Vector2 Start;
     internal Vector2 End;
     internal Vector2 Speed;
+    internal Vector2 RetentionSpeed;
+    internal float RetentionTimer;
     internal bool TakeStamina = true;
     internal float NoGrabTimer = 0f;
-
-    static readonly float PlayerMovement = 30f;
-    static readonly float Friction = 80f;
     static readonly float PlayerOffset = 20f;
-    static readonly float MaxFall = 160f;
-    static readonly float Gravity = 400f;
-    static readonly float HoldSpeedLimit = 60f;
-    static readonly float SpriteThreshold = 20f;
+    static readonly float RetentionTime = 0.1f;
     static readonly float GrabCooldown = 0.6f;
-    static readonly float StaminaCost = 12f;
+
+    internal float PlayerMaxSpeed = 30f;
+    internal float Friction = 80f;
+    internal float MaxFall = 160f;
+    internal float Gravity = 400f;
+    internal float HoldSpeedLimit = 60f;
+    internal float TiltSpriteThreshold = 20f;
+    internal float StaminaCost = 12f;
+    internal float JumpStaminaCost = 27.5f;
 
     private readonly MTexture[] ropeSlices;
     private readonly MTexture tieTexture;
     private readonly Vector2 Direction;
+    private bool noLiftBoost = true;
 
     public HangRail(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
         DoGravity = data.Bool("StartWithGravity");
         TakeStamina = data.Bool("TakesStamina", true);
+
+        PlayerMaxSpeed = data.Float("PlayerMaxSpeed", 30f);
+        Friction = data.Float("Friction", 80f);
+        MaxFall = data.Float("MaxFall", 160f);
+        Gravity = data.Float("Gravity", 400f);
+        HoldSpeedLimit = data.Float("HoldSpeedLimit", 60f);
+        TiltSpriteThreshold = data.Float("TiltSpriteThreshold", 20f);
+        StaminaCost = data.Float("StaminaCost", 12f);
+        JumpStaminaCost = data.Float("JumpStaminaCost", 27.5f);
+
         Depth = 10;
         var offsetNodes = data.NodesOffset(offset);
         Start = offsetNodes[0];
@@ -77,7 +92,9 @@ public class HangRail : Entity
     private void OnRelease(Vector2 vector)
     {
         if (Hold.Holder is not Player player) return;
-        player.Speed = Speed;
+        player.Speed = RetentionSpeed;
+        if (!noLiftBoost) player.LiftSpeed = RetentionSpeed;
+        noLiftBoost = false;
         player.LaunchedBoostCheck();
         NoGrabTimer = GrabCooldown;
     }
@@ -86,6 +103,7 @@ public class HangRail : Entity
 
     private void OnPickup()
     {
+        Hold.Holder?.StateMachine.State = Player.StNormal;
         Vector2 holderSpeed = Hold.Holder.Speed;
         if (
             (
@@ -121,9 +139,10 @@ public class HangRail : Entity
     public override void Update()
     {
         base.Update();
-        Collidable = NoGrabTimer <= 0f && !(Scene.Tracker.GetEntity<Player>() is Player pl && pl.Stamina <= 0f);
+        Collidable = NoGrabTimer <= 0f && !(Scene.Tracker.GetEntity<Player>() is Player pl && (pl.Stamina <= 0f || pl.OnGround()));
         Hold.PickupCollider = Collidable ? Collider : new Hitbox(0, 0, -1e10f, -1e10f);
         NoGrabTimer -= Engine.DeltaTime;
+        Hold.Holder?.minHoldTimer = 0f;
 
         // Make absolutely sure we're still on the track
         if (End == Start)
@@ -155,9 +174,11 @@ public class HangRail : Entity
                 if (oldSpeed.Length() > HoldSpeedLimit)
                 {
                     NoGrabTimer = GrabCooldown;
-                    if (Hold.Holder is Player p)
+                    if (Hold.Holder is Player p) {
                         p.Drop();
-                    if (Math.Abs(oldSpeed.X) > SpriteThreshold)
+                        p.jumpGraceTimer = Player.JumpGraceTime;
+                    }
+                    if (Math.Abs(oldSpeed.X) > TiltSpriteThreshold)
                         Sprite.Play(oldSpeed.X < 0 ? "swingLeft" : "swingRight");
                 }
             }
@@ -166,40 +187,53 @@ public class HangRail : Entity
             if (angleDifference > 0.1 && End != Start)
                 if (Hold.Holder is Player p) p.Drop();
         }
+        if (RetentionSpeed.LengthSquared() > Speed.LengthSquared()) {
+            if (RetentionTimer <= 0f) RetentionTimer = RetentionTime;
+            else {
+                RetentionTimer -= Engine.DeltaTime;
+                if (RetentionTimer <= 0f) RetentionSpeed = Speed;
+            }
+        } else {
+            RetentionSpeed = Speed;
+            RetentionTimer = 0f;
+        }
+
 
 
         float movementTarget = 0f;
         // Move the player to us
         if (Hold.Holder is Player player)
         {
+            player.StateMachine.State = Player.StNormal;
             if (player.Stamina <= 0f) player.Drop();
             else
             {
                 if (TakeStamina) player.Stamina -= StaminaCost * Engine.DeltaTime;
-                player.Speed = Speed;
+                player.Speed = RetentionSpeed;
                 bool wasNaive = player.TreatNaive;
                 if (Start == End) player.Position = Position + Vector2.UnitY * PlayerOffset;
                 else {
                     player.MoveToX(Position.X, OnBonkH);
                     player.MoveToY(Position.Y + PlayerOffset, OnBonkV);
                 }
-                movementTarget = Input.MoveX * PlayerMovement;
+                movementTarget = Input.MoveX * PlayerMaxSpeed;
                 if (Input.Jump.Pressed)
                 {
                     Input.Jump.ConsumePress();
+                    noLiftBoost = true;
                     player.Drop();
-                    player.Stamina -= Player.ClimbJumpCost;
+                    player.Stamina -= JumpStaminaCost;
                     player.Jump(false, true);
                     NoGrabTimer = GrabCooldown;
                 }
             }
         }
         if (Sprite.CurrentAnimationID is "idle" or "pushLeft" or "pushRight")
-            Sprite.Play(Speed.X > SpriteThreshold ? "pushRight" : Speed.X < -SpriteThreshold ? "pushLeft" : "idle");
+            Sprite.Play(Speed.X > TiltSpriteThreshold ? "pushRight" : Speed.X < -TiltSpriteThreshold ? "pushLeft" : "idle");
         if (Start != End)
         {
             Speed.X = Calc.Approach(Speed.X, movementTarget, Friction * Engine.DeltaTime);
-                Speed.Y = Calc.Approach(Speed.Y, 0, Friction * Engine.DeltaTime);
+            Speed.Y = Calc.Approach(Speed.Y, 0, Friction * Engine.DeltaTime);
         }
 
     }
@@ -287,6 +321,7 @@ public class HangRail : Entity
         Vector2 deltaSpeed = self.Speed - oldSpeed;
         if (ent is HangRail hangrail)
         {
+            self.Speed = self.LiftSpeed = hangrail.RetentionSpeed;
             hangrail.Speed.X -= deltaSpeed.X / 2;
             self.Speed.X -= deltaSpeed.X / 2;
         }
