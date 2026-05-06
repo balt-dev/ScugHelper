@@ -15,7 +15,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/SaveTouchSwitchesTrigger")]
 public class SaveTouchSwitchesTrigger(EntityData data, Vector2 offset) : Trigger(data, offset)
 {
-    static readonly List<EntityID> ToSave = [];
+    static List<EntityID> ToSave = [];
     public override void Awake(Scene scene) {
         base.Awake(scene);
         if (scene is not Level level) return;
@@ -39,10 +39,11 @@ public class SaveTouchSwitchesTrigger(EntityData data, Vector2 offset) : Trigger
         On.Celeste.TouchSwitch.TurnOn += OnTurnOn;
     }
 
-    private static void OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader) => ToSave.Clear();
+    private static void OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader) => ToSave = [];
 
     [OnUnload]
     internal static void UnloadHooks() {
+        Everest.Events.Level.OnLoadLevel -= OnLoadLevel;
         On.Celeste.TouchSwitch.TurnOn -= OnTurnOn;
     }
 

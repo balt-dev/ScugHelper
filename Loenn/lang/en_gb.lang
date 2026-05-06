@@ -268,3 +268,6 @@ entities.ScugHelper/StaticFloatySpaceBlock.placements.name.floaty_space_block=St
 entities.ScugHelper/StaticFloatySpaceBlock.placements.description.floaty_space_block=Like a normal floating block, but doesn't oscillate.
 
 entities.ScugHelper/AngleBumper.placements.name.normal=Angle Bumper
+
+entities.ScugHelper/Hangrail.placements.name.normal=Hangrail
+entities.ScugHelper/Hangrail.placements.description.normal=Grabbable rail that inherits momentum.

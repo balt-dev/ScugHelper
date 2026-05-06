@@ -153,7 +153,7 @@ public class Gripwall : Entity
     private static void ClimbUpdateHook(ILContext il)
     {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNextBestFit(MoveType.Before, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.Before, 16,
             instr => instr.MatchLdarg0(),
             instr => instr.MatchCallvirt<Player>("WallBoosterCheck")
         )) throw new InvalidOperationException("Gripwalls failed to match IL code for the ClimbUpdate hook.");

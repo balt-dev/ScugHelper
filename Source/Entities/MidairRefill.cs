@@ -147,11 +147,11 @@ public class MidairRefill : Refill, ICustomRefill
 
         ILLabel? label = null;
 
-        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             instr => instr.MatchLdarg(0),
             instr => instr.MatchLdfld<Player>("jumpGraceTimer")
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
-        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             instr => instr.MatchLdcR4(0.0f),
             instr => instr.MatchBleUn(out label)
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
@@ -182,7 +182,7 @@ public class MidairRefill : Refill, ICustomRefill
         ILCursor cursor = new(il);
 
         if (!cursor.TryGotoNextBestFit(
-            MoveType.Before, 256,
+            MoveType.Before, 16,
             static instr => instr.MatchLdarg(0),
             static instr => instr.MatchLdcI4(1),
             static instr => instr.MatchCallvirt(m_SuperWallJump),
@@ -213,7 +213,7 @@ public class MidairRefill : Refill, ICustomRefill
         ILCursor cursor = new(il);
 
         // we want to favor vanilla wallbounce behavior, so we append our own to the end
-        if (!cursor.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cursor.TryGotoNextBestFit(MoveType.After, 16,
             static instr => instr.MatchLdarg(0),
             static instr => instr.MatchLdcI4(1),
             static instr => instr.MatchCallvirt(m_WallJump))

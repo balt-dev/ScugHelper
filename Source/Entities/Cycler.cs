@@ -82,6 +82,10 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
             frozen = kevin.returnStack.Count > 0;
             if (frozen) return;
         }
+        if (AttachedEntity is HangRail rail) {
+            SetPosition(ref rail.Start, rail.InitialStart + offsetVec);
+            SetPosition(ref rail.End, rail.InitialEnd + offsetVec);
+        }
         if (AttachedEntity is Platform AttachedPlatform) {
             if (!KeepX) AttachedPlatform.MoveToX(targetPosition.X);
             if (!KeepY) AttachedPlatform.MoveToY(targetPosition.Y);
@@ -143,7 +147,7 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
 
     private static ILHook ZipMoverSequenceHook = null;
     private bool frozen;
-    
+
     [OnLoad]
     internal static void LoadHooks()
     {

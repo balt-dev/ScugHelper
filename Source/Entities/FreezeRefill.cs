@@ -82,7 +82,7 @@ public class FreezeRefill : Refill, ICustomRefill
     {
         ILCursor cur = new(il);
         ILLabel? label = null;
-        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             static instr => instr.MatchLdsfld(typeof(Engine), nameof(Engine.DashAssistFreeze)),
             instr => instr.MatchBrtrue(out label)
         )) throw new InvalidOperationException("Freeze refills failed to match IL code for the EngineUpdate hook.");
@@ -90,7 +90,7 @@ public class FreezeRefill : Refill, ICustomRefill
         Level _;
         cur.EmitDelegate(static (Engine engine) => {
             Frozen &= !(Input.Jump.Pressed || Input.Grab.Pressed || Input.Dash.Pressed || Input.Pause.Pressed || Input.CrouchDash.Pressed);
-            if (Frozen) {
+            if (Frozen && engine.scene is not null) {
                 (engine.scene as Level).UpdateTime();
                 engine.scene.Entities.UpdateLists();
             }

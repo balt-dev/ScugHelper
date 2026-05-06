@@ -102,7 +102,7 @@ public class NeutrallessWallBooster : WallBooster
     {
         ILCursor cursor = new(il);
 
-        if (!cursor.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cursor.TryGotoNextBestFit(MoveType.After, 16,
             instr => instr.OpCode == OpCodes.Ldarg_0,
             instr => instr.MatchLdfld<Player>("moveX"))
         ) throw new Exception("Neutralless wall boosters failed to match IL for Player orig_WallJump hook.");

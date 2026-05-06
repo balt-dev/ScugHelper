@@ -82,4 +82,11 @@
         <Anim id="flipMouth" path="predator" delay="0.05" frames="61-63" goto="spotted"/>
         <Anim id="flipEyes" path="predator" delay="0.05" frames="68-74" goto="search"/>
       </fragileSeeker>
+      <hangrail path="objects/hangrail/" start="idle">
+          <Loop id="idle" path="bar" frames="3" delay="0.06" />
+          <Loop id="pushLeft" path="bar" frames="2" delay="0.06" />
+          <Loop id="pushRight" path="bar" frames="4" delay="0.06" />
+          <Anim id="swingLeft" path="bar" frames="1,0*2,1,3,4,3" delay="0.06" goto="idle" />
+          <Anim id="swingRight" path="bar" frames="5,6*2,5,3,2,3" delay="0.06" goto="idle" />
+      </hangrail>
 </Sprites>

@@ -62,6 +62,7 @@ public class MinimapEntity : Entity
         Camera = new(ScugHelperModule.Settings.Minimap.MinimapWidth, ScugHelperModule.Settings.Minimap.MinimapHeight);
         Tag |= Tags.Global | Tags.HUD | Tags.TransitionUpdate | Tags.FrozenUpdate;
         Add(new BeforeRenderHook(BeforeRender));
+        ScugHelperModule.Session.RenderedEditorOnce = false;
     }
     public override void Awake(Scene scene)
     {
@@ -151,10 +152,16 @@ public class MinimapEntity : Entity
         foreach (var temp in templates)
         {
             if (!temp.Rect.Intersects(new Rectangle((int)Camera.Left, (int)Camera.Top, (int)(Camera.Right - Camera.Left), (int)(Camera.Bottom - Camera.Top)))) continue;
-            temp.RenderOutline(Camera);
-            temp.RenderContents(Camera, templates);
-            if (level.Session.LevelData.Name == temp.Name)
-                temp.RenderHighlight(Camera, true, false);
+            try
+            {
+                temp.RenderOutline(Camera);
+                temp.RenderContents(Camera, templates);
+                if (level.Session.LevelData.Name == temp.Name)
+                    temp.RenderHighlight(Camera, true, false);
+            } catch (NullReferenceException) {
+                Logger.Warn(nameof(ScugHelperModule), "GameHelper is fucking with the minimap. Caught NullReferenceException.");
+                // GameHelper does this sometimes for some reason.
+            }
         }
         if (level.Tracker.GetEntity<Player>() is Player player)
             Draw.Pixel.Draw((player.Position / 8f).Round() - Vector2.UnitY, Vector2.Zero, Color.Pink);

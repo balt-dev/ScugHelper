@@ -343,7 +343,7 @@ public class PinballBooster : Booster
     private static void ExplodeLaunchILHook(ILContext ctx)
     {
         ILCursor cur = new(ctx);
-        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             instr => instr.MatchCall<SlashFx>("Burst"),
             instr => instr.MatchPop()
         ))

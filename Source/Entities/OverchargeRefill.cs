@@ -161,7 +161,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         ILCursor cur = new(il);
         ILLabel label = null!;
 
-        if (!cur.TryGotoNextBestFit(MoveType.Before, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.Before, 16,
             static instr => instr.MatchLdloc1(),
             static instr => instr.MatchLdloc3(),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
@@ -178,7 +178,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         cur.EmitStloc3();
         
         if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)))) return;
-        if (!cur.TryGotoNextBestFit(MoveType.After, 256,
+        if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             static instr => instr.MatchCall<Vector2>("op_Multiply"),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
         )) return;

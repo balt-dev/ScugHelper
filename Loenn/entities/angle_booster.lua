@@ -1,3 +1,5 @@
+local atlases = require("atlases")
+
 return {
     name = "ScugHelper/AngleBumper",
     depth = -100,
@@ -7,6 +9,5 @@ return {
             data = { Angle = 0, ColdSprite = "bumper", HotSprite = "bumper_evil" },
         }
     },
-    texture = "objects/bumper/Idle00",
     fieldInformation = {}
 }
