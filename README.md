@@ -1,7 +1,7 @@
 # ScugHelper
 a few new entities to mess with :3
 
-check the [gamebanana](https://gamebanana.com/mods/664530) for details on the entities themselves
+check the [wiki]https://github.com/balt-dev/ScugHelper/wiki) for details on the entities themselves
 
 also fixes player seekers not being able to hit dash switches
 
