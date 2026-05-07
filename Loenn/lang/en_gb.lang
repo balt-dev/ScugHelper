@@ -283,3 +283,7 @@ entities.ScugHelper/Hangrail.attributes.description.TiltSpriteThreshold=The amou
 entities.ScugHelper/Hangrail.attributes.description.GrabCooldown=The amount of time the player has to wait after grabbing the bar to grab it again, in seconds.
 entities.ScugHelper/Hangrail.attributes.description.StaminaCost=The amount of stamina per second it takes to hold onto the bar.
 entities.ScugHelper/Hangrail.attributes.description.JumpStaminaCost=The amount of stamina it takes to jump on the bar.
+
+
+entities.ScugHelper/CollideGate.placements.name.normal=Collide Gate
+entities.ScugHelper/CollideGate.placements.description.normal=Performs a player collision at a specified position when crossed.

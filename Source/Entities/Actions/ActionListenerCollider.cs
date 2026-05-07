@@ -23,8 +23,12 @@ public class ActionListenerCollider : Entity
     internal void Alert(Level level)
     {
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
-        foreach (PlayerCollider collider in level.Tracker.GetComponents<PlayerCollider>())
-            if (collider.Entity.CollidePoint(CollidePos))
-                collider.OnCollide(player);
+        foreach (PlayerCollider collider in Scene.CollideAllByComponent<PlayerCollider>(CollidePos))
+            collider.OnCollide(player);
+        foreach (Trigger trigger in Scene.CollideAll<Trigger>(CollidePos)) {
+            trigger.OnEnter(player);
+            trigger.OnStay(player);
+            trigger.OnLeave(player);
+        }
     }
 }

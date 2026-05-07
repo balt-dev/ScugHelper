@@ -13,7 +13,18 @@ public class CollideGate(EntityData data, Vector2 offset) : AbstractGate(data, o
     public override void OnTrigger(Player player)
     {
         Level level = SceneAs<Level>();
-        foreach (PlayerCollider collider in CollideAllByComponent<PlayerCollider>(CollidePosition))
+        foreach (PlayerCollider collider in Scene.CollideAllByComponent<PlayerCollider>(CollidePosition))
             collider.OnCollide(player);
+        foreach (Trigger trigger in Scene.CollideAll<Trigger>(CollidePosition)) {
+            trigger.OnEnter(player);
+            trigger.OnStay(player);
+            trigger.OnLeave(player);
+        }
+    }
+    
+    public override void DebugRender(Camera camera) {
+        base.DebugRender(camera);
+        Draw.Line(Position, CollidePosition, Color.Yellow);
+        Draw.Circle(CollidePosition, 2, Color.Cyan, 6);
     }
 }
