@@ -170,9 +170,6 @@ entities.ScugHelper/ActionDashSwitch.placements.description.down=Triggers some a
 entities.ScugHelper/ActionDashSwitch.placements.description.left=Triggers some action groups when hit.
 entities.ScugHelper/ActionDashSwitch.placements.description.right=Triggers some action groups when hit.
 
-entities.ScugHelper/ActionTempleGate.placements.name.normal=Action Temple Gate
-entities.ScugHelper/ActionTempleGate.placements.description.normal=Opens when some action groups are alerted, and closes when others are alerted.
-
 entities.ScugHelper/SeekerTempleGate.placements.name.normal=Seeker Temple Gate
 entities.ScugHelper/SeekerTempleGate.placements.description.normal=Opens when no seekers are left in the room (i.e. when all have been killed).
 
@@ -287,3 +284,23 @@ entities.ScugHelper/Hangrail.attributes.description.JumpStaminaCost=The amount o
 
 entities.ScugHelper/CollideGate.placements.name.normal=Collide Gate
 entities.ScugHelper/CollideGate.placements.description.normal=Performs a player collision at a specified position when crossed.
+
+entities.ScugHelper/ActionSwapBlock.attributes.description.HidePath=Whether to hide the backdrop of the block's path.
+entities.ScugHelper/ActionSwapBlock.attributes.description.Toggle=Whether the block should stay at the end.
+entities.ScugHelper/ActionSwapBlock.attributes.description.Groups=The action groups this swap block should swap on.
+entities.ScugHelper/ActionSwapBlock.attributes.description.PathSprite=The sprite to use for the block's path backdrop.
+entities.ScugHelper/ActionSwapBlock.attributes.description.ReturnTime=The amount of time the block will move towards the target after being alerted.
+entities.ScugHelper/ActionSwapBlock.attributes.description.InactiveBlockSprite=The block sprite to use while the block is not moving towards the target.
+entities.ScugHelper/ActionSwapBlock.attributes.description.ActiveBlockSprite=The block sprite to use while the block is moving towards the target.
+entities.ScugHelper/ActionSwapBlock.attributes.description.BackgroundSprite=The sprite to put behind the block's path.
+entities.ScugHelper/ActionSwapBlock.attributes.description.InactiveMiddleSprite=The sprite name to put in the middle of the sprite while the block is not moving towards the target.
+entities.ScugHelper/ActionSwapBlock.attributes.description.ActiveMiddleSprite=The sprite name to put in the middle of the sprite while the block is moving towards the target.
+entities.ScugHelper/ActionSwapBlock.attributes.description.MovementSpeed=The speed at which the block should move.
+entities.ScugHelper/ActionSwapBlock.attributes.description.ReturnSpeedMultiplier=The speed at which the block should return, relative to the move speed.
+
+entities.ScugHelper/ActionSwapBlock.placements.name.normal=Custom Swap Block (On Dash)
+entities.ScugHelper/ActionSwapBlock.placements.name.jump=Custom Swap Block (On Jump)
+entities.ScugHelper/ActionSwapBlock.placements.name.grab=Custom Swap Block (On Grab)
+entities.ScugHelper/ActionSwapBlock.placements.name.action=Custom Swap Block (On Action)
+
+entities.ScugHelper/ActionTempleGate.placements.name.normal=Custom Temple Gate
