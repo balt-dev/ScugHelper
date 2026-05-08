@@ -162,6 +162,8 @@ public class ActionSwapBlock : SwapBlock
                 player.Speed.X = MathF.MaxMagnitude(player.Speed.X, liftSpeed.X);
                 player.Speed.Y = MathF.MaxMagnitude(player.Speed.Y, liftSpeed.Y);
                 player.LiftSpeed = player.Speed;
+                if (player.StateMachine.State is Player.StDash or Player.StRedDash)
+                    player.StateMachine.State = Player.StNormal;
             }
             if (Slippery) {
                 GetRiders();
