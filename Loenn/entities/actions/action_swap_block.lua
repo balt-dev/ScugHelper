@@ -63,6 +63,10 @@ for _, pair in ipairs(placements) do
             BackgroundSprite = "objects/swapblock/target",
             InactiveMiddleSprite = "swapBlockLight",
             ActiveMiddleSprite = "swapBlockLightRed",
+            ReturnSound = "event:/game/05_mirror_temple/swapblock_return",
+            ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
+            MoveSound = "event:/game/05_mirror_temple/swapblock_move",
+            MoveEndSound = "event:/game/05_mirror_temple/swapblock_move_end",
             MovementSpeed = 360,
             ReturnSpeedMultiplier = 0.4,
         }

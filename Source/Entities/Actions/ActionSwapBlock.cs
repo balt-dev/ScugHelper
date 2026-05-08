@@ -17,6 +17,10 @@ public class ActionSwapBlock : SwapBlock
     }
 
     readonly string[] Groups;
+    readonly string ReturnSound;
+    readonly string ReturnEndSound;
+    readonly string MoveSound;
+    readonly string MoveEndSound;
     readonly bool Toggle;
     readonly bool Particles;
     readonly string PathSprite;
@@ -31,6 +35,10 @@ public class ActionSwapBlock : SwapBlock
             data.Bool("HidePath") ? Themes.Moon : Themes.Normal
         )
     {
+        ReturnSound = data.String("ReturnSound", "event:/game/05_mirror_temple/swapblock_return");
+        ReturnEndSound = data.String("ReturnEndSound", "event:/game/05_mirror_temple/swapblock_return_end");
+        MoveSound = data.String("MoveSound", "event:/game/05_mirror_temple/swapblock_move");
+        MoveEndSound = data.String("MoveEndSound", "event:/game/05_mirror_temple/swapblock_move_end");
         Particles = data.Bool("Particles");
         Toggle = data.Bool("Toggle");
         Groups = IAction.GetGroups(data.String("Groups", "#PlayerDash"));
@@ -42,6 +50,7 @@ public class ActionSwapBlock : SwapBlock
         PathSprite = data.String("PathSprite", "objects/swapblock/path");
         ReturnTime = data.Float("ReturnTime", 0.8f);
 
+        
         var inactive = GFX.Game[data.String("InactiveBlockSprite", "objects/swapblock/block")];
         var active = GFX.Game[data.String("ActiveBlockSprite", "objects/swapblock/blockRed")];
         var background =
@@ -85,9 +94,9 @@ public class ActionSwapBlock : SwapBlock
         Audio.Stop(returnSfx);
         Audio.Stop(moveSfx);
         if (!Swapping)
-            Audio.Play("event:/game/05_mirror_temple/swapblock_move_end", Center);
+            Audio.Play(MoveEndSound, Center);
         else
-            moveSfx = Audio.Play("event:/game/05_mirror_temple/swapblock_move", Center);
+            moveSfx = Audio.Play(MoveSound, Center);
     }
 
     public override void Awake(Scene scene) {
@@ -111,7 +120,7 @@ public class ActionSwapBlock : SwapBlock
                 target = 1 - target;
                 speed = 0f;
                 Audio.Stop(returnSfx);
-                returnSfx = Audio.Play("event:/game/05_mirror_temple/swapblock_return", Center);
+                returnSfx = Audio.Play(ReturnSound, Center);
             }
         }
 
@@ -150,7 +159,7 @@ public class ActionSwapBlock : SwapBlock
                 if (lerp <= 0 || lerp >= 1)
                 {
                     Audio.SetParameter(returnSfx, "end", 1f);
-                    Audio.Play("event:/game/05_mirror_temple/swapblock_return_end", Center);
+                    Audio.Play(ReturnEndSound, Center);
                 }
             }
             else
@@ -158,10 +167,10 @@ public class ActionSwapBlock : SwapBlock
                 if (lerp <= 0 && target == 0)
                 {
                     Audio.SetParameter(returnSfx, "end", 1f);
-                    Audio.Play("event:/game/05_mirror_temple/swapblock_return_end", Center);
+                    Audio.Play(ReturnEndSound, Center);
                 }
                 else if (lerp >= 1 && target == 1)
-                    Audio.Play("event:/game/05_mirror_temple/swapblock_move_end", Center);
+                    Audio.Play(MoveEndSound, Center);
             }
         }
 
