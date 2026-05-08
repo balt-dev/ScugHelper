@@ -78,7 +78,7 @@ public class ActionSwapBlock : SwapBlock
         returnTimer = ReturnTime;
         Swapping = Toggle || lerp < 1f;
         target = Toggle ? 1 - target : 1;
-        burst = (Scene as Level).Displacement.AddBurst(Center, 0.2f, 0f, 16f);
+        if (middleGreen != null) burst = (Scene as Level).Displacement.AddBurst(Center, 0.2f, 0f, 16f);
         var absLerp = target == 0 ? 1 - lerp : lerp;
         speed = absLerp >= 0.2 ? maxForwardSpeed : MathHelper.Lerp(maxForwardSpeed * 0.333f, maxForwardSpeed, absLerp / 0.2f);
 
