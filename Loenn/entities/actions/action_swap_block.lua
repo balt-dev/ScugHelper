@@ -1,4 +1,5 @@
 local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
+local drawableSprite = require("structs.drawable_sprite")
 local drawableNinePatch = require("structs.drawable_nine_patch")
 local utils = require("utils")
 
@@ -50,19 +51,15 @@ for _, pair in ipairs(placements) do
         data = {
             width = 16,
             height = 16,
-            Particles = true,
+                Particles = true,
+                Slippery = false,
             HidePath = false,
             HideBackground = false,
             HideMiddle = false,
             Toggle = pair.toggle or false,
             Groups = pair[2],
-            PathSprite = "objects/swapblock/path",
             ReturnTime = 0.8,
-            InactiveBlockSprite = "objects/swapblock/block",
-            ActiveBlockSprite = "objects/swapblock/blockRed",
-            BackgroundSprite = "objects/swapblock/target",
-            InactiveMiddleSprite = "swapBlockLight",
-            ActiveMiddleSprite = "swapBlockLightRed",
+            SpriteDirectory = "objects/swapblock",
             ReturnSound = "event:/game/05_mirror_temple/swapblock_return",
             ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
             MoveSound = "event:/game/05_mirror_temple/swapblock_move",
@@ -76,13 +73,21 @@ end
 
 swapBlock.warnBelowSize = {16, 16}
 
-local function addBlockSprites(sprites, entity, position, frameTexture, isNode)
+local function addBlockSprites(sprites, entity, position, frameTexture, middleTexture, isNode)
     local x, y = position.x or 0, position.y or 0
     local width, height = entity.width or 8, entity.height or 8
 
     local ninePatchOptions = isNode and frameNodeNinePatchOptions or frameNinePatchOptions
     local frameNinePatch = drawableNinePatch.fromTexture(frameTexture, ninePatchOptions, x, y, width, height)
     local frameSprites = frameNinePatch:getDrawableSprite()
+
+    local middleSprite = drawableSprite.fromTexture(middleTexture, position)
+    middleSprite:addPosition(math.floor(width / 2), math.floor(height / 2))
+    middleSprite.depth = blockDepth
+
+    if isNode then
+        middleSprite:setColor({1, 1, 1, 0.7})
+    end
 
     for _, sprite in ipairs(frameSprites) do
         sprite.depth = blockDepth
@@ -102,7 +107,7 @@ local function addTrailSprites(sprites, entity, trailTexture, path)
 
     if path then
         local pathDirection = x == nodeX and "V" or "H"
-        local pathTexture = string.format(entity.PathSprite .. "%s", pathDirection)
+        local pathTexture = string.format(entity.SpriteDirectory .. "/path%s", pathDirection)
         local pathNinePatch = drawableNinePatch.fromTexture(pathTexture, pathNinePatchOptions, x, y, drawWidth, drawHeight)
         local pathSprites = pathNinePatch:getDrawableSprite()
 
@@ -128,8 +133,8 @@ end
 function swapBlock.sprite(room, entity)
     local sprites = {}
 
-    addTrailSprites(sprites, entity, entity.BackgroundSprite, not entity.HidePath)
-    addBlockSprites(sprites, entity, entity, entity.InactiveBlockSprite)
+    addTrailSprites(sprites, entity, entity.SpriteDirectory .. "/target", not entity.HidePath)
+    addBlockSprites(sprites, entity, entity, entity.SpriteDirectory .. "/block", entity.SpriteDirectory .. "/midBlockRed00")
 
     return sprites
 end
@@ -137,7 +142,7 @@ end
 function swapBlock.nodeSprite(room, entity, node)
     local sprites = {}
 
-    addBlockSprites(sprites, entity, entity, entity.InactiveBlockSprite, true)
+    addBlockSprites(sprites, entity, entity, entity.SpriteDirectory .. "/block", entity.SpriteDirectory .. "/midBlockRed00", true)
 
     return sprites
 end

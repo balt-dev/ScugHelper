@@ -3,6 +3,8 @@ using Monocle;
 using Celeste.Mod.Entities;
 using System;
 using MonoMod;
+using System.Linq;
+using System.Collections.Generic;
 namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
 [TrackedAs(typeof(SwapBlock))]
@@ -13,7 +15,7 @@ public class ActionSwapBlock : SwapBlock
     internal class CustomPathRenderer : PathRenderer
     {
         public CustomPathRenderer(ActionSwapBlock block)
-            : base(block) => pathTexture = GFX.Game[block.PathSprite + ((block.start.X == block.end.X) ? "V" : "H")];
+            : base(block) => pathTexture = GFX.Game[block.SpritePath + "/path" + ((block.start.X == block.end.X) ? "V" : "H")];
     }
 
     readonly string[] Groups;
@@ -22,8 +24,9 @@ public class ActionSwapBlock : SwapBlock
     readonly string MoveSound;
     readonly string MoveEndSound;
     readonly bool Toggle;
+    readonly bool Slippery;
     readonly bool Particles;
-    readonly string PathSprite;
+    readonly string SpritePath;
     readonly new float ReturnTime;
 
     private static readonly MTexture transparent = new(VirtualContent.CreateTexture("transparent", 24, 24, Color.Transparent));
@@ -41,22 +44,22 @@ public class ActionSwapBlock : SwapBlock
         MoveEndSound = data.String("MoveEndSound", "event:/game/05_mirror_temple/swapblock_move_end");
         Particles = data.Bool("Particles");
         Toggle = data.Bool("Toggle");
+        Slippery = data.Bool("Slippery");
         Groups = IAction.GetGroups(data.String("Groups", "#PlayerDash"));
         Add(new ActionListener(Groups, OnAlert));
 
         Components.RemoveAll<DashListener>();
         Components.RemoveAll<Sprite>();
 
-        PathSprite = data.String("PathSprite", "objects/swapblock/path");
+        SpritePath = data.String("SpriteDirectory", "objects/swapblock");
         ReturnTime = data.Float("ReturnTime", 0.8f);
 
-        
-        var inactive = GFX.Game[data.String("InactiveBlockSprite", "objects/swapblock/block")];
-        var active = GFX.Game[data.String("ActiveBlockSprite", "objects/swapblock/blockRed")];
+        var inactive = GFX.Game[SpritePath + "/block"];
+        var active = GFX.Game[SpritePath + "/blockRed"];
         var background =
             data.Bool("HideBackground")
             ? transparent
-            : GFX.Game[data.String("BackgroundSprite", "objects/swapblock/target")];
+            : GFX.Game[SpritePath + "/target"];
 
         nineSliceGreen = new MTexture[3, 3];
         nineSliceRed = new MTexture[3, 3];
@@ -71,11 +74,16 @@ public class ActionSwapBlock : SwapBlock
             }
         }
 
-        middleGreen = null;
-        middleRed = null;
-        if (!data.Bool("HideMiddle")) {
-            Add(middleGreen = GFX.SpriteBank.Create(data.String("InactiveMiddleSprite", "swapBlockLight")));
-            Add(middleRed = GFX.SpriteBank.Create(data.String("ActiveMiddleSprite", "swapBlockLightRed")));
+        if (data.Bool("HideMiddle")) {
+            middleGreen = null;
+            middleRed = null;
+        } else {
+            middleGreen.Reset(GFX.Game, SpritePath + '/');
+            middleRed.Reset(GFX.Game, SpritePath + '/');
+            middleGreen.AddLoop("idle", "midBlock", 0.08f, [0, 1, 2, 3]);
+            middleRed.AddLoop("idle", "midBlockRed", 0.08f, [0, 1, 2, 3]);
+            middleGreen.Play("idle", true);
+            middleRed.Play("idle", true);
         }
 
         maxForwardSpeed = data.Float("MovementSpeed", 360) / Vector2.Distance(start, end);
@@ -149,7 +157,28 @@ public class ActionSwapBlock : SwapBlock
             if (Particles && (Toggle || target == 1) && Scene.OnInterval(0.02f))
                 MoveParticles(end - start);
 
+            if (Slippery && CollideFirstOutside<Player>(Vector2.Lerp(start, end, lerp)) is Player player)
+            {
+                player.Speed.X = MathF.MaxMagnitude(player.Speed.X, liftSpeed.X);
+                player.Speed.Y = MathF.MaxMagnitude(player.Speed.Y, liftSpeed.Y);
+                player.LiftSpeed = player.Speed;
+            }
+            if (Slippery) {
+                GetRiders();
+            }
+
             MoveTo(Vector2.Lerp(start, end, lerp), liftSpeed);
+            
+            if (Slippery) {
+                foreach (Actor rider in riders)
+                {
+                    if (SpeedAccessor.For(rider) is not SpeedAccessor accessor) continue;
+                    var actorSpeed = accessor.Speed;
+                    accessor.Speed = new(liftSpeed.X, actorSpeed.Y);
+                    rider.LiftSpeed = liftSpeed;
+                }
+                riders.Clear();
+            }
             Audio.Position(moveSfx, Center);
             Audio.Position(returnSfx, Center);
 
