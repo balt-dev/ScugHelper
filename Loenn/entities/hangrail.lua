@@ -13,8 +13,8 @@ return {
             name = "normal",
             data = {
                 Sprite = "hangrail",
-                TieSprite = "objects/hangrail/tie",
-                RopeSprite = "objects/hangrail/rope",
+                TieSprite = "objects/ScugHelper/hangrail/tie",
+                RopeSprite = "objects/ScugHelper/hangrail/rope",
                 StartWithGravity = false,
                 Position = 0,
                 TakesStamina = true,
@@ -34,7 +34,7 @@ return {
         entity.nodes[1] = entity.nodes[1] or { x = entity.x, y = entity.y }
         entity.nodes[2] = entity.nodes[2] or { x = entity.x, y = entity.y }
         local s = entity.nodes[1]; local e = entity.nodes[2]
-        local bar = drawableSprite.fromTexture("objects/hangrail/bar03", entity)
+        local bar = drawableSprite.fromTexture("objects/ScugHelper/hangrail/bar03", entity)
         bar.x = s.x + (e.x - s.x) * entity.Position
         bar.y = s.y + (e.y - s.y) * entity.Position
         return {

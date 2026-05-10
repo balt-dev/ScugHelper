@@ -26,7 +26,7 @@ public class SeekerTrackSpinner : TrackSpinner
         PauseTime = data.Float("PauseTime", 0.3f);
         Add(new PlayerCollider(OnPlayer));
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
-        Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/seekerSpinner/fg"));
+        Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg"));
     }
 
     public override void Render()

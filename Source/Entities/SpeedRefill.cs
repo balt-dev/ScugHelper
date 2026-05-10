@@ -51,8 +51,8 @@ public class SpeedRefill : Refill, ICustomRefill
         else if (rawAngle < 37.5) prefix = "rot30_";
         else prefix = "rot45_";
 
-        Add(sprite = new Sprite(GFX.Game, $"objects/speedRefill/{prefix}"));
-        Add(outline = new Image(GFX.Game[$"objects/speedRefill/{prefix}outline"]));
+        Add(sprite = new Sprite(GFX.Game, $"objects/ScugHelper/speedRefill/{prefix}"));
+        Add(outline = new Image(GFX.Game[$"objects/ScugHelper/speedRefill/{prefix}outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();
@@ -97,7 +97,12 @@ public class SpeedRefill : Refill, ICustomRefill
         sprite.Visible = false;
         Depth = 8999;
         player.Speed = SpeedToSet;
-        player.Position = Center + (player.Position - player.Center);
+        var positionTarget = Center + (player.Position - player.Center);
+        var oldNaive = player.TreatNaive;
+        player.TreatNaive = true;
+        player.MoveToX(positionTarget.X);
+        player.MoveToY(positionTarget.Y);
+        player.TreatNaive = oldNaive;
         if (!(player.LastBooster is PinballBooster pinball && pinball.BoostingPlayer && pinball.ConsumeBounce())) player.StateMachine.State = Player.StLaunch;
         yield return 0.05f;
         float num = player.Speed.Angle();

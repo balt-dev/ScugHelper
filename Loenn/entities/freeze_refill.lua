@@ -12,7 +12,7 @@ return {
             }
         }
     },
-    texture = "objects/freezeRefill/idle00",
+    texture = "objects/ScugHelper/freezeRefill/idle00",
     selection = function(room, entity)
         return utils.rectangle(entity.x - 8, entity.y - 8, 16, 16)
     end,

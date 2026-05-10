@@ -6,13 +6,13 @@ local ninePatchOptions = {
     fillMode = "repeat"
 }
 
-local zeroBlock = "objects/reboundBlock/zeroBlock"
-local oneBlock = "objects/reboundBlock/oneBlock"
-local twoBlock = "objects/reboundBlock/twoBlock"
+local zeroBlock = "objects/ScugHelper/reboundBlock/zeroBlock"
+local oneBlock = "objects/ScugHelper/reboundBlock/oneBlock"
+local twoBlock = "objects/ScugHelper/reboundBlock/twoBlock"
 
-local zeroSlot = "objects/reboundBlock/zeroSlot"
-local oneSlot = "objects/reboundBlock/oneSlot"
-local twoSlot = "objects/reboundBlock/twoSlot"
+local zeroSlot = "objects/ScugHelper/reboundBlock/zeroSlot"
+local oneSlot = "objects/ScugHelper/reboundBlock/oneSlot"
+local twoSlot = "objects/ScugHelper/reboundBlock/twoSlot"
 
 return {
     name = "ScugHelper/ReboundBlock",
@@ -20,23 +20,23 @@ return {
     placements = {
         {
             name = "reboundBlockGrey",
-            data = {width = 32, height = 32, kind = 0}
+            data = { width = 32, height = 32, kind = 0 }
         },
         {
             name = "reboundBlockGreen",
-            data = {width = 32, height = 32, kind = 1}
+            data = { width = 32, height = 32, kind = 1 }
         },
         {
             name = "reboundBlockGreen",
-            data = {width = 32, height = 32, kind = 2}
+            data = { width = 32, height = 32, kind = 2 }
         },
     },
     sprite = function(room, entity)
         local x, y = entity.x or 0, entity.y or 0
         local width, height = entity.width or 24, entity.height or 24
 
-        local blockTexture = ({zeroBlock, oneBlock, twoBlock})[entity.kind + 1]
-        local slotTexture = ({zeroSlot, oneSlot, twoSlot})[entity.kind + 1]
+        local blockTexture = ({ zeroBlock, oneBlock, twoBlock })[entity.kind + 1]
+        local slotTexture = ({ zeroSlot, oneSlot, twoSlot })[entity.kind + 1]
 
         local ninePatch = drawableNinePatch.fromTexture(blockTexture, ninePatchOptions, x, y, width, height)
         local sprites = ninePatch:getDrawableSprite()
@@ -46,7 +46,7 @@ return {
     fieldInformation = {
         kind = {
             type = "integer",
-            options = { {"Grey", 0}, {"Green", 1}, {"Pink", 2} }
+            options = { { "Grey", 0 }, { "Green", 1 }, { "Pink", 2 } }
         }
     }
 }

@@ -10,5 +10,5 @@ return {
         }
     },
 
-    texture = "objects/seekerSpinner/fg00",
+    texture = "objects/ScugHelper/seekerSpinner/fg00",
 }

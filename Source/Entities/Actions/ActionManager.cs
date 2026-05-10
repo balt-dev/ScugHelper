@@ -16,7 +16,8 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
 using Callback = Action<Level>;
 
-readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null, bool immediate = false) {
+readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null, bool immediate = false)
+{
     public readonly Callback? Action = action;
     public readonly float? Delay = delay;
     public readonly EntityData? AssociatedData = data;
@@ -79,55 +80,71 @@ public static class ActionManager
         if (action is not IAction iAction) throw new Exception($"Constructor for action type {ty} must return an implementer of IActor.");
         if (!idSet.Add(id)) return;
         updaters.Add(iAction.ActionUpdate);
-        foreach (string group in groups) {
+        foreach (string group in groups)
+        {
             if (!actionMap.TryGetValue(group, out var actions))
                 actionMap.Add(group, actions = []);
             actions.Add(new(iAction.Alert, delay, data, immediate: data?.Bool("Immediate") ?? false));
         }
-        if (action is GlobalTriggerFlagListener listener) {
-            foreach (var entData in room.Triggers) {
-                if (TryConstructEntity(entData, room, out _) is not Trigger trigger) {
+        if (action is GlobalTriggerFlagListener listener)
+        {
+            foreach (var entData in room.Triggers)
+            {
+                if (TryConstructEntity(entData, room, out _) is not Trigger trigger)
+                {
                     Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
                     continue;
                 }
-                if (trigger.Collider.Collide(data.Position + room.Position)) {
+                if (trigger.Collider.Collide(data.Position + room.Position))
+                {
                     session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     listener.triggers.Add(trigger);
                     globalEnts.Add(trigger);
                 }
             }
         }
-        if (action is GlobalTriggerActionListener actListener) {
-            foreach (var entData in room.Triggers) {
-                if (TryConstructEntity(entData, room, out _) is not Trigger trigger) {
+        if (action is GlobalTriggerActionListener actListener)
+        {
+            foreach (var entData in room.Triggers)
+            {
+                if (TryConstructEntity(entData, room, out _) is not Trigger trigger)
+                {
                     Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
                     continue;
                 }
-                if (trigger.Collider.Collide(data.Position + room.Position)) {
+                if (trigger.Collider.Collide(data.Position + room.Position))
+                {
                     session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     actListener.triggers.Add(trigger);
                     globalEnts.Add(trigger);
                 }
             }
         }
-        if (action is GlobalEntityActionListener entActListener) {
-            foreach (var entData in room.Entities) {
-                if (TryConstructEntity(entData, room, out _) is not Entity entity) {
+        if (action is GlobalEntityActionListener entActListener)
+        {
+            foreach (var entData in room.Entities)
+            {
+                if (TryConstructEntity(entData, room, out _) is not Entity entity)
+                {
                     Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
                     continue;
                 }
                 if (entity.Get<PlayerCollider>() is not PlayerCollider collider) continue;
-                if (entActListener.Collider.Collide(entData.Position + room.Position)) {
+                if (entActListener.Collider.Collide(entData.Position + room.Position))
+                {
                     session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     entActListener.colliders.Add(collider);
                     globalEnts.Add(entity);
                 }
             }
         }
-        if (action is EntityGlobalizer entGlobalizer) {
-            foreach (var entData in room.Entities) {
+        if (action is EntityGlobalizer entGlobalizer)
+        {
+            foreach (var entData in room.Entities)
+            {
                 if (TryConstructEntity(entData, room, out _) is not Entity entity) continue;
-                if (entGlobalizer.Collider.Collide(entData.Position + room.Position)) {
+                if (entGlobalizer.Collider.Collide(entData.Position + room.Position))
+                {
                     session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     globalEnts.Add(entity);
                 }
@@ -171,21 +188,23 @@ public static class ActionManager
     }
 
     [OnLoad]
-    internal static void LoadHooks() {
+    internal static void LoadHooks()
+    {
         Everest.Events.Level.OnLoadLevel += OnLoadLevel;
         On.Celeste.Level.Update += OnLevelUpdate;
     }
     [OnUnload]
-    internal static void UnloadHooks() {
+    internal static void UnloadHooks()
+    {
         Everest.Events.Level.OnLoadLevel -= OnLoadLevel;
         On.Celeste.Level.Update -= OnLevelUpdate;
     }
 
-    private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
+    private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self)
+    {
         orig(self);
         dummy.Scene = self;
         dummy.Update();
-        UpdateVariables(self);
     }
 
     private static void OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
@@ -209,34 +228,6 @@ public static class ActionManager
         AlertActions(["#LoadLevel"], level);
     }
 
-    internal static void UpdateVariables(Level level) {
-        Session session = level.Session;
-        if (level.Tracker.GetEntity<Player>() is Player player)
-        {
-            session.SetSlider("ScugHelper.PlayerX", player.Position.X);
-            session.SetSlider("ScugHelper.PlayerY", player.Position.Y);
-            session.SetSlider("ScugHelper.PlayerSpeedX", player.Speed.X);
-            session.SetSlider("ScugHelper.PlayerSpeedY", player.Speed.Y);
-            session.SetSlider("ScugHelper.PlayerSubpixelX", player.movementCounter.X);
-            session.SetSlider("ScugHelper.PlayerSubpixelY", player.movementCounter.Y);
-            session.SetSlider("ScugHelper.PlayerStamina", player.Stamina);
-            session.SetCounter("ScugHelper.PlayerDashes", player.Dashes);
-            session.SetCounter("ScugHelper.PlayerState", player.StateMachine.State);
-            session.SetFlag("ScugHelper.PlayerDead", player.Dead);
-            session.SetFlag("ScugHelper.PlayerOnGround", player.OnGround());
-            session.SetFlag("ScugHelper.PlayerOnSafeGround", player.OnSafeGround);
-            session.SetFlag("ScugHelper.PlayerDashAttacking", player.DashAttacking);
-            session.SetFlag("ScugHelper.IsPlayerSeeker", player.Get<PlayerSeekerComponent>() is not null);
-        }
-        session.SetFlag("ScugHelper.HasMidair", MidairRefill.MidairDashCount > 0);
-        session.SetFlag("ScugHelper.HasOvercharge", OverchargeRefill.OverchargeDashCount > 0);
-        session.SetFlag("ScugHelper.InLimbo", LimboRefill.LimboTimer > 0);
-        session.SetCounter("ScugHelper.LevelX", level.Bounds.X);
-        session.SetCounter("ScugHelper.LevelY", level.Bounds.Y);
-        session.SetCounter("ScugHelper.LevelWidth", level.Bounds.Width);
-        session.SetCounter("ScugHelper.LevelHeight", level.Bounds.Height);
-    }
-
     [Command("alert", "Alerts a specified action group.")]
     internal static void CmdTriggerActionGroup(string group)
     {
@@ -244,10 +235,13 @@ public static class ActionManager
     }
 
     [Command("actions", "Shows all action groups. An optional first argument searches for groups with a given string in their name.")]
-    internal static void CmdShowActionGroups(string? search = null) {
+    internal static void CmdShowActionGroups(string? search = null)
+    {
         Engine.Commands.Log($"Action groups:");
-        foreach ((string key, List<ActionMapEntry> value) in actionMap.AsEnumerable()) {
-            if (search is null || key.Contains(search)) {
+        foreach ((string key, List<ActionMapEntry> value) in actionMap.AsEnumerable())
+        {
+            if (search is null || key.Contains(search))
+            {
                 Engine.Commands.Log($"  {key}:");
                 foreach (var entry in value)
                 {
@@ -259,7 +253,8 @@ public static class ActionManager
     }
 
     [Command("sessionvars", "Shows currently set flags, counters, and sliders. An optional first argument searches for values with a given string in their name.")]
-    internal static void ShowValues(string? search = null) {
+    internal static void ShowValues(string? search = null)
+    {
         if (Engine.Scene is not Level lv) return;
         Session session = lv.Session;
         Engine.Commands.Log($"Flags:");
@@ -285,17 +280,21 @@ public static class ActionManager
     }
 
     [Command("globalents", "Shows all global entities")]
-    internal static void CmdShowGlobalEnts() {
+    internal static void CmdShowGlobalEnts()
+    {
         Engine.Commands.Log($"Global Entities:");
-        foreach (Entity ent in globalEnts) {
+        foreach (Entity ent in globalEnts)
+        {
             Engine.Commands.Log($"  {ent.SourceId}: {ent}");
         }
     }
 }
 
 [CustomEntity("ScugHelper/ActionDummy")]
-internal class ActionDummy(): Entity() {
-    public override void Update() {
+internal class ActionDummy() : Entity()
+{
+    public override void Update()
+    {
         base.Update();
         Level lv = SceneAs<Level>();
         ActionManager.AlertActions(["#Tick"], lv);

@@ -9,7 +9,7 @@ return {
             data = {}
         }
     },
-    texture = "objects/anvil",
+    texture = "objects/ScugHelper/anvil",
     selection = function(room, entity)
         return utils.rectangle(entity.x - 4, entity.y - 4, 8, 8)
     end,

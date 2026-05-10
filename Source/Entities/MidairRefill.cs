@@ -29,8 +29,8 @@ public class MidairRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        Add(sprite = new Sprite(GFX.Game, "objects/midairRefill/idle"));
-        Add(outline = new Image(GFX.Game["objects/midairRefill/outline"]));
+        Add(sprite = new Sprite(GFX.Game, "objects/ScugHelper/midairRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/ScugHelper/midairRefill/outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();

@@ -27,8 +27,8 @@ public class OverchargeRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        Add(sprite = new Sprite(GFX.Game, "objects/overchargeRefill/idle"));
-        Add(outline = new Image(GFX.Game["objects/overchargeRefill/outline"]));
+        Add(sprite = new Sprite(GFX.Game, "objects/ScugHelper/overchargeRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/ScugHelper/overchargeRefill/outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();

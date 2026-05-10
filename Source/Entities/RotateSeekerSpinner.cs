@@ -20,7 +20,7 @@ public class SeekerRotateSpinner : RotateSpinner
         Period = data.Float("Period", 1.8f);
         Add(new PlayerCollider(OnPlayer));
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
-        Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/seekerSpinner/fg"));
+        Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg"));
     }
 
     public override void Render()

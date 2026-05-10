@@ -22,8 +22,8 @@ public class FreezeRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        Add(sprite = new Sprite(GFX.Game, "objects/freezeRefill/idle"));
-        Add(outline = new Image(GFX.Game["objects/freezeRefill/outline"]));
+        Add(sprite = new Sprite(GFX.Game, "objects/ScugHelper/freezeRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/ScugHelper/freezeRefill/outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();

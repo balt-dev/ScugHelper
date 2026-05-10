@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Celeste.Mod.Registry;
 using Microsoft.Xna.Framework;
+using Monocle;
 using MonoMod.ModInterop;
 
 namespace Celeste.Mod.ScugHelper;
@@ -86,11 +87,25 @@ public class ScugHelperModule : EverestModule
         });
         KillingSeeker = false;
     }
-    
-    internal static Type? GetTypeOfEntity(EntityData data) {
+
+    static readonly Dictionary<string, Type?> TypeCache = [];
+    internal static Type? GetTypeOfEntity(EntityData data)
+    {
+        if (TypeCache.TryGetValue(data.Name, out var res)) return res;
         var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
         if (type is not Type ty)
             Logger.Warn(nameof(ScugHelperModule), $"SID {data.Name} of entity with ID {data.ID} does not correspond to any known types.");
+        TypeCache[data.Name] = type;
         return type;
+    }
+
+    static readonly Dictionary<Type, IReadOnlySet<string>> NameCache = [];
+    internal static IReadOnlySet<string> GetNamesOfEntity(Entity entity)
+    {
+        var type = entity.GetType();
+        if (NameCache.TryGetValue(type, out var res)) return res;
+        var sids = EntityRegistry.GetKnownSidsFromType(entity.GetType());
+        NameCache[type] = sids;
+        return sids;
     }
 }

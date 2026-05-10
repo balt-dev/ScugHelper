@@ -16,8 +16,8 @@ public class SeekerRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        Add(sprite = new Sprite(GFX.Game, "objects/seekerRefill/idle"));
-        Add(outline = new Image(GFX.Game["objects/seekerRefill/outline"]));
+        Add(sprite = new Sprite(GFX.Game, "objects/ScugHelper/seekerRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/ScugHelper/seekerRefill/outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();

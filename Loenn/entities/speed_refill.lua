@@ -10,5 +10,5 @@ return {
         }
     },
 
-    texture = "objects/speedRefill/rot0_00",
+    texture = "objects/ScugHelper/speedRefill/rot0_00",
 }

@@ -9,5 +9,5 @@ return {
             }
         }
     },
-    texture = "objects/limboRefill/idle00",
+    texture = "objects/ScugHelper/limboRefill/idle00",
 }

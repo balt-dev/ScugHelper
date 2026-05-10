@@ -16,9 +16,9 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/Gripwall")]
 public class Gripwall : Entity
 {
-    private static readonly Color RefillBothColor = new(0xd6, 0xf2, 0x64);
+    private static readonly Color RefillBothColor = new(0x59, 0xc1, 0x35);
     private static readonly Color RefillDashColor = new(0x88, 0xea, 0xff);
-    private static readonly Color RefillStaminaColor = new(0xf2, 0xe7, 0x9b);
+    private static readonly Color RefillStaminaColor = new(0xff, 0xd5, 0x41);
     private static readonly Color RefillNoneColor = new(0xff, 0x6e, 0x54);
 
     public Facings Facing = Facings.Left;

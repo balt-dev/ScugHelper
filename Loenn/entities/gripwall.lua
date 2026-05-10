@@ -3,14 +3,14 @@ local utils = require("utils")
 
 local gripwall = {}
 
-local refillBothColor = {0xd6 / 0xff, 0xf2 / 0xff, 0x64 / 0xff}
-local refillDashColor = {0x88 / 0xff, 0xea / 0xff, 0xff / 0xff}
-local refillStaminaColor = {0xf2 / 0xff, 0xe7 / 0xff, 0x9b / 0xff}
-local refillNoneColor = {0xff / 0xff, 0x6e / 0xff, 0x54 / 0xff}
+local refillBothColor = { 0x59 / 0xff, 0xc1 / 0xff, 0x35 / 0xff }
+local refillDashColor = { 0x88 / 0xff, 0xea / 0xff, 0xff / 0xff }
+local refillStaminaColor = { 0xff / 0xff, 0xd5 / 0xff, 0x41 / 0xff }
+local refillNoneColor = { 0xff / 0xff, 0x6e / 0xff, 0x54 / 0xff }
 
 gripwall.name = "ScugHelper/Gripwall"
 gripwall.depth = 1999
-gripwall.canResize = {false, true}
+gripwall.canResize = { false, true }
 gripwall.placements = {
     {
         name = "gripwall_right",
@@ -36,9 +36,9 @@ gripwall.placements = {
     },
 }
 
-local topTexture = "objects/gripwall/bothTop0"
-local middleTexture = "objects/gripwall/bothMid0"
-local bottomTexture = "objects/gripwall/bothBottom0"
+local topTexture = "objects/ScugHelper/gripwall/bothTop0"
+local middleTexture = "objects/ScugHelper/gripwall/bothMid0"
+local bottomTexture = "objects/ScugHelper/gripwall/bothBottom0"
 
 function gripwall.sprite(room, entity)
     local sprites = {}

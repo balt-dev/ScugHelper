@@ -13,7 +13,8 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/ReboundBlock")]
 public class ReboundBlock : Solid
 {
-    public enum ReboundBlockKind {
+    public enum ReboundBlockKind
+    {
         Grey,
         Green,
         Pink
@@ -45,18 +46,18 @@ public class ReboundBlock : Solid
         switch (kind)
         {
             case ReboundBlockKind.Grey:
-                renderImages = BuildSprite(GFX.Game["objects/reboundBlock/zeroBlock"]);
-                renderSlot = new(GFX.Game["objects/reboundBlock/zeroSlot"]);
+                renderImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/zeroBlock"]);
+                renderSlot = new(GFX.Game["objects/ScugHelper/reboundBlock/zeroSlot"]);
                 renderRefill = null;
                 break;
             case ReboundBlockKind.Green:
-                renderImages = BuildSprite(GFX.Game["objects/reboundBlock/oneBlock"]);
-                renderSlot = new(GFX.Game["objects/reboundBlock/oneSlot"]);
+                renderImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/oneBlock"]);
+                renderSlot = new(GFX.Game["objects/ScugHelper/reboundBlock/oneSlot"]);
                 renderRefill = new Sprite(GFX.Game, "objects/refill/idle");
                 break;
             case ReboundBlockKind.Pink:
-                renderImages = BuildSprite(GFX.Game["objects/reboundBlock/twoBlock"]);
-                renderSlot = new(GFX.Game["objects/reboundBlock/twoSlot"]);
+                renderImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/twoBlock"]);
+                renderSlot = new(GFX.Game["objects/ScugHelper/reboundBlock/twoSlot"]);
                 renderRefill = new Sprite(GFX.Game, "objects/refillTwo/idle");
                 break;
         }
@@ -133,7 +134,8 @@ public class ReboundBlock : Solid
         Celeste.Freeze(0.1f);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
 
-        switch (Kind) {
+        switch (Kind)
+        {
             case ReboundBlockKind.Pink:
                 Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_touch", Position);
                 player.RefillDash();
@@ -149,9 +151,10 @@ public class ReboundBlock : Solid
         return DashCollisionResults.Rebound;
     }
 
-    private IEnumerator SoundRoutine() {
+    private IEnumerator SoundRoutine()
+    {
         var evInstance = Audio.Play("event:/new_content/game/10_farewell/fusebox_hit_1", Position);
-		yield return 0.18f;
+        yield return 0.18f;
         evInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
@@ -166,28 +169,28 @@ public class ReboundBlock : Solid
             direction = 0f;
             position = CenterRight - Vector2.UnitX * 12f;
             positionRange = Vector2.UnitY * (Height - 6f) * 0.5f;
-            num = (int)(Height / 8f) ;
+            num = (int)(Height / 8f);
         }
         else if (dir == -Vector2.UnitX)
         {
             direction = MathF.PI;
             position = CenterLeft + Vector2.UnitX * 12f;
             positionRange = Vector2.UnitY * (Height - 6f) * 0.5f;
-            num = (int)(Height / 8f) ;
+            num = (int)(Height / 8f);
         }
         else if (dir == Vector2.UnitY)
         {
             direction = MathF.PI / 2f;
             position = BottomCenter - Vector2.UnitY * 12f;
             positionRange = Vector2.UnitX * (Width - 6f) * 0.5f;
-            num = (int)(Width / 8f) ;
+            num = (int)(Width / 8f);
         }
         else
         {
             direction = -MathF.PI / 2f;
             position = TopCenter + Vector2.UnitY * 12f;
             positionRange = Vector2.UnitX * (Width - 6f) * 0.5f;
-            num = (int)(Width / 8f) ;
+            num = (int)(Width / 8f);
         }
         num += 2;
         SceneAs<Level>().Particles.Emit(Kind == ReboundBlockKind.Pink ? Refill.P_ShatterTwo : Refill.P_Shatter, num, position, positionRange, direction);

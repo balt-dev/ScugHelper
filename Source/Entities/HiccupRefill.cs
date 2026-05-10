@@ -20,8 +20,8 @@ public class HiccupRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        Add(sprite = new Sprite(GFX.Game, "objects/hiccupRefill/idle"));
-        Add(outline = new Image(GFX.Game["objects/hiccupRefill/outline"]));
+        Add(sprite = new Sprite(GFX.Game, "objects/ScugHelper/hiccupRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/ScugHelper/hiccupRefill/outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();

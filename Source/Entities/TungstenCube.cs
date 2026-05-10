@@ -15,7 +15,8 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Anvil")]
-public class TungstenCube : Actor, IHasSpeed {
+public class TungstenCube : Actor, IHasSpeed
+{
     private Vector2 Speed;
     private readonly Holdable Hold;
     private readonly Image Image;
@@ -31,7 +32,7 @@ public class TungstenCube : Actor, IHasSpeed {
         Collider = new Hitbox(8f, 6f, -4f, -2f);
         CrushCollider = new Hitbox(8f, 16f, -4f, -2f);
         LiftSpeedGraceTime = 1f / 30f;
-        Image = new Image(GFX.Game["objects/anvil"]);
+        Image = new Image(GFX.Game["objects/ScugHelper/anvil"]);
         Image.Position = TopLeft;
         Image.Position.Y -= 2f;
         Add(Hold = new Holdable()
@@ -61,7 +62,8 @@ public class TungstenCube : Actor, IHasSpeed {
         Speed = force * 250f;
     }
 
-    public override void Render() {
+    public override void Render()
+    {
         base.Render();
         Image.DrawSimpleOutline();
         Image.Render();
@@ -69,10 +71,12 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private void OnPlayer(Player player)
     {
-        if (Speed.Y - player.Speed.Y >= 300 && !Hold.IsHeld) {
+        if (Speed.Y - player.Speed.Y >= 300 && !Hold.IsHeld)
+        {
             if (player.wasOnGround)
                 player.Die(Vector2.Zero);
-            else {
+            else
+            {
                 Audio.Play("event:/game/general/thing_booped");
                 player.Speed.Y = Speed.Y;
                 Celeste.Freeze(0.1f);
@@ -123,15 +127,17 @@ public class TungstenCube : Actor, IHasSpeed {
     public override void Update()
     {
         base.Update();
-        Image.Position = TopLeft;
-        Image.Position.Y -= 2f;
+        Image.Position = new(MathF.Floor(Left), MathF.Floor(Top) - 2);
         if (Hold.IsHeld)
             Image.Position.Y -= 4f;
         Image.Update();
-        if (!Hold.IsHeld) {
-            if (CollideFirst<HeartGem>() is HeartGem gem && gem != null) {
+        if (!Hold.IsHeld)
+        {
+            if (CollideFirst<HeartGem>() is HeartGem gem && gem != null)
+            {
                 Player player = Level.Tracker.GetEntity<Player>();
-                if (player != null && !gem.collected) {
+                if (player != null && !gem.collected)
+                {
                     gem.Collect(player);
                 }
             }
@@ -168,7 +174,8 @@ public class TungstenCube : Actor, IHasSpeed {
             block.Break(Position, Vector2.UnitY * Math.Sign(Speed.Y), true, true);
         if (data.Hit is FastfallBlock fblock)
             fblock.Break(Vector2.UnitX * Math.Sign(Speed.X), true, true);
-        if (Speed.Y > 60f) {
+        if (Speed.Y > 60f)
+        {
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
             Level.DirectionalShake(Vector2.UnitY, 0.1f);
         }
@@ -191,7 +198,8 @@ public class TungstenCube : Actor, IHasSpeed {
         Audio.Play("event:/game/04_cliffside/arrowblock_side_depress", Position);
     }
 
-    public override void OnSquish(CollisionData data) {
+    public override void OnSquish(CollisionData data)
+    {
         if (!TrySquishWiggle(data, 8, 8))
         {
             Audio.Play("event:/game/general/wall_break_stone", Position);
@@ -234,7 +242,8 @@ public class TungstenCube : Actor, IHasSpeed {
         getCameraTargetHook.Dispose();
     }
 
-    private static void GetCameraTargetHook(ILContext il) {
+    private static void GetCameraTargetHook(ILContext il)
+    {
         ILCursor cur = new(il);
         if (!cur.TryGotoNextBestFit(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)]))))
             throw new Exception("Tungsten cube failed to match code for camera target offset hook.");
@@ -276,7 +285,8 @@ public class TungstenCube : Actor, IHasSpeed {
     private static void PufferCtorHook(On.Celeste.Puffer.orig_ctor_Vector2_bool orig, Puffer self, Vector2 position, bool faceRight)
     {
         orig(self, position, faceRight);
-        self.Add(new AnvilCollider(crys => {
+        self.Add(new AnvilCollider(crys =>
+        {
             if (!(self.state == Puffer.States.Gone || !(self.cantExplodeTimer <= 0f)))
             {
                 crys.Speed = (crys.Center - self.Center).SafeNormalize(-Vector2.UnitY) * 400f;
@@ -300,7 +310,7 @@ public class TungstenCube : Actor, IHasSpeed {
         if (self.Holding?.Entity is TungstenCube)
         {
             var mult = self.OnGround() ? JumpMultiplier : 0.4f;
-            self.Speed.Y *= mult; 
+            self.Speed.Y *= mult;
             self.varJumpSpeed *= mult;
         }
     }
@@ -317,24 +327,29 @@ public class TungstenCube : Actor, IHasSpeed {
         if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
     }
 
-    static float FloatMultiply (Player player) {
+    static float FloatMultiply(Player player)
+    {
         if (player.Holding?.Entity is TungstenCube)
             return 500f / 160f;
         else
             return 1.0f;
     }
 
-    private static void ModNormalBegin(ILContext il) {
+    private static void ModNormalBegin(ILContext il)
+    {
         ILCursor cursor = new(il);
-        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float) instr.Operand == 160f)) {
+        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float)instr.Operand == 160f))
+        {
             cursor.EmitLdarg0();
             cursor.EmitDelegate(FloatMultiply);
             cursor.Emit(OpCodes.Mul);
         }
     }
-    private static void ModNormalUpdate(ILContext il) {
+    private static void ModNormalUpdate(ILContext il)
+    {
         ILCursor cursor = new(il);
-        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && ((float) instr.Operand == 160f || (float) instr.Operand == 240f))) {
+        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && ((float)instr.Operand == 160f || (float)instr.Operand == 240f)))
+        {
             cursor.EmitLdarg0();
             cursor.EmitDelegate(FloatMultiply);
             cursor.Emit(OpCodes.Mul);
@@ -343,7 +358,8 @@ public class TungstenCube : Actor, IHasSpeed {
 
 
     [Command("givetheo", "Spawns a theo crystal on the player.")]
-    private static void SpawnTheo() {
+    private static void SpawnTheo()
+    {
         Scene scene = Engine.Instance.scene;
         if (scene is not Level level) return;
         Player? player = level.Tracker.GetEntity<Player>();
@@ -351,7 +367,8 @@ public class TungstenCube : Actor, IHasSpeed {
         scene.Add(new TheoCrystal(p.Position - Vector2.UnitY * 10f));
     }
     [Command("giveglider", "Spawns a jellyfish on the player.")]
-    private static void SpawnGlider() {
+    private static void SpawnGlider()
+    {
         Scene scene = Engine.Instance.scene;
         if (scene is not Level level) return;
         Player? player = level.Tracker.GetEntity<Player>();
@@ -360,7 +377,8 @@ public class TungstenCube : Actor, IHasSpeed {
     }
 
     [Command("givecube", "Spawns a cube on the player.")]
-    private static void SpawnCube() {
+    private static void SpawnCube()
+    {
         Scene scene = Engine.Instance.scene;
         if (scene is not Level level) return;
         Player? player = level.Tracker.GetEntity<Player>();
@@ -370,10 +388,12 @@ public class TungstenCube : Actor, IHasSpeed {
 }
 
 [Tracked(false)]
-internal class AnvilCollider(Action<TungstenCube> onCollide): Component(active: false, visible: false) {
+internal class AnvilCollider(Action<TungstenCube> onCollide) : Component(active: false, visible: false)
+{
     public Action<TungstenCube> OnCollide = onCollide;
 
-    public void Check(TungstenCube obj) {
+    public void Check(TungstenCube obj)
+    {
         if (obj.CollideCheck(Entity))
             OnCollide?.Invoke(obj);
     }

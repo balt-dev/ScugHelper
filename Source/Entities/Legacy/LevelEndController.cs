@@ -1,3 +1,4 @@
+using System;
 using Celeste;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
@@ -7,6 +8,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 #nullable enable
 
 [CustomEntity("ScugHelper/LevelEndController")]
+[Obsolete("Use LevelEndTrigger instead")]
 public class LevelEndController(EntityData data, Vector2 offset) : Entity(data.Position + offset)
 {
     public string flagToCheck = data.String("FlagToCheck", "");
@@ -22,7 +24,8 @@ public class LevelEndController(EntityData data, Vector2 offset) : Entity(data.P
         RemoveSelf();
     }
 
-    private void EndLevel() {
+    private void EndLevel()
+    {
         Level level = SceneAs<Level>();
         level.CompleteArea(spotlightWipe: spotlightWipe, skipScreenWipe: !screenWipe, skipCompleteScreen: !showCompleteScreen);
     }

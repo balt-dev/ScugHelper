@@ -9,5 +9,5 @@ return {
             }
         }
     },
-    texture = "objects/overchargeRefill/idle00",
+    texture = "objects/ScugHelper/overchargeRefill/idle00",
 }

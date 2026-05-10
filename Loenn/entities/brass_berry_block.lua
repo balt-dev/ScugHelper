@@ -20,8 +20,8 @@ local ninePatchOptions = {
     fillMode = "repeat"
 }
 
-local blockTexture = "objects/brassBerry/brassBerryBlock00"
-local middleTexture = "objects/brassBerry/idle00"
+local blockTexture = "objects/ScugHelper/brassBerry/brassBerryBlock00"
+local middleTexture = "objects/ScugHelper/brassBerry/idle00"
 
 function goldenBlock.sprite(room, entity)
     local x, y = entity.x or 0, entity.y or 0

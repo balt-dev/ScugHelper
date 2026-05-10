@@ -13,7 +13,8 @@ public class BoosterField : Solid
     internal class BoosterFieldColliderList : ColliderList
     {
         private readonly BoosterField field;
-        public BoosterFieldColliderList(BoosterField field) {
+        public BoosterFieldColliderList(BoosterField field)
+        {
             colliders = [field.Collider];
             this.field = field;
         }
@@ -22,8 +23,11 @@ public class BoosterField : Solid
         public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
         public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
 
-        private bool CheckEntity(Entity entity) {
+        private bool CheckEntity(Entity entity)
+        {
             bool res = entity is Player player && ((player.LastBooster?.BoostingPlayer ?? false) ^ field.Invert);
+            if (res && field.Destroy)
+                (entity as Player).StateMachine.State = Player.StNormal;
             field.BouncedBooster |= res;
             return res;
         }
@@ -34,22 +38,24 @@ public class BoosterField : Solid
     private bool BouncedBooster;
     private readonly bool Invisible;
     private readonly bool Invert;
+    private readonly bool Destroy;
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
-    public BoosterField(Vector2 position, float width, float height, bool invis, bool invert) : base(position, width, height, false)
+    public BoosterField(Vector2 position, float width, float height, bool invis, bool invert, bool destroy) : base(position, width, height, false)
     {
         Depth = -20000;
         Collider = new BoosterFieldColliderList(this);
         Collidable = true;
         Invisible = invis;
+        Destroy = destroy;
         Invert = invert;
         for (int i = 0; i < Width * Height / 24f; i++)
             particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
     }
 
     public BoosterField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"), data.Bool("invert"))
+        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"), data.Bool("invert"), data.Bool("destroy"))
     { }
 
     private static readonly float SineMovement = 2.0f;
@@ -79,10 +85,13 @@ public class BoosterField : Solid
     public override void Update()
     {
         Elapsed += Engine.DeltaTime;
-        if (BouncedBooster) {
+        if (BouncedBooster)
+        {
             BounceTimer = BouncePulseLength;
             BouncedBooster = false;
-        } else {
+        }
+        else
+        {
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
         }
         int num = speeds.Length;

@@ -10,5 +10,5 @@ return {
         }
     },
 
-    texture = "objects/seekerRefill/idle00",
+    texture = "objects/ScugHelper/seekerRefill/idle00",
 }

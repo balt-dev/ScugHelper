@@ -304,3 +304,29 @@ entities.ScugHelper/ActionSwapBlock.placements.name.grab=Custom Swap Block (On G
 entities.ScugHelper/ActionSwapBlock.placements.name.action=Custom Swap Block (On Action)
 
 entities.ScugHelper/ActionTempleGate.placements.name.normal=Custom Temple Gate
+
+entities.ScugHelper/EditorHideController.placements.name.normal=Debug Hide Controller
+entities.ScugHelper/EditorHideController.placements.description.normal=Hides the room this is placed in in the debug view.
+
+entities.ScugHelper/DebugWall.placements.name.normal=Debug Wall
+entities.ScugHelper/DebugWall.placements.description.normal=Creates a fake rectangle of either solid or background in the debug screen.
+
+entities.ScugHelper/LightningStrikeAction.placements.name.normal=Action - Lightning Strike
+entities.ScugHelper/LightningStrikeAction.placements.description.normal=Summons a lightning strike at the node's position when alerted.
+
+entities.ScugHelper/FlagClutterDoor.placements.name.normal=Flag Clutter Door
+entities.ScugHelper/FlagClutterSwitch.placements.name.normal=Flag Clutter Switch
+
+triggers.ScugHelper/CountEntitiesTrigger.placements.name.normal=Count Entities
+triggers.ScugHelper/CountEntitiesTrigger.placements.description.normal=Sets a counter to the number of entities in the current room.
+
+triggers.ScugHelper/CameraBlocker.placements.name.normal=Camera Blocker
+
+entities.ScugHelper/Tightrope.placements.name.normal=Tightrope
+entities.ScugHelper/Tightrope.description.name.normal=Jumpthru that can be dashed through, crouched through, and isn't solid when not standing directly on top of it.
+
+entities.ScugHelper/Conveyor.placements.name.normal=Conveyor
+entities.ScugHelper/Conveyor.description.name.normal=Floor-attached booster that moves entities on top of it.
+
+triggers.ScugHelper/DeathEffectTrigger.placements.name.normal=Death Effect
+triggers.ScugHelper/DeathEffectTrigger.placements.description.normal=Plays a player death effect at the given position.

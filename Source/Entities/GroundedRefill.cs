@@ -17,7 +17,7 @@ public class GroundedRefill : Refill {
     private readonly Image underline;
 
     public GroundedRefill(Vector2 position, bool twoDashes) : base(position, twoDashes, false) {
-        Add(underline = new Image(GFX.Game["objects/groundedRefill/underline"]));
+        Add(underline = new Image(GFX.Game["objects/ScugHelper/groundedRefill/underline"]));
         underline.CenterOrigin();
     }
     public GroundedRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("twoDash")) { }

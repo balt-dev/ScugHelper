@@ -5,7 +5,7 @@ local wallBooster = {}
 
 wallBooster.name = "ScugHelper/NeutrallessWallBooster"
 wallBooster.depth = 1999
-wallBooster.canResize = {false, true}
+wallBooster.canResize = { false, true }
 wallBooster.placements = {
     {
         name = "booster_right",
@@ -45,18 +45,17 @@ wallBooster.placements = {
     }
 }
 
-local fireTopTexture = "objects/neutrallessWallBooster/fireTop00"
-local fireMiddleTexture = "objects/neutrallessWallBooster/fireMid00"
-local fireBottomTexture = "objects/neutrallessWallBooster/fireBottom00"
+local fireTopTexture = "objects/ScugHelper/neutrallessWallBooster/fireTop00"
+local fireMiddleTexture = "objects/ScugHelper/neutrallessWallBooster/fireMid00"
+local fireBottomTexture = "objects/ScugHelper/neutrallessWallBooster/fireBottom00"
 
-local iceTopTexture = "objects/neutrallessWallBooster/iceTop00"
-local iceMiddleTexture = "objects/neutrallessWallBooster/iceMid00"
-local iceBottomTexture = "objects/neutrallessWallBooster/iceBottom00"
+local iceTopTexture = "objects/ScugHelper/neutrallessWallBooster/iceTop00"
+local iceMiddleTexture = "objects/ScugHelper/neutrallessWallBooster/iceMid00"
+local iceBottomTexture = "objects/ScugHelper/neutrallessWallBooster/iceBottom00"
 
 local function getWallTextures(entity)
     if entity.notCoreMode then
         return iceTopTexture, iceMiddleTexture, iceBottomTexture
-
     else
         return fireTopTexture, fireMiddleTexture, fireBottomTexture
     end

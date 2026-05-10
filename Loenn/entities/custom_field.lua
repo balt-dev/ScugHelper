@@ -1,15 +1,15 @@
 local drawableRect = require("structs.drawable_rectangle")
 local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 return {
-    name = "ScugHelper/CustomField",
+    name = "ScugHelper/NewCustomField",
     depth = -20000,
     placements = {
         {
             name = "normal",
-            data = {width = 32, height = 32, Invisible = false, Types = "Celeste.Player", Invert = false, Color = "B3D9FF"}
+            data = {width = 32, height = 32, Invisible = false, Names = "player", Invert = false, Color = "B3D9FF"}
         },
     },
-    fieldInformation = { Types = { fieldType = "list" }, Color = { fieldType = "color" }},
+    fieldInformation = { Names = { fieldType = "list", searchable = true }, Color = { fieldType = "color" }},
     sprite = function(room, entity)
         local r, g, b = table.unpack(scughelper.parseColor(entity.Color))
         return {

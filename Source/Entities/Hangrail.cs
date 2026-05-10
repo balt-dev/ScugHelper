@@ -80,8 +80,12 @@ public class HangRail : Entity
             PickupCollider = Collider
         });
 
-        tieTexture = GFX.Game[data.String("TieSprite", "objects/hangrail/tie")];
-        var ropeTexture = GFX.Game[data.String("RopeSprite", "objects/hangrail/rope")];
+        var tie = data.String("TieSprite", "objects/ScugHelper/hangrail/tie");
+        if (tie == "objects/hangrail/tie") tie = "objects/ScugHelper/hangrail/tie";
+        tieTexture = GFX.Game[tie];
+        var rope = data.String("RopeSprite", "objects/ScugHelper/hangrail/rope");
+        if (rope == "objects/hangrail/rope") rope = "objects/ScugHelper/hangrail/rope";
+        var ropeTexture = GFX.Game[rope];
         ropeSlices = Enumerable.Range(0, ropeTexture.Width)
             .Select(i => new MTexture(ropeTexture, i, 0, 1, ropeTexture.Height))
             .ToArray();
@@ -174,7 +178,8 @@ public class HangRail : Entity
                 if (oldSpeed.Length() > HoldSpeedLimit)
                 {
                     NoGrabTimer = GrabCooldown;
-                    if (Hold.Holder is Player p) {
+                    if (Hold.Holder is Player p)
+                    {
                         p.Drop();
                         p.jumpGraceTimer = Player.JumpGraceTime;
                     }
@@ -187,13 +192,17 @@ public class HangRail : Entity
             if (angleDifference > 0.1 && End != Start)
                 if (Hold.Holder is Player p) p.Drop();
         }
-        if (RetentionSpeed.LengthSquared() > Speed.LengthSquared()) {
+        if (RetentionSpeed.LengthSquared() > Speed.LengthSquared())
+        {
             if (RetentionTimer <= 0f) RetentionTimer = RetentionTime;
-            else {
+            else
+            {
                 RetentionTimer -= Engine.DeltaTime;
                 if (RetentionTimer <= 0f) RetentionSpeed = Speed;
             }
-        } else {
+        }
+        else
+        {
             RetentionSpeed = Speed;
             RetentionTimer = 0f;
         }
@@ -212,7 +221,8 @@ public class HangRail : Entity
                 player.Speed = RetentionSpeed;
                 bool wasNaive = player.TreatNaive;
                 if (Start == End) player.Position = Position + Vector2.UnitY * PlayerOffset;
-                else {
+                else
+                {
                     player.MoveToX(Position.X, OnBonkH);
                     player.MoveToY(Position.Y + PlayerOffset, OnBonkV);
                 }
@@ -256,11 +266,11 @@ public class HangRail : Entity
 
     public override void Render()
     {
-        DrawRope(Start - Vector2.UnitX, End - Vector2.UnitX, Color.Black);
-        DrawRope(Start + Vector2.UnitX, End + Vector2.UnitX, Color.Black);
-        DrawRope(Start - Vector2.UnitY, End - Vector2.UnitY, Color.Black);
-        DrawRope(Start + Vector2.UnitY, End + Vector2.UnitY, Color.Black);
-        DrawRope(Start, End, Color.White);
+        DrawRope(ropeSlices, Start - Vector2.UnitX, End - Vector2.UnitX, Color.Black);
+        DrawRope(ropeSlices, Start + Vector2.UnitX, End + Vector2.UnitX, Color.Black);
+        DrawRope(ropeSlices, Start - Vector2.UnitY, End - Vector2.UnitY, Color.Black);
+        DrawRope(ropeSlices, Start + Vector2.UnitY, End + Vector2.UnitY, Color.Black);
+        DrawRope(ropeSlices, Start, End, Color.White);
         Sprite.DrawSimpleOutline();
         base.Render();
         tieTexture.DrawCentered(Start);
@@ -273,15 +283,16 @@ public class HangRail : Entity
         Draw.Line(Start, End, Color.Cyan);
     }
 
-    private void DrawRope(Vector2 start, Vector2 end, Color color)
+    internal static void DrawRope(MTexture[] ropeSlices, Vector2 start, Vector2 end, Color color)
     {
         if (start == end) return;
-        if (Math.Abs(Direction.X) < FRAC_SQRT_2_2)
+        var dir = (end - start).SafeNormalize();
+        if (Math.Abs(dir.X) < FRAC_SQRT_2_2)
         {
             // Vertical rope
             for (int y = (int)Math.Min(start.Y, end.Y) + 1; y < (int)Math.Max(start.Y, end.Y); y++)
             {
-                int x = (int)(start.X + Direction.X / Direction.Y * (y - start.Y));
+                int x = (int)(start.X + dir.X / dir.Y * (y - start.Y));
                 int index = ((y % ropeSlices.Length) + ropeSlices.Length) % ropeSlices.Length;
                 MTexture tex = ropeSlices[index];
                 tex.Draw(new(x, y), new(0, tex.Height / 2), color, 1, MathF.PI / 2);
@@ -292,7 +303,7 @@ public class HangRail : Entity
             // Horizontal rope
             for (int x = (int)Math.Min(start.X, end.X) + 1; x < (int)Math.Max(start.X, end.X); x++)
             {
-                int y = (int)(start.Y + Direction.Y / Direction.X * (x - start.X));
+                int y = (int)(start.Y + dir.Y / dir.X * (x - start.X));
                 int index = ((x % ropeSlices.Length) + ropeSlices.Length) % ropeSlices.Length;
                 MTexture tex = ropeSlices[index];
                 tex.Draw(new(x, y), new(0, tex.Height / 2), color);

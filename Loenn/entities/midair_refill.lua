@@ -9,5 +9,5 @@ return {
             }
         }
     },
-    texture = "objects/midairRefill/idle00",
+    texture = "objects/ScugHelper/midairRefill/idle00",
 }

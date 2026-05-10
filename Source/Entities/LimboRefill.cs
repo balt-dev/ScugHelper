@@ -10,8 +10,8 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/LimboRefill")]
 public class LimboRefill : Refill, ICustomRefill
 {
-    private static readonly float InitialLimboLength = 2f;
-    private static readonly float RefreshLimboLength = 0.5f;
+    public static readonly float InitialLimboLength = 2f;
+    public static readonly float RefreshLimboLength = 0.5f;
 
     public LimboRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
     {
@@ -19,8 +19,8 @@ public class LimboRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        Add(sprite = new Sprite(GFX.Game, "objects/limboRefill/idle"));
-        Add(outline = new Image(GFX.Game["objects/limboRefill/outline"]));
+        Add(sprite = new Sprite(GFX.Game, "objects/ScugHelper/limboRefill/idle"));
+        Add(outline = new Image(GFX.Game["objects/ScugHelper/limboRefill/outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();
@@ -102,31 +102,35 @@ public class LimboRefill : Refill, ICustomRefill
         On.Celeste.Actor.MoveH -= OnActorMoveH;
         On.Celeste.Actor.MoveV -= OnActorMoveV;
     }
-    
+
     private static bool OnActorMoveH(On.Celeste.Actor.orig_MoveH orig, Actor self, float move, Collision onCollide, Solid pusher)
     {
-        if (self is Player player && LimboTimer > 0f) {
+        if (self is Player player && LimboTimer > 0f)
+        {
             LimboColliderList collList;
             player.Collider = collList = new LimboColliderList(player.Collider);
             var res = orig(self, move, onCollide, pusher);
             player.Collider = collList.OriginalCollider;
             return res;
-        } else { return orig(self, move, onCollide, pusher); }
+        }
+        else { return orig(self, move, onCollide, pusher); }
     }
 
     private static bool OnActorMoveV(On.Celeste.Actor.orig_MoveV orig, Actor self, float move, Collision onCollide, Solid pusher)
     {
-        if (self is Player player && LimboTimer > 0f) {
+        if (self is Player player && LimboTimer > 0f)
+        {
             LimboColliderList collList;
             player.Collider = collList = new LimboColliderList(player.Collider);
             var res = orig(self, move, onCollide, pusher);
             player.Collider = collList.OriginalCollider;
             return res;
-        } else { return orig(self, move, onCollide, pusher); }
+        }
+        else { return orig(self, move, onCollide, pusher); }
     }
 
     internal static bool DenyEntityCollisions(Entity ent)
-        =>  (LimboTimer > 0f) && !(ent is Platform or Trigger or InvisibleBarrier or RefillField);
+        => (LimboTimer > 0f) && !(ent is Platform or Trigger or InvisibleBarrier or RefillField);
 
     private static bool OnPlayerColliderCheck(On.Celeste.PlayerCollider.orig_Check orig, PlayerCollider self, Player player)
         => !DenyEntityCollisions(self.Entity) && orig(self, player);
@@ -186,7 +190,7 @@ public class LimboRefill : Refill, ICustomRefill
     }
 }
 
-internal class LimboColliderList: ColliderList
+internal class LimboColliderList : ColliderList
 {
     public Collider OriginalCollider { get => colliders[0]; }
 

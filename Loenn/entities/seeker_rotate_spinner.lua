@@ -14,7 +14,7 @@ rotateSpinner.placements = {
 }
 
 local function getSprite(room, entity, alpha)
-    local spr = drawableSpriteStruct.fromTexture("objects/seekerSpinner/fg00", entity)
+    local spr = drawableSpriteStruct.fromTexture("objects/ScugHelper/seekerSpinner/fg00", entity)
     spr:setAlpha(alpha)
     return spr
 end

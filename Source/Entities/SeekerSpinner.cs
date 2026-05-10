@@ -43,8 +43,8 @@ public class SeekerSpinner : Entity
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Untrack(this);
     }
 
-    List<MTexture> bgTex = GFX.Game.GetAtlasSubtextures("objects/seekerSpinner/bg");
-    List<MTexture> fgTex = GFX.Game.GetAtlasSubtextures("objects/seekerSpinner/fg");
+    List<MTexture> bgTex = GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/bg");
+    List<MTexture> fgTex = GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg");
 
     private void AddFiller(Vector2 offset)
     {

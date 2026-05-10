@@ -23,7 +23,7 @@ refill.placements = {
 
 function refill.sprite(room, entity)
     local base = drawableSprite.fromTexture((entity.twoDash and "objects/refillTwo/idle00") or "objects/refill/idle00", entity)
-    local underline = drawableSprite.fromTexture("objects/groundedRefill/underline", entity)
+    local underline = drawableSprite.fromTexture("objects/ScugHelper/groundedRefill/underline", entity)
     return { base, underline }
 end
 

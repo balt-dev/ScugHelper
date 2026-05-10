@@ -12,8 +12,8 @@ return {
         }
     },
     sprite = function(room, entity)
-        local base = drawableSprite.fromTexture("objects/squareGem/gemBase00", entity)
-        local outline = drawableSprite.fromTexture("objects/squareGem/gemOutline00", entity)
+        local base = drawableSprite.fromTexture("objects/ScugHelper/squareGem/gemBase00", entity)
+        local outline = drawableSprite.fromTexture("objects/ScugHelper/squareGem/gemOutline00", entity)
         base:setColor(scughelper.parseColor(entity.Color))
         outline:setColor({1, 1, 1})
         return { base, outline }
