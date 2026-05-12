@@ -21,10 +21,13 @@ public readonly struct SpeedAccessor
     public readonly Vector2 Speed { get
         {
             if (Getter == null) throw new NullReferenceException("Speed getter must not be null. Check you're not accidentally initializing the struct with null values.");
-            return Getter(Object);
+            var ret = Getter(Object);
+            if (Object is Actor actor && actor.IsInverted()) ret = new(ret.X, -ret.Y);
+            return ret;
         }
         set {
             if (Setter == null) throw new NullReferenceException("Speed setter must not be null. Check you're not accidentally initializing the struct with null values.");
+            if (Object is Actor actor && actor.IsInverted()) value = new(value.X, -value.Y);
             Setter(Object, value);
         }
     }

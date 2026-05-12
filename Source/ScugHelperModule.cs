@@ -12,10 +12,6 @@ namespace Celeste.Mod.ScugHelper;
 
 public class ScugHelperModule : EverestModule
 {
-    internal bool ForceRenderDebug = false;
-    internal static readonly List<Action> LoadHooks;
-    internal static readonly List<Action> UnloadHooks;
-
     public static ScugHelperModule Instance { get; private set; }
 
     public override Type SettingsType => typeof(ScugHelperModuleSettings);
@@ -40,6 +36,7 @@ public class ScugHelperModule : EverestModule
     {
         // TODO: apply any hooks that should always be active
         typeof(FrostHelperImports).ModInterop();
+        typeof(GravityHelperImports).ModInterop();
         LifecycleMethods.OnLoad();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;

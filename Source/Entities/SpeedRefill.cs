@@ -32,11 +32,13 @@ public class SpeedRefill : Refill, ICustomRefill
             vFlip = !vFlip;
             hFlip = !hFlip;
         }
-        if (rawAngle >= 180) {
+        if (rawAngle >= 180)
+        {
             hFlip = !hFlip;
             rawAngle = 360 - rawAngle;
         }
-        if (rawAngle >= 90) {
+        if (rawAngle >= 90)
+        {
             vFlip = !vFlip;
             rawAngle = 180 - rawAngle;
         }
@@ -74,7 +76,8 @@ public class SpeedRefill : Refill, ICustomRefill
     public override void Render()
     {
         outline.Visible = true;
-        if (sprite.Visible) {
+        if (sprite.Visible)
+        {
             outline.Position = sprite.Position;
             outline.DrawOutline(Color.Black);
             outline.Render();
@@ -96,7 +99,7 @@ public class SpeedRefill : Refill, ICustomRefill
         yield return null;
         sprite.Visible = false;
         Depth = 8999;
-        player.Speed = SpeedToSet;
+        player.SetAdjustedSpeed(SpeedToSet);
         var positionTarget = Center + (player.Position - player.Center);
         var oldNaive = player.TreatNaive;
         player.TreatNaive = true;
@@ -113,12 +116,14 @@ public class SpeedRefill : Refill, ICustomRefill
     }
 
     [Command("speedrefilltest", "Spawns speed refills around the player at every angle.")]
-    internal static void SpeedRefillTest() {
+    internal static void SpeedRefillTest()
+    {
         if (Engine.Scene is not Level level) return;
         Player? maybePlayer = level.Tracker.GetEntity<Player>();
         if (maybePlayer is not Player player) return;
         Vector2 pos = player.Position - Vector2.UnitY * 80f;
-        for (float i = 0; i < 360; i += 3) {
+        for (float i = 0; i < 360; i += 3)
+        {
             float angle = ((float)i).ToRad();
             Vector2 unitVec = new(MathF.Cos(angle), MathF.Sin(angle));
             Vector2 deltaVec = unitVec * (60f - i % 8 * 6f);

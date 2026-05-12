@@ -15,6 +15,7 @@ public class Conveyor : Entity
 {
     public readonly string SpritePath;
     public readonly float TargetSpeed;
+    public readonly bool Flip;
     public readonly float Acceleration;
     public readonly float SpriteRate;
 
@@ -28,7 +29,8 @@ public class Conveyor : Entity
     {
         Tag = Tags.TransitionUpdate;
         Depth = 1999;
-        Collider = new Hitbox(data.Width, 2f, 0, 6f);
+        Flip = data.Bool("Flip");
+        Collider = new Hitbox(data.Width, 2f, 0, Flip ? 0f : 6f);
         Add(staticMover = new StaticMover());
         Add(idleSfx = new SoundSource());
         idleSfx.Play("event:/env/local/09_core/conveyor_idle");
@@ -43,7 +45,7 @@ public class Conveyor : Entity
         List<Sprite> list = [];
         for (int i = 0; i < Width; i += 4)
         {
-            Sprite sprite = new(GFX.Game, SpritePath + (i == Width - 4 ? "/right" : i == 0 ? "/left" : "/middle")) { Position = new Vector2(i, 4), Origin = Vector2.Zero };
+            Sprite sprite = new(GFX.Game, SpritePath + (i == Width - 4 ? "/right" : i == 0 ? "/left" : "/middle")) { Position = new Vector2(i, Flip ? 0 : 4), Origin = Vector2.Zero, FlipY = Flip };
             sprite.AddLoop("idle", "", 1f / 60f);
             sprite.Play("idle");
             TotalFrames = sprite.CurrentAnimationTotalFrames;
@@ -63,7 +65,7 @@ public class Conveyor : Entity
         elapsed += Engine.DeltaTime;
         foreach (Sprite tile in tiles)
             tile.SetAnimationFrame((((int)(elapsed * TargetSpeed) % TotalFrames) + TotalFrames) % TotalFrames);
-            
+
         foreach (var kvp in Scene.Tracker.Entities)
         {
             foreach (Entity entity in kvp.Value)

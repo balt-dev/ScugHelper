@@ -38,6 +38,8 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     public ButtonBinding MinimapZoomOut { get; set; } = new();
 
     public MinimapMenu Minimap { get; set; } = new();
+    public bool AlwaysCenterCameraX { get; set; } = false;
+    public bool AlwaysCenterCameraY { get; set; } = false;
 }
 
 [SettingSubMenu]

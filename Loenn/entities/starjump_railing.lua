@@ -5,12 +5,39 @@ local starjumpRailing = {}
 
 starjumpRailing.name = "ScugHelper/StarjumpRailing"
 starjumpRailing.depth = function(room, entity) return entity.Depth end
-starjumpRailing.warnBelowSize = {8, 8}
+starjumpRailing.warnBelowSize = { 8, 8 }
 starjumpRailing.placements = {
-    name = "normal",
-    data = {
-        width = 32,
-        Depth = -10
+    {
+        name = "normal",
+        data = {
+            width = 32,
+            Depth = -10,
+            Flip = false
+        }
+    },
+    {
+        name = "flipped",
+        data = {
+            width = 32,
+            Depth = -10,
+            Flip = true
+        }
+    },
+    {
+        name = "background",
+        data = {
+            width = 32,
+            Depth = 10,
+            Flip = false
+        }
+    },
+    {
+        name = "flipped_background",
+        data = {
+            width = 32,
+            Depth = 10,
+            Flip = true
+        }
     }
 }
 
@@ -49,6 +76,7 @@ local function getRailingSprite(entity, textures, offsetX, offsetY)
         local sprite = drawableSprite.fromTexture(texture, entity)
 
         sprite:addPosition(offsetX, offsetY)
+        sprite:setScale(1, (entity.Flip and -1) or 1)
         sprite:setJustification(0.0, 0.0)
 
         return sprite
@@ -67,14 +95,14 @@ function starjumpRailing.sprite(room, entity)
     local sprites = {}
     local width = entity.width or 16
     if width <= 8 then
-        addRailingSprite(sprites, entity, railings, 0, -8)
+        addRailingSprite(sprites, entity, railings, 0, (entity.Flip and 0) or -8)
         return sprites
     end
-    addRailingSprite(sprites, entity, leftRailings, 0, -8)
+    addRailingSprite(sprites, entity, leftRailings, 0, (entity.Flip and 0) or -8)
     for w = 8, width - 16, 8 do
-        addRailingSprite(sprites, entity, railings, w, -8)
+        addRailingSprite(sprites, entity, railings, w, (entity.Flip and 0) or -8)
     end
-    addRailingSprite(sprites, entity, rightRailings, width - 8, -8)
+    addRailingSprite(sprites, entity, rightRailings, width - 8, (entity.Flip and 0) or -8)
     return sprites
 end
 

@@ -165,10 +165,10 @@ public class RecoilBumper : Actor, IHasSpeed
 
             Vector2 collisionNormal = (Center - player.Center).SafeNormalize(Vector2.UnitY);
 
-            Vector2 oldSpeed = player.Speed;
+            Vector2 oldSpeed = player.AdjustedSpeed();
             player.PointBounce(Center);
-            player.Speed += Speed;
-            Vector2 speedChange = player.Speed - oldSpeed;
+            player.SetAdjustedSpeed(player.AdjustedSpeed() + Speed);
+            Vector2 speedChange = player.AdjustedSpeed() - oldSpeed;
             Speed -= speedChange / Mass;
 
             SlashFx.Burst(Center, collisionNormal.Angle());

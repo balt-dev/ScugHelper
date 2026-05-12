@@ -188,6 +188,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         self.starFlyTimer = 0f;
         self.starFlyLoopSfx?.Stop();
         LimboRefill.LimboTimer = 0f;
+        sprite.FlipY = self.Sprite.FlipY;
 
         Vector2 cameraPos = self.level.Camera.Position;
         Vector2 cameraTarget = self.CameraTarget;

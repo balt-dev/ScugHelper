@@ -13,9 +13,8 @@ conveyor.placements = {
         data = {
             width = 32,
             SpritePath = "objects/ScugHelper/conveyor",
-            SpriteRate = 1,
-            TargetSpeed = 120,
-            Acceleration = 300
+            TargetSpeed = 60,
+            Flip = false
         }
     }
 }
@@ -33,6 +32,7 @@ function conveyor.sprite(room, entity)
     for i = 2, tileWidth - 1 do
         local middleSprite = drawableSprite.fromTexture(midTex, entity)
         middleSprite:addPosition((i - 1) * 4, 4)
+        middleSprite:setScale(1, (entity.Flip and -1) or 1)
         middleSprite:setJustification(0.0, 0.0)
         table.insert(sprites, middleSprite)
     end
@@ -41,9 +41,11 @@ function conveyor.sprite(room, entity)
     local rightSprite = drawableSprite.fromTexture(rightTex, entity)
 
     leftSprite:addPosition(0, 4)
+    leftSprite:setScale(1, (entity.Flip and -1) or 1)
     leftSprite:setJustification(0.0, 0.0)
 
     rightSprite:addPosition((tileWidth - 1) * 4, 4)
+    rightSprite:setScale(1, (entity.Flip and -1) or 1)
     rightSprite:setJustification(0.0, 0.0)
 
     table.insert(sprites, leftSprite)

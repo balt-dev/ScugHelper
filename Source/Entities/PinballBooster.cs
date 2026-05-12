@@ -196,6 +196,7 @@ public class PinballBooster : Booster
     {
         if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster  && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce))
         {
+            Logger.Info(nameof(ScugHelperModule), "VCollide");
             if (self.Speed.Y > 0)
             {
                 //Dash corner correction
@@ -238,9 +239,9 @@ public class PinballBooster : Booster
                         {
                             for (int i = 1; i <= Player.UpwardCornerCorrection; i++)
                             {
-                                if (!self.CollideCheck<Solid>(self.Position + new Vector2(-i, -1)))
+                                if (!self.CollideCheck<Solid>(self.Position + (self.IsInverted() ? new Vector2(-i, 1) : new Vector2(-i, -1))))
                                 {
-                                    self.Position += new Vector2(-i, -1);
+                                    self.Position += self.IsInverted() ? new Vector2(-i, 1) : new Vector2(-i, -1);
                                     return;
                                 }
                             }
@@ -250,9 +251,9 @@ public class PinballBooster : Booster
                         {
                             for (int i = 1; i <= Player.UpwardCornerCorrection; i++)
                             {
-                                if (!self.CollideCheck<Solid>(self.Position + new Vector2(i, -1)))
+                                if (!self.CollideCheck<Solid>(self.Position + (self.IsInverted() ? new Vector2(i, 1) : new Vector2(i, -1))))
                                 {
-                                    self.Position += new Vector2(i, -1);
+                                    self.Position += self.IsInverted() ? new Vector2(i, 1) : new Vector2(i, -1);
                                     return;
                                 }
                             }

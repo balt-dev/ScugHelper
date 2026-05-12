@@ -26,9 +26,12 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
 
     public Cycler(EntityData data, Vector2 offset)
         : this(data.Position + offset, data.Float("Radius"), data.Float("RPM"), data.Float("Phase"), data.Int("AttachedEntityID"), data.Bool("KeepX"), data.Bool("KeepY"))
-    {}
+    {
+        Depth = 1000000;
+    }
 
-    public override void Update() {
+    public override void Update()
+    {
         base.Update();
         if (AttachedEntity is Cycler child)
             frozen = child.frozen;
@@ -46,7 +49,8 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
             Player player = SceneAs<Level>()?.Tracker?.GetEntity<Player>();
             frozen = player != null && player.CurrentBooster != null && player.CurrentBooster == booster;
         }
-        if (AttachedEntity is ZipMover mover) {
+        if (AttachedEntity is ZipMover mover)
+        {
             SetPosition(ref mover.target, targetPosition + mover.target - mover.start);
             SetPosition(ref mover.start, targetPosition);
             SetPosition(ref mover.pathRenderer.from, targetPosition + mover.Center - mover.Position);
@@ -65,34 +69,43 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
             int top = (int)MathHelper.Min(block.start.Y, block.end.Y);
             int right = (int)MathHelper.Max(block.start.X + block.Width, block.end.X + block.Width);
             int bottom = (int)MathHelper.Max(block.start.Y + block.Height, block.end.Y + block.Height);
-            block.moveRect = new Rectangle(left, top, (int) (MathF.Round((right - left) / 8f) * 8f), (int) (MathF.Round((bottom - top) / 8f) * 8f));
+            block.moveRect = new Rectangle(left, top, (int)(MathF.Round((right - left) / 8f) * 8f), (int)(MathF.Round((bottom - top) / 8f) * 8f));
             if (block.lerp == 1) targetPosition = block.end;
             else if (block.lerp > 0) return;
         }
-        if (AttachedEntity is Puffer puffer) {
+        if (AttachedEntity is Puffer puffer)
+        {
             frozen = puffer.state == Puffer.States.Gone;
             if (frozen) return;
             SetPosition(ref puffer.startPosition, targetPosition);
         }
-        if (AttachedEntity is MoveBlock moveBlock) {
+        if (AttachedEntity is MoveBlock moveBlock)
+        {
             frozen = moveBlock.state != MoveBlock.MovementState.Idling;
             if (frozen) return;
         }
-        if (AttachedEntity is CrushBlock kevin) {
+        if (AttachedEntity is CrushBlock kevin)
+        {
             frozen = kevin.returnStack.Count > 0;
             if (frozen) return;
         }
-        if (AttachedEntity is HangRail rail) {
-            SetPosition(ref rail.Start, rail.InitialStart + offsetVec);
-            SetPosition(ref rail.End, rail.InitialEnd + offsetVec);
+        if (AttachedEntity is HangRail rail)
+        {
+            SetPosition(ref rail.Start, targetPosition + rail.Start - rail.Position);
+            SetPosition(ref rail.End, targetPosition + rail.End - rail.Position);
+            SetPosition(ref rail.Position, targetPosition);
         }
-        if (AttachedEntity is Platform AttachedPlatform) {
+        else if (AttachedEntity is Platform AttachedPlatform)
+        {
             if (!KeepX) AttachedPlatform.MoveToX(targetPosition.X);
             if (!KeepY) AttachedPlatform.MoveToY(targetPosition.Y);
-        } else if (AttachedEntity is Actor AttachedActor) {
+        }
+        else if (AttachedEntity is Actor AttachedActor)
+        {
             if (!KeepX) AttachedActor.MoveToX(targetPosition.X);
             if (!KeepY) AttachedActor.MoveToY(targetPosition.Y);
-        } else SetPosition(ref AttachedEntity.Position, targetPosition);
+        }
+        else SetPosition(ref AttachedEntity.Position, targetPosition);
     }
 
     private void SetPosition(ref Vector2 anchor, Vector2 targetPosition)
@@ -106,7 +119,8 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
     public override void Render()
     { base.Render(); }
 
-    public override void DebugRender(Camera camera) {
+    public override void DebugRender(Camera camera)
+    {
         base.DebugRender(camera);
 
         Vector2 offsetVec = new Vector2((float)Math.Cos(Math.Tau * Phase), (float)Math.Sin(Math.Tau * Phase)) * Radius;
@@ -165,19 +179,22 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
     {
         float oldLerp = self.lerp;
         orig(self);
-        if (self.lerp != oldLerp && self.lerp <= 0f) {
+        if (self.lerp != oldLerp && self.lerp <= 0f)
+        {
             Audio.SetParameter(self.returnSfx, "end", 1f);
             Audio.Play("event:/game/05_mirror_temple/swapblock_return_end", self.Center);
         }
     }
 
-    private static void ZipMoverFix(ILContext il) {
+    private static void ZipMoverFix(ILContext il)
+    {
         ILCursor cur = new(il);
         ILLabel[] labels = [];
         if (!cur.TryGotoNext(MoveType.Before,
             instr => instr.MatchSwitch(out labels)
         )) throw new Exception("Cycler failed to match IL for fixing Zip Movers.");
-        for (int i = 1; i < labels.Length; i++) {
+        for (int i = 1; i < labels.Length; i++)
+        {
             cur.GotoLabel(labels[i]);
             cur.EmitLdarg0();
             cur.EmitLdloc1();

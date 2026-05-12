@@ -23,6 +23,9 @@ public static class SpecialSessionVariables
         new("ScugHelper.HasMidair", new HasMidairFlag()),
         new("ScugHelper.HasOvercharge", new HasOverchargeFlag()),
         new("ScugHelper.InLimbo", new HasLimboFlag()),
+        new("ScugHelper.GravityHelper.PlayerInverted", new PlayerInvertedFlag()),
+        new("ScugHelper.FrostHelper.Enabled", new FrostHelperEnabledFlag()),
+        new("ScugHelper.GravityHelper.Enabled", new GravityHelperEnabledFlag()),
     ]);
     static Dictionary<string, SpecialCounter> counters = new([
         new("ScugHelper.DeathCount", new DeathCounter()),
@@ -125,6 +128,19 @@ public static class SpecialSessionVariables
             if (Engine.Scene is Level level) specialSlider.SetValue(level, value);
         }
         else orig(self, value);
+    }
+
+    [Command("getflag", "Gets the value of a flag.")]
+    internal static void CmdGetFlag(string name) {
+        Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetFlag(name)}");
+    }
+    [Command("getcounter", "Gets the value of a counter.")]
+    internal static void CmdGetCounter(string name) {
+        Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetCounter(name)}");
+    }
+    [Command("getslider", "Gets the value of a slider.")]
+    internal static void CmdGetSlider(string name) {
+        Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetSlider(name)}");
     }
 
     [Command("setflag", "Sets the value of a flag.")]

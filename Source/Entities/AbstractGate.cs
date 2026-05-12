@@ -68,7 +68,19 @@ public abstract class AbstractGate : Entity
 
         if (CheckLine(player.PreviousPosition, player.Position))
             OnTrigger(player);
-        else if (CheckLine(player.PreviousPosition + player.TopCenter - player.Position, player.TopCenter))
-            OnTrigger(player);
+        else
+        {
+            if (player.IsInverted())
+            {
+                if (CheckLine(player.PreviousPosition + player.BottomCenter - player.Position, player.BottomCenter))
+                    OnTrigger(player);
+            }
+            else
+            {
+                if (CheckLine(player.PreviousPosition + player.TopCenter - player.Position, player.TopCenter))
+                    OnTrigger(player);
+            }
+
+        }
     }
 }

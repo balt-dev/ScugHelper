@@ -91,7 +91,20 @@ internal class HasLimboFlag : SpecialFlag
     public override bool GetValue(Level level) => LimboRefill.LimboTimer > 0;
     public override void SetValue(Level level, bool value) => LimboRefill.LimboTimer = value ? MathF.Max(LimboRefill.LimboTimer, LimboRefill.RefreshLimboLength) : 0;
 }
+internal class PlayerInvertedFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => GravityHelperImports.PlayerInverted();
+    public override void SetValue(Level level, bool value) => GravityHelperImports.SetPlayerInverted(value);
+}
 
+internal class FrostHelperEnabledFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => FrostHelperImports.IsLoaded;
+}
+internal class GravityHelperEnabledFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => GravityHelperImports.IsLoaded;
+}
 
 internal class PlayerStateCounter : SpecialCounter
 {

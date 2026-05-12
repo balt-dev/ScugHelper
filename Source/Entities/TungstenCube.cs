@@ -20,7 +20,7 @@ public class TungstenCube : Actor, IHasSpeed
     private Vector2 Speed;
     private readonly Holdable Hold;
     private readonly Image Image;
-    private readonly Collider CrushCollider;
+    private Collider CrushCollider;
 
     private Level Level { get => SceneAs<Level>(); }
     Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
@@ -45,7 +45,7 @@ public class TungstenCube : Actor, IHasSpeed
             OnPickup = OnPickup,
             OnRelease = OnRelease
         });
-        Add(new PlayerCollider(OnPlayer, CrushCollider));
+        Add(playerCollider = new PlayerCollider(OnPlayer, CrushCollider));
     }
     public void OnPickup()
     {
@@ -71,14 +71,14 @@ public class TungstenCube : Actor, IHasSpeed
 
     private void OnPlayer(Player player)
     {
-        if (Speed.Y - player.Speed.Y >= 300 && !Hold.IsHeld)
+        if (Speed.Y - player.AdjustedSpeed().Y >= 300 && !Hold.IsHeld)
         {
             if (player.wasOnGround)
                 player.Die(Vector2.Zero);
             else
             {
                 Audio.Play("event:/game/general/thing_booped");
-                player.Speed.Y = Speed.Y;
+                player.SetAdjustedSpeed(player.AdjustedSpeed().X, Speed.Y);
                 Celeste.Freeze(0.1f);
             }
         }
@@ -127,9 +127,13 @@ public class TungstenCube : Actor, IHasSpeed
     public override void Update()
     {
         base.Update();
+        if (GravityHelperImports.IsInverted(this))
+            playerCollider.Collider = new Hitbox(8f, 16f, -4f, -14f);
+        else
+            playerCollider.Collider = new Hitbox(8f, 16f, -4f, -2f);
         Image.Position = new(MathF.Floor(Left), MathF.Floor(Top) - 2);
         if (Hold.IsHeld)
-            Image.Position.Y -= 4f;
+            Image.Position.Y -= Hold.Holder.IsInverted() ? -4f : 4f;
         Image.Update();
         if (!Hold.IsHeld)
         {
@@ -249,11 +253,12 @@ public class TungstenCube : Actor, IHasSpeed
             throw new Exception("Tungsten cube failed to match code for camera target offset hook.");
         cur.EmitLdarg0();
         cur.EmitLdloc1();
-        cur.EmitDelegate(static (Player self, Vector2 vector) =>
-        {
+        static Vector2 Del(Player self, Vector2 vector) {
             if (self.Holding?.Entity is not TungstenCube) return vector;
+            if (self.IsInverted()) return vector + Vector2.UnitY * (-30f + Math.Clamp((240f - self.Speed.Y) * 0.24f, -240f, 0f));
             return vector + Vector2.UnitY * Math.Clamp((self.Speed.Y - 240f) * 0.24f, 0f, 240f);
-        });
+        }
+        cur.EmitDelegate(Del);
         cur.EmitStloc1();
     }
 
@@ -297,6 +302,7 @@ public class TungstenCube : Actor, IHasSpeed
     }
 
     private static readonly float JumpMultiplier = 0.5f;
+    private readonly PlayerCollider playerCollider;
 
     private static void CanSuperWallJumpHook(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir)
     {

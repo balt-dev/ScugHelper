@@ -135,7 +135,7 @@ public class MinimapEntity : Entity
             // GameHelper compat
             VirtualRenderTarget scratchBuffer = VirtualContent.CreateRenderTarget("minimap-scratch", settings.MinimapWidth, settings.MinimapHeight);
             Engine.Graphics.GraphicsDevice.SetRenderTarget(scratchBuffer);
-            MapEditor ed = new(level.Session.Area, false);
+            MapEditor ed = new(level.Session.Area, false); 
             DynamicData.For(ed).Set("CurrentSession", level.Session);
             ed.Render();
             ScugHelperModule.Session.RenderedEditorOnce = true;
@@ -163,8 +163,11 @@ public class MinimapEntity : Entity
                 // GameHelper does this sometimes for some reason.
             }
         }
-        if (level.Tracker.GetEntity<Player>() is Player player)
+        if (level.Tracker.GetEntity<Player>() is Player player) {
             Draw.Pixel.Draw((player.Position / 8f).Round() - Vector2.UnitY, Vector2.Zero, Color.Pink);
+            Draw.SpriteBatch.DrawString(Draw.DefaultFont, $"{level.Session.LevelData.Name}", Camera.Position, Color.Yellow, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
+            Draw.SpriteBatch.DrawString(Draw.DefaultFont, $"{player.X}, {player.Y}", Camera.Position + Vector2.UnitY * 6, Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
+        }
 
         Draw.SpriteBatch.End();
 

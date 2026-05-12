@@ -45,6 +45,7 @@ public class BoosterField : Solid
     public BoosterField(Vector2 position, float width, float height, bool invis, bool invert, bool destroy) : base(position, width, height, false)
     {
         Depth = -20000;
+        SurfaceSoundIndex = 32;
         Collider = new BoosterFieldColliderList(this);
         Collidable = true;
         Invisible = invis;

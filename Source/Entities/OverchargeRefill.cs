@@ -90,7 +90,11 @@ public class OverchargeRefill : Refill, ICustomRefill
         On.Celeste.Player.SuperJump += Player_SuperJump;
         On.Celeste.Level.Reload += Level_Reload;
         On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
-        PlayerDashCoroHook = new(PlayerDashCoro, OnPlayerDashCoro);
+        using (new DetourConfigContext(
+            new DetourConfig("ScugHelper").WithPriority(1000000000)
+        ).Use()) {
+            PlayerDashCoroHook = new(PlayerDashCoro, OnPlayerDashCoro);
+        }
     }
 
     [OnUnload]
@@ -165,7 +169,7 @@ public class OverchargeRefill : Refill, ICustomRefill
             static instr => instr.MatchLdloc1(),
             static instr => instr.MatchLdloc3(),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
-        )) return;
+        )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (ldloc1, ldloc3, stfld Player Speed)"); return;}
         cur.MoveAfterLabels();
         cur.EmitLdloc1();
         cur.EmitLdloc3();
@@ -176,15 +180,15 @@ public class OverchargeRefill : Refill, ICustomRefill
         }
         cur.EmitDelegate(MultiplyOvercharge);
         cur.EmitStloc3();
-        
-        if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)))) return;
+
+        if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)))) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (ldfld Player DashDir)"); return;}
         if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             static instr => instr.MatchCall<Vector2>("op_Multiply"),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
-        )) return;
+        )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (call Vector2 op_Multiply, stfld Player Speed)"); return;}
         if (!cur.TryGotoPrev(MoveType.After,
             instr => instr.MatchBgtUn(out label)
-        )) return;
+        )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (bgt.un)"); return;}
         cur.MoveAfterLabels();
         cur.EmitDelegate(HasOverchargeDash);
         cur.EmitBrtrue(label);

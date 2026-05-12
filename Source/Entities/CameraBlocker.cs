@@ -4,21 +4,24 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using System.Linq;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/CameraBlocker")]
-public class CameraBlocker : Solid
+public class CameraBlocker : Solid, IComparable
 {
     public readonly string Flag;
     public readonly bool State;
+    public readonly int Priority;
     public CameraBlocker(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, false)
     {
         Collider = new Hitbox(data.Width, data.Height);
         Collidable = false;
         Flag = data.String("Flag");
         State = data.Bool("State");
+        Priority = data.Int("Priority");
     }
 
     public override void Update()
@@ -26,58 +29,46 @@ public class CameraBlocker : Solid
         base.Update();
     }
 
-    public override void Awake(Scene scene)
-    {
-        base.Awake(scene);
-        if (scene is not Level level) { RemoveSelf(); return; }
-        if (level.Tracker.GetEntity<CameraBox>() is null)
-            level.Add(new CameraBox(level.Camera));
-    }
-
     [OnLoad] internal static void LoadHooks() => On.Celeste.Level.Update += OnLevelUpdate;
     [OnUnload] internal static void UnloadHooks() => On.Celeste.Level.Update -= OnLevelUpdate;
 
     private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self)
     {
-        if (self.Tracker.GetEntity<CameraBox>() is CameraBox box)
+        orig(self);
+        CenterCameraTrigger.OnLevelUpdate(self);
+
+        CameraBlocker[] blockers = [.. self.Tracker.GetEntities<CameraBlocker>().Select(e => e as CameraBlocker)];
+        Array.Sort(blockers);
+        foreach (CameraBlocker blocker in blockers)
         {
-            box.Position = self.Camera.Position;
-            float oldWidth = box.Width;
-            float oldHeight = box.Height;
-            box.Collider = new CameraBox.CameraBoxColliderList(new Hitbox(self.Camera.Right - self.Camera.Left, self.Camera.Bottom - self.Camera.Top));
-            orig(self);
-            var deltaPos = self.Camera.Position - box.ExactPosition;
-            foreach (CameraBlocker blocker in self.Tracker.GetEntities<CameraBlocker>()) blocker.Collidable = blocker.Flag is null || self.Session.GetFlag(blocker.Flag) == blocker.State;
-            try
-            { // fuck it
-                box.MoveH(deltaPos.X);
-                box.MoveV(deltaPos.Y);
+            if (blocker.Flag is not null && blocker.State != self.Session.GetFlag(blocker.Flag))
+                continue;
+            var cameraRect = new Rectangle((int)self.Camera.Left, (int)self.Camera.Top, (int)(self.Camera.Right - self.Camera.Left), (int)(self.Camera.Bottom - self.Camera.Top));
+            if (!cameraRect.Intersects(blocker.Collider.Bounds))
+                continue;
+
+            var cameraPos = self.Camera.Position;
+
+            Vector2 minOverlap = new(Math.Min(self.Camera.Right - blocker.Left, blocker.Right - self.Camera.Left), Math.Min(blocker.Bottom - self.Camera.Top, self.Camera.Bottom - blocker.Top));
+
+            if (minOverlap.X < minOverlap.Y)
+            {
+                if (self.Camera.Left <= blocker.Right && self.Camera.Right >= blocker.Right)
+                    cameraPos.X = Math.Max(self.Camera.Left, blocker.Right);
+                else if (self.Camera.Right >= blocker.Left && self.Camera.Right <= blocker.Right)
+                    cameraPos.X = Math.Min(self.Camera.Right, blocker.Left) - cameraRect.Width;
             }
-            catch (NullReferenceException) { }
-            foreach (CameraBlocker blocker in self.Tracker.GetEntities<CameraBlocker>()) blocker.Collidable = false;
-            self.Camera.Position = box.ExactPosition;
-        }
-        else orig(self);
-    }
+            else
+            {
+                if (self.Camera.Top <= blocker.Bottom && self.Camera.Bottom >= blocker.Bottom)
+                    cameraPos.Y = Math.Max(self.Camera.Top, blocker.Bottom);
+                else if (self.Camera.Bottom >= blocker.Top && self.Camera.Top <= blocker.Top)
+                    cameraPos.Y = Math.Min(self.Camera.Bottom, blocker.Top) - cameraRect.Height;
+            }
 
-    [Tracked]
-    private class CameraBox : Actor
-    {
-        public CameraBox(Camera camera) : base(camera.Position)
-        {
-            Collider = new CameraBoxColliderList(new Hitbox(camera.Right - camera.Left, camera.Bottom - camera.Top));
-        }
-
-        internal class CameraBoxColliderList : ColliderList
-        {
-            public CameraBoxColliderList(Hitbox hitbox) => colliders = [hitbox];
-
-            public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-            public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-            public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-            public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-            private bool CheckEntity(Entity entity) => entity is CameraBlocker;
+            self.Camera.Position = cameraPos;
         }
     }
+
+    public int CompareTo(object other) => Priority.CompareTo((other as CameraBlocker).Priority);
 }

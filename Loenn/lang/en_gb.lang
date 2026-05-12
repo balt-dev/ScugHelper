@@ -177,6 +177,9 @@ entities.ScugHelper/OverchargeRefill.placements.name.normal=Overcharge Refill
 entities.ScugHelper/OverchargeRefill.placements.description.normal=Retains speed after a super or at the end of a dash. Gives 1.2x speed when performing a super. Consumed when a super is performed.
 
 entities.ScugHelper/StarjumpRailing.placements.name.normal=Starjump Railing
+entities.ScugHelper/StarjumpRailing.placements.name.background=Starjump Railing (Background)
+entities.ScugHelper/StarjumpRailing.placements.name.flipped=Starjump Railing (Flipped),
+entities.ScugHelper/StarjumpRailing.placements.name.flipped_background=Starjump Railing (Flipped, Background)
 
 entities.ScugHelper/LimboRefill.placements.name.normal=Limbo Refill
 entities.ScugHelper/LimboRefill.placements.description.normal=Prevents the player from colliding with anything other than a Platform, Trigger, or Gate when held. Consumed when no inputs are pressed or held for more than 30 frames.
@@ -330,3 +333,25 @@ entities.ScugHelper/Conveyor.description.name.normal=Floor-attached booster that
 
 triggers.ScugHelper/DeathEffectTrigger.placements.name.normal=Death Effect
 triggers.ScugHelper/DeathEffectTrigger.placements.description.normal=Plays a player death effect at the given position.
+
+entities.ScugHelper/RefillRectangle.placements.name.green=Refill Rectangle (Green)
+entities.ScugHelper/RefillRectangle.placements.name.pink=Refill Rectangle (Pink)
+entities.ScugHelper/RefillRectangle.placements.name.blue=Refill Rectangle (Blue)
+entities.ScugHelper/RefillRectangle.placements.name.black=Refill Rectangle (Black)
+entities.ScugHelper/RefillRectangle.placements.name.rose=Refill Rectangle (Rose)
+entities.ScugHelper/RefillRectangle.placements.name.cyan=Refill Rectangle (Cyan)
+entities.ScugHelper/RefillRectangle.placements.name.dark_green=Refill Rectangle (Dark Green)
+
+entities.ScugHelper/RefillRectangle.placements.description.green=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.pink=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.blue=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.black=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.rose=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.cyan=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.dark_green=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+
+triggers.ScugHelper/CenterCameraTrigger.placements.name.normal=Center Camera
+triggers.ScugHelper/CenterCameraTrigger.placements.description.normal=Centers the camera on the player, respecting the set camera offset.
+
+entities.ScugHelper/GliderFizzleGate.placements.name.normal=Jellyfish Fizzle Gate
+entities.ScugHelper/GliderFizzleGate.placements.description.normal=Fizzles any jellyfish that go through it.

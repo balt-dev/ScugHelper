@@ -36,7 +36,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
         )) throw new Exception("Fastfall blocks failed to match IL for Player orig_Update hook.");
         static void PlayerCheck(Player player) {
             if (
-                player.CollideFirst<FastfallBlock>(player.Position + player.Speed * Engine.DeltaTime) is FastfallBlock block
+                player.CollideFirst<FastfallBlock>(player.Position + player.AdjustedSpeed() * Engine.DeltaTime) is FastfallBlock block
                 && (
                     (player.StateMachine.State == Player.StNormal && Input.MoveY.Value == 1 && player.Speed.Y >= block.SpeedMinimum) ||
                     (player.StateMachine.State == Player.StTempleFall) ||

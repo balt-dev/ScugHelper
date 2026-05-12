@@ -70,7 +70,7 @@ public class SquareCrystal : Actor, IHasSpeed
     {
         Vector2 deltaDir = (player.Center - Center).SafeNormalize(Vector2.UnitY);
 
-        Vector2 oldSpeed = player.Speed;
+        Vector2 oldSpeed = player.AdjustedSpeed();
         if (Math.Abs(deltaDir.X) > FRAC_SQRT_2_2)
             player.PointBounce(new(Center.X, player.Y));
         else
@@ -78,8 +78,8 @@ public class SquareCrystal : Actor, IHasSpeed
             player.PointBounce(new(player.X, Center.Y));
             player.Speed.X = 0;
         }
-        player.Speed += Speed;
-        Vector2 speedDelta = player.Speed - oldSpeed;
+        player.SetAdjustedSpeed(player.AdjustedSpeed() + Speed);
+        Vector2 speedDelta = player.AdjustedSpeed() - oldSpeed;
         if (DoGravity) Speed -= speedDelta;
 
         moveWiggler.Start();

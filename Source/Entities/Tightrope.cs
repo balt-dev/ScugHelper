@@ -11,7 +11,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Tightrope")]
-public class Tightrope : JumpThru
+public class Tightrope : Solid
 {
     internal class TightropeColliderList : ColliderList
     {
@@ -28,9 +28,8 @@ public class Tightrope : JumpThru
 
         private bool CheckEntity(Entity entity)
         {
-            if (SpeedAccessor.For(entity) is not SpeedAccessor accessor) return false;
-            var approxGrounded = Math.Round(accessor.Speed.Y) == 0 && Math.Abs(entity.Bottom - tightrope.Y) < 2;
-            if (!approxGrounded) return false;
+            if (entity is not Actor actor) return false;
+            if (!tightrope.IsRiding(actor)) return false;
             if (entity is not Player player) return true;
             if (!player.wasOnGround) return false;
             if (player.Ducking) return false;
@@ -40,13 +39,14 @@ public class Tightrope : JumpThru
 
     private readonly MTexture[] ropeSlices;
     private readonly MTexture tieTexture;
+    private readonly TightropeColliderList colliderList;
 
-    public Tightrope(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, true)
+    public Tightrope(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, 2f, true)
     {
         Depth = 1000;
         SurfaceSoundIndex = 17;
-        Collider = new Hitbox(data.Width, 5f);
-        Collider = new TightropeColliderList(this);
+        Collider = new Hitbox(data.Width, 2f);
+        Collider = colliderList = new TightropeColliderList(this);
         var tie = data.String("TieSprite", "objects/ScugHelper/hangrail/tie");
         if (tie == "objects/hangrail/tie") tie = "objects/ScugHelper/hangrail/tie";
         tieTexture = GFX.Game[tie];
@@ -56,6 +56,15 @@ public class Tightrope : JumpThru
         ropeSlices = Enumerable.Range(0, ropeTexture.Width)
             .Select(i => new MTexture(ropeTexture, i, 0, 1, ropeTexture.Height))
             .ToArray();
+    }
+
+    public override void Added(Scene scene)
+    {
+        base.Added(scene);
+    }
+    public override void Removed(Scene scene)
+    {
+        base.Removed(scene);
     }
 
     public override void Render()
@@ -70,5 +79,49 @@ public class Tightrope : JumpThru
         base.Render();
         tieTexture.DrawCentered(start);
         tieTexture.DrawCentered(end);
+    }
+
+    public override void MoveHExact(int move)
+    {
+        if (Collidable)
+        {
+            foreach (Actor actor in Scene.Tracker.GetEntities<Actor>())
+            {
+                if (!IsRiding(actor)) continue;
+                if (actor.TreatNaive) actor.NaiveMove(Vector2.UnitX * move);
+                else actor.MoveHExact(move);
+            }
+        }
+        X += move;
+        MoveStaticMovers(Vector2.UnitX * move);
+    }
+
+    public override void MoveVExact(int move)
+    {
+        if (Collidable)
+        {
+            foreach (Actor actor in Scene.Tracker.GetEntities<Actor>())
+            {
+                if (!IsRiding(actor)) continue;
+                Collidable = false;
+                if (actor.TreatNaive) actor.NaiveMove(Vector2.UnitY * move);
+                else actor.MoveVExact(move);
+                actor.LiftSpeed = LiftSpeed;
+                Collidable = true;
+            }
+        }
+
+        Y += move;
+        MoveStaticMovers(Vector2.UnitY * move);
+    }
+
+    private bool IsRiding(Actor actor)
+    {
+        if (actor.IgnoreJumpThrus) return false;
+        if (SpeedAccessor.For(actor) is not SpeedAccessor accessor) return false;
+        Collider = colliderList.colliders[0];
+        var res = accessor.Speed.Y == 0 && actor.OnGround() && (Math.Abs(actor.IsInverted() ? (actor.Top - Bottom) : (actor.Bottom - Top)) < 2);
+        Collider = colliderList;
+        return res;
     }
 }

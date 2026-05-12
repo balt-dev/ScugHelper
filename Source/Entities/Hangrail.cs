@@ -11,7 +11,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Hangrail")]
-public class HangRail : Entity
+public class HangRail : Actor
 {
     internal bool DoGravity = false;
     internal Holdable Hold;
@@ -96,7 +96,7 @@ public class HangRail : Entity
     private void OnRelease(Vector2 vector)
     {
         if (Hold.Holder is not Player player) return;
-        player.Speed = RetentionSpeed;
+        player.SetAdjustedSpeed(RetentionSpeed);
         if (!noLiftBoost) player.LiftSpeed = RetentionSpeed;
         noLiftBoost = false;
         player.LaunchedBoostCheck();
@@ -108,7 +108,7 @@ public class HangRail : Entity
     private void OnPickup()
     {
         Hold.Holder?.StateMachine.State = Player.StNormal;
-        Vector2 holderSpeed = Hold.Holder.Speed;
+        Vector2 holderSpeed = Hold.Holder.AdjustedSpeed();
         if (
             (
                 (
@@ -144,19 +144,23 @@ public class HangRail : Entity
     {
         base.Update();
         Collidable = NoGrabTimer <= 0f && !(Scene.Tracker.GetEntity<Player>() is Player pl && (pl.Stamina <= 0f || pl.OnGround()));
-        Hold.PickupCollider = Collidable ? Collider : new Hitbox(0, 0, -1e10f, -1e10f);
+        if (GravityHelperImports.IsInverted(this))
+            Collider = Hold.PickupCollider = Start == End ? new Hitbox(16, 16, -8, -20) : new Hitbox(12, 12, -6, -20);
+        else
+            Collider = Hold.PickupCollider = Start == End ? new Hitbox(16, 16, -8, 8) : new Hitbox(12, 12, -6, 8);
+        if (!Collidable) Hold.PickupCollider = new Hitbox(0, 0, -1e10f, -1e10f);
         NoGrabTimer -= Engine.DeltaTime;
         Hold.Holder?.minHoldTimer = 0f;
 
         // Make absolutely sure we're still on the track
         if (End == Start)
         {
-            Start = End = Position;
+            Position = Start = End;
         }
         else
         {
             if (DoGravity)
-                Speed.Y = Calc.Approach(Speed.Y, MaxFall, Gravity * Engine.DeltaTime);
+                Speed.Y = Calc.Approach(Speed.Y, GravityHelperImports.IsInverted(this) ? -MaxFall : MaxFall, Gravity * Engine.DeltaTime);
 
             var oldPos = Position;
 
@@ -198,16 +202,14 @@ public class HangRail : Entity
             else
             {
                 RetentionTimer -= Engine.DeltaTime;
-                if (RetentionTimer <= 0f) RetentionSpeed = Speed;
+                if (RetentionTimer <= 0f) RetentionSpeed = GravityHelperImports.IsInverted(this) ? new(Speed.X, -Speed.Y) : Speed;
             }
         }
         else
         {
-            RetentionSpeed = Speed;
+            RetentionSpeed = GravityHelperImports.IsInverted(this) ? new(Speed.X, -Speed.Y) : Speed;
             RetentionTimer = 0f;
         }
-
-
 
         float movementTarget = 0f;
         // Move the player to us
@@ -218,13 +220,16 @@ public class HangRail : Entity
             else
             {
                 if (TakeStamina) player.Stamina -= StaminaCost * Engine.DeltaTime;
-                player.Speed = RetentionSpeed;
-                bool wasNaive = player.TreatNaive;
-                if (Start == End) player.Position = Position + Vector2.UnitY * PlayerOffset;
+                player.SetAdjustedSpeed(RetentionSpeed);
+                float playerOffset = player.IsInverted() ? -PlayerOffset : PlayerOffset;
+                if (Start == End) player.Position = Position + Vector2.UnitY * playerOffset;
                 else
                 {
                     player.MoveToX(Position.X, OnBonkH);
-                    player.MoveToY(Position.Y + PlayerOffset, OnBonkV);
+                    if (player.IsInverted())
+                        player.MoveV(-(float)((double)(Position.Y + playerOffset) - player.Position.Y - player.movementCounter.Y), OnBonkV); // Inverted MoveToY
+                    else
+                        player.MoveToY(Position.Y + playerOffset, OnBonkV);
                 }
                 movementTarget = Input.MoveX * PlayerMaxSpeed;
                 if (Input.Jump.Pressed)

@@ -56,6 +56,7 @@ public class NewCustomField : Solid
         : base(data.Position + offset, data.Width, data.Height, false)
     {
         Depth = -20000;
+        SurfaceSoundIndex = 32;
         Names = [.. data.String("Names").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
         Invert = data.Bool("Invert");
         Color = data.HexColor("Color", new(0.7f, 0.85f, 1.0f));

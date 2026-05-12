@@ -10,7 +10,8 @@ using System.Linq;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/RefillGate")]
-public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, offset) {
+public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, offset)
+{
     private Refill refill;
     private ParticleType pType = new(Player.P_DashA)
     {
@@ -28,23 +29,20 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
     {
         Collider = new Hitbox(32, 32, -16, -16);
         // Refills aren't Tracked.
-        Refill collidedRefill = null;
+        Refill closestRefill = null;
         foreach (Entity entity in scene.Entities)
-            if (entity is Refill refill && CollideCheck(refill))
-            {
-                collidedRefill = refill;
-                break;
-            }
+            if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
+                closestRefill = refill;
         Collider = null;
-        if (collidedRefill == null)
+        if (closestRefill == null)
         {
             Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill gate...");
             RemoveSelf();
             return;
         }
-        collidedRefill.Position = Position + collidedRefill.Center - collidedRefill.Position;
-        collidedRefill.Collider = new Hitbox(0, 0);
-        refill = collidedRefill;
+        closestRefill.Position = Position + closestRefill.Center - closestRefill.Position;
+        closestRefill.Collider = new Hitbox(0, 0);
+        refill = closestRefill;
     }
 
     public override void OnTrigger(Player player)

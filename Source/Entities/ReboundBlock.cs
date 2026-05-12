@@ -31,18 +31,22 @@ public class ReboundBlock : Solid
     protected bool spikesDown;
 
     protected List<Image> renderImages;
+    protected List<Image> bloomImages;
     protected Image renderSlot;
     protected Sprite renderRefill;
     protected SoundSource firstHitSfx;
 
     internal Vector2 Anchor;
     private static readonly float Displacement = 4.0f;
+    private Refill refill;
 
     public ReboundBlock(Vector2 position, float width, float height, ReboundBlockKind kind)
      : base(position, width, height, safe: true)
     {
+        Tag |= Tags.TransitionUpdate;
         Anchor = position;
         Kind = kind;
+        bloomImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/bloomBlock"], add: false);
         switch (kind)
         {
             case ReboundBlockKind.Grey:
@@ -53,19 +57,24 @@ public class ReboundBlock : Solid
             case ReboundBlockKind.Green:
                 renderImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/oneBlock"]);
                 renderSlot = new(GFX.Game["objects/ScugHelper/reboundBlock/oneSlot"]);
-                renderRefill = new Sprite(GFX.Game, "objects/refill/idle");
                 break;
             case ReboundBlockKind.Pink:
                 renderImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/twoBlock"]);
                 renderSlot = new(GFX.Game["objects/ScugHelper/reboundBlock/twoSlot"]);
-                renderRefill = new Sprite(GFX.Game, "objects/refillTwo/idle");
                 break;
         }
         renderRefill?.AddLoop("idle", "", 0.1f);
         renderRefill?.Play("idle");
         renderRefill?.CenterOrigin();
+        Add(new CustomBloom(OnRenderBloom));
 
         OnDashCollide = Dashed;
+    }
+
+    private void OnRenderBloom()
+    {
+        foreach (Image image in bloomImages)
+            image.Render();
     }
 
     public override void Render()
@@ -87,9 +96,24 @@ public class ReboundBlock : Solid
     {
         base.Added(scene);
         RecenterImages();
+        switch (Kind)
+        {
+            case ReboundBlockKind.Green:
+                refill = new Refill(Vector2.Zero, false, false);
+                refill.Added(scene);
+                renderRefill = refill.sprite;
+                refill.Removed(scene);
+                break;
+            case ReboundBlockKind.Pink:
+                refill = new Refill(Vector2.Zero, true, false);
+                refill.Added(scene);
+                renderRefill = refill.sprite;
+                refill.Removed(scene);
+                break;
+        }
     }
 
-    private List<Image> BuildSprite(MTexture source)
+    private List<Image> BuildSprite(MTexture source, bool add = true)
     {
         List<Image> list = [];
         int num = source.Width / 8;
@@ -101,7 +125,7 @@ public class ReboundBlock : Solid
                 int num4 = (j != 0) ? ((!(j >= Height - 8f)) ? Calc.Random.Next(1, num2 - 1) : (num2 - 1)) : 0;
                 Image image = new(source.GetSubtexture(num3 * 8, num4 * 8, 8, 8)) { Position = new Vector2(i, j) };
                 list.Add(image);
-                Add(image);
+                if (add) Add(image);
             }
         return list;
     }
