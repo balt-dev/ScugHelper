@@ -11,6 +11,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/HoldableGate")]
 public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, offset) {
     private Holdable holdable;
+    private Collider actualPickupCollider;
     private Collider actualCollider;
 
     public override void Awake(Scene scene) {
@@ -22,11 +23,10 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
             RemoveSelf();
             return;
         }
-        Hitbox hitbox = holdable.PickupCollider.Clone() as Hitbox;
-        hitbox.width = 0;
-        hitbox.height = 0;
-        actualCollider = holdable.PickupCollider;
-        holdable.PickupCollider = hitbox;
+        
+        actualPickupCollider = holdable.PickupCollider;
+        actualCollider = holdable.Entity.Collider;
+        holdable.PickupCollider = holdable.Entity.Collider = null;
     }
 
     private bool Triggered = false;
@@ -47,7 +47,8 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
             if (player != null && Input.GrabCheck && player.Holding == null && player.Pickup(holdable)) {
                 holdable.Entity.Active = true;
                 player.StateMachine.State = Player.StPickup;
-                holdable.PickupCollider = actualCollider;
+                holdable.PickupCollider = actualPickupCollider;
+                holdable.Entity.Collider = actualCollider;
                 Triggered = true;
                 var startPos = Position - lineDir * Size / 2;
                 var endPos = Position + lineDir * Size / 2;

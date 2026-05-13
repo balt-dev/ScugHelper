@@ -1,3 +1,4 @@
+using System;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -23,5 +24,7 @@ public class SetInventoryAction(EntityData data, Vector2 _) : Entity(), IAction
             Backpack = backpack,
             NoRefills = noRefills
         };
+        if (level.Tracker.GetEntity<Player>() is Player player)
+            player.Dashes = Math.Min(player.Dashes, dashes);
     }
 }

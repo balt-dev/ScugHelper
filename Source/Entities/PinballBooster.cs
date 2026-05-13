@@ -23,13 +23,12 @@ public class PinballBooster : Booster
     private Vector2 SpeedLimit;
     private readonly float LaunchSpeed;
     private int BounceLimit = -1;
-    public bool Bounce { get; internal set; } = true;
     readonly bool SquareHitbox;
     readonly bool HitDashColliders;
 
     public bool ConsumeBounce()
     {
-        if (BounceLimit == 0 || !Bounce) return false;
+        if (BounceLimit == 0) return false;
         BounceLimit--;
         return true;
     }
@@ -40,12 +39,11 @@ public class PinballBooster : Booster
         LaunchSpeed = data.Float("speed", 240);
         SquareHitbox = data.Bool("SquareHitbox", false);
         HitDashColliders = data.Bool("HitDashColliders", false);
-        Bounce = data.Bool("Bounce", true);
         Acceleration = new(data.Float("accelX", 0), data.Float("accelY", 0));
         SpeedLimit = new(data.Float("limitX", 500), data.Float("limitY", 500));
-        BounceLimit = data.Int("BounceLimit", -1);
+        BounceLimit = data.Bool("Bounce", true) ? data.Int("BounceLimit", -1) : 0;
         Remove(wiggler);
-        if (Bounce)
+        if (BounceLimit != 0)
         {
             Remove(sprite);
             Add(sprite = GFX.SpriteBank.Create(red ? "pinballBoosterRed" : "pinballBooster"));
@@ -201,9 +199,16 @@ public class PinballBooster : Booster
 
             if (data.Hit != null && data.Hit.OnCollide != null)
                 data.Hit.OnCollide(data.Direction);
-            
-            if (data.Hit != null && data.Hit.OnDashCollide != null && self.LastBooster is PinballBooster boost && boost.HitDashColliders)
-                data.Hit.OnDashCollide(self, data.Direction);
+            if (self.LastBooster is PinballBooster boost && boost.HitDashColliders && data.Hit != null) {
+                if (data.Hit.OnDashCollide != null)
+                    data.Hit.OnDashCollide(self, data.Direction);
+                else if (data.Hit is DreamBlock)
+                {
+                    self.DashDir = self.Speed.SafeNormalize();
+                    self.StateMachine.State = Player.StDreamDash;
+                    return;
+                }
+            }
             self.Speed.X = -self.Speed.X;
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
@@ -290,8 +295,16 @@ public class PinballBooster : Booster
 
             if (data.Hit != null && data.Hit.OnCollide != null)
                 data.Hit.OnCollide(data.Direction);
-            if (data.Hit != null && data.Hit.OnDashCollide != null && self.LastBooster is PinballBooster boost && boost.HitDashColliders)
-                data.Hit.OnDashCollide(self, data.Direction);
+            if (self.LastBooster is PinballBooster boost && boost.HitDashColliders && data.Hit != null) {
+                if (data.Hit.OnDashCollide != null)
+                    data.Hit.OnDashCollide(self, data.Direction);
+                else if (data.Hit is DreamBlock)
+                {
+                    self.DashDir = self.Speed.SafeNormalize();
+                    self.StateMachine.State = Player.StDreamDash;
+                    return;
+                }
+            }
             self.Speed.Y = -self.Speed.Y;
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",

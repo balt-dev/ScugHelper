@@ -8,12 +8,33 @@
     </pinballBooster>
     <pinballBoosterRed path="objects/ScugHelper/pinballBooster/" start="loop">
         <Justify x="0.5" y="0.5" />
-        <Anim id="appear" path="boosterRed" delay="0.08" frames="26-34" goto="loop" />
+        <Anim
+            id="appear"
+            path="boosterRed"
+            delay="0.08"
+            frames="26-34"
+            goto="loop"
+        />
         <Loop id="loop" path="boosterRed" delay="0.1" frames="0-4" />
         <Loop id="inside" path="boosterRed" delay="0.1" frames="5-8" />
         <Loop id="spin" path="boosterRed" delay="0.06" frames="18-25" />
         <Anim id="pop" path="boosterRed" delay="0.08" frames="9-17" />
     </pinballBoosterRed>
+
+    <macabreBooster path="objects/ScugHelper/macabreBooster/" start="loop">
+        <Justify x="0.5" y="0.5" />
+        <Anim
+            id="appear"
+            path="boosterRed"
+            delay="0.08"
+            frames="26-34"
+            goto="loop"
+        />
+        <Loop id="loop" path="booster" delay="0.1" frames="0-4" />
+        <Loop id="inside" path="booster" delay="0.1" frames="5-8" />
+        <Loop id="spin" path="booster" delay="0.06" frames="18-25" />
+        <Anim id="pop" path="booster" delay="0.08" frames="9-17" />
+    </macabreBooster>
     <gripwallTop path="objects/ScugHelper/gripwall/" start="idle">
         <Loop id="idle" path="bothTop" frames="0" delay="0.035" />
     </gripwallTop>
@@ -28,65 +49,179 @@
 
         <Loop id="idle" path="idle" delay=".08" frames="0-5,0-5,0-5,0-5,0-7" />
         <Anim id="collect" path="idle" delay=".07" frames="7-11" />
-        <Loop id="idleGhost" path="idleGhost" delay=".08" frames="0-6,0-6,0-6,0-6,0-7" />
+        <Loop
+            id="idleGhost"
+            path="idleGhost"
+            delay=".08"
+            frames="0-6,0-6,0-6,0-6,0-7"
+        />
         <Anim id="collectGhost" path="idleGhost" delay=".07" frames="7-11" />
     </brassBerry>
     <squareGemFill path="objects/ScugHelper/squareGem/" start="idle">
         <Loop id="idle" path="gemBase" frames="0" />
-		<Loop id="spin" path="gemBase" frames="0*10,1-13" delay="0.1"/>
-		<Loop id="glint" path="gemBase" frames="8*6,9,10,11,12,13,0*7,13,12,11,10,9" delay="0.1"/>
-		<Loop id="fastspin" path="gemBase" delay="0.1"/>
+		<Loop id="spin" path="gemBase" frames="0*10,1-13" delay="0.1" />
+		<Loop
+            id="glint"
+            path="gemBase"
+            frames="8*6,9,10,11,12,13,0*7,13,12,11,10,9"
+            delay="0.1"
+        />
+		<Loop id="fastspin" path="gemBase" delay="0.1" />
     </squareGemFill>
     <squareGemOutline path="objects/ScugHelper/squareGem/" start="idle">
         <Loop id="idle" path="gemOutline" frames="0" />
-		<Loop id="spin" path="gemOutline" frames="0*10,1-13" delay="0.1"/>
-		<Loop id="glint" path="gemOutline" frames="8*6,9,10,11,12,13,0*7,13,12,11,10,9" delay="0.1"/>
-		<Loop id="fastspin" path="gemOutline" delay="0.1"/>
+		<Loop id="spin" path="gemOutline" frames="0*10,1-13" delay="0.1" />
+		<Loop
+            id="glint"
+            path="gemOutline"
+            frames="8*6,9,10,11,12,13,0*7,13,12,11,10,9"
+            delay="0.1"
+        />
+		<Loop id="fastspin" path="gemOutline" delay="0.1" />
     </squareGemOutline>
-    <recoilBumper copy="bumper" path="objects/ScugHelper/recoilBumper/"/>
+    <recoilBumper copy="bumper" path="objects/ScugHelper/recoilBumper/" />
 
-      <neutrallessWallBoosterTop path="objects/ScugHelper/neutrallessWallBooster/" start="hot">
-        <Loop id="hot" path="fireTop" frames="0-7" delay="0.035"/>
-        <Anim id="ice" path="iceTop" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
-        <Anim id="iceShine" path="iceTop" frames="0-4" delay="0.08" goto="ice"/>
+      <neutrallessWallBoosterTop
+        path="objects/ScugHelper/neutrallessWallBooster/"
+        start="hot"
+    >
+        <Loop id="hot" path="fireTop" frames="0-7" delay="0.035" />
+        <Anim
+            id="ice"
+            path="iceTop"
+            frames="0*10"
+            delay="0.08"
+            goto="ice,ice,ice,ice,ice,iceShine"
+        />
+        <Anim
+            id="iceShine"
+            path="iceTop"
+            frames="0-4"
+            delay="0.08"
+            goto="ice"
+        />
       </neutrallessWallBoosterTop>
-      <neutrallessWallBoosterMid path="objects/ScugHelper/neutrallessWallBooster/" start="hot">
-        <Loop id="hot" path="fireMid" frames="0-7" delay="0.035"/>
-        <Anim id="ice" path="iceMid" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
-        <Anim id="iceShine" path="iceMid" frames="0-4" delay="0.08" goto="ice"/>
+      <neutrallessWallBoosterMid
+        path="objects/ScugHelper/neutrallessWallBooster/"
+        start="hot"
+    >
+        <Loop id="hot" path="fireMid" frames="0-7" delay="0.035" />
+        <Anim
+            id="ice"
+            path="iceMid"
+            frames="0*10"
+            delay="0.08"
+            goto="ice,ice,ice,ice,ice,iceShine"
+        />
+        <Anim
+            id="iceShine"
+            path="iceMid"
+            frames="0-4"
+            delay="0.08"
+            goto="ice"
+        />
       </neutrallessWallBoosterMid>
-      <neutrallessWallBoosterBottom path="objects/ScugHelper/neutrallessWallBooster/" start="hot">
-        <Loop id="hot" path="fireBottom" frames="0-7" delay="0.035"/>
-        <Anim id="ice" path="iceBottom" frames="0*10" delay="0.08" goto="ice,ice,ice,ice,ice,iceShine"/>
-        <Anim id="iceShine" path="iceBottom" frames="0-4" delay="0.08" goto="ice"/>
+      <neutrallessWallBoosterBottom
+        path="objects/ScugHelper/neutrallessWallBooster/"
+        start="hot"
+    >
+        <Loop id="hot" path="fireBottom" frames="0-7" delay="0.035" />
+        <Anim
+            id="ice"
+            path="iceBottom"
+            frames="0*10"
+            delay="0.08"
+            goto="ice,ice,ice,ice,ice,iceShine"
+        />
+        <Anim
+            id="iceShine"
+            path="iceBottom"
+            frames="0-4"
+            delay="0.08"
+            goto="ice"
+        />
       </neutrallessWallBoosterBottom>
 
       <fragileSeeker path="objects/ScugHelper/fragileSeeker/" start="idle">
-        <Justify x="0.5" y="0.5"/>
-        <Loop id="idle" path="predator" delay="0.08" frames="0-19"/>
-        <Loop id="search" path="predator" delay="0.08" frames="0-19,20-39"/>
-        <Anim id="spot" path="predator" delay="0.07" frames="40-43" goto="spotted"/>
-        <Loop id="spotted" path="predator" delay="0.07" frames="44-48"/>
-        <Anim id="windUp" path="predator" delay="0.07" frames="103-107" goto="attacking"/>
-        <Loop id="attacking" path="predator" delay="0.07" frames="49-53"/>
-        <Anim id="takeHit" path="predator" delay="0.07" frames="108-121" goto="stunned"/>
+        <Justify x="0.5" y="0.5" />
+        <Loop id="idle" path="predator" delay="0.08" frames="0-19" />
+        <Loop id="search" path="predator" delay="0.08" frames="0-19,20-39" />
+        <Anim
+            id="spot"
+            path="predator"
+            delay="0.07"
+            frames="40-43"
+            goto="spotted"
+        />
+        <Loop id="spotted" path="predator" delay="0.07" frames="44-48" />
+        <Anim
+            id="windUp"
+            path="predator"
+            delay="0.07"
+            frames="103-107"
+            goto="attacking"
+        />
+        <Loop id="attacking" path="predator" delay="0.07" frames="49-53" />
+        <Anim
+            id="takeHit"
+            path="predator"
+            delay="0.07"
+            frames="108-121"
+            goto="stunned"
+        />
         <Loop id="stunned" path="predator" delay="0.07" frames="122,123" />
         <Loop id="pulse" path="predator" delay="0.04" frames="144-151" />
-        <Anim id="recover" path="rebirth" delay="0.07"/>
-        <Anim id="skid" path="predator" delay="0.07" frames="129-133" goto="attacking"/>
+        <Anim id="recover" path="rebirth" delay="0.07" />
+        <Anim
+            id="skid"
+            path="predator"
+            delay="0.07"
+            frames="129-133"
+            goto="attacking"
+        />
         <Loop id="dazed" path="predator" delay="0.07" frames="134-143" />
 
-        <Anim id="hatch" path="predator" delay="0.05" frames="75-102" goto="idle"/>
+        <Anim
+            id="hatch"
+            path="predator"
+            delay="0.05"
+            frames="75-102"
+            goto="idle"
+        />
         <Loop id="statue" path="predator" delay="0.07" frames="75" />
 
-        <Anim id="flipMouth" path="predator" delay="0.05" frames="61-63" goto="spotted"/>
-        <Anim id="flipEyes" path="predator" delay="0.05" frames="68-74" goto="search"/>
+        <Anim
+            id="flipMouth"
+            path="predator"
+            delay="0.05"
+            frames="61-63"
+            goto="spotted"
+        />
+        <Anim
+            id="flipEyes"
+            path="predator"
+            delay="0.05"
+            frames="68-74"
+            goto="search"
+        />
       </fragileSeeker>
       <hangrail path="objects/ScugHelper/hangrail/" start="idle">
           <Loop id="idle" path="bar" frames="3" delay="0.06" />
           <Loop id="pushLeft" path="bar" frames="2" delay="0.06" />
           <Loop id="pushRight" path="bar" frames="4" delay="0.06" />
-          <Anim id="swingLeft" path="bar" frames="1,0*2,1,3,4,3" delay="0.06" goto="idle" />
-          <Anim id="swingRight" path="bar" frames="5,6*2,5,3,2,3" delay="0.06" goto="idle" />
+          <Anim
+            id="swingLeft"
+            path="bar"
+            frames="1,0*2,1,3,4,3"
+            delay="0.06"
+            goto="idle"
+        />
+          <Anim
+            id="swingRight"
+            path="bar"
+            frames="5,6*2,5,3,2,3"
+            delay="0.06"
+            goto="idle"
+        />
       </hangrail>
 </Sprites>

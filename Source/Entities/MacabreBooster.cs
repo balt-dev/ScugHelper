@@ -36,7 +36,7 @@ public class MacabreBooster : Booster
         Remove(sprite);
         Add(sprite = GFX.SpriteBank.Create("macabreBooster"));
         Add(wiggler = Wiggler.Create(0.5f, 4f, f => { sprite.Scale = Vector2.One * (1f + f * 0.25f); }));
-        particleType = new(P_Burst) { Color = Calc.HexToColor("3d2e44"), Color2 = Calc.HexToColor("251d36") };
+        particleType = new(P_Burst) { Color = Calc.HexToColor("3d0000"), Color2 = Calc.HexToColor("250000") };
     }
 
 
