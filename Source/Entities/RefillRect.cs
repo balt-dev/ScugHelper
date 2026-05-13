@@ -22,7 +22,7 @@ public class RefillRectangle : Entity
             return ScanPatterns[width][i];
         if (i < 2 || (width - i - 1) < 2) return true;
         if (i == 2 || (width - i - 1) == 2) return false;
-        float center = ((float) width) / 2;
+        float center = ((float)width) / 2;
         return (width % 6) switch
         {
             2 or 5 => i % 3 != 2,
@@ -39,6 +39,8 @@ public class RefillRectangle : Entity
     public readonly float InfillOpacity;
     public readonly int ID;
     private VirtualRenderTarget? bakedTexture;
+    readonly string? FallbackRefillType;
+    readonly bool FallbackRefillOneUse;
 
     public RefillRectangle(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
     {
@@ -48,6 +50,8 @@ public class RefillRectangle : Entity
         Collider = new Hitbox(data.Width, data.Height);
         OutlineColor = data.HexColor("OutlineColor", Calc.HexToColor("93bd40"));
         InfillColor = data.HexColor("InfillColor", Calc.HexToColor("208020"));
+        FallbackRefillType = data.String("FallbackRefillType");
+        FallbackRefillOneUse = data.Bool("FallbackRefillOneUse");
         InfillOpacity = data.Float("InfillOpacity", 0.8f);
         Add(new BeforeRenderHook(BakeTexture));
         Add(new CustomBloom(OnRenderBloom));
@@ -98,9 +102,36 @@ public class RefillRectangle : Entity
 
         if (closestRefill == null)
         {
-            Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill rectangle...");
-            RemoveSelf();
-            return;
+            switch (FallbackRefillType)
+            {
+                case "green":
+                    scene.Add(closestRefill = new Refill(Position, false, FallbackRefillOneUse));
+                    break;
+                case "pink":
+                    scene.Add(closestRefill = new Refill(Position, true, FallbackRefillOneUse));
+                    break;
+                case "blue":
+                    scene.Add(closestRefill = new MidairRefill(Position, FallbackRefillOneUse));
+                    break;
+                case "black":
+                    scene.Add(closestRefill = new LimboRefill(Position, FallbackRefillOneUse));
+                    break;
+                case "dark_green":
+                    scene.Add(closestRefill = new SeekerRefill(Position, FallbackRefillOneUse));
+                    break;
+                case "cyan":
+                    scene.Add(closestRefill = new OverchargeRefill(Position, FallbackRefillOneUse));
+                    break;
+                case "rose":
+                    scene.Add(closestRefill = new HiccupRefill(Position, FallbackRefillOneUse));
+                    break;
+            }
+            if (closestRefill is null)
+            {
+                Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill rectangle...");
+                RemoveSelf();
+                return;
+            }
         }
         closestRefill.Position = Position + closestRefill.Center - closestRefill.Position;
         closestRefill.Collider = new Hitbox(0, 0);
@@ -109,7 +140,7 @@ public class RefillRectangle : Entity
 
     public void OnPlayer(Player player)
     {
-        if (refill == null) return;
+        if (refill is null) return;
         if (refill.respawnTimer > 0f) return;
         foreach (PlayerCollider collider in refill.Components.GetAll<PlayerCollider>().ToArray())
             collider.OnCollide(player);
@@ -119,13 +150,14 @@ public class RefillRectangle : Entity
     public override void Update()
     {
         base.Update();
-        refill.Position = Center + refill.Center - refill.Position;
-        refill.Collidable = false;
+        refill?.Position = Center + refill.Center - refill.Position;
+        refill?.Collidable = false;
     }
 
     public override void Render()
     {
         base.Render();
+        if (refill is null) return;
         refill.sprite.Y = refill.flash.Y = refill.outline.Y = 0;
         if (!(refill.sprite.Visible || refill.outline.Visible)) { return; }
         if (!refill.sprite.Visible)
@@ -141,6 +173,7 @@ public class RefillRectangle : Entity
 
     internal void OnRenderBloom()
     {
+        if (refill is null) return;
         if (refill.sprite.Visible)
         {
             Draw.HollowRect(Collider, Color.White);

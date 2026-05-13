@@ -28,10 +28,10 @@ public class BrassBerryBlock : Solid
 		: base(position, width, height, safe: false)
 	{
 		startY = Y;
-		berry = new Image(GFX.Game["objects/brassBerry/idle00"]);
+		berry = new Image(GFX.Game["objects/ScugHelper/brassBerry/idle00"]);
 		berry.CenterOrigin();
 		berry.Position = new Vector2(width / 2f, height / 2f);
-        MTexture mTexture = GFX.Game["objects/brassBerry/brassBerryBlock00"];
+        MTexture mTexture = GFX.Game["objects/ScugHelper/brassBerry/brassBerryBlock00"];
 		nineSlice = new MTexture[3, 3];
 		for (int i = 0; i < 3; i++)
 		{

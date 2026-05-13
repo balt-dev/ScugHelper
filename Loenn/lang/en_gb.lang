@@ -342,16 +342,22 @@ entities.ScugHelper/RefillRectangle.placements.name.rose=Refill Rectangle (Rose)
 entities.ScugHelper/RefillRectangle.placements.name.cyan=Refill Rectangle (Cyan)
 entities.ScugHelper/RefillRectangle.placements.name.dark_green=Refill Rectangle (Dark Green)
 
-entities.ScugHelper/RefillRectangle.placements.description.green=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
-entities.ScugHelper/RefillRectangle.placements.description.pink=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
-entities.ScugHelper/RefillRectangle.placements.description.blue=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
-entities.ScugHelper/RefillRectangle.placements.description.black=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
-entities.ScugHelper/RefillRectangle.placements.description.rose=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
-entities.ScugHelper/RefillRectangle.placements.description.cyan=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
-entities.ScugHelper/RefillRectangle.placements.description.dark_green=Holds a refill placed on top of it and extends its hitbox to this rectangle. THIS DOES NOTHING ON ITS OWN.
+entities.ScugHelper/RefillRectangle.placements.description.green=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.pink=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.blue=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.black=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.rose=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.cyan=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.dark_green=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.attributes.description.FallbackRefillType=The refill type to default to if one is not placed on top of it.
+entities.ScugHelper/RefillRectangle.attributes.description.FallbackRefillOneUse=Whether the fallback refill should be one-use.
 
 triggers.ScugHelper/CenterCameraTrigger.placements.name.normal=Center Camera
 triggers.ScugHelper/CenterCameraTrigger.placements.description.normal=Centers the camera on the player, respecting the set camera offset.
 
 entities.ScugHelper/GliderFizzleGate.placements.name.normal=Jellyfish Fizzle Gate
 entities.ScugHelper/GliderFizzleGate.placements.description.normal=Fizzles any jellyfish that go through it.
+
+
+entities.ScugHelper/MacabreBooster.placements.name.normal=Macabre Booster
+entities.ScugHelper/MacabreBooster.placements.description.normal=Red booster that kills the player if they don't dash out of it early.
