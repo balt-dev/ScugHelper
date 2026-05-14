@@ -32,6 +32,7 @@ public class SessionExpressionAction : Entity, IAction
     public void Alert(Level level)
     {
         if (!FrostHelperImports.IsLoaded) return;
+        if (SessionExpression is null) return;
         Player? player = level.Tracker.GetEntity<Player>();
         switch (Target) {
             case "$player.x": player.X = player.PreviousPosition.X = FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session); return;

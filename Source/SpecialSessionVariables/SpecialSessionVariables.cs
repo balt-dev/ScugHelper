@@ -30,6 +30,7 @@ public static class SpecialSessionVariables
     static Dictionary<string, SpecialCounter> counters = new([
         new("ScugHelper.DeathCount", new DeathCounter()),
         new("ScugHelper.DeathHereCount", new HereDeathCounter()),
+        new("ScugHelper.PlayerState", new PlayerStateCounter()),
         new("ScugHelper.PlayerDashes", new PlayerDashesCounter()),
         new("ScugHelper.PlayerMaxDashes", new PlayerMaxDashesCounter()),
         new("ScugHelper.PlayerTotalDashes", new PlayerTotalDashesCounter()),
@@ -64,6 +65,19 @@ public static class SpecialSessionVariables
         On.Celeste.Session.IncrementCounter += OnIncrementCounter;
         OnSliderObjectGetValue = new(typeof(Session.Slider).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance)!, OnSliderObjectGet);
         OnSliderObjectSetValue = new(typeof(Session.Slider).GetMethod("set_Value", BindingFlags.Public | BindingFlags.Instance)!, OnSliderObjectSet);
+        On.Celeste.Level.Update += OnUpdate;
+    }
+
+    static bool NoOverride;
+    private static void OnUpdate(On.Celeste.Level.orig_Update orig, Level self)
+    {
+        // Annoyingly slow but we do this to support legacy stuff
+        NoOverride = true;
+        foreach (var kvp in flags) self.Session.SetFlag(kvp.Key, kvp.Value.GetValue(self));
+        foreach (var kvp in counters) self.Session.SetCounter(kvp.Key, kvp.Value.GetValue(self));
+        foreach (var kvp in sliders) self.Session.SetSlider(kvp.Key, kvp.Value.GetValue(self));
+        NoOverride = false;
+        orig(self);
     }
 
     [OnUnload]
@@ -80,50 +94,50 @@ public static class SpecialSessionVariables
 
     private static bool OnGetFlag(On.Celeste.Session.orig_GetFlag orig, Session self, string flag)
     {
-        if (flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) return specialFlag.GetValue(level);
+        if (!NoOverride && flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) return specialFlag.GetValue(level);
         else return orig(self, flag);
     }
 
     private static int OnGetCounter(On.Celeste.Session.orig_GetCounter orig, Session self, string counter)
     {
-        if (counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) return specialCounter.GetValue(level);
+        if (!NoOverride && counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) return specialCounter.GetValue(level);
         else return orig(self, counter);
     }
 
     private static float OnGetSlider(On.Celeste.Session.orig_GetSlider orig, Session self, string slider)
     {
-        if (slider is not null && Engine.Scene is Level level && sliders.TryGetValue(slider, out var specialSlider)) return specialSlider.GetValue(level);
+        if (!NoOverride && slider is not null && Engine.Scene is Level level && sliders.TryGetValue(slider, out var specialSlider)) return specialSlider.GetValue(level);
         else return orig(self, slider);
     }
 
     private static void OnSetFlag(On.Celeste.Session.orig_SetFlag orig, Session self, string flag, bool value)
     {
-        if (flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) specialFlag.SetValue(level, value);
+        if (!NoOverride && flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) specialFlag.SetValue(level, value);
         else orig(self, flag, value);
     }
 
     private static void OnSetCounter(On.Celeste.Session.orig_SetCounter orig, Session self, string counter, int value)
     {
-        if (counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, value);
+        if (!NoOverride && counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, value);
         else orig(self, counter, value);
     }
 
     private static void OnIncrementCounter(On.Celeste.Session.orig_IncrementCounter orig, Session self, string counter)
     {
-        if (counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, specialCounter.GetValue(level) + 1);
+        if (!NoOverride && counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, specialCounter.GetValue(level) + 1);
         else orig(self, counter);
     }
 
     private static float OnSliderObjectGet(Func<Session.Slider, float> orig, Session.Slider self)
     {
-        if (sliders.TryGetValue(self.Name, out var specialSlider))
+        if (!NoOverride && sliders.TryGetValue(self.Name, out var specialSlider))
             return (Engine.Scene is Level level) ? specialSlider.GetValue(level) : 0f;
         return orig(self);
     }
 
     private static void OnSliderObjectSet(Action<Session.Slider, float> orig, Session.Slider self, float value)
     {
-        if (sliders.TryGetValue(self.Name, out var specialSlider))
+        if (!NoOverride && sliders.TryGetValue(self.Name, out var specialSlider))
         {
             if (Engine.Scene is Level level) specialSlider.SetValue(level, value);
         }

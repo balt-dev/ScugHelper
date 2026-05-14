@@ -32,6 +32,7 @@ public class SessionExpressionConditionAction : Entity, IAction
     public void Alert(Level level)
     {
         if (!FrostHelperImports.IsLoaded) return;
+        if (SessionExpression is null) return;
         if (FrostHelperImports.GetBoolSessionExpressionValue(SessionExpression, level.Session) ^ Invert)
             ActionManager.AlertActions(Targets, level);
     }

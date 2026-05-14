@@ -33,6 +33,7 @@ public class SessionExpressionListener : Entity, IAction
     public void ActionUpdate(Level level)
     {
         if (!FrostHelperImports.IsLoaded) return;
+        if (SessionExpression is null) return;
         var now = FrostHelperImports.GetBoolSessionExpressionValue(SessionExpression, level.Session);
         if (stateLastTick is bool state && (now ^ Invert) && !(state ^ Invert))
             ActionManager.AlertActions(Targets, level);
