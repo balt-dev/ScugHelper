@@ -33,6 +33,9 @@ return {
             data = { FallbackRefillOneUse = false, FallbackRefillType = "dark_green", width = 32, height = 32, OutlineColor = "7ac533", InfillColor = "435e28", InfillOpacity = 0.3 }
         },
     },
+    fieldInformation = {
+        OutlineColor = { fieldType = "color" }, InfillColor = { fieldType = "color" },
+    },
     sprite = function(room, entity)
         local infillColor = scughelper.parseColor(entity.InfillColor)
         infillColor[4] = entity.InfillOpacity
