@@ -36,6 +36,7 @@ public class ActionCassetteBlock : Solid
     List<ActionCassetteBlock>? BlockGroup = null;
     bool WantsCollide;
     bool IsLeader;
+    bool Silent;
     bool? IsGroupLeader;
     Vector2 GroupOrigin;
     BoxSide? side;
@@ -57,6 +58,7 @@ public class ActionCassetteBlock : Solid
         }
         Groups = IAction.GetGroups(data);
         Flag = data.String("Flag");
+        Silent = data.Bool("Silent");
         FlagState = data.Bool("FlagState");
         GroupHash = (data.String("Groups", ""), Flag, FlagState, StartedSolid).GetHashCode();
         Color = data.HexColor("Color", Calc.HexToColor("49aaf0"));
@@ -69,7 +71,8 @@ public class ActionCassetteBlock : Solid
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
-        if (Flag is string flag && (scene as Level)!.Session.GetFlag(flag) == FlagState && !StartedSolid) {
+        if (Flag is string flag && (scene as Level)!.Session.GetFlag(flag) == FlagState && !StartedSolid)
+        {
             WantsCollide = Collidable = true;
             BlockHeight = 2;
             Position.Y -= 2;
@@ -96,8 +99,13 @@ public class ActionCassetteBlock : Solid
         if (IsGroupLeader == null)
         {
             foreach (ActionCassetteBlock acb in Scene.Tracker.GetEntities<ActionCassetteBlock>())
-                if (acb != this && acb.GroupHash == GroupHash)
+            {
+                if (acb != this && acb.GroupHash == GroupHash) {
                     acb.IsGroupLeader = false;
+                    if (!acb.Silent)
+                        Silent = false;
+                }
+            }
             IsGroupLeader = true;
         }
 
@@ -209,7 +217,7 @@ public class ActionCassetteBlock : Solid
         {
             var oldWantsCollide = WantsCollide;
             WantsCollide = SceneAs<Level>().Session.GetFlag(flag) == FlagState;
-            if (WantsCollide != oldWantsCollide && IsGroupLeader == true)
+            if (WantsCollide != oldWantsCollide && IsGroupLeader == true && !Silent)
                 Audio.Play(WantsCollide ? "event:/game/general/cassette_block_switch_2" : "event:/game/general/cassette_block_switch_1");
         }
         if (IsLeader)

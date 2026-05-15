@@ -34,7 +34,7 @@ public partial class CassetteFlagController : Entity
             string flag = match.Groups[1].Value;
             if (!int.TryParse(match.Groups[2].Value, out int start)) throw new FormatException($"Failed to parse flag span {str}: Start {match.Groups[2].Value} is not a valid 32-bit integer");
             if (!int.TryParse(match.Groups[3].Value, out int end)) throw new FormatException($"Failed to parse flag span {str}: End {match.Groups[3].Value} is not a valid 32-bit integer");
-            if (start >= end) throw new FormatException($"Failed to parse flag span {str}: Start ({start}) must be less than end ({end})");
+            if (start > end) throw new FormatException($"Failed to parse flag span {str}: Start ({start}) must be less than or equal to end ({end})");
             return new FlagSpan(flag, start, end);
         }
     }
@@ -61,11 +61,13 @@ public partial class CassetteFlagController : Entity
             scene.Add(manager = []);
     }
 
-    public override void Update() {
+    public override void Update()
+    {
         base.Update();
         Level level = SceneAs<Level>();
         if (manager is not CassetteBlockManager man) return;
-        foreach (FlagSpan span in Spans) {
+        foreach (FlagSpan span in Spans)
+        {
             level.Session.SetFlag(span.Flag, span.InSpan((man.beatIndex + man.beatIndexOffset) % Length + 1));
         }
     }

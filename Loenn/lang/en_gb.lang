@@ -366,7 +366,7 @@ entities.ScugHelper/ActionCassetteBlock.placements.name.jump=Manual Cassette Blo
 entities.ScugHelper/ActionCassetteBlock.placements.name.dash=Manual Cassette Block (Dash)
 entities.ScugHelper/ActionCassetteBlock.placements.name.grab=Manual Cassette Block (Grab)
 entities.ScugHelper/ActionCassetteBlock.placements.name.action=Manual Cassette Block (Action)
-entities.ScugHelper/ActionCassetteBlock.placements.name.flag=Manual Cassette Block (Flag)
+entities.ScugHelper/ActionCassetteBlock.placements.name.flag=Flag Cassette Block
 
 entities.ScugHelper/CassetteFlagController.placements.name.normal=Cassette Flag Controller
 entities.ScugHelper/CassetteFlagController.placements.description.normal=Sets session flags based on the current beat index of cassette blocks. Cassette blocks are not needed in the room to make this work.

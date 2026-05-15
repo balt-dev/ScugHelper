@@ -10,23 +10,23 @@ cassetteBlock.warnBelowSize = { 16, 16 }
 cassetteBlock.placements = {
     {
         name = "jump",
-        data = { width = 16, height = 16, Groups = "#PlayerJump", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
+        data = { Silent = false, width = 16, height = 16, Groups = "#PlayerJump", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
     },
     {
         name = "dash",
-        data = { width = 16, height = 16, Groups = "#PlayerDash", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
+        data = { Silent = false, width = 16, height = 16, Groups = "#PlayerDash", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
     },
     {
         name = "grab",
-        data = { width = 16, height = 16, Groups = "#PlayerGrab", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
+        data = { Silent = false, width = 16, height = 16, Groups = "#PlayerGrab", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
     },
     {
         name = "action",
-        data = { width = 16, height = 16, Groups = "", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
+        data = { Silent = false, width = 16, height = 16, Groups = "", PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", StartSolid = true, SurfaceSoundIndex = 35 }
     },
     {
         name = "flag",
-        data = { width = 16, height = 16, Flag = "ScugHelper.PlayerAirborne", FlagState = true, PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", SurfaceSoundIndex = 35 }
+        data = { Silent = false, width = 16, height = 16, Flag = "ScugHelper.PlayerAirborne", FlagState = true, PressedTexture = "objects/cassetteblock/pressed00", SolidTexture = "objects/cassetteblock/solid", Color = "49aaf0", SurfaceSoundIndex = 35 }
     }
 }
 cassetteBlock.fieldInformation = {
@@ -37,7 +37,8 @@ cassetteBlock.fieldInformation = {
 -- Filter by cassette blocks sharing the same index
 local function getSearchPredicate(entity)
     return function(target)
-        return entity._name == target._name and entity.Groups == target.Groups and entity.Flag == target.Flag and entity.FlagState == target.FlagState and entity.StartSolid == target.StartSolid
+        return entity._name == target._name and entity.Groups == target.Groups and entity.Flag == target.Flag and
+            entity.FlagState == target.FlagState and entity.StartSolid == target.StartSolid
     end
 end
 
