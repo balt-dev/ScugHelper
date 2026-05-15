@@ -361,3 +361,9 @@ entities.ScugHelper/GliderFizzleGate.placements.description.normal=Fizzles any j
 
 entities.ScugHelper/MacabreBooster.placements.name.normal=Macabre Booster
 entities.ScugHelper/MacabreBooster.placements.description.normal=Red booster that kills the player if they don't dash out of it early.
+
+entities.ScugHelper/ActionCassetteBlock.placements.name.jump=Manual Cassette Block (Jump)
+entities.ScugHelper/ActionCassetteBlock.placements.name.dash=Manual Cassette Block (Dash)
+entities.ScugHelper/ActionCassetteBlock.placements.name.grab=Manual Cassette Block (Grab)
+entities.ScugHelper/ActionCassetteBlock.placements.name.action=Manual Cassette Block (Action)
+entities.ScugHelper/ActionCassetteBlock.placements.name.flag=Manual Cassette Block (Flag)

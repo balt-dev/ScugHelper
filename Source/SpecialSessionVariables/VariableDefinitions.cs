@@ -53,7 +53,13 @@ internal class PlayerOnSafeGroundFlag : SpecialFlag
 
 internal class PlayerDashAttackingFlag : SpecialFlag
 {
-    public override bool GetValue(Level level) => level.GetPlayer()?.DashAttacking ?? false;
+    public override bool GetValue(Level level) => level.GetPlayer()?.DashAttacking ?? false ;
+}
+
+internal class SaveQuitDisabledFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => level.SaveQuitDisabled;
+    public override void SetValue(Level level, bool value) => level.SaveQuitDisabled = value;
 }
 
 internal class IsPlayerSeekerFlag : SpecialFlag

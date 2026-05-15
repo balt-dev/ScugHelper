@@ -118,6 +118,7 @@ public static class ActionHooks
 
     private static void OnDashEvents(On.Celeste.Player.orig_CallDashEvents orig, Player self)
     {
+        if (self.CurrentBooster is not null) { orig(self); return; }
         var was = self.calledDashEvents;
         orig(self);
         if (self.calledDashEvents && !was)

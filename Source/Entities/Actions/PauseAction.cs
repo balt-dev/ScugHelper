@@ -11,6 +11,7 @@ public class PauseAction() : Entity(), IAction
 {
     public void Alert(Level level)
     {
+        if (level.Paused) return;
         level.Pause();
     }
 }

@@ -13,7 +13,7 @@ local frameNinePatchOptions = {
 local frameNodeNinePatchOptions = {
     mode = "fill",
     borderMode = "repeat",
-    color =  {1.0, 1.0, 1.0, 0.7}
+    color = { 1.0, 1.0, 1.0, 0.7 }
 }
 
 local trailNinePatchOptions = {
@@ -33,45 +33,46 @@ local trailDepth = 8999
 local blockDepth = -9999
 
 swapBlock.name = "ScugHelper/ActionSwapBlock"
-swapBlock.nodeLimits = {1, 1}
+swapBlock.nodeLimits = { 1, 1 }
 swapBlock.fieldInformation = {
-    Groups = {fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = ""}
+    Groups = { fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = "" }
 }
 local placements = {
     { "normal", "#PlayerDash" },
-    { "jump", "#PlayerJump" },
-    { "grab", "#PlayerGrab" },
+    { "jump",   "#PlayerJump" },
+    { "grab",   "#PlayerGrab" },
     { "action", "" },
 }
 swapBlock.placements = {}
 for _, pair in ipairs(placements) do
     table.insert(swapBlock.placements,
-    {
-        name = pair[1],
-        data = {
-            width = 16,
-            height = 16,
+        {
+            name = pair[1],
+            data = {
+                width = 16,
+                height = 16,
                 Particles = true,
                 Slippery = false,
-            HidePath = false,
-            HideBackground = false,
-            HideMiddle = false,
-            Toggle = pair.toggle or false,
-            Groups = pair[2],
-            ReturnTime = 0.8,
-            SpriteDirectory = "objects/swapblock",
-            ReturnSound = "event:/game/05_mirror_temple/swapblock_return",
-            ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
-            MoveSound = "event:/game/05_mirror_temple/swapblock_move",
-            MoveEndSound = "event:/game/05_mirror_temple/swapblock_move_end",
-            MovementSpeed = 360,
-            ReturnSpeedMultiplier = 0.4,
+                HidePath = false,
+                HideBackground = false,
+                HideMiddle = false,
+                Toggle = pair.toggle or false,
+                Groups = pair[2],
+                ReturnTime = 0.8,
+                SpriteDirectory = "objects/swapblock",
+                ReturnSound = "event:/game/05_mirror_temple/swapblock_return",
+                ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
+                MoveSound = "event:/game/05_mirror_temple/swapblock_move",
+                MoveEndSound = "event:/game/05_mirror_temple/swapblock_move_end",
+                MovementSpeed = 360,
+                ReturnSpeedMultiplier = 0.4,
+                SurfaceSoundIndex = 8
+            }
         }
-    }
- )
+    )
 end
 
-swapBlock.warnBelowSize = {16, 16}
+swapBlock.warnBelowSize = { 16, 16 }
 
 local function addBlockSprites(sprites, entity, position, frameTexture, middleTexture, isNode)
     local x, y = position.x or 0, position.y or 0
@@ -86,7 +87,7 @@ local function addBlockSprites(sprites, entity, position, frameTexture, middleTe
     middleSprite.depth = blockDepth
 
     if isNode then
-        middleSprite:setColor({1, 1, 1, 0.7})
+        middleSprite:setColor({ 1, 1, 1, 0.7 })
     end
 
     for _, sprite in ipairs(frameSprites) do
@@ -108,7 +109,8 @@ local function addTrailSprites(sprites, entity, trailTexture, path)
     if path then
         local pathDirection = x == nodeX and "V" or "H"
         local pathTexture = string.format(entity.SpriteDirectory .. "/path%s", pathDirection)
-        local pathNinePatch = drawableNinePatch.fromTexture(pathTexture, pathNinePatchOptions, x, y, drawWidth, drawHeight)
+        local pathNinePatch = drawableNinePatch.fromTexture(pathTexture, pathNinePatchOptions, x, y, drawWidth,
+            drawHeight)
         local pathSprites = pathNinePatch:getDrawableSprite()
 
         for _, sprite in ipairs(pathSprites) do
@@ -119,7 +121,8 @@ local function addTrailSprites(sprites, entity, trailTexture, path)
     end
 
     if (not entity.HideBackground) then
-        local frameNinePatch = drawableNinePatch.fromTexture(trailTexture, trailNinePatchOptions, x, y, drawWidth, drawHeight)
+        local frameNinePatch = drawableNinePatch.fromTexture(trailTexture, trailNinePatchOptions, x, y, drawWidth,
+            drawHeight)
         local frameSprites = frameNinePatch:getDrawableSprite()
 
         for _, sprite in ipairs(frameSprites) do
@@ -134,7 +137,8 @@ function swapBlock.sprite(room, entity)
     local sprites = {}
 
     addTrailSprites(sprites, entity, entity.SpriteDirectory .. "/target", not entity.HidePath)
-    addBlockSprites(sprites, entity, entity, entity.SpriteDirectory .. "/block", entity.SpriteDirectory .. "/midBlockRed00")
+    addBlockSprites(sprites, entity, entity, entity.SpriteDirectory .. "/block",
+        entity.SpriteDirectory .. "/midBlockRed00")
 
     return sprites
 end
@@ -142,7 +146,8 @@ end
 function swapBlock.nodeSprite(room, entity, node)
     local sprites = {}
 
-    addBlockSprites(sprites, entity, entity, entity.SpriteDirectory .. "/block", entity.SpriteDirectory .. "/midBlockRed00", true)
+    addBlockSprites(sprites, entity, entity, entity.SpriteDirectory .. "/block",
+        entity.SpriteDirectory .. "/midBlockRed00", true)
 
     return sprites
 end
@@ -153,7 +158,7 @@ function swapBlock.selection(room, entity)
     local nodeX, nodeY = nodes[1].x or x, nodes[1].y or y
     local width, height = entity.width or 8, entity.height or 8
 
-    return utils.rectangle(x, y, width, height), {utils.rectangle(nodeX, nodeY, width, height)}
+    return utils.rectangle(x, y, width, height), { utils.rectangle(nodeX, nodeY, width, height) }
 end
 
 return swapBlock

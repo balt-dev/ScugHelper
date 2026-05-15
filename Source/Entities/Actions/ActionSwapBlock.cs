@@ -38,6 +38,7 @@ public class ActionSwapBlock : SwapBlock
             data.Bool("HidePath") ? Themes.Moon : Themes.Normal
         )
     {
+        SurfaceSoundIndex = data.Int("SurfaceSoundIndex", 8);
         ReturnSound = data.String("ReturnSound", "event:/game/05_mirror_temple/swapblock_return");
         ReturnEndSound = data.String("ReturnEndSound", "event:/game/05_mirror_temple/swapblock_return_end");
         MoveSound = data.String("MoveSound", "event:/game/05_mirror_temple/swapblock_move");
@@ -74,10 +75,13 @@ public class ActionSwapBlock : SwapBlock
             }
         }
 
-        if (data.Bool("HideMiddle")) {
+        if (data.Bool("HideMiddle"))
+        {
             middleGreen = null;
             middleRed = null;
-        } else {
+        }
+        else
+        {
             middleGreen.Reset(GFX.Game, SpritePath + '/');
             middleRed.Reset(GFX.Game, SpritePath + '/');
             middleGreen.AddLoop("idle", "midBlock", 0.08f, [0, 1, 2, 3]);
@@ -107,7 +111,8 @@ public class ActionSwapBlock : SwapBlock
             moveSfx = Audio.Play(MoveSound, Center);
     }
 
-    public override void Awake(Scene scene) {
+    public override void Awake(Scene scene)
+    {
         base.Awake(scene);
         path.RemoveSelf();
         scene.Add(path = new CustomPathRenderer(this));
@@ -165,13 +170,15 @@ public class ActionSwapBlock : SwapBlock
                 if (player.StateMachine.State is Player.StDash or Player.StRedDash)
                     player.StateMachine.State = Player.StNormal;
             }
-            if (Slippery) {
+            if (Slippery)
+            {
                 GetRiders();
             }
 
             MoveTo(Vector2.Lerp(start, end, lerp), liftSpeed);
-            
-            if (Slippery) {
+
+            if (Slippery)
+            {
                 foreach (Actor rider in riders)
                 {
                     if (SpeedAccessor.For(rider) is not SpeedAccessor accessor) continue;
