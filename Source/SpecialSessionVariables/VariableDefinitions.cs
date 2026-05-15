@@ -53,7 +53,7 @@ internal class PlayerOnSafeGroundFlag : SpecialFlag
 
 internal class PlayerDashAttackingFlag : SpecialFlag
 {
-    public override bool GetValue(Level level) => level.GetPlayer()?.DashAttacking ?? false ;
+    public override bool GetValue(Level level) => level.GetPlayer()?.DashAttacking ?? false;
 }
 
 internal class SaveQuitDisabledFlag : SpecialFlag
@@ -160,6 +160,19 @@ internal class HereDeathCounter : SpecialCounter
 {
     public override int GetValue(Level level) => level.Session.DeathsInCurrentLevel;
 }
+internal class CassetteBlockIndexCounter : SpecialCounter
+{
+    public override int GetValue(Level level)
+    {
+        if (level.Tracker.GetEntity<CassetteBlockManager>() is not CassetteBlockManager manager) return 0;
+        try { return manager.GetSixteenthNote(); }
+        catch (DivideByZeroException) { return 0; }
+    }
+}
+
+
+
+
 internal class TimeRateSlider : SpecialSlider
 {
     public override float GetValue(Level level) => Engine.EffectiveTimeRate;

@@ -25,6 +25,14 @@ public static class ActionHooks
         On.Celeste.DashSwitch.OnDashed += OnDashSwitch;
         On.Celeste.TouchSwitch.TurnOn += OnTouchSwitch;
         On.Celeste.Torch.OnPlayer += OnTorch;
+        On.Celeste.Player.Bounce += OnBounce;
+        On.Celeste.Player.SuperBounce += OnSuperBounce;
+        On.Celeste.Player.Pickup += OnPickup;
+        On.Celeste.Player.Drop += OnDrop;
+        On.Celeste.Player.PointBounce += OnPointBounce;
+        On.Celeste.Player.Throw += OnThrow;
+        On.Celeste.Player.Rebound += OnRebound;
+        On.Celeste.Player.ReflectBounce += OnReflectBounce;
     }
     [OnUnload]
     public static void UnloadHooks()
@@ -34,6 +42,14 @@ public static class ActionHooks
         On.Celeste.Player.SuperJump -= OnSuperJump;
         On.Celeste.Player.SuperWallJump -= OnSuperWallJump;
         On.Celeste.Player.ClimbJump -= OnClimbJump;
+        On.Celeste.Player.Bounce -= OnBounce;
+        On.Celeste.Player.SuperBounce -= OnSuperBounce;
+        On.Celeste.Player.Pickup -= OnPickup;
+        On.Celeste.Player.Drop -= OnDrop;
+        On.Celeste.Player.PointBounce -= OnPointBounce;
+        On.Celeste.Player.Throw -= OnThrow;
+        On.Celeste.Player.Rebound -= OnRebound;
+        On.Celeste.Player.ReflectBounce -= OnReflectBounce;
         On.Celeste.Player.ClimbBegin -= OnGrab;
         On.Celeste.Player.CallDashEvents -= OnDashEvents;
         On.Celeste.Player.Die -= OnDie;
@@ -44,6 +60,55 @@ public static class ActionHooks
         On.Celeste.DashSwitch.OnDashed -= OnDashSwitch;
         On.Celeste.TouchSwitch.TurnOn -= OnTouchSwitch;
         On.Celeste.Torch.OnPlayer -= OnTorch;
+    }
+
+    private static void OnReflectBounce(On.Celeste.Player.orig_ReflectBounce orig, Player self, Vector2 direction)
+    {
+        orig(self, direction);
+        ActionManager.AlertActions(["#PlayerReflectBounce"], self.SceneAs<Level>());
+    }
+
+    private static void OnBounce(On.Celeste.Player.orig_Bounce orig, Player self, float fromY)
+    {
+        orig(self, fromY);
+        ActionManager.AlertActions(["#PlayerBounce"], self.SceneAs<Level>());
+    }
+
+    private static void OnSuperBounce(On.Celeste.Player.orig_SuperBounce orig, Player self, float fromY)
+    {
+        orig(self, fromY);
+        ActionManager.AlertActions(["#PlayerSuperBounce"], self.SceneAs<Level>());
+    }
+
+    private static bool OnPickup(On.Celeste.Player.orig_Pickup orig, Player self, Holdable pickup)
+    {
+        var res = orig(self, pickup);
+        if (res) ActionManager.AlertActions(["#PlayerPickup"], self.SceneAs<Level>());
+        return res;
+    }
+
+    private static void OnDrop(On.Celeste.Player.orig_Drop orig, Player self)
+    {
+        orig(self);
+        ActionManager.AlertActions(["#PlayerDrop"], self.SceneAs<Level>());
+    }
+
+    private static void OnPointBounce(On.Celeste.Player.orig_PointBounce orig, Player self, Vector2 from)
+    {
+        orig(self, from);
+        ActionManager.AlertActions(["#PlayerPointBounce"], self.SceneAs<Level>());
+    }
+
+    private static void OnThrow(On.Celeste.Player.orig_Throw orig, Player self)
+    {
+        orig(self);
+        ActionManager.AlertActions(["#PlayerThrow"], self.SceneAs<Level>());
+    }
+
+    private static void OnRebound(On.Celeste.Player.orig_Rebound orig, Player self, int direction)
+    {
+        orig(self, direction);
+        ActionManager.AlertActions(["#PlayerRebound"], self.SceneAs<Level>());
     }
 
     private static void OnTorch(On.Celeste.Torch.orig_OnPlayer orig, Torch self, Player player)

@@ -367,3 +367,8 @@ entities.ScugHelper/ActionCassetteBlock.placements.name.dash=Manual Cassette Blo
 entities.ScugHelper/ActionCassetteBlock.placements.name.grab=Manual Cassette Block (Grab)
 entities.ScugHelper/ActionCassetteBlock.placements.name.action=Manual Cassette Block (Action)
 entities.ScugHelper/ActionCassetteBlock.placements.name.flag=Manual Cassette Block (Flag)
+
+entities.ScugHelper/CassetteFlagController.placements.name.normal=Cassette Flag Controller
+entities.ScugHelper/CassetteFlagController.placements.description.normal=Sets session flags based on the current beat index of cassette blocks. Cassette blocks are not needed in the room to make this work.
+entities.ScugHelper/CassetteFlagController.attributes.description.Spans=The intervals each flag should be active on. Specified as 'FlagName Start-End;FlagName Start-End' - for example, 'FirstHalf 1-8;SecondHalf 9-16'. Ranges are one-indexed and inclusive.
+entities.ScugHelper/CassetteFlagController.attributes.description.Length=The amount of beats the controller will count up to before resetting.

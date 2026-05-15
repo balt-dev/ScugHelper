@@ -28,7 +28,15 @@ local builtins = {
     "#DashSwitchHit",
     "#TouchSwitchActivated",
     "#TouchSwitchFinished",
-    "#TorchLit"
+    "#TorchLit",
+    "#PlayerBounce",
+    "#PlayerSuperBounce",
+    "#PlayerPickup",
+    "#PlayerDrop",
+    "#PlayerPointBounce",
+    "#PlayerThrow",
+    "#PlayerRebound",
+    "#PlayerReflectBounce",
 }
 T.actionGroups = {options = {}, searchable = true, editable = true}
 for _, val in ipairs(builtins) do

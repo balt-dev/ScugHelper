@@ -40,6 +40,7 @@ public static class SpecialSessionVariables
         new("ScugHelper.LevelWidth", new LevelWidthCounter()),
         new("ScugHelper.LevelHeight", new LevelHeightCounter()),
         new("ScugHelper.FPS", new FPSCounter()),
+        new("ScugHelper.CassetteBlockIndex", new CassetteBlockIndexCounter()),
     ]);
     static Dictionary<string, SpecialSlider> sliders = new([
         new("ScugHelper.TimeRate", new TimeRateSlider()),
@@ -146,15 +147,18 @@ public static class SpecialSessionVariables
     }
 
     [Command("getflag", "Gets the value of a flag.")]
-    internal static void CmdGetFlag(string name) {
+    internal static void CmdGetFlag(string name)
+    {
         Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetFlag(name)}");
     }
     [Command("getcounter", "Gets the value of a counter.")]
-    internal static void CmdGetCounter(string name) {
+    internal static void CmdGetCounter(string name)
+    {
         Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetCounter(name)}");
     }
     [Command("getslider", "Gets the value of a slider.")]
-    internal static void CmdGetSlider(string name) {
+    internal static void CmdGetSlider(string name)
+    {
         Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetSlider(name)}");
     }
 
