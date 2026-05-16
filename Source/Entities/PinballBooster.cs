@@ -199,7 +199,8 @@ public class PinballBooster : Booster
 
             if (data.Hit != null && data.Hit.OnCollide != null)
                 data.Hit.OnCollide(data.Direction);
-            if (self.LastBooster is PinballBooster boost && boost.HitDashColliders && data.Hit != null) {
+            if (self.LastBooster is PinballBooster boost && boost.HitDashColliders && data.Hit != null)
+            {
                 if (data.Hit.OnDashCollide != null)
                     data.Hit.OnDashCollide(self, data.Direction);
                 else if (data.Hit is DreamBlock)
@@ -295,7 +296,8 @@ public class PinballBooster : Booster
 
             if (data.Hit != null && data.Hit.OnCollide != null)
                 data.Hit.OnCollide(data.Direction);
-            if (self.LastBooster is PinballBooster boost && boost.HitDashColliders && data.Hit != null) {
+            if (self.LastBooster is PinballBooster boost && boost.HitDashColliders && data.Hit != null)
+            {
                 if (data.Hit.OnDashCollide != null)
                     data.Hit.OnDashCollide(self, data.Direction);
                 else if (data.Hit is DreamBlock)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Celeste.Mod.Registry;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 using MonoMod.ModInterop;
 
@@ -104,5 +105,14 @@ public class ScugHelperModule : EverestModule
         var sids = EntityRegistry.GetKnownSidsFromType(entity.GetType());
         NameCache[type] = sids;
         return sids;
+    }
+
+    internal static Effect OutlineFX;
+
+    public override void LoadContent(bool firstLoad)
+    {
+        base.LoadContent(firstLoad);
+
+        OutlineFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Shaders/outline.cso", true).Data);
     }
 }

@@ -33,6 +33,7 @@ public abstract class AbstractGate : Entity
         Size = data.Float("Size");
         lineDir = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
         lineNorm = new Vector2((float)-Math.Sin(Angle), (float)Math.Cos(Angle));
+        Collider = new Hitbox(32, 32, -16, -16);
     }
 
     /// <summary>

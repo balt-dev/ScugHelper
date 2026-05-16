@@ -149,23 +149,26 @@ public static class SpecialSessionVariables
     [Command("getflag", "Gets the value of a flag.")]
     internal static void CmdGetFlag(string name)
     {
+        if (name is null || name == "") return;
         Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetFlag(name)}");
     }
     [Command("getcounter", "Gets the value of a counter.")]
     internal static void CmdGetCounter(string name)
     {
+        if (name is null || name == "") return;
         Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetCounter(name)}");
     }
     [Command("getslider", "Gets the value of a slider.")]
     internal static void CmdGetSlider(string name)
     {
+        if (name is null || name == "") return;
         Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetSlider(name)}");
     }
 
     [Command("setflag", "Sets the value of a flag.")]
-    internal static void CmdSetFlag(string name, bool value) => (Engine.Scene as Level)?.Session.SetFlag(name, value);
+    internal static void CmdSetFlag(string name, bool value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetFlag(name, value); }
     [Command("setcounter", "Sets the value of a counter.")]
-    internal static void CmdSetCounter(string name, int value) => (Engine.Scene as Level)?.Session.SetCounter(name, value);
+    internal static void CmdSetCounter(string name, int value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetCounter(name, value); }
     [Command("setslider", "Sets the value of a slider.")]
-    internal static void CmdSetSlider(string name, float value) => (Engine.Scene as Level)?.Session.SetSlider(name, value);
+    internal static void CmdSetSlider(string name, float value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetSlider(name, value); }
 }

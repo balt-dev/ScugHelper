@@ -17,7 +17,8 @@ public class SeekerBarrierMaskRenderer : Entity
         Everest.Events.LevelLoader.OnLoadingThread += OnLevelLoad;
     }
     [OnUnload]
-    public static void UnloadHooks() {
+    public static void UnloadHooks()
+    {
         Everest.Events.LevelLoader.OnLoadingThread -= OnLevelLoad;
     }
 
@@ -37,7 +38,8 @@ public class SeekerBarrierMaskRenderer : Entity
     private static readonly int ParticleHeight = 512;
     protected static readonly Vector2[] particles = new Vector2[ParticleWidth * ParticleHeight / 16];
 
-    static SeekerBarrierMaskRenderer () {
+    static SeekerBarrierMaskRenderer()
+    {
         for (int i = 0; i < particles.Length; i++)
             particles[i] = new Vector2(Calc.Random.NextFloat(ParticleWidth - 1f), Calc.Random.NextFloat(ParticleHeight - 1f));
     }
@@ -107,10 +109,11 @@ public class SeekerBarrierMaskRenderer : Entity
 
         Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
-        foreach (Entity entity in Entities) {
+        foreach (Entity entity in Entities)
+        {
+            entity.Visible = true;
             entity.Render();
-            foreach (Component comp in entity.Components)
-                comp.Render();
+            entity.Visible = false;
         }
 
 
@@ -120,21 +123,25 @@ public class SeekerBarrierMaskRenderer : Entity
         buffer.Target.GetData(pixelData);
     }
 
-    public bool CheckParticle(Vector2 pos) {
+    public bool CheckParticle(Vector2 pos)
+    {
         int x = (int)pos.X;
         int y = (int)pos.Y;
         if (x < 0 || y < 0 || x >= buffer.Width || y >= buffer.Height) return false;
         return pixelData[y * buffer.Width + x].A > 0;
     }
 
-    public override void Render() {
+    public override void Render()
+    {
         base.Render();
-        if (buffer is not null) {
+        if (buffer is not null)
+        {
             var cam = (Scene as Level).Camera;
 
             Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White * FieldOpacity, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
             int count = particles.Length;
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 Vector2 part = particles[i];
                 for (int x = 0; x < BufferWidth / ParticleWidth; x += ParticleWidth)
                     for (int y = 0; y < BufferHeight / ParticleHeight; y += ParticleHeight)
