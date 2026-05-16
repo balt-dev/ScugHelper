@@ -389,12 +389,12 @@ entities.ScugHelper/CustomKevinController.attributes.description.HitDashCollider
 entities.ScugHelper/CustomKevinController.attributes.description.HitTouchSwitches=Whether Kevins should activate touch switches.
 entities.ScugHelper/CustomKevinController.attributes.description.HitByHoldables=Whether Kevins should be activated when hit on the side by a Theo Crystal, Jellyfish, or Tungsten Cube. Other holdables are likely unsupported.
 
-triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.cardinal = Dash Angle Restriction Trigger (Cardinal)
-triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.orthogonal = Dash Angle Restriction Trigger (Orthogonal)
-triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.starfish = Dash Angle Restriction Trigger (Starfish)
-triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.custom = Dash Angle Restriction Trigger (Custom)
+triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.cardinal=Dash Angle Restriction Trigger (Cardinal)
+triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.diagonal=Dash Angle Restriction Trigger (Diagonal)
+triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.starfish=Dash Angle Restriction Trigger (Starfish)
+triggers.ScugHelper/DashAngleRestrictionTrigger.placements.name.custom=Dash Angle Restriction Trigger (Custom)
 triggers.ScugHelper/DashAngleRestrictionTrigger.placements.description.cardinal=Restricts the player's dashes to cardinal directions only.
-triggers.ScugHelper/DashAngleRestrictionTrigger.placements.description.orthogonal=Restricts the player's dashes to diagonals only.
+triggers.ScugHelper/DashAngleRestrictionTrigger.placements.description.diagonal=Restricts the player's dashes to diagonal directions only.
 triggers.ScugHelper/DashAngleRestrictionTrigger.placements.description.starfish=Restricts the player's dashes to 5 equal subdivisions. Inspired by Starfish by casju0.
 triggers.ScugHelper/DashAngleRestrictionTrigger.placements.description.custom=Restricts the player's dashes to an arbitrary list of angles.
 triggers.ScugHelper/DashAngleRestrictionTrigger.attributes.description.Flag=Only affects the player while this flag is set to the given state. Leave blank to always affect the player.
