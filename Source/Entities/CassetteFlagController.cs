@@ -47,16 +47,17 @@ public partial class CassetteFlagController : Entity
     public CassetteFlagController(EntityData data, Vector2 _) : base()
     {
         Spans = data.String("Spans", "")
-        .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-        .Select(FlagSpan.Parse)
-        .ToList();
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(FlagSpan.Parse)
+            .ToList();
         Length = data.Int("Length", 16);
         if (Length <= 0) throw new Exception("Length for cassette flag controller must be greater than than 0.");
     }
 
-    public override void Added(Scene scene)
+    public override void Awake(Scene scene)
     {
-        base.Added(scene);
+        base.Awake(scene);
+        SceneAs<Level>().HasCassetteBlocks = true;
         if ((manager = scene.Tracker.GetEntity<CassetteBlockManager>()) is null)
             scene.Add(manager = []);
     }

@@ -192,6 +192,8 @@ public class TungstenCube : Actor, IHasSpeed
 
     private void OnCollideH(CollisionData data)
     {
+        if (data.Hit is CrushBlock crushBlock)
+            CustomKevinController.HandleHoldableHit(crushBlock, data);
         if (data.Hit is DashSwitch button)
             button.OnDashCollide(null, Vector2.UnitX * Math.Sign(Speed.X));
         if (data.Hit is DashBlock block)
@@ -253,7 +255,8 @@ public class TungstenCube : Actor, IHasSpeed
             throw new Exception("Tungsten cube failed to match code for camera target offset hook.");
         cur.EmitLdarg0();
         cur.EmitLdloc1();
-        static Vector2 Del(Player self, Vector2 vector) {
+        static Vector2 Del(Player self, Vector2 vector)
+        {
             if (self.Holding?.Entity is not TungstenCube) return vector;
             if (self.IsInverted()) return vector + Vector2.UnitY * (-30f + Math.Clamp((240f - self.Speed.Y) * 0.24f, -240f, 0f));
             return vector + Vector2.UnitY * Math.Clamp((self.Speed.Y - 240f) * 0.24f, 0f, 240f);

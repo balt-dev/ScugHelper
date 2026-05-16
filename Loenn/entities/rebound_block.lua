@@ -27,7 +27,7 @@ return {
             data = { width = 32, height = 32, kind = 1 }
         },
         {
-            name = "reboundBlockGreen",
+            name = "reboundBlockPink",
             data = { width = 32, height = 32, kind = 2 }
         },
     },

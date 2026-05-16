@@ -21,7 +21,7 @@ return {
             data = { Spans = "FirstHalf 1-8;SecondHalf 9-16", Length = 16 }
         },
     },
-    fieldInformation = { Spans = { fieldType = "list", elementSeparator = ";", minimumElements = 1, validator = spanValidator }, Length = { fieldType = "integer" } },
+    fieldInformation = { Spans = { fieldType = "list", elementSeparator = ";", minimumElements = 1, validator = spanValidator, elementDefault = "FirstHalf 1-8" }, Length = { fieldType = "integer" } },
     sprite = function(room, entity)
         return {
             drawableText.fromText(

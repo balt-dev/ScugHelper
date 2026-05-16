@@ -36,7 +36,7 @@ public class ReboundBlock : Solid
     protected Sprite renderRefill;
     protected SoundSource firstHitSfx;
 
-    internal Vector2 Anchor;
+    internal Vector2 Offset;
     private static readonly float Displacement = 4.0f;
     private Refill refill;
 
@@ -44,7 +44,6 @@ public class ReboundBlock : Solid
      : base(position, width, height, safe: true)
     {
         Tag |= Tags.TransitionUpdate;
-        Anchor = position;
         Kind = kind;
         bloomImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/bloomBlock"], add: false);
         switch (kind)
@@ -79,12 +78,14 @@ public class ReboundBlock : Solid
 
     public override void Render()
     {
+        Position += Offset;
         foreach (Image image in renderImages)
             image.DrawSimpleOutline();
         base.Render();
         renderSlot.Render();
         renderRefill?.DrawSimpleOutline();
         renderRefill?.Render();
+        Position -= Offset;
     }
 
     public ReboundBlock(EntityData e, Vector2 levelOffset)
@@ -153,7 +154,7 @@ public class ReboundBlock : Solid
                 return DashCollisionResults.NormalCollision;
         }
         (Scene as Level).DirectionalShake(dir);
-        MoveTo(Position + dir * Displacement);
+        Offset = dir * Displacement;
         SmashParticles(-dir);
         Celeste.Freeze(0.1f);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
@@ -223,8 +224,7 @@ public class ReboundBlock : Solid
     public override void Update()
     {
         base.Update();
-        Vector2 target = Calc.Approach(Position, Anchor, 1);
-        MoveTo(target);
+        Offset = Calc.Approach(Offset, Vector2.Zero, Engine.DeltaTime * 60f);
         RecenterImages();
         foreach (Image image in renderImages)
             image.Update();
@@ -234,13 +234,7 @@ public class ReboundBlock : Solid
 
     private void RecenterImages()
     {
-        renderSlot?.Position = Center - new Vector2(renderSlot.Width, renderSlot.Height) / 2;
-        renderRefill?.Position = Center;
-    }
-
-    public override void DebugRender(Camera camera)
-    {
-        base.DebugRender(camera);
-        Draw.Circle(Anchor, 4, Color.Red, 8);
+        renderSlot?.Position = Offset + Center - new Vector2(renderSlot.Width, renderSlot.Height) / 2;
+        renderRefill?.Position = Offset + Center;
     }
 }

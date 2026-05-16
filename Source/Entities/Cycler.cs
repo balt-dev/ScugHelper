@@ -42,7 +42,6 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
         Vector2 offsetVec = new Vector2((float)Math.Cos(Math.Tau * Phase), (float)Math.Sin(Math.Tau * Phase)) * Radius;
         Vector2 targetPosition = Position + offsetVec;
         if (AttachedEntity is Bumper bumper) SetPosition(ref bumper.anchor, targetPosition);
-        if (AttachedEntity is ReboundBlock reboundBlock) SetPosition(ref reboundBlock.Anchor, targetPosition);
         if (AttachedEntity is Booster booster)
         {
             SetPosition(ref booster.outline.Position, targetPosition);
