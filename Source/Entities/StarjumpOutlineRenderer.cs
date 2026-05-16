@@ -4,6 +4,7 @@ using Celeste.Mod.Entities;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using System;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -35,6 +36,7 @@ public class StarjumpOutlineRenderer : Entity
         Tag = (int)Tags.Global | (int)Tags.TransitionUpdate;
         Depth = -8500;
         Add(new BeforeRenderHook(BeforeRender));
+        Add(new CustomBloom(RenderBloom));
     }
 
     internal void Track(Entity ent)
@@ -111,18 +113,32 @@ public class StarjumpOutlineRenderer : Entity
             GameplayRenderer.Begin();
         }
     }
+    
+    private void RenderBloom()
+    {
+        if (!control.Bloom) return;
+        var cam = (Scene as Level).Camera;
+        
+        GameplayRenderer.End();
+        ScugHelperModule.OutlineFX.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
+        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
+        Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
+        Draw.SpriteBatch.End();
+        GameplayRenderer.Begin();
+    }
 }
 
 [Tracked]
 [CustomEntity("ScugHelper/StarjumpSpinnerColorController")]
-public class StarjumpSpinnerColorController(Color color = default, bool rainbow = false) : Entity()
+public class StarjumpSpinnerColorController(Color color = default, bool rainbow = false, bool bloom = false) : Entity()
 {
     public StarjumpSpinnerColorController(EntityData data, Vector2 position)
-        : this(data.HexColor("Color", Color.White), data.Bool("Rainbow"))
+        : this(data.HexColor("Color", Color.White), data.Bool("Rainbow"), data.Bool("Bloom"))
     { }
 
     internal readonly Color ActualColor = color;
     internal readonly bool Rainbow = rainbow;
+    internal readonly bool Bloom = bloom;
 
     public Color Color { get => Rainbow ? Calc.HsvToColor(0.4f + Calc.YoYo((Scene?.TimeActive ?? 0f) * 50f % 280 / 280) * 0.4f, 0.4f, 0.9f) : ActualColor; }
 }
