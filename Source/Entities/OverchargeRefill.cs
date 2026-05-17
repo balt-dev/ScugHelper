@@ -176,8 +176,9 @@ public class OverchargeRefill : Refill, ICustomRefill
         cur.EmitLdloc1();
         cur.EmitLdloc3();
         static Vector2 MultiplyOvercharge(Player self, Vector2 speed) {
-            if (OverchargeDashCount > 0)
-                speed.X = Math.Max(Math.Abs(self.beforeDashSpeed.X), Math.Abs(speed.X)) * Math.Sign(speed.X) * 1.1f;
+            if (OverchargeDashCount > 0) {
+                speed = Math.Max(self.beforeDashSpeed.Length(), speed.Length()) * speed.SafeNormalize() * 1.1f;
+            }
             return speed;
         }
         cur.EmitDelegate(MultiplyOvercharge);
