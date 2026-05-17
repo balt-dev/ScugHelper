@@ -35,7 +35,8 @@ public class MidStepPortals : Entity
     {
         base.Update();
         SoundTimer -= Engine.RawDeltaTime;
-        if (ShouldPlaySound && SoundTimer <= 0f) {
+        if (ShouldPlaySound && SoundTimer <= 0f)
+        {
             ShouldPlaySound = false;
             SoundTimer = SoundCooldown;
             Audio.Play("event:/char/badeline/disappear");
@@ -97,7 +98,7 @@ public class MidStepPortals : Entity
                     portals.OnTeleport();
                 }
                 else if (
-                    moveH > 0 
+                    moveH > 0
                     && self.Right < portals.EndX && self.Right + moveDir >= portals.EndX
                     && !(self.Bottom > portals.Position.Y + portals.PortalHeight + portals.YOffset || self.Top < portals.Position.Y + portals.YOffset)
                 )

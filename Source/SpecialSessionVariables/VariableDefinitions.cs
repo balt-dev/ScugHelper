@@ -193,7 +193,7 @@ internal class PlayerXSlider : SpecialSlider
 }
 internal class PlayerYSlider : SpecialSlider
 {
-    public override float GetValue(Level level) => level.GetPlayer()?.X ?? 0f;
+    public override float GetValue(Level level) => level.GetPlayer()?.Y ?? 0f;
     public override void SetValue(Level level, float value) { if (level.GetPlayer() is not Player player) return; bool oldNaive = player.TreatNaive; player.TreatNaive = true; player.MoveToY(value); player.TreatNaive = oldNaive; }
 }
 internal class PlayerSpeedXSlider : SpecialSlider
@@ -203,7 +203,7 @@ internal class PlayerSpeedXSlider : SpecialSlider
 }
 internal class PlayerSpeedYSlider : SpecialSlider
 {
-    public override float GetValue(Level level) => level.GetPlayer()?.Speed.X ?? 0f;
+    public override float GetValue(Level level) => level.GetPlayer()?.Speed.Y ?? 0f;
     public override void SetValue(Level level, float value) { if (level.GetPlayer() is Player player) player.Speed.Y = value; }
 }
 internal class PlayerSubpixelXSlider : SpecialSlider
