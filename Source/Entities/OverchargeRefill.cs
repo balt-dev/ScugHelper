@@ -88,6 +88,8 @@ public class OverchargeRefill : Refill, ICustomRefill
         On.Celeste.Player.CreateTrail += Player_CreateTrail;
         On.Celeste.Player.Update += Player_Update;
         On.Celeste.Player.SuperJump += Player_SuperJump;
+        On.Celeste.Player.SuperWallJump += Player_SuperWallJump;
+        On.Celeste.Player.BeforeUpTransition += Player_BeforeUpTransition;
         On.Celeste.Level.Reload += Level_Reload;
         On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
         using (new DetourConfigContext(
@@ -97,11 +99,22 @@ public class OverchargeRefill : Refill, ICustomRefill
         }
     }
 
+    private static void Player_BeforeUpTransition(On.Celeste.Player.orig_BeforeUpTransition orig, Player self)
+    {
+        var oldYSpeed = self.Speed.Y;
+        orig(self);
+        if (OverchargeDashCount > 0) {
+            self.Speed.Y = MathF.Min(oldYSpeed, self.Speed.Y);
+            self.dashCooldownTimer = 0f;
+        }
+    }
+
     [OnUnload]
     public static void UnloadHooks() {
         On.Celeste.Player.CreateTrail -= Player_CreateTrail;
         On.Celeste.Player.Update -= Player_Update;
         On.Celeste.Player.SuperJump -= Player_SuperJump;
+        On.Celeste.Player.SuperWallJump -= Player_SuperWallJump;
         On.Celeste.Level.Reload -= Level_Reload;
         On.Celeste.LevelLoader.StartLevel -= LevelLoader_StartLevel;
         PlayerDashCoroHook?.Dispose();
@@ -137,6 +150,14 @@ public class OverchargeRefill : Refill, ICustomRefill
             self.Speed.X = MathF.Max(oldSpeedX, newSpeedX) * (float)self.Facing * 1.2f;
             OverchargeDashCount--;
         }
+    }
+    
+    private static void Player_SuperWallJump(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir)
+    {
+        var oldSpeedY = self.Speed.Y;
+        orig(self, dir);
+        if (OverchargeDashCount > 0)
+            self.Speed.Y = MathF.Min(oldSpeedY, self.Speed.Y) * 1.2f; // -Y = up
     }
 
     public static readonly float LoseOverchargeTime = 0.3f;
