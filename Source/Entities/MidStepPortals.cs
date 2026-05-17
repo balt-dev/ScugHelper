@@ -13,6 +13,7 @@ public class MidStepPortals : Entity
 {
     public readonly float StartX;
     public readonly float EndX;
+    public readonly float YOffset;
     public readonly float PortalHeight;
     public readonly bool Silent;
     bool ShouldPlaySound;
@@ -21,8 +22,10 @@ public class MidStepPortals : Entity
 
     public MidStepPortals(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
+        var endPos = data.FirstNodeNullable(offset) ?? Position;
         StartX = Position.X;
-        EndX = (data.FirstNodeNullable(offset) ?? Position).X;
+        EndX = endPos.X;
+        YOffset = endPos.Y - Y;
         PortalHeight = data.Height;
         Silent = data.Bool("Silent", false);
         Visible = !data.Bool("Invisible", false);
@@ -41,7 +44,7 @@ public class MidStepPortals : Entity
         {
             var particlePos = Y + Calc.Random.NextFloat() * PortalHeight;
             SceneAs<Level>().ParticlesFG.Emit(TeleportGate.ParticleType, 1, new(StartX + 1, particlePos), Vector2.Zero);
-            var particlePos2 = Y + Calc.Random.NextFloat() * PortalHeight;
+            var particlePos2 = Y + YOffset + Calc.Random.NextFloat() * PortalHeight;
             SceneAs<Level>().ParticlesFG.Emit(TeleportGate.ParticleType, 1, new(EndX + 1, particlePos2), Vector2.Zero);
         }
     }
@@ -83,15 +86,24 @@ public class MidStepPortals : Entity
             for (int i = 0; i < allPortals.Count; i++)
             {
                 MidStepPortals portals = (MidStepPortals)allPortals[i];
-                if (self.Bottom > portals.Position.Y + portals.PortalHeight || self.Top < portals.Position.Y) continue;
-                if (moveH < 0 && self.Left > portals.StartX && self.Left + moveDir <= portals.StartX)
+                if (
+                    moveH < 0
+                    && self.Left > portals.StartX && self.Left + moveDir <= portals.StartX
+                    && !(self.Bottom > portals.Position.Y + portals.PortalHeight || self.Top < portals.Position.Y)
+                )
                 {
                     self.Position.X = portals.EndX - self.Width / 2;
+                    self.MoveV(portals.YOffset);
                     portals.OnTeleport();
                 }
-                else if (moveH > 0 && self.Right < portals.EndX && self.Right + moveDir >= portals.EndX)
+                else if (
+                    moveH > 0 
+                    && self.Right < portals.EndX && self.Right + moveDir >= portals.EndX
+                    && !(self.Bottom > portals.Position.Y + portals.PortalHeight + portals.YOffset || self.Top < portals.Position.Y + portals.YOffset)
+                )
                 {
                     self.Position.X = portals.StartX + self.Width / 2;
+                    self.MoveV(-portals.YOffset);
                     portals.OnTeleport();
                 }
             }
