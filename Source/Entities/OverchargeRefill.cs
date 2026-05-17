@@ -90,6 +90,8 @@ public class OverchargeRefill : Refill, ICustomRefill
         On.Celeste.Player.SuperJump += Player_SuperJump;
         On.Celeste.Player.SuperWallJump += Player_SuperWallJump;
         On.Celeste.Player.BeforeUpTransition += Player_BeforeUpTransition;
+        On.Celeste.Player.BeforeSideTransition += Player_BeforeSideTransition;
+        On.Celeste.Player.BeforeDownTransition += Player_BeforeDownTransition;
         On.Celeste.Level.Reload += Level_Reload;
         On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
         using (new DetourConfigContext(
@@ -99,12 +101,28 @@ public class OverchargeRefill : Refill, ICustomRefill
         }
     }
 
+    private static void Player_BeforeDownTransition(On.Celeste.Player.orig_BeforeDownTransition orig, Player self)
+    {
+        orig(self);
+        if (OverchargeDashCount > 0) {
+            self.dashCooldownTimer = 0f;
+        }
+    }
+
     private static void Player_BeforeUpTransition(On.Celeste.Player.orig_BeforeUpTransition orig, Player self)
     {
         var oldYSpeed = self.Speed.Y;
         orig(self);
         if (OverchargeDashCount > 0) {
             self.Speed.Y = MathF.Min(oldYSpeed, self.Speed.Y);
+            self.dashCooldownTimer = 0f;
+        }
+    }
+    
+    private static void Player_BeforeSideTransition(On.Celeste.Player.orig_BeforeSideTransition orig, Player self)
+    {
+        orig(self);
+        if (OverchargeDashCount > 0) {
             self.dashCooldownTimer = 0f;
         }
     }
