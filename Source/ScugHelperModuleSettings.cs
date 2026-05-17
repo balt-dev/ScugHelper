@@ -22,6 +22,9 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Enables booster bouncing for every booster.")]
     public bool AllBoostersBounce { get; set; } = false;
+    
+    [SettingSubText("Forces the Overcharge Refill's effect permanently.")]
+    public bool AlwaysOvercharges { get; set; } = false;
 
     [SettingSubText("Replaces all spinners with seekers. Good luck :)")]
     public SpinnerSeekerState SpinnersAreSeekers { get; set; } = SpinnerSeekerState.Off;

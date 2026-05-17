@@ -403,3 +403,6 @@ triggers.ScugHelper/DashAngleRestrictionTrigger.attributes.description.CoverRoom
 
 entities.ScugHelper/FlagField.placements.name.normal=Flag Barrier
 entities.ScugHelper/FlagField.placements.description.normal=Barrier that is solid when a given flag is set to a given state.
+
+entities.ScugHelper/MidStepPortals.placements.name.normal=Mid-Step Portals
+entities.ScugHelper/MidStepPortals.placements.description.normal=Horizontal portals that teleport the player in the middle of their movement. May hurt performance, be careful.

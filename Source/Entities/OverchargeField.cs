@@ -22,15 +22,22 @@ public class RefillField : Entity
     public bool State { get; protected set; }
     public RefillType Refill { get; protected set; }
 
-    public RefillField(Vector2 position, float width, float height, RefillType type, bool state) : base(position)
+    public RefillField(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
         Depth = 100;
         Collidable = true;
-        Refill = type;
-        State = state;
-        Collider = new Hitbox(width, height);
-        for (int i = 0; i < Width * Height / 24f; i++)
-            particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
+        Refill = data.Enum<RefillType>("RefillType");
+        State = data.Bool("State", true);
+        if (data.Bool("CoverRoom", false))
+        {
+            Visible = false;
+            Position = data.Level.Position;
+            Collider = new Hitbox(data.Level.Bounds.Width + 256, data.Level.Bounds.Height + 256, -128, -128);
+        } else {
+            Collider = new Hitbox(data.Width, data.Height);
+            for (int i = 0; i < Width * Height / 24f; i++)
+                particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
+        }
         Add(new PlayerCollider(OnPlayer));
     }
 
@@ -48,10 +55,6 @@ public class RefillField : Entity
                 break;
         }
     }
-
-    public RefillField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Enum<RefillType>("RefillType"), data.Bool("State", true))
-    { }
 
     private static readonly float SineMovement = 2.0f;
 

@@ -144,6 +144,8 @@ public class OverchargeRefill : Refill, ICustomRefill
     private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
+        if (ScugHelperModule.Settings.AlwaysOvercharges)
+            OverchargeDashCount = 1;
 
         if (OverchargeDashCount > 0 && self.Scene.OnInterval(0.07f))
             CreateTrail(self);

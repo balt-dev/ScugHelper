@@ -19,7 +19,7 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     private readonly bool TeleportCamera = data.Bool("TeleportCamera", true);
     private readonly string Flag = data.String("Flag");
     private string? LevelTPName;
-    private static readonly ParticleType pType = new(Player.P_DashA)
+    internal static readonly ParticleType ParticleType = new(Player.P_DashA)
     {
         Color = Color.White,
         Color2 = Color.Transparent,
@@ -37,7 +37,7 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
         var startPos = Position - lineDir * Size / 2;
         var endPos = Position + lineDir * Size / 2;
         var particlePos = startPos + Calc.Random.NextFloat() * (endPos - startPos);
-        SceneAs<Level>().ParticlesFG.Emit(pType, 1, particlePos, Vector2.Zero);
+        SceneAs<Level>().ParticlesFG.Emit(ParticleType, 1, particlePos, Vector2.Zero);
     }
 
     public override void OnTrigger(Player player)
