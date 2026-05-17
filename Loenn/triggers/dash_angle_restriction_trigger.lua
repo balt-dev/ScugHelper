@@ -1,3 +1,5 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
+
 return {
     name = "ScugHelper/DashAngleRestrictionTrigger",
     depth = -100,
@@ -13,7 +15,8 @@ return {
             elementDefault = "0",
             elementSeparator = ",",
             minimumElements = 1
-        }
+        },
+        Flag = scughelper.builtinFlags
     },
     fillColor = { 0, 0, 0, 0 },
     outlineColor = { 1, 1, 1 }

@@ -1,3 +1,4 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableText = require("structs.drawable_text")
 
@@ -9,6 +10,7 @@ clutterSwitch.placements = {
     name = "normal",
     data = { Flag = "", Icon = "objects/resortclutter/icon_lightning", TargetState = true }
 }
+clutterSwitch.fieldInformation = { Flag = scughelper.builtinFlags }
 
 local buttonTexture = "objects/resortclutter/clutter_button00"
 

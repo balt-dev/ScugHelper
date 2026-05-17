@@ -1,3 +1,4 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local utils = require("utils")
 
 return {
@@ -18,5 +19,6 @@ return {
         return utils.rectangle((nodeX or 0) - 2, (nodeY or 0) - 2, 4, 4)
     end,
     nodeFillColor = {0, 0, 0, 0},
-    nodeBorderColor = {1, 1, 1, 1}
+    nodeBorderColor = {1, 1, 1, 1},
+    fieldInformation = { Flag = scughelper.builtinFlags },
 }

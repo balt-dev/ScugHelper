@@ -1,3 +1,4 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local drawableRectangle = require("structs.drawable_rectangle")
 local drawableText = require("structs.drawable_text")
 local utils = require("utils")
@@ -11,6 +12,7 @@ oshiroDoor.borderColor = { 1.0, 1.0, 1.0, 1.0 }
 oshiroDoor.placements = {
     name = "normal", data = { Flag = "", TargetState = true }
 }
+oshiroDoor.fieldInformation = { Flag = scughelper.builtinFlags }
 
 local fillColor = { 74 / 255, 71 / 255, 135 / 255, 153 }
 local borderColor = { 1.0, 1.0, 1.0, 1.0 }

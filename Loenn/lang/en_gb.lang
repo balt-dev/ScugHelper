@@ -7,8 +7,8 @@ entities.ScugHelper/PinballBooster.placements.description.red=Red booster that b
 entities.ScugHelper/Cycler.placements.name.cycler=Cycler
 entities.ScugHelper/Cycler.placements.description.cycler=Moves entities in a circle. May break with modded entities that don't expect to be moved.
 
-entities.ScugHelper/BoosterField.placements.name.boosterfield=Booster Field
-entities.ScugHelper/BoosterField.placements.description.boosterfield=Field that is solid when touched by a Booster, and intangible otherwise.
+entities.ScugHelper/BoosterField.placements.name.boosterfield=Booster Barrier
+entities.ScugHelper/BoosterField.placements.description.boosterfield=Barrier that is solid when touched by a Booster, and intangible otherwise.
 
 entities.ScugHelper/Gripwall.placements.name.gripwall_left=Gripwall (Left)
 entities.ScugHelper/Gripwall.placements.name.gripwall_right=Gripwall (Right)
@@ -138,8 +138,8 @@ entities.ScugHelper/ActionListenerCollider.placements.description.normal=Runs a 
 entities.ScugHelper/Outline.placements.name.normal=Outline
 entities.ScugHelper/Outline.placements.description.normal=Customizable block outline.
 
-entities.ScugHelper/CustomField.placements.name.normal=Entity Field
-entities.ScugHelper/CustomField.placements.description.normal=Field that is solid only for the a customizable list of entities, and intangible otherwise. Entities are specified via their namespaced type.
+entities.ScugHelper/NewCustomField.placements.name.normal=Entity Barrier
+entities.ScugHelper/NewCustomField.placements.description.normal=Barrier that is solid only for the a customizable list of entities, and intangible otherwise. Entities are specified via their namespaced type.
 
 entities.ScugHelper/ExtremelyFragileBlock.placements.name.normal=Extremely Fragile Block
 entities.ScugHelper/ExtremelyFragileBlock.placements.description.normal=Broken when collided with in any way.
@@ -184,8 +184,8 @@ entities.ScugHelper/StarjumpRailing.placements.name.flipped_background=Starjump 
 entities.ScugHelper/LimboRefill.placements.name.normal=Limbo Refill
 entities.ScugHelper/LimboRefill.placements.description.normal=Prevents the player from colliding with anything other than a Platform, Trigger, or Gate when held. Consumed when no inputs are pressed or held for more than 30 frames.
 
-entities.ScugHelper/LimboField.placements.name.normal=Limbo Field
-entities.ScugHelper/LimboField.placements.description.normal=Field that is solid for the player when they are under the effect of a Limbo Refill, and intangible otherwise.
+entities.ScugHelper/LimboField.placements.name.normal=Limbo Barrier
+entities.ScugHelper/LimboField.placements.description.normal=Barrier that is solid for the player when they are under the effect of a Limbo Refill, and intangible otherwise.
 
 entities.ScugHelper/SeekerRefill.placements.name.normal=Seeker Refill
 entities.ScugHelper/SeekerRefill.placements.description.normal=Turns the player into a custom-implemented player seeker. This is not the vanilla player seeker, and is instead an ad-hoc implementation to keep compatibility with vanilla entities.
@@ -400,3 +400,6 @@ triggers.ScugHelper/DashAngleRestrictionTrigger.placements.description.custom=Re
 triggers.ScugHelper/DashAngleRestrictionTrigger.attributes.description.Flag=Only affects the player while this flag is set to the given state. Leave blank to always affect the player.
 triggers.ScugHelper/DashAngleRestrictionTrigger.attributes.description.FlagState=The state to check the given flag against.
 triggers.ScugHelper/DashAngleRestrictionTrigger.attributes.description.CoverRoom=Whether to affect the player everywhere in the room.
+
+entities.ScugHelper/FlagField.placements.name.normal=Flag Barrier
+entities.ScugHelper/FlagField.placements.description.normal=Barrier that is solid when a given flag is set to a given state.

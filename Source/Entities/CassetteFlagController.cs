@@ -39,17 +39,22 @@ public partial class CassetteFlagController : Entity
         }
     }
 
-    public readonly List<FlagSpan> Spans;
+    public readonly Dictionary<string, List<FlagSpan>> Spans = [];
     public readonly int Length;
 
     CassetteBlockManager? manager;
 
     public CassetteFlagController(EntityData data, Vector2 _) : base()
     {
-        Spans = data.String("Spans", "")
-            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(FlagSpan.Parse)
-            .ToList();
+        foreach (
+            FlagSpan span in data.String("Spans", "")
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(FlagSpan.Parse)
+        ) {
+            if (!Spans.TryGetValue(span.Flag!, out var spanList))
+                Spans.Add(span.Flag!, spanList = []);
+            spanList.Add(span);
+        }
         Length = data.Int("Length", 16);
         if (Length <= 0) throw new Exception("Length for cassette flag controller must be greater than than 0.");
     }
@@ -67,9 +72,12 @@ public partial class CassetteFlagController : Entity
         base.Update();
         Level level = SceneAs<Level>();
         if (manager is not CassetteBlockManager man) return;
-        foreach (FlagSpan span in Spans)
+        foreach (var kvp in Spans)
         {
-            level.Session.SetFlag(span.Flag, span.InSpan((man.beatIndex + man.beatIndexOffset) % Length + 1));
+            bool result = false;
+            foreach (var span in kvp.Value)
+                result |= span.InSpan((man.beatIndex + man.beatIndexOffset) % Length + 1);
+            level.Session.SetFlag(kvp.Key, result);
         }
     }
 }

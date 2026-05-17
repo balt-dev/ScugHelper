@@ -111,6 +111,14 @@ internal class GravityHelperEnabledFlag : SpecialFlag
 {
     public override bool GetValue(Level level) => GravityHelperImports.IsLoaded;
 }
+internal class PlayerHoldingFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => level.GetPlayer()?.Holding is not null;
+}
+internal class PlayerDuckingFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => level.GetPlayer()?.Ducking ?? false;
+}
 
 internal class PlayerStateCounter : SpecialCounter
 {

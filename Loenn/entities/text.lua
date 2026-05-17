@@ -20,6 +20,7 @@ return {
     fieldInformation = {
         Depth = { fieldType = "integer" },
         Infill = { fieldType = "color" },
-        Outline = { fieldType = "color" }
+        Outline = { fieldType = "color" },
+        Flag = scughelper.builtinFlags
     }
 }

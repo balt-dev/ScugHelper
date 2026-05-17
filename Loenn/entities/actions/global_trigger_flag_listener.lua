@@ -12,6 +12,7 @@ return {
             data = {Flag = "", Invert = false}
         },
     },
+    fieldInformation = { Flag = scughelper.builtinFlags },
     sprite = function(room, entity)
         return {
             drawableText.fromText(

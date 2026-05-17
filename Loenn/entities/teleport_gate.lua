@@ -13,6 +13,7 @@ return {
             data = {Angle = 0, Size = 32, Silent = false, Invisible = false, KeepX = false, KeepY = false, TeleportCamera = true, Flag = "", FlipFacing = false},
         },
     },
+    fieldInformation = { Flag = scughelper.builtinFlags },
     sprite = function(room, entity)
         return scughelper.drawableGate(entity.x, entity.y, entity.Angle, entity.Size, {0, 1, 1})
     end,

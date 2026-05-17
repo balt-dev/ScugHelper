@@ -31,7 +31,8 @@ cassetteBlock.placements = {
 }
 cassetteBlock.fieldInformation = {
     Color = { fieldType = "color" },
-    Groups = { fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = "" }
+    Groups = { fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = "" },
+    Flag = scughelper.builtinFlags,
 }
 
 -- Filter by cassette blocks sharing the same index

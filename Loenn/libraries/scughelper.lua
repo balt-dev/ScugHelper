@@ -43,6 +43,30 @@ for _, val in ipairs(builtins) do
     T.actionGroups.options[val] = val
 end
 
+local builtinFlags = {
+    "ScugHelper.PlayerDead",
+    "ScugHelper.HasGolden",
+    "ScugHelper.RestartedFromGolden",
+    "ScugHelper.StartedFromBeginning",
+    "ScugHelper.PlayerOnGround",
+    "ScugHelper.PlayerOnSafeGround",
+    "ScugHelper.PlayerDashAttacking",
+    "ScugHelper.IsPlayerSeeker",
+    "ScugHelper.DreamBlocksEnabled",
+    "ScugHelper.HasMidair",
+    "ScugHelper.HasOvercharge",
+    "ScugHelper.InLimbo",
+    "ScugHelper.SaveQuitDisabled",
+    "ScugHelper.PlayerHolding",
+    "ScugHelper.GravityHelper.Enabled",
+    "ScugHelper.FrostHelper.Enabled",
+    "ScugHelper.GravityHelper.PlayerInverted",
+}
+T.builtinFlags = {options = {}, searchable = true, editable = true}
+for _, val in ipairs(builtinFlags) do
+    T.builtinFlags.options[val] = val
+end
+
 function T.drawableGate(x, y, angle, size, color)
     return drawableFunc.fromFunction(function()
         drawing.callKeepOriginalColor(function()
