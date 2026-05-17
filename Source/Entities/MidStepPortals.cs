@@ -22,6 +22,7 @@ public class MidStepPortals : Entity
 
     public MidStepPortals(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
+        Depth = -150000;
         var endPos = data.FirstNodeNullable(offset) ?? Position;
         StartX = Position.X;
         EndX = endPos.X;
@@ -43,12 +44,19 @@ public class MidStepPortals : Entity
         }
         if (Visible)
         {
-            var particlePos = Y + Calc.Random.NextFloat() * PortalHeight;
+            var particlePos = Y + Calc.Random.NextFloat() * PortalHeight + 1;
             SceneAs<Level>().ParticlesFG.Emit(TeleportGate.ParticleType, 1, new(StartX + 1, particlePos), Vector2.Zero);
-            var particlePos2 = Y + YOffset + Calc.Random.NextFloat() * PortalHeight;
-            SceneAs<Level>().ParticlesFG.Emit(TeleportGate.ParticleType, 1, new(EndX + 1, particlePos2), Vector2.Zero);
+            var particlePos2 = Y + YOffset + Calc.Random.NextFloat() * PortalHeight + 1;
+            SceneAs<Level>().ParticlesFG.Emit(TeleportGate.ParticleType, 1, new(EndX, particlePos2), Vector2.Zero);
         }
     }
+    
+        public override void DebugRender(Camera camera)
+        {
+            base.DebugRender(camera);
+            Draw.Line(new(StartX + 1, Y), new(StartX + 1, Y + PortalHeight), Color.Green);
+            Draw.Line(new(EndX, Y + YOffset), new(EndX, Y + PortalHeight + YOffset), Color.Yellow);
+        }
 
     [OnLoad]
     internal static void LoadHooks()
@@ -62,18 +70,9 @@ public class MidStepPortals : Entity
     }
 
     private static bool OnMoveHExact(On.Celeste.Actor.orig_MoveHExact orig, Actor self, int moveH, Collision onCollide, Solid pusher)
-    {
-        var anyPortal = self.Scene.Tracker.GetEntity<MidStepPortals>();
-        if (anyPortal is null) return orig(self, moveH, onCollide, pusher);
-        return ClobberedMoveHExact(self, moveH, onCollide, pusher);
-    }
-
-    public override void DebugRender(Camera camera)
-    {
-        base.DebugRender(camera);
-        Draw.Line(Position, Position + Vector2.UnitY * Height, Color.Red);
-        Draw.Line(new(EndX, Position.Y), new Vector2(EndX, Position.Y) + Vector2.UnitY * Height, Color.Yellow);
-    }
+        => self.Scene.Tracker.GetEntity<MidStepPortals>() is null
+            ? orig(self, moveH, onCollide, pusher)
+            : ClobberedMoveHExact(self, moveH, onCollide, pusher);
 
     public static bool ClobberedMoveHExact(Actor self, int moveH, Collision? onCollide = null, Solid? pusher = null)
     {
