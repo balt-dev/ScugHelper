@@ -11,6 +11,7 @@ return {
             data = {Radius = 32, RPM = 30, Phase = 0, AttachedEntityID = 0, KeepX = false, KeepY = false}
         },
     },
+    fieldInformation = { AttachedEntityID = { fieldType = "integer" } },
     sprite = function(room, entity)
         return drawableFunc.fromFunction(function()
             drawing.callKeepOriginalColor(function()

@@ -406,3 +406,8 @@ entities.ScugHelper/FlagField.placements.description.normal=Barrier that is soli
 
 entities.ScugHelper/MidStepPortals.placements.name.normal=Mid-Step Portals
 entities.ScugHelper/MidStepPortals.placements.description.normal=Horizontal portals that teleport the player in the middle of their movement. May hurt performance, be careful.
+
+entities.ScugHelper/NoTilesController.placements.name.normal=Remove Tiles Controller
+entities.ScugHelper/NoTilesController.placements.description.normal=Removes all tiles from the map when loading. You will need to place alternate blocks for the player to stand on. Tile-based blocks with Blend In enabled will not render properly with this controller in the level.
+
+entities.ScugHelper/CustomInvisibleBarrier.placements.name.normal=Flag Invisible Barrier
