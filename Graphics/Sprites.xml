@@ -80,6 +80,7 @@
 		<Loop id="fastspin" path="gemOutline" delay="0.1" />
     </squareGemOutline>
     <recoilBumper copy="bumper" path="objects/ScugHelper/recoilBumper/" />
+    <angleBumper copy="bumper" path="objects/ScugHelper/angleBumper/" />
 
       <neutrallessWallBoosterTop
         path="objects/ScugHelper/neutrallessWallBooster/"

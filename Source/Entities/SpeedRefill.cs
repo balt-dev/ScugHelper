@@ -15,6 +15,44 @@ public class SpeedRefill : Refill, ICustomRefill
 
     public SpeedRefill(EntityData data, Vector2 offset) : this(data.Position + offset, new(data.Float("SpeedX"), data.Float("SpeedY")), data.Bool("oneUse")) { }
 
+    public struct SpriteSettings() {
+        public string Prefix;
+        public bool HFlip = false;
+        public bool VFlip = false;
+        public bool Rot90 = false;
+    }
+
+    public static SpriteSettings GetVectorAnglePrefix(Vector2 vec) {
+        float rawAngle = (vec.Angle().ToDeg() + 90 + 360) % 360;
+        SpriteSettings settings = new() { Prefix = "", HFlip = false, VFlip = false, Rot90 = false};
+        if ((rawAngle % 180) >= 45 && ((rawAngle < 180 && rawAngle % 180 < 90) || (rawAngle > 180 && rawAngle % 180 <= 90)))
+        {
+            settings.VFlip = true;
+            settings.HFlip = true;
+        }
+        if (rawAngle >= 180)
+        {
+            settings.HFlip = !settings.HFlip;
+            rawAngle = 360 - rawAngle;
+        }
+        if (rawAngle >= 90)
+        {
+            settings.VFlip = !settings.VFlip;
+            rawAngle = 180 - rawAngle;
+        }
+        if (rawAngle >= 45)
+        {
+            settings.VFlip = !settings.VFlip;
+            settings.Rot90 = true;
+            rawAngle = 90 - rawAngle;
+        }
+        if (rawAngle < 7.5) settings.Prefix = "rot0";
+        else if (rawAngle < 22.5) settings.Prefix = "rot15";
+        else if (rawAngle < 37.5) settings.Prefix = "rot30";
+        else settings.Prefix = "rot45";
+        return settings;
+    }
+
     public SpeedRefill(Vector2 position, Vector2 speed, bool oneUse) : base(position, false, oneUse)
     {
         Depth = -100;
@@ -22,46 +60,17 @@ public class SpeedRefill : Refill, ICustomRefill
         Remove(outline);
         Remove(sprite);
         Remove(flash);
-        float rawAngle = (speed.Angle().ToDeg() + 90 + 360) % 360;
-        string prefix;
-        bool hFlip = false;
-        bool vFlip = false;
-        bool rot90 = false;
-        if ((rawAngle % 180) >= 45 && ((rawAngle < 180 && rawAngle % 180 < 90) || (rawAngle > 180 && rawAngle % 180 <= 90)))
-        {
-            vFlip = !vFlip;
-            hFlip = !hFlip;
-        }
-        if (rawAngle >= 180)
-        {
-            hFlip = !hFlip;
-            rawAngle = 360 - rawAngle;
-        }
-        if (rawAngle >= 90)
-        {
-            vFlip = !vFlip;
-            rawAngle = 180 - rawAngle;
-        }
-        if (rawAngle >= 45)
-        {
-            vFlip = !vFlip;
-            rot90 = true;
-            rawAngle = 90 - rawAngle;
-        }
-        if (rawAngle < 7.5) prefix = "rot0_";
-        else if (rawAngle < 22.5) prefix = "rot15_";
-        else if (rawAngle < 37.5) prefix = "rot30_";
-        else prefix = "rot45_";
 
-        Add(sprite = new Sprite(GFX.Game, $"objects/ScugHelper/speedRefill/{prefix}"));
-        Add(outline = new Image(GFX.Game[$"objects/ScugHelper/speedRefill/{prefix}outline"]));
+        var settings = GetVectorAnglePrefix(speed);
+        Add(sprite = new Sprite(GFX.Game, $"objects/ScugHelper/speedRefill/{settings.Prefix}_"));
+        Add(outline = new Image(GFX.Game[$"objects/ScugHelper/speedRefill/{settings.Prefix}_outline"]));
         sprite.AddLoop("idle", "", 0.1f);
         sprite.Play("idle");
         sprite.CenterOrigin();
         outline.CenterOrigin();
-        if (hFlip) { sprite.FlipX = true; outline.FlipX = true; }
-        if (vFlip) { sprite.FlipY = true; outline.FlipY = true; }
-        if (rot90) { sprite.Rotation = MathF.PI / 2; outline.Rotation = MathF.PI / 2; }
+        if (settings.HFlip) { sprite.FlipX = true; outline.FlipX = true; }
+        if (settings.VFlip) { sprite.FlipY = true; outline.FlipY = true; }
+        if (settings.Rot90) { sprite.Rotation = MathF.PI / 2; outline.Rotation = MathF.PI / 2; }
         Remove(wiggler);
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();

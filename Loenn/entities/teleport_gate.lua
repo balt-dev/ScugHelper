@@ -10,7 +10,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Angle = 0, Size = 32, Silent = false, Invisible = false, KeepX = false, KeepY = false, TeleportCamera = true, Flag = "", FlipFacing = false},
+            data = {Angle = 0, Size = 32, Silent = false, Invisible = false, KeepX = false, KeepY = false, TeleportCamera = true, Flag = "", FlipFacing = false, Delay = 0, ReloadRoom = false},
         },
     },
     fieldInformation = { Flag = scughelper.builtinFlags },

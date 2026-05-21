@@ -11,6 +11,8 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/TeleportGate")]
 public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, offset) {
     private Vector2 TeleportPosition = data.FirstNodeNullable(offset) ?? throw new NullReferenceException("Teleport gate does not have a teleport position node.");
+    private readonly float Delay = data.Float("Delay", 0.0f);
+    private readonly bool ReloadRoom = data.Bool("ReloadRoom", false);
     private readonly bool Silent = data.Bool("Silent", false);
     private readonly bool Invisible = data.Bool("Invisible", false);
     private readonly bool KeepX = data.Bool("KeepX", false);
@@ -18,7 +20,6 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     private readonly bool FlipFacing = data.Bool("FlipFacing", false);
     private readonly bool TeleportCamera = data.Bool("TeleportCamera", true);
     private readonly string Flag = data.String("Flag");
-    private string? LevelTPName;
     internal static readonly ParticleType ParticleType = new(Player.P_DashA)
     {
         Color = Color.White,
@@ -44,6 +45,6 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     {
         Level level = SceneAs<Level>();
         if (Flag is string flag && !level.Session.GetFlag(flag)) return;
-        TeleportTrigger.TeleportPlayer(player, ref LevelTPName, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing);
+        TeleportTrigger.TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom);
     }
 }

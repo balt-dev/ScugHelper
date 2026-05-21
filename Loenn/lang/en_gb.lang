@@ -411,3 +411,8 @@ entities.ScugHelper/NoTilesController.placements.name.normal=Remove Tiles Contro
 entities.ScugHelper/NoTilesController.placements.description.normal=Removes all tiles from the map when loading. You will need to place alternate blocks for the player to stand on. Tile-based blocks with Blend In enabled will not render properly with this controller in the level.
 
 entities.ScugHelper/CustomInvisibleBarrier.placements.name.normal=Flag Invisible Barrier
+
+triggers.ScugHelper/FauxLimboTrigger.placements.name.normal=Faux Limbo Trigger
+triggers.ScugHelper/FauxLimboTrigger.placements.description.normal=Recreates the "limbo" glitch. This has nothing to do with the Limbo Refill. Do not use if you don't know what you're doing. The player will still collide with gates while in the limbo state.
+entities.ScugHelper/ExitLimboGate.placements.name.normal=Exit Faux Limbo Gate
+entities.ScugHelper/ExitLimboGate.placements.description.normal=Exits the limbo glitch state. This has nothing to do with the Limbo Refill.

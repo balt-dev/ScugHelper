@@ -1,4 +1,5 @@
 using Celeste.Mod.ScugHelper.Entities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Monocle;
 
@@ -6,13 +7,40 @@ namespace Celeste.Mod.ScugHelper;
 
 public class ScugHelperModuleSettings : EverestModuleSettings
 {
+    [SettingInGame(false)]
+    public TextMenuExt.SubMenu ShowcaseMaps { get; set; } = null;
+
+    public MinimapMenu Minimap { get; set; } = new();
+
+    public void CreateShowcaseMapsEntry(TextMenu menu, bool inGame) {
+        if (inGame) return;
+        ShowcaseMaps = new(Dialog.Clean("ScugHelper_ShowcaseMaps"), false);
+        foreach (string mapSID in (string[]) ["1-ScugHelperTest", "2-Actions", "3-BrassBerryTest"]) {
+            string fullSID = $"ScugHelper/ScugHelperTest/{mapSID}";
+            AreaData data = AreaData.Get(fullSID);
+            AreaKey area = data.ToKey(AreaMode.Normal);
+            var button = new TextMenu.Button(Dialog.Clean(fullSID)) {
+                OnPressed = () => {
+                    SaveData.InitializeDebugMode();
+                    SaveData.Instance.LastArea_Safe = area;
+                    Audio.SetMusic(null);
+                    Audio.SetAmbience(null);
+                    var session = new Session(area);
+                    LevelEnter.Go(session, false);
+                }
+            };
+            ShowcaseMaps.Add(button);
+        }
+        menu.Add(ShowcaseMaps);
+    }
+
+
+    [SettingSubText("Uses an alternative font for text entities.")]
+    public bool AlternativeFont { get; set; } = false;
 
     [SettingNumberInput(allowNegatives: false, maxLength: 5)]
     [SettingSubText("Adjusts how much squash and stretch pinball boosters have.")]
     public float PinballBoosterSquash { get; set; } = 1.45f;
-
-    [SettingSubText("Uses an alternative font for text entities.")]
-    public bool AlternativeFont { get; set; } = false;
 
     [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
@@ -22,7 +50,7 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Enables booster bouncing for every booster.")]
     public bool AllBoostersBounce { get; set; } = false;
-    
+
     [SettingSubText("Forces the Overcharge Refill's effect permanently.")]
     public bool AlwaysOvercharges { get; set; } = false;
 
@@ -40,7 +68,6 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [DefaultButtonBinding([], [Keys.OemPlus])]
     public ButtonBinding MinimapZoomOut { get; set; } = new();
 
-    public MinimapMenu Minimap { get; set; } = new();
     public bool AlwaysCenterCameraX { get; set; } = false;
     public bool AlwaysCenterCameraY { get; set; } = false;
 }

@@ -3,6 +3,7 @@ using Monocle;
 using Celeste.Mod.Entities;
 using Celeste;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -12,36 +13,38 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/TeleportTrigger")]
 public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, offset) {
     private Vector2 TeleportPosition = data.FirstNodeNullable(offset) ?? throw new NullReferenceException("Teleport gate does not have a teleport position node.");
+    private readonly float Delay = data.Float("Delay", 0.0f);
+    private readonly bool ReloadRoom = data.Bool("ReloadRoom", false);
     private readonly bool Silent = data.Bool("Silent", false);
     private readonly string Flag = data.String("Flag");
     private readonly bool KeepX = data.Bool("KeepX", false);
     private readonly bool KeepY = data.Bool("KeepY", false);
     private readonly bool FlipFacing = data.Bool("FlipFacing", false);
     private readonly bool TeleportCamera = data.Bool("TeleportCamera", true);
-    private string? LevelTPName;
 
     public override void OnEnter(Player player)
     {
         Level level = player.SceneAs<Level>();
         if (Flag is string flag && !level.Session.GetFlag(flag)) return;
-        TeleportPlayer(player, ref LevelTPName, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing);
+        TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom);
     }
 
-    internal static void TeleportPlayer(Player player, ref string? LevelTPName, Vector2 TeleportPosition, bool Silent, bool KeepX, bool KeepY, bool TeleportCamera, bool FlipFacing)
+    internal static IEnumerable TeleportPlayer(Player player, Vector2 TeleportPosition, bool Silent, bool KeepX, bool KeepY, bool TeleportCamera, bool FlipFacing, float Delay, bool ReloadRoom)
     {
         Level level = player.SceneAs<Level>();
-        if (LevelTPName == null)
+        string? LevelTPName = null;
+        foreach (LevelData levelData in level.Session.MapData.Levels)
         {
-            foreach (LevelData levelData in level.Session.MapData.Levels)
+            if (levelData.Bounds.Contains(new Point((int)TeleportPosition.X, (int)TeleportPosition.Y)))
             {
-                if (levelData.Bounds.Contains(new Point((int)TeleportPosition.X, (int)TeleportPosition.Y)))
-                {
-                    LevelTPName = levelData.Name;
-                    break;
-                }
+                LevelTPName = levelData.Name;
+                break;
             }
-            if (LevelTPName == null) { player.Die(Vector2.Zero); return; }
         }
+        if (LevelTPName == null) { player.Die(Vector2.Zero); yield break; }
+
+        if (Delay > 0.0f) yield return Delay;
+
         bool crossedLevels = level.Session.LevelData.Name != LevelTPName;
 
         Vector2 oldPos = player.Position;
@@ -84,17 +87,19 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
             player.Speed.X *= -1;
         }
 
-        if (crossedLevels) {
+        if (crossedLevels || ReloadRoom) {
             player.PreviousPosition = player.Position = oldPos;
             string name = LevelTPName;
+            foreach (Follower follower in player.Leader.Followers)
+            {
+                follower.Entity.AddTag(Tags.Global);
+				level.Session.DoNotLoad.Add(follower.ParentEntityID);
+                level.Remove(follower.Entity);
+            }
             level.OnEndOfFrame += () =>
             {
+                player.CleanUpTriggers();
                 List<Follower> ents = [];
-                foreach (Follower follower in player.Leader.Followers)
-                {
-                    level.Remove(follower.Entity);
-                    ents.Add(follower);
-                }
                 level.Remove(player);
                 level.UnloadLevel();
                 level.Session.Level = name;
@@ -106,11 +111,14 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
                 level.Camera.X = Math.Clamp(level.Camera.X, level.Bounds.Left, level.Bounds.Right - (level.Camera.Right - level.Camera.Left));
                 level.Camera.Y = Math.Clamp(level.Camera.Y, level.Bounds.Top, level.Bounds.Bottom - (level.Camera.Bottom - level.Camera.Top));
                 level.Add(player);
-                foreach (Follower follower in ents) {
-                    level.Add(follower.Entity);
-                }
                 if (!KeepX) player.Position.X = TeleportPosition.X;
                 if (!KeepY) player.Position.Y = TeleportPosition.Y;
+                foreach (Follower follower in player.Leader.Followers) {
+    				follower.Entity.Position = player.Position;
+    				follower.Entity.RemoveTag(Tags.Global);
+    				level.Session.DoNotLoad.Remove(follower.ParentEntityID);
+                }
+                player.Leader.TransferFollowers();
                 level.Wipe?.Cancel();
                 crossedLevels = true;
             };

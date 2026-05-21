@@ -33,6 +33,7 @@ cassetteBlock.fieldInformation = {
     Color = { fieldType = "color" },
     Groups = { fieldType = "list", elementOptions = scughelper.actionGroups, elementDefault = "" },
     Flag = scughelper.builtinFlags,
+    SurfaceSoundIndex = { fieldType = "integer" }
 }
 
 -- Filter by cassette blocks sharing the same index
