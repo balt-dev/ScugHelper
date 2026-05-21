@@ -412,7 +412,7 @@ entities.ScugHelper/NoTilesController.placements.description.normal=Removes all 
 
 entities.ScugHelper/CustomInvisibleBarrier.placements.name.normal=Flag Invisible Barrier
 
-triggers.ScugHelper/FauxLimboTrigger.placements.name.normal=Faux Limbo Trigger
-triggers.ScugHelper/FauxLimboTrigger.placements.description.normal=Recreates the "limbo" glitch. This has nothing to do with the Limbo Refill. Do not use if you don't know what you're doing. The player will still collide with gates while in the limbo state.
-entities.ScugHelper/ExitLimboGate.placements.name.normal=Exit Faux Limbo Gate
-entities.ScugHelper/ExitLimboGate.placements.description.normal=Exits the limbo glitch state. This has nothing to do with the Limbo Refill.
+triggers.ScugHelper/LimboGlitchStateTrigger.placements.name.normal=Limbo Glitch State
+triggers.ScugHelper/LimboGlitchStateTrigger.placements.description.normal=Triggers the "limbo" glitch state. This has nothing to do with the Limbo Refill. Do not use if you don't know what you're doing.
+triggers.ScugHelper/ExitLimboGlitchStateTrigger.placements.name.normal=Exit Limbo Glitch State
+triggers.ScugHelper/ExitLimboGlitchStateTrigger.placements.description.normal=Exits the limbo glitch state. This has nothing to do with the Limbo Refill.

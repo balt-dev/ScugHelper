@@ -45,6 +45,6 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     {
         Level level = SceneAs<Level>();
         if (Flag is string flag && !level.Session.GetFlag(flag)) return;
-        TeleportTrigger.TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom);
+        Add(new Coroutine(TeleportTrigger.TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom)));
     }
 }

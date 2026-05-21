@@ -2,7 +2,7 @@ local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local utils = require("utils")
 
 return {
-    name = "ScugHelper/LimboGlitchStateTrigger",
+    name = "ScugHelper/ExitLimboGlitchStateTrigger",
     depth = 100,
     placements = {
         {

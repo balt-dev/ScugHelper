@@ -26,10 +26,10 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
     {
         Level level = player.SceneAs<Level>();
         if (Flag is string flag && !level.Session.GetFlag(flag)) return;
-        TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom);
+        Add(new Coroutine(TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom)));
     }
 
-    internal static IEnumerable TeleportPlayer(Player player, Vector2 TeleportPosition, bool Silent, bool KeepX, bool KeepY, bool TeleportCamera, bool FlipFacing, float Delay, bool ReloadRoom)
+    internal static IEnumerator TeleportPlayer(Player player, Vector2 TeleportPosition, bool Silent, bool KeepX, bool KeepY, bool TeleportCamera, bool FlipFacing, float Delay, bool ReloadRoom)
     {
         Level level = player.SceneAs<Level>();
         string? LevelTPName = null;
@@ -73,7 +73,7 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
             for (int i = 0; i < player.Leader.PastPoints.Count; i++)
                 player.Leader.PastPoints[i] = new(player.Leader.PastPoints[i].X, player.Leader.PastPoints[i].Y + delta);
         }
-        if (TeleportCamera || crossedLevels)
+        if (TeleportCamera && !crossedLevels)
         {
             level.Camera.Position = cameraPos;
             level.Camera.X = Math.Clamp(level.Camera.X, level.Bounds.Left, level.Bounds.Right - (level.Camera.Right - level.Camera.Left));
@@ -94,8 +94,8 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
             {
                 follower.Entity.AddTag(Tags.Global);
 				level.Session.DoNotLoad.Add(follower.ParentEntityID);
-                level.Remove(follower.Entity);
             }
+           	
             level.OnEndOfFrame += () =>
             {
                 player.CleanUpTriggers();
@@ -106,8 +106,8 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
                 level.Session.RespawnPoint = level.GetSpawnPoint(TeleportPosition);
                 level.Session.FirstLevel = false;
                 level.LoadLevel(Player.IntroTypes.Transition);
-                if (!KeepX) level.Camera.Position = new(TeleportPosition.X, level.Camera.Position.Y);
-                if (!KeepY) level.Camera.Position = new(level.Camera.Position.X, TeleportPosition.Y);
+                if (!KeepX) level.Camera.Position = new(TeleportPosition.X - (level.Camera.Right - level.Camera.Left) / 2, level.Camera.Position.Y);
+                if (!KeepY) level.Camera.Position = new(level.Camera.Position.X, TeleportPosition.Y - (level.Camera.Bottom - level.Camera.Top) / 2);
                 level.Camera.X = Math.Clamp(level.Camera.X, level.Bounds.Left, level.Bounds.Right - (level.Camera.Right - level.Camera.Left));
                 level.Camera.Y = Math.Clamp(level.Camera.Y, level.Bounds.Top, level.Bounds.Bottom - (level.Camera.Bottom - level.Camera.Top));
                 level.Add(player);
@@ -118,6 +118,8 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
     				follower.Entity.RemoveTag(Tags.Global);
     				level.Session.DoNotLoad.Remove(follower.ParentEntityID);
                 }
+                for (int i = 0; i < player.Leader.PastPoints.Count; i++)
+              		player.Leader.PastPoints[i] = player.Position;
                 player.Leader.TransferFollowers();
                 level.Wipe?.Cancel();
                 crossedLevels = true;
