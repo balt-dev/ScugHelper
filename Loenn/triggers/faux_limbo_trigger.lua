@@ -7,7 +7,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {width = 32, height = 32},
+            data = {width = 32, height = 32, LockStateMachine = true},
         },
     },
     fillColor = {0, 0, 0, 0},

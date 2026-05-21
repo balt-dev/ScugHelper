@@ -267,7 +267,8 @@ entities.ScugHelper/SeekerTrackSpinner.placements.name.fast=Track Seeker Spinner
 entities.ScugHelper/StaticFloatySpaceBlock.placements.name.floaty_space_block=Static Floaty Space Block
 entities.ScugHelper/StaticFloatySpaceBlock.placements.description.floaty_space_block=Like a normal floating block, but doesn't oscillate.
 
-entities.ScugHelper/AngleBumper.placements.name.normal=Angle Bumper
+entities.ScugHelper/NewAngleBumper.placements.name.normal=Angle Bumper
+entities.ScugHelper/NewAngleBumper.placements.description.normal=Launches the player at a specified angle.
 
 entities.ScugHelper/Hangrail.placements.name.normal=Hang Rail
 entities.ScugHelper/Hangrail.placements.description.normal=Grabbable rail that inherits momentum.

@@ -10,6 +10,8 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/LimboGlitchStateTrigger")]
 public class LimboGlitchStateTrigger(EntityData data, Vector2 offset) : Trigger(data, offset) {
+    readonly bool LockStateMachine = data.Bool("LockStateMachine", true);
+
     public override void OnEnter(Player player)
     {
         var dummyEntity = new LimboDummyEntity(player.Position);
@@ -17,10 +19,13 @@ public class LimboGlitchStateTrigger(EntityData data, Vector2 offset) : Trigger(
         player.Hair.Entity = dummyEntity;
         player.Light.Entity = dummyEntity;
         player.Dead = true;
-        player.StateMachine.State = Player.StNormal;
         player.Depth = -1000000;
-        player.StateMachine.Locked = true;
-        player.Collidable = true;
+        if (LockStateMachine)
+        {
+            player.StateMachine.State = Player.StNormal;
+            player.StateMachine.Locked = true;
+        }
+        player.Collidable = false;
     }
 }
 

@@ -177,9 +177,11 @@ internal class CassetteBlockIndexCounter : SpecialCounter
         catch (DivideByZeroException) { return 0; }
     }
 }
-
-
-
+internal class CoreModeCounter : SpecialCounter
+{
+    public override int GetValue(Level level) => (int)level.CoreMode;
+    public override void SetValue(Level level, int value) => level.CoreMode = (Session.CoreModes) Math.Clamp(value, 0, 2);
+}
 
 internal class TimeRateSlider : SpecialSlider
 {

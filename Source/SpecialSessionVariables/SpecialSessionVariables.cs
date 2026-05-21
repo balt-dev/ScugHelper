@@ -43,6 +43,7 @@ public static class SpecialSessionVariables
         new("ScugHelper.LevelHeight", new LevelHeightCounter()),
         new("ScugHelper.FPS", new FPSCounter()),
         new("ScugHelper.CassetteBlockIndex", new CassetteBlockIndexCounter()),
+        new("ScugHelper.CoreMode", new CoreModeCounter()),
     ]);
     static Dictionary<string, SpecialSlider> sliders = new([
         new("ScugHelper.TimeRate", new TimeRateSlider()),

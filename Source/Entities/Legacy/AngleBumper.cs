@@ -86,6 +86,8 @@ public class AngleBumper : Bumper
             player.StateMachine.State = 7;
 
             player.Dashes = Math.Max(player.Dashes, DashCount);
+
+            if (RefillStamina) player.RefillStamina();
             sprite.Play("hit", restart: true);
             spriteEvil.Play("hit", restart: true);
             light.Visible = false;
