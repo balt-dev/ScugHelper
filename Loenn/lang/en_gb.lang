@@ -417,3 +417,21 @@ triggers.ScugHelper/LimboGlitchStateTrigger.placements.name.normal=Limbo Glitch 
 triggers.ScugHelper/LimboGlitchStateTrigger.placements.description.normal=Triggers the "limbo" glitch state. This has nothing to do with the Limbo Refill. Do not use if you don't know what you're doing.
 triggers.ScugHelper/ExitLimboGlitchStateTrigger.placements.name.normal=Exit Limbo Glitch State
 triggers.ScugHelper/ExitLimboGlitchStateTrigger.placements.description.normal=Exits the limbo glitch state. This has nothing to do with the Limbo Refill.
+
+entities.ScugHelper/RefillCircle.placements.name.green=Refill Circle (Green)
+entities.ScugHelper/RefillCircle.placements.name.pink=Refill Circle (Pink)
+entities.ScugHelper/RefillCircle.placements.name.blue=Refill Circle (Blue)
+entities.ScugHelper/RefillCircle.placements.name.black=Refill Circle (Black)
+entities.ScugHelper/RefillCircle.placements.name.rose=Refill Circle (Rose)
+entities.ScugHelper/RefillCircle.placements.name.cyan=Refill Circle (Cyan)
+entities.ScugHelper/RefillCircle.placements.name.dark_green=Refill Circle (Dark Green)
+
+entities.ScugHelper/RefillCircle.placements.description.green=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.pink=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.blue=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.black=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.rose=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.cyan=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.dark_green=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.attributes.description.FallbackRefillType=The refill type to default to if one is not placed on top of it.
+entities.ScugHelper/RefillCircle.attributes.description.FallbackRefillOneUse=Whether the fallback refill should be one-use.
