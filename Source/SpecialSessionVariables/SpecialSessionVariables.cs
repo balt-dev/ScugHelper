@@ -29,6 +29,7 @@ public static class SpecialSessionVariables
         new("ScugHelper.GravityHelper.PlayerInverted", new PlayerInvertedFlag()),
         new("ScugHelper.FrostHelper.Enabled", new FrostHelperEnabledFlag()),
         new("ScugHelper.GravityHelper.Enabled", new GravityHelperEnabledFlag()),
+        new("ScugHelper.InBooster", new InBoosterFlag()),
     ]);
     static Dictionary<string, SpecialCounter> counters = new([
         new("ScugHelper.DeathCount", new DeathCounter()),

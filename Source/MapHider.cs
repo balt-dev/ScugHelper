@@ -16,9 +16,6 @@ public static class MapHider {
     private static readonly string HiddenLevelSet = "ScugHelper/ScugHelperTest";
 
     private static ILHook hookOnLevelSetSwitch;
-    private static ILHook hookMapSearchReloadItems;
-    private static ILHook hookMapListReloadItems;
-    private static ILHook hookMapListCreateMenu;
     private static ILHook hookLevelSetPicker;
 
     [OnLoad]

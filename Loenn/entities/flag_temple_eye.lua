@@ -1,3 +1,4 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local drawableSpriteStruct = require("structs.drawable_sprite")
 
 local templeEye = {}
@@ -6,6 +7,8 @@ templeEye.name = "ScugHelper/FlagTempleEye"
 templeEye.placements = {
     name = "normal", data = { trackPlayer = false, flag = "" }
 }
+templeEye.fieldInformation = { flag = scughelper.builtinFlags }
+
 
 local function isBackground(room, entity)
     local x = entity.x or 0

@@ -31,6 +31,15 @@ internal class HasGoldenFlag : SpecialFlag
     public override void SetValue(Level level, bool value) { }
 }
 
+internal class InBoosterFlag : SpecialFlag
+{
+    public override bool GetValue(Level level)  {
+        if (level.GetPlayer() is not Player player) return false;
+        if (player.StateMachine.State is Player.StBoost) return true;
+        return player.LastBooster?.BoostingPlayer ?? false;
+    }
+}
+
 internal class RestartedFromGoldenFlag : SpecialFlag
 {
     public override bool GetValue(Level level) => level.Session.RestartedFromGolden;

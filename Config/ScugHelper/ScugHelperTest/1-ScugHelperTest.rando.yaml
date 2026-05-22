@@ -14,6 +14,7 @@ ASide:
         Idx: 0
         Kind: none
   - Room: "sideflipShrine"
+    Worth: 0.1
     Flags:
       - ScugHelper-AllowSideflipping:set
     Holes:

@@ -86,6 +86,13 @@ return {
     nodeFillColor = {0, 0, 0, 0},
     nodeBorderColor = {1, 1, 1, 1},
     fieldInformation = { DashCount = {fieldType = "integer"}},
+    rectangle = function(room, entity)
+        return utils.rectangle(
+            entity.x - 8,
+            entity.y - 8,
+            16, 16
+        )
+    end,
     selection = function(room, entity)
         local nodeX, nodeY = entity.nodes[1].x or entity.x, entity.nodes[1].y or entity.y
         local deltaX = nodeX - entity.x

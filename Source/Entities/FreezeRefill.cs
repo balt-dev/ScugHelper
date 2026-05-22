@@ -90,9 +90,9 @@ public class FreezeRefill : Refill, ICustomRefill
         Level _;
         cur.EmitDelegate(static (Engine engine) => {
             Frozen &= !(Input.Jump.Pressed || Input.Grab.Pressed || Input.Dash.Pressed || Input.Pause.Pressed || Input.CrouchDash.Pressed);
-            if (Frozen && engine.scene is not null) {
-                (engine.scene as Level).UpdateTime();
-                engine.scene.Entities.UpdateLists();
+            if (Frozen && engine.scene is Level level) {
+                level.UpdateTime();
+                level.Entities.UpdateLists();
             }
             return Frozen;
         });

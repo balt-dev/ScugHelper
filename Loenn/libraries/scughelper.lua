@@ -58,6 +58,7 @@ local builtinFlags = {
     "ScugHelper.InLimbo",
     "ScugHelper.SaveQuitDisabled",
     "ScugHelper.PlayerHolding",
+    "ScugHelper.InBooster",
     "ScugHelper.GravityHelper.Enabled",
     "ScugHelper.FrostHelper.Enabled",
     "ScugHelper.GravityHelper.PlayerInverted",
