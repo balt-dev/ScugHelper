@@ -19,8 +19,7 @@ public class SeekerTrackSpinner : TrackSpinner
     [MonoModLinkTo("Monocle.Entity", "System.Void Update")]
     private void EntityUpdate() { }
 
-    public SeekerTrackSpinner(EntityData data, Vector2 offset) : base(data, offset)
-    {
+    public SeekerTrackSpinner(EntityData data, Vector2 offset) : base(data, offset) {
         Depth = -8500;
         MoveTime = data.Float("MoveTime", 0.9f);
         PauseTime = data.Float("PauseTime", 0.3f);
@@ -29,8 +28,7 @@ public class SeekerTrackSpinner : TrackSpinner
         Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg"));
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         Texture.DrawCentered(Position);
     }
@@ -51,30 +49,25 @@ public class SeekerTrackSpinner : TrackSpinner
 
         Percent = Calc.Approach(Percent, Up ? 1 : 0, Engine.DeltaTime / MoveTime);
         UpdatePosition();
-        if ((Up && Percent == 1f) || (!Up && Percent == 0f))
-        {
+        if ((Up && Percent == 1f) || (!Up && Percent == 0f)) {
             Up = !Up;
             PauseTimer = PauseTime;
             OnTrackEnd();
         }
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Track(this);
     }
 
-    public override void Removed(Scene scene)
-    {
+    public override void Removed(Scene scene) {
         base.Removed(scene);
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Untrack(this);
     }
 
-    private new void OnPlayer(Player player)
-    {
-        if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp)
-        {
+    private new void OnPlayer(Player player) {
+        if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp) {
             comp.disableDeath = false;
             player.Die(-player.Speed.SafeNormalize(Vector2.UnitY));
         }

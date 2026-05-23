@@ -19,8 +19,7 @@ public class AngleBumper : Bumper
     readonly int DashCount;
     readonly bool RefillStamina = true;
 
-    public AngleBumper(EntityData data, Vector2 offset) : base(data, offset)
-    {
+    public AngleBumper(EntityData data, Vector2 offset) : base(data, offset) {
         Angle = -Calc.DegToRad * data.Float("Angle", 0f);
         sprite.RemoveSelf();
         hitWiggler.RemoveSelf();
@@ -49,10 +48,8 @@ public class AngleBumper : Bumper
         base.Update();
     }
 
-    private void NewOnPlayer(Player player)
-    {
-        if (respawnTimer <= 0f)
-        {
+    private void NewOnPlayer(Player player) {
+        if (respawnTimer <= 0f) {
             Audio.Play("event:/game/06_reflection/pinballbumper_hit", Position);
 
             respawnTimer = 0.6f;
@@ -63,18 +60,14 @@ public class AngleBumper : Bumper
             Vector2 SpeedAngle = Calc.AngleToVector(Angle, 1f);
             int dashes = player.Dashes;
             player.Speed = SpeedAngle * LaunchSpeed;
-            if (SpeedAngle.Y <= 50f / 280f)
-            {
+            if (SpeedAngle.Y <= 50f / 280f) {
                 player.AutoJump = true;
             }
             if (player.Speed.X != 0f) {
-                if (Input.MoveX.Value == Math.Sign(player.Speed.X))
-                {
+                if (Input.MoveX.Value == Math.Sign(player.Speed.X)) {
                     player.explodeLaunchBoostTimer = 0f;
                     player.Speed.X *= 1.2f;
-                }
-                else
-                {
+                } else {
                     player.explodeLaunchBoostTimer = 0.01f;
                     player.explodeLaunchBoostSpeed = player.Speed.X * 1.2f;
                 }
@@ -103,8 +96,7 @@ public class AngleBumper : Bumper
     [OnUnload]
     public static void UnloadHooks() => On.Celeste.Bumper.UpdatePosition -= OnUpdatePosition;
 
-    private static void OnUpdatePosition(On.Celeste.Bumper.orig_UpdatePosition orig, Bumper self)
-    {
+    private static void OnUpdatePosition(On.Celeste.Bumper.orig_UpdatePosition orig, Bumper self) {
         if (self is AngleBumper)
             self.Position = self.anchor;
         else

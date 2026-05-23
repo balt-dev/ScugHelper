@@ -23,8 +23,7 @@ public class StaticFloatySpaceBlock(EntityData data, Vector2 offset) : FloatySpa
     internal static void UnloadHooks() {
         On.Celeste.FloatySpaceBlock.MoveToTarget -= OnMoveToTarget;
     }
-    private static void OnMoveToTarget(On.Celeste.FloatySpaceBlock.orig_MoveToTarget orig, FloatySpaceBlock self)
-    {
+    private static void OnMoveToTarget(On.Celeste.FloatySpaceBlock.orig_MoveToTarget orig, FloatySpaceBlock self) {
         if (self is StaticFloatySpaceBlock)
             self.sineWave = 0f;
         orig(self);

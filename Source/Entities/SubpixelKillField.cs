@@ -16,8 +16,7 @@ public class SubpixelKillField : Entity
     protected float StartY;
     protected float EndY;
 
-    public SubpixelKillField(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public SubpixelKillField(EntityData data, Vector2 offset) : base(data.Position + offset) {
         StartX = Math.Clamp(data.Float("StartX", -0.5f), -0.5f, 0.5f);
         EndX = Math.Clamp(data.Float("EndX", 0.5f), -0.5f, 0.5f);
         StartY = Math.Clamp(data.Float("StartY", -0.5f), -0.5f, 0.5f);
@@ -30,8 +29,7 @@ public class SubpixelKillField : Entity
         Add(new PlayerCollider((player) => player.Die(Vector2.Zero), innerCollider));
     }
 
-    private void OnPlayer(Player player)
-    {
+    private void OnPlayer(Player player) {
         float approxXOffset = player.movementCounter.X - Position.X;
         float approxYOffset = player.movementCounter.Y - Position.Y;
         float approxHCenter = player.Center.X + approxXOffset;

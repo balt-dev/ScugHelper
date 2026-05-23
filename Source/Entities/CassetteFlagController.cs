@@ -17,8 +17,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/CassetteFlagController")]
 public partial class CassetteFlagController : Entity
 {
-    public partial struct FlagSpan(string flag, int start, int end)
-    {
+    public partial struct FlagSpan(string flag, int start, int end) {
         public string? Flag = flag;
         public int Start = start;
         public int End = end;
@@ -27,8 +26,7 @@ public partial class CassetteFlagController : Entity
         [GeneratedRegex(@"^(\S+)\s+([0-9]+)-([0-9]+)$")]
         private static partial Regex FlagSpanRegex();
         static readonly Regex regex = FlagSpanRegex();
-        public static FlagSpan Parse(string str)
-        {
+        public static FlagSpan Parse(string str) {
             var match = regex.Match(str);
             if (!match.Success) throw new FormatException($"Failed to parse flag span {str}: Invalid string format");
             string flag = match.Groups[1].Value;
@@ -44,8 +42,7 @@ public partial class CassetteFlagController : Entity
 
     CassetteBlockManager? manager;
 
-    public CassetteFlagController(EntityData data, Vector2 _) : base()
-    {
+    public CassetteFlagController(EntityData data, Vector2 _) : base() {
         foreach (
             FlagSpan span in data.String("Spans", "")
                 .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -59,21 +56,18 @@ public partial class CassetteFlagController : Entity
         if (Length <= 0) throw new Exception("Length for cassette flag controller must be greater than than 0.");
     }
 
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         SceneAs<Level>().HasCassetteBlocks = true;
         if ((manager = scene.Tracker.GetEntity<CassetteBlockManager>()) is null)
             scene.Add(manager = []);
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         Level level = SceneAs<Level>();
         if (manager is not CassetteBlockManager man) return;
-        foreach (var kvp in Spans)
-        {
+        foreach (var kvp in Spans) {
             bool result = false;
             foreach (var span in kvp.Value)
                 result |= span.InSpan((man.beatIndex + man.beatIndexOffset) % Length + 1);

@@ -12,8 +12,7 @@ public class SeekerTempleGate(EntityData data, Vector2 offset, EntityID id) : Te
     public static readonly Types ActionType = (Types)(-0x5EECE9);
     public override void Update() {
         base.Update();
-        if (!open && !Opening && Scene.Tracker.GetEntity<Seeker>() is null)
-        {
+        if (!open && !Opening && Scene.Tracker.GetEntity<Seeker>() is null) {
             Opening = true;
             SwitchOpen();
         }

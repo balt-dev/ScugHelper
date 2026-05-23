@@ -13,8 +13,7 @@ public class GlobalTriggerActionListener(EntityData data, Vector2 _) : Entity(),
         foreach (Trigger trigger in triggers)
             trigger.Update();
     }
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
         foreach (Trigger trigger in triggers) { trigger.OnEnter(player); trigger.OnStay(player); trigger.OnLeave(player); }
     }

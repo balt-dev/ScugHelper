@@ -21,8 +21,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/OverchargeRefill")]
 public class OverchargeRefill : Refill, ICustomRefill
 {
-    public OverchargeRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
-    {
+    public OverchargeRefill(Vector2 position, bool oneUse) : base(position, false, oneUse) {
         Depth = -100;
         Remove(outline);
         Remove(sprite);
@@ -38,21 +37,18 @@ public class OverchargeRefill : Refill, ICustomRefill
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
     public OverchargeRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse")) { }
 
-    public override void Render()
-    {
+    public override void Render() {
         if (sprite.Visible) sprite.DrawOutline();
         base.Render();
     }
-    public void CustomOnPlayer(Player player)
-    {
+    public void CustomOnPlayer(Player player) {
         if (OverchargeDashCount == 0) {
             Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_touch", Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
@@ -61,8 +57,7 @@ public class OverchargeRefill : Refill, ICustomRefill
             respawnTimer = 2.5f;
         }
     }
-    public IEnumerator NewRefillRoutine(Player player)
-    {
+    public IEnumerator NewRefillRoutine(Player player) {
         Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;
@@ -101,16 +96,14 @@ public class OverchargeRefill : Refill, ICustomRefill
         }
     }
 
-    private static void Player_BeforeDownTransition(On.Celeste.Player.orig_BeforeDownTransition orig, Player self)
-    {
+    private static void Player_BeforeDownTransition(On.Celeste.Player.orig_BeforeDownTransition orig, Player self) {
         orig(self);
         if (OverchargeDashCount > 0) {
             self.dashCooldownTimer = 0f;
         }
     }
 
-    private static void Player_BeforeUpTransition(On.Celeste.Player.orig_BeforeUpTransition orig, Player self)
-    {
+    private static void Player_BeforeUpTransition(On.Celeste.Player.orig_BeforeUpTransition orig, Player self) {
         var oldYSpeed = self.Speed.Y;
         orig(self);
         if (OverchargeDashCount > 0) {
@@ -119,8 +112,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         }
     }
     
-    private static void Player_BeforeSideTransition(On.Celeste.Player.orig_BeforeSideTransition orig, Player self)
-    {
+    private static void Player_BeforeSideTransition(On.Celeste.Player.orig_BeforeSideTransition orig, Player self) {
         orig(self);
         if (OverchargeDashCount > 0) {
             self.dashCooldownTimer = 0f;
@@ -149,8 +141,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         TrailManager.Add(player, scale, TrailColor);
     }
 
-    private static void Player_CreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player)
-    {
+    private static void Player_CreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player) {
         if (OverchargeDashCount > 0)
             CreateTrail(player);
         else
@@ -158,20 +149,17 @@ public class OverchargeRefill : Refill, ICustomRefill
     }
 
 
-    private static void Player_SuperJump(On.Celeste.Player.orig_SuperJump orig, Player self)
-    {
+    private static void Player_SuperJump(On.Celeste.Player.orig_SuperJump orig, Player self) {
         var oldSpeedX = MathF.Abs(self.Speed.X);
         orig(self);
         var newSpeedX = MathF.Abs(self.Speed.X);
-        if (OverchargeDashCount > 0)
-        {
+        if (OverchargeDashCount > 0) {
             self.Speed.X = MathF.Max(oldSpeedX, newSpeedX) * (float)self.Facing * 1.2f;
             OverchargeDashCount--;
         }
     }
     
-    private static void Player_SuperWallJump(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir)
-    {
+    private static void Player_SuperWallJump(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir) {
         var oldSpeedY = self.Speed.Y;
         orig(self, dir);
         if (OverchargeDashCount > 0 && self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior"))
@@ -180,8 +168,7 @@ public class OverchargeRefill : Refill, ICustomRefill
 
     public static readonly float LoseOverchargeTime = 0.3f;
 
-    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self) {
         orig(self);
         if (ScugHelperModule.Settings.AlwaysOvercharges)
             OverchargeDashCount = 1;
@@ -190,14 +177,12 @@ public class OverchargeRefill : Refill, ICustomRefill
             CreateTrail(self);
     }
 
-    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self)
-    {
+    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self) {
         OverchargeDashCount = 0;
         orig(self);
     }
 
-    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
-    {
+    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
         OverchargeDashCount = 0;
         orig(self);
     }

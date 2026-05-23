@@ -7,8 +7,7 @@ namespace Celeste.Mod.ScugHelper;
 
 internal static class LuaIntegration
 {
-    internal static void InitFunctions()
-    {
+    internal static void InitFunctions() {
         Lua lua = SandboxedLua.Instance;
         lua.NewTable();
 
@@ -57,8 +56,7 @@ internal static class LuaIntegration
         lua.SetField(-2, "__newindex");
     }
 
-    private static int LuaPerlinNoise(nint luaState)
-    {
+    private static int LuaPerlinNoise(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         double x = lua.ToNumberX(1) ?? 0;
         double y = lua.ToNumberX(2) ?? 0;
@@ -70,16 +68,14 @@ internal static class LuaIntegration
         return 1;
     }
 
-    private static int ReadOnlyTable(nint luaState)
-    {
+    private static int ReadOnlyTable(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         string varName = lua.ToString(2);
         lua.Error($"cannot assign key {varName} to read-only table");
         return 0; // unreachable
     }
 
-    private static int LuaGetFlag(nint luaState)
-    {
+    private static int LuaGetFlag(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         string varName = lua.ToString(2);
         if (varName is null) lua.Error("could not convert to string");
@@ -87,8 +83,7 @@ internal static class LuaIntegration
         return 1;
     }
 
-    private static int LuaGetCounter(nint luaState)
-    {
+    private static int LuaGetCounter(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         string varName = lua.ToString(2);
         if (varName is null) lua.Error("could not convert to string");
@@ -96,8 +91,7 @@ internal static class LuaIntegration
         return 1;
     }
     
-    private static int LuaGetSlider(nint luaState)
-    {
+    private static int LuaGetSlider(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         string varName = lua.ToString(2);
         if (varName is null) lua.Error("could not convert to string");

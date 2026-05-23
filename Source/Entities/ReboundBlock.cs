@@ -41,13 +41,11 @@ public class ReboundBlock : Solid
     private Refill refill;
 
     public ReboundBlock(Vector2 position, float width, float height, ReboundBlockKind kind)
-     : base(position, width, height, safe: true)
-    {
+     : base(position, width, height, safe: true) {
         Tag |= Tags.TransitionUpdate;
         Kind = kind;
         bloomImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/bloomBlock"], add: false);
-        switch (kind)
-        {
+        switch (kind) {
             case ReboundBlockKind.Grey:
                 renderImages = BuildSprite(GFX.Game["objects/ScugHelper/reboundBlock/zeroBlock"]);
                 renderSlot = new(GFX.Game["objects/ScugHelper/reboundBlock/zeroSlot"]);
@@ -70,14 +68,12 @@ public class ReboundBlock : Solid
         OnDashCollide = Dashed;
     }
 
-    private void OnRenderBloom()
-    {
+    private void OnRenderBloom() {
         foreach (Image image in bloomImages)
             image.Render();
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         Position += Offset;
         foreach (Image image in renderImages)
             image.DrawSimpleOutline();
@@ -89,16 +85,13 @@ public class ReboundBlock : Solid
     }
 
     public ReboundBlock(EntityData e, Vector2 levelOffset)
-     : this(e.Position + levelOffset, e.Width, e.Height, e.Enum<ReboundBlockKind>("kind"))
-    {
+     : this(e.Position + levelOffset, e.Width, e.Height, e.Enum<ReboundBlockKind>("kind")) {
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         RecenterImages();
-        switch (Kind)
-        {
+        switch (Kind) {
             case ReboundBlockKind.Green:
                 refill = new Refill(Vector2.Zero, false, false);
                 refill.Added(scene);
@@ -114,14 +107,12 @@ public class ReboundBlock : Solid
         }
     }
 
-    private List<Image> BuildSprite(MTexture source, bool add = true)
-    {
+    private List<Image> BuildSprite(MTexture source, bool add = true) {
         List<Image> list = [];
         int num = source.Width / 8;
         int num2 = source.Height / 8;
         for (int i = 0; i < Width; i += 8)
-            for (int j = 0; j < Height; j += 8)
-            {
+            for (int j = 0; j < Height; j += 8) {
                 int num3 = (i != 0) ? ((!(i >= Width - 8f)) ? Calc.Random.Next(1, num - 1) : (num - 1)) : 0;
                 int num4 = (j != 0) ? ((!(j >= Height - 8f)) ? Calc.Random.Next(1, num2 - 1) : (num2 - 1)) : 0;
                 Image image = new(source.GetSubtexture(num3 * 8, num4 * 8, 8, 8)) { Position = new Vector2(i, j) };
@@ -131,8 +122,7 @@ public class ReboundBlock : Solid
         return list;
     }
 
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         spikesUp = CollideCheck<Spikes>(Position - Vector2.UnitY);
         spikesDown = CollideCheck<Spikes>(Position + Vector2.UnitY);
@@ -140,10 +130,8 @@ public class ReboundBlock : Solid
         spikesRight = CollideCheck<Spikes>(Position + Vector2.UnitX);
     }
 
-    public DashCollisionResults Dashed(Player player, Vector2 dir)
-    {
-        if (!SaveData.Instance.Assists.Invincible)
-        {
+    public DashCollisionResults Dashed(Player player, Vector2 dir) {
+        if (!SaveData.Instance.Assists.Invincible) {
             if (dir == Vector2.UnitX && spikesLeft)
                 return DashCollisionResults.NormalCollision;
             if (dir == -Vector2.UnitX && spikesRight)
@@ -159,8 +147,7 @@ public class ReboundBlock : Solid
         Celeste.Freeze(0.1f);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
 
-        switch (Kind)
-        {
+        switch (Kind) {
             case ReboundBlockKind.Pink:
                 Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_touch", Position);
                 player.RefillDash();
@@ -176,42 +163,33 @@ public class ReboundBlock : Solid
         return DashCollisionResults.Rebound;
     }
 
-    private IEnumerator SoundRoutine()
-    {
+    private IEnumerator SoundRoutine() {
         var evInstance = Audio.Play("event:/new_content/game/10_farewell/fusebox_hit_1", Position);
         yield return 0.18f;
         evInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
-    protected void SmashParticles(Vector2 dir)
-    {
+    protected void SmashParticles(Vector2 dir) {
         float direction;
         Vector2 position;
         Vector2 positionRange;
         int num;
-        if (dir == Vector2.UnitX)
-        {
+        if (dir == Vector2.UnitX) {
             direction = 0f;
             position = CenterRight - Vector2.UnitX * 12f;
             positionRange = Vector2.UnitY * (Height - 6f) * 0.5f;
             num = (int)(Height / 8f);
-        }
-        else if (dir == -Vector2.UnitX)
-        {
+        } else if (dir == -Vector2.UnitX) {
             direction = MathF.PI;
             position = CenterLeft + Vector2.UnitX * 12f;
             positionRange = Vector2.UnitY * (Height - 6f) * 0.5f;
             num = (int)(Height / 8f);
-        }
-        else if (dir == Vector2.UnitY)
-        {
+        } else if (dir == Vector2.UnitY) {
             direction = MathF.PI / 2f;
             position = BottomCenter - Vector2.UnitY * 12f;
             positionRange = Vector2.UnitX * (Width - 6f) * 0.5f;
             num = (int)(Width / 8f);
-        }
-        else
-        {
+        } else {
             direction = -MathF.PI / 2f;
             position = TopCenter + Vector2.UnitY * 12f;
             positionRange = Vector2.UnitX * (Width - 6f) * 0.5f;
@@ -221,8 +199,7 @@ public class ReboundBlock : Solid
         SceneAs<Level>().Particles.Emit(Kind == ReboundBlockKind.Pink ? Refill.P_ShatterTwo : Refill.P_Shatter, num, position, positionRange, direction);
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         Offset = Calc.Approach(Offset, Vector2.Zero, Engine.DeltaTime * 60f);
         RecenterImages();
@@ -232,8 +209,7 @@ public class ReboundBlock : Solid
         renderRefill?.Update();
     }
 
-    private void RecenterImages()
-    {
+    private void RecenterImages() {
         renderSlot?.Position = Offset + Center - new Vector2(renderSlot.Width, renderSlot.Height) / 2;
         renderRefill?.Position = Offset + Center;
     }

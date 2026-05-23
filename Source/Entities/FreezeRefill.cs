@@ -16,8 +16,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/FreezeRefill")]
 public class FreezeRefill : Refill, ICustomRefill
 {
-    public FreezeRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
-    {
+    public FreezeRefill(Vector2 position, bool oneUse) : base(position, false, oneUse) {
         Depth = -100;
         Remove(outline);
         Remove(sprite);
@@ -33,29 +32,25 @@ public class FreezeRefill : Refill, ICustomRefill
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
     public FreezeRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse")) { }
 
-    public override void Render()
-    {
+    public override void Render() {
         if (sprite.Visible) sprite.DrawOutline();
         base.Render();
     }
-    public void CustomOnPlayer(Player player)
-    {
+    public void CustomOnPlayer(Player player) {
         Audio.Play("event:/game/general/diamond_touch", Position);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
         Collidable = false;
         Add(new Coroutine(NewRefillRoutine(player)));
         respawnTimer = 2.5f;
     }
-    public IEnumerator NewRefillRoutine(Player player)
-    {
+    public IEnumerator NewRefillRoutine(Player player) {
         float num = player.Speed.Angle();
         Frozen = true;
         sprite.Visible = false;
@@ -78,8 +73,7 @@ public class FreezeRefill : Refill, ICustomRefill
 
     private static bool Frozen = false;
     
-    private static void EngineUpdateHook(ILContext il)
-    {
+    private static void EngineUpdateHook(ILContext il) {
         ILCursor cur = new(il);
         ILLabel? label = null;
         if (!cur.TryGotoNextBestFit(MoveType.After, 16,

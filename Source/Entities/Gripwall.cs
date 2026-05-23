@@ -28,24 +28,19 @@ public class Gripwall : Entity
     public bool RefillStamina { get; protected set; }
 
     public Gripwall(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Height, data.Bool("left"), data.Bool("refillDash"), data.Bool("refillStamina"), data.Bool("attach", false))
-    { }
+        : this(data.Position + offset, data.Height, data.Bool("left"), data.Bool("refillDash"), data.Bool("refillStamina"), data.Bool("attach", false)) { }
 
 
     public Gripwall(Vector2 position, float height, bool left, bool refillDash, bool refillStamina, bool attach)
-        : base(position)
-    {
+        : base(position) {
         RefillDash = refillDash;
         RefillStamina = refillStamina;
         Tag = Tags.TransitionUpdate;
         Depth = 1990;
-        if (left)
-        {
+        if (left) {
             Facing = Facings.Left;
             Collider = new Hitbox(2f, height);
-        }
-        else
-        {
+        } else {
             Facing = Facings.Right;
             Collider = new Hitbox(2f, height, 6f);
         }
@@ -59,8 +54,7 @@ public class Gripwall : Entity
                 OnDisable = OnDisable
             });
     }
-    public bool IsRiding(Solid solid)
-    {
+    public bool IsRiding(Solid solid) {
         return Facing switch
         {
             Facings.Left => CollideCheckOutside(solid, Position - Vector2.UnitX),
@@ -69,33 +63,27 @@ public class Gripwall : Entity
         };
     }
 
-    public void OnEnable()
-    {
+    public void OnEnable() {
         Active = Visible = Collidable = true;
     }
 
-    public void OnDisable()
-    {
+    public void OnDisable() {
         Active = Collidable = false;
         Visible = false;
     }
-    public void OnShake(Vector2 amount)
-    {
+    public void OnShake(Vector2 amount) {
         imageOffset += amount;
     }
-    public override void Render()
-    {
+    public override void Render() {
         Vector2 position = Position;
         Position += imageOffset;
         base.Render();
         Position = position;
     }
 
-    private List<Sprite> BuildSprite(bool left)
-    {
+    private List<Sprite> BuildSprite(bool left) {
         List<Sprite> list = [];
-        for (int i = 0; i < Height; i += 8)
-        {
+        for (int i = 0; i < Height; i += 8) {
             string id;
             if (i == 0)
                 id = "gripwallTop";
@@ -107,28 +95,19 @@ public class Gripwall : Entity
             Sprite sprite = GFX.SpriteBank.Create(id);
             if (left)
                 sprite.Position = new Vector2(0f, i);
-            else
-            {
+            else {
                 sprite.FlipX = true;
                 sprite.Position = new Vector2(4f, i);
             }
-            if (RefillDash)
-            {
-                if (RefillStamina)
-                {
+            if (RefillDash) {
+                if (RefillStamina) {
                     sprite.Color = RefillBothColor;
-                }
-                else
-                {
+                } else {
                     sprite.Color = RefillDashColor;
                 }
-            }
-            else if (RefillStamina)
-            {
+            } else if (RefillStamina) {
                 sprite.Color = RefillStaminaColor;
-            }
-            else
-            {
+            } else {
                 sprite.Color = RefillNoneColor;
             }
 
@@ -138,39 +117,32 @@ public class Gripwall : Entity
     }
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         IL.Celeste.Player.ClimbUpdate += ClimbUpdateHook;
     }
 
 
     [OnUnload]
-    internal static void UnloadHooks()
-    {
+    internal static void UnloadHooks() {
         IL.Celeste.Player.ClimbUpdate -= ClimbUpdateHook;
     }
 
-    private static void ClimbUpdateHook(ILContext il)
-    {
+    private static void ClimbUpdateHook(ILContext il) {
         ILCursor cur = new(il);
         if (!cur.TryGotoNextBestFit(MoveType.Before, 16,
             instr => instr.MatchLdarg0(),
             instr => instr.MatchCallvirt<Player>("WallBoosterCheck")
         )) throw new InvalidOperationException("Gripwalls failed to match IL code for the ClimbUpdate hook.");
-        static bool Delegate(Player self)
-        {
-            if (self.climbNoMoveTimer > 0)
-            {
+        static bool Delegate(Player self) {
+            if (self.climbNoMoveTimer > 0) {
                 return false;
             }
-            if (ClimbBlocker.Check(self.Scene, self, self.Position + Vector2.UnitX * (int)self.Facing))
-            {
+            if (ClimbBlocker.Check(self.Scene, self, self.Position + Vector2.UnitX * (int)self.Facing)) {
 
                 return false;
             }
             foreach (Gripwall gripwall in self.Scene.Tracker.GetEntities<Gripwall>())
-                if (gripwall.Facing == self.Facing && self.CollideCheck(gripwall))
-                {
+                if (gripwall.Facing == self.Facing && self.CollideCheck(gripwall)) {
                     if (gripwall.RefillDash)
                         self.RefillDash();
                     if (gripwall.RefillStamina)

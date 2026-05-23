@@ -8,8 +8,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 public class ForwardAction(EntityData data, Vector2 _) : Entity(), IAction
 {
     public readonly string[] Targets = IAction.GetTargets(data);
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         ActionManager.AlertActions(Targets, level);
     }
 }

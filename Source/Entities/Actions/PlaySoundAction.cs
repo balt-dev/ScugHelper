@@ -10,8 +10,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 public class PlaySoundAction(EntityData data, Vector2 _) : Entity(), IAction
 {
     readonly string SoundPath = data.String("Path");
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         Audio.Play(SoundPath);
     }
 }

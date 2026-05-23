@@ -8,8 +8,7 @@ internal interface ICustomRefill
 {
     public abstract void CustomOnPlayer(Player player);
 
-    public static void OnPlayerHook(On.Celeste.Refill.orig_OnPlayer orig, Refill self, Player player)
-    {
+    public static void OnPlayerHook(On.Celeste.Refill.orig_OnPlayer orig, Refill self, Player player) {
         if (self is ICustomRefill refill)
             refill.CustomOnPlayer(player);
         else

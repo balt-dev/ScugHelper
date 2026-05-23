@@ -55,8 +55,7 @@ public class ProceduralTilemap : Platform
     private readonly Hitbox BottomCollider;
     Entity BackgroundRenderer;
 
-    public ProceduralTilemap(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset, true)
-    {
+    public ProceduralTilemap(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset, true) {
         Depth = -10001;
         ID = id;
         TileWidth = Math.Max(1, data.Width / 8);
@@ -80,8 +79,7 @@ public class ProceduralTilemap : Platform
 
 
     private void OnLeft(Player player) => Scene.OnEndOfFrame += () => {
-        while (true)
-        {
+        while (true) {
             Collider = LeftCollider;
             if (!player.CollideCheck(this)) break;
             X -= RegenerateMarginX;
@@ -91,8 +89,7 @@ public class ProceduralTilemap : Platform
     };
 
     private void OnTop(Player player) => Scene.OnEndOfFrame += () => {
-        while (true)
-        {
+        while (true) {
             Collider = TopCollider;
             if (!player.CollideCheck(this)) break;
             Y -= RegenerateMarginY;
@@ -102,8 +99,7 @@ public class ProceduralTilemap : Platform
     };
 
     private void OnRight(Player player) => Scene.OnEndOfFrame += () => {
-        while (true)
-        {
+        while (true) {
             Collider = RightCollider;
             if (!player.CollideCheck(this)) break;
             X += RegenerateMarginX;
@@ -113,8 +109,7 @@ public class ProceduralTilemap : Platform
     };
 
     private void OnBottom(Player player) => Scene.OnEndOfFrame += () => {
-        while (true)
-        {
+        while (true) {
             Collider = BottomCollider;
             if (!player.CollideCheck(this)) break;
             Y += RegenerateMarginY;
@@ -129,27 +124,23 @@ public class ProceduralTilemap : Platform
             Lua lua = SandboxedLua.Instance;
             SandboxedLua.ActiveScene = scene;
 
-            if (!CallbackCache.TryGetValue(ID, out callbacks))
-            {
+            if (!CallbackCache.TryGetValue(ID, out callbacks)) {
 
                 // We do this here so it's on the main thread
                 if (!Everest.Content.TryGet(filePath, out ModAsset metadata, true))
                     throw new LuaException($"Failed to read file: {filePath}");
 
-                if (lua.LoadBuffer(metadata.Data, "proceduralTilemap") != LuaStatus.OK)
-                {
+                if (lua.LoadBuffer(metadata.Data, "proceduralTilemap") != LuaStatus.OK) {
                     string? errorMessage = lua.ToString(-1);
                     throw new LuaException($"Failed to load file {filePath}: {errorMessage ?? "<could not convert error message to string>"}");
                 }
                 foreach (string arg in Arguments)
                     lua.PushString(arg);
-                if (lua.PCall(Arguments.Length, 1, 0) != LuaStatus.OK)
-                {
+                if (lua.PCall(Arguments.Length, 1, 0) != LuaStatus.OK) {
                     string? errorMessage = lua.ToString(-1);
                     throw new LuaException($"Failed to execute file {filePath}: {errorMessage ?? "<could not convert error message to string>"}");
                 }
-                if (!lua.IsTable(-1))
-                {
+                if (!lua.IsTable(-1)) {
                     lua.Pop(1);
                     throw new LuaException($"Failed to execute file {filePath}: File must return a table.");
                 }
@@ -157,8 +148,7 @@ public class ProceduralTilemap : Platform
                 lua.GetField(-1, "before");
                 if (lua.IsNil(-1)) lua.Pop(1);
                 else if (lua.IsFunction(-1)) callbacks.beforeFuncRef = lua.Ref(LuaRegistry.Index);
-                else
-                {
+                else {
                     lua.Pop(1);
                     throw new LuaException($"Failed to execute file {filePath}: Returned field 'before' must be a function or nil.");
                 }
@@ -166,8 +156,7 @@ public class ProceduralTilemap : Platform
                 lua.GetField(-1, "foreground");
                 if (lua.IsNil(-1)) lua.Pop(1);
                 else if (lua.IsFunction(-1)) callbacks.foregroundFuncRef = lua.Ref(LuaRegistry.Index);
-                else
-                {
+                else {
                     lua.Pop(1);
                     throw new LuaException($"Failed to execute file {filePath}: Returned field 'foreground' must be a function or nil.");
                 }
@@ -175,8 +164,7 @@ public class ProceduralTilemap : Platform
                 lua.GetField(-1, "background");
                 if (lua.IsNil(-1)) lua.Pop(1);
                 else if (lua.IsFunction(-1)) callbacks.backgroundFuncRef = lua.Ref(LuaRegistry.Index);
-                else
-                {
+                else {
                     lua.Pop(1);
                     throw new LuaException($"Failed to execute file {filePath}: Returned field 'background' must be a function or nil.");
                 }
@@ -194,8 +182,7 @@ public class ProceduralTilemap : Platform
 
         base.Awake(scene);
     }
-    public bool RegenerateTiles(Scene? scene = null)
-    {
+    public bool RegenerateTiles(Scene? scene = null) {
         scene ??= Scene;
         try
         {
@@ -203,15 +190,13 @@ public class ProceduralTilemap : Platform
 
             SandboxedLua.ActiveScene = scene;
             
-            if (callbacks.beforeFuncRef is int beforeFunc)
-            {
+            if (callbacks.beforeFuncRef is int beforeFunc) {
                 lua.RawGetInteger(LuaRegistry.Index, beforeFunc);
                 lua.PushInteger(XOffset);
                 lua.PushInteger(YOffset);
                 lua.PushInteger(TileWidth);
                 lua.PushInteger(TileHeight);
-                if (lua.PCall(4, 0, 0) != LuaStatus.OK)
-                {
+                if (lua.PCall(4, 0, 0) != LuaStatus.OK) {
                     string? errorMessage = lua.ToString(-1);
                     throw new LuaException($"At {filePath} before({XOffset}, {YOffset}, {TileWidth}, {TileHeight}): " + (errorMessage ?? "<could not convert to string>"));
                 }
@@ -219,46 +204,36 @@ public class ProceduralTilemap : Platform
             
             VirtualMap<char> bgTiles = new(TileWidth, TileHeight, '0');
             VirtualMap<char> fgTiles = new(TileWidth, TileHeight, '0');
-            for (int x = 0; x < TileWidth; x++)
-            {
-                for (int y = 0; y < TileHeight; y++)
-                {
+            for (int x = 0; x < TileWidth; x++) {
+                for (int y = 0; y < TileHeight; y++) {
                     bgTiles[x, y] = '0';
                     fgTiles[x, y] = '0';
                     int logicalX = x + XOffset;
                     int logicalY = y + YOffset;
-                    if (callbacks.foregroundFuncRef is int fgFunc)
-                    {
+                    if (callbacks.foregroundFuncRef is int fgFunc) {
                         lua.RawGetInteger(LuaRegistry.Index, fgFunc);
                         lua.PushInteger(logicalX);
                         lua.PushInteger(logicalY);
                         lua.PushInteger(TileWidth);
                         lua.PushInteger(TileHeight);
-                        if (lua.PCall(4, 1, 0) != LuaStatus.OK)
-                        {
+                        if (lua.PCall(4, 1, 0) != LuaStatus.OK) {
                             string? errorMessage = lua.ToString(-1);
                             throw new LuaException($"At {filePath} foreground({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): " + (errorMessage ?? "<could not convert to string>"));
                         }
-                        if (lua.IsNil(-1)) { fgTiles[x, y] = '0'; }
-                        else if (lua.IsString(-1)) { fgTiles[x, y] = lua.ToString(-1).First(); }
-                        else { throw new LuaException($"At {filePath} foreground({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): returned non-string non-nil value"); }
+                        if (lua.IsNil(-1)) { fgTiles[x, y] = '0'; } else if (lua.IsString(-1)) { fgTiles[x, y] = lua.ToString(-1).First(); } else { throw new LuaException($"At {filePath} foreground({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): returned non-string non-nil value"); }
                         lua.Pop(-1);
                     }
-                    if (callbacks.backgroundFuncRef is int bgFunc)
-                    {
+                    if (callbacks.backgroundFuncRef is int bgFunc) {
                         lua.RawGetInteger(LuaRegistry.Index, bgFunc);
                         lua.PushInteger(logicalX);
                         lua.PushInteger(logicalY);
                         lua.PushInteger(TileWidth);
                         lua.PushInteger(TileHeight);
-                        if (lua.PCall(4, 1, 0) != LuaStatus.OK)
-                        {
+                        if (lua.PCall(4, 1, 0) != LuaStatus.OK) {
                             string? errorMessage = lua.ToString(-1);
                             throw new LuaException($"At {filePath} background({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): " + (errorMessage ?? "<could not convert to string>"));
                         }
-                        if (lua.IsNil(-1)) { bgTiles[x, y] = '0'; }
-                        else if (lua.IsString(-1)) { bgTiles[x, y] = lua.ToString(-1).First(); }
-                        else { throw new LuaException($"At {filePath} background({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): returned non-string non-nil value"); }
+                        if (lua.IsNil(-1)) { bgTiles[x, y] = '0'; } else if (lua.IsString(-1)) { bgTiles[x, y] = lua.ToString(-1).First(); } else { throw new LuaException($"At {filePath} background({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): returned non-string non-nil value"); }
                         lua.Pop(-1);
                     }
                 }
@@ -327,8 +302,7 @@ public class ProceduralTilemap : Platform
     private static void OnReloadLevel(Level level) => WipeCache();
     private static void OnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow) => WipeCache();
 
-    private static void WipeCache()
-    {
+    private static void WipeCache() {
         Lua lua = SandboxedLua.Instance;
 
         foreach (LuaCallbacks callbacks in CallbackCache.Values) {
@@ -348,16 +322,14 @@ public class ProceduralTilemap : Platform
 
 
 
-    private static void ILGenerate(ILContext il)
-    {
+    private static void ILGenerate(ILContext il) {
         static Random SeedRandoIfDeterministic(Random rand, int k, int l) {
             if (!UseDeterministicAutotiling) return rand;
             return new Random((int)Utils.HashPosition(k + TilingOffsetX, l + TilingOffsetY));
         }
 
         ILCursor cur = new(il);
-        while (cur.TryGotoNext(MoveType.After, static match => match.MatchLdsfld(typeof(Calc), nameof(Calc.Random))))
-        {
+        while (cur.TryGotoNext(MoveType.After, static match => match.MatchLdsfld(typeof(Calc), nameof(Calc.Random)))) {
             Logger.Log(nameof(ScugHelperModule), "Found ILGenerate hook");
             cur.EmitLdloc(5); // k
             cur.EmitLdloc(7); // l

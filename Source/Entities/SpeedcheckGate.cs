@@ -11,21 +11,18 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/SpeedcheckGate")]
 public class SpeedcheckGate(EntityData data, Vector2 offset) : AbstractGate(data, offset)
 {
-    public enum SpeedAxis
-    {
+    public enum SpeedAxis {
         Horizontal,
         Vertical,
         Total
     }
-    public enum ComparisonType
-    {
+    public enum ComparisonType {
         Less,
         LessEq,
         Greater,
         GreaterEq
     }
-    public enum TriggerAction
-    {
+    public enum TriggerAction {
         Kill,
         SetFlag,
         SetSpeed
@@ -39,24 +36,20 @@ public class SpeedcheckGate(EntityData data, Vector2 offset) : AbstractGate(data
     public string FlagName = data.String("FlagName");
     public Vector2 SetSpeed = new(data.Float("SetX"), data.Float("SetY"));
 
-    public override void OnTrigger(Player player)
-    {
-        float checkSpeed = Axis switch
-        {
+    public override void OnTrigger(Player player) {
+        float checkSpeed = Axis switch {
             SpeedAxis.Horizontal => Math.Abs(player.Speed.X),
             SpeedAxis.Vertical => Math.Abs(player.Speed.Y),
             SpeedAxis.Total => player.Speed.Length(),
         };
-        bool isTriggered = Comparison switch
-        {
+        bool isTriggered = Comparison switch {
             ComparisonType.Less => checkSpeed < Threshold,
             ComparisonType.LessEq => checkSpeed <= Threshold,
             ComparisonType.Greater => checkSpeed > Threshold,
             ComparisonType.GreaterEq => checkSpeed >= Threshold
         };
         if (!isTriggered) return;
-        switch (Action)
-        {
+        switch (Action) {
             case TriggerAction.Kill:
                 player.Die(Vector2.Zero);
                 break;

@@ -19,8 +19,7 @@ internal static class LevelExt
 internal class PlayerDeadFlag : SpecialFlag
 {
     public override bool GetValue(Level level) => level.GetPlayer()?.Dead ?? true;
-    public override void SetValue(Level level, bool value)
-    {
+    public override void SetValue(Level level, bool value) {
         if (value && level.GetPlayer() is Player player && !player.Dead) player.Die(Vector2.Zero, true);
     }
 }
@@ -74,8 +73,7 @@ internal class SaveQuitDisabledFlag : SpecialFlag
 internal class IsPlayerSeekerFlag : SpecialFlag
 {
     public override bool GetValue(Level level) => level.GetPlayer()?.Get<PlayerSeekerComponent>() is not null;
-    public override void SetValue(Level level, bool value)
-    {
+    public override void SetValue(Level level, bool value) {
         if (level.GetPlayer() is not Player player) return;
         if (value && player.Get<PlayerSeekerComponent>() is null) player.Add(new PlayerSeekerComponent());
         else if (!value && player.Get<PlayerSeekerComponent>() is not null) player.Components.RemoveAll<PlayerSeekerComponent>();
@@ -84,8 +82,7 @@ internal class IsPlayerSeekerFlag : SpecialFlag
 internal class DreamBlocksEnabledFlag : SpecialFlag
 {
     public override bool GetValue(Level level) => level.Session.Inventory.DreamDash;
-    public override void SetValue(Level level, bool value)
-    {
+    public override void SetValue(Level level, bool value) {
         level.Session.Inventory.DreamDash = value;
         if (value) foreach (DreamBlock block in level.Tracker.GetEntities<DreamBlock>()) block.ActivateNoRoutine();
         else foreach (DreamBlock block in level.Tracker.GetEntities<DreamBlock>()) block.DeactivateNoRoutine();
@@ -179,8 +176,7 @@ internal class HereDeathCounter : SpecialCounter
 }
 internal class CassetteBlockIndexCounter : SpecialCounter
 {
-    public override int GetValue(Level level)
-    {
+    public override int GetValue(Level level) {
         if (level.Tracker.GetEntity<CassetteBlockManager>() is not CassetteBlockManager manager) return 0;
         try { return manager.GetSixteenthNote(); }
         catch (DivideByZeroException) { return 0; }

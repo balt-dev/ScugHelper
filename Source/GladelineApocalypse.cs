@@ -9,16 +9,12 @@ internal static class GladelineApocalypse
 {
     [OnLoad]
     internal static void LoadHooks() {
-        static MTexture DoCheck(MTexture self)
-        {
-            if (ScugHelperModuleSettings.GladelineApocalypse)
-            {
+        static MTexture DoCheck(MTexture self) {
+            if (ScugHelperModuleSettings.GladelineApocalypse) {
                 var im = GFX.Portraits["madeline/normal00"];
                 im.ScaleFix = Math.Max((float) self.Width, (float) self.Height) / 160f;
                 return im;
-            }
-            else
-            {
+            } else {
                 return self;
             }
         }

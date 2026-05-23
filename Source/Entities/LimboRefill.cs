@@ -13,8 +13,7 @@ public class LimboRefill : Refill, ICustomRefill
     public static readonly float InitialLimboLength = 2f;
     public static readonly float RefreshLimboLength = 0.5f;
 
-    public LimboRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
-    {
+    public LimboRefill(Vector2 position, bool oneUse) : base(position, false, oneUse) {
         Depth = -100;
         Remove(outline);
         Remove(sprite);
@@ -30,23 +29,19 @@ public class LimboRefill : Refill, ICustomRefill
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
     public LimboRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse")) { }
 
-    public override void Render()
-    {
+    public override void Render() {
         if (sprite.Visible) sprite.DrawOutline();
         base.Render();
     }
-    public void CustomOnPlayer(Player player)
-    {
-        if (LimboTimer <= 0f)
-        {
+    public void CustomOnPlayer(Player player) {
+        if (LimboTimer <= 0f) {
             Audio.Play("event:/game/general/diamond_touch", Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             Collidable = false;
@@ -54,8 +49,7 @@ public class LimboRefill : Refill, ICustomRefill
             respawnTimer = 2.5f;
         }
     }
-    public IEnumerator NewRefillRoutine(Player player)
-    {
+    public IEnumerator NewRefillRoutine(Player player) {
         Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;
@@ -77,8 +71,7 @@ public class LimboRefill : Refill, ICustomRefill
 
 
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.Player.CreateTrail += Player_CreateTrail;
         On.Celeste.Player.Update += Player_Update;
         On.Celeste.Player.Render += Player_Render;
@@ -90,8 +83,7 @@ public class LimboRefill : Refill, ICustomRefill
         On.Celeste.Actor.MoveV += OnActorMoveV;
     }
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         On.Celeste.Player.CreateTrail -= Player_CreateTrail;
         On.Celeste.Player.Update -= Player_Update;
         On.Celeste.Player.Render -= Player_Render;
@@ -103,30 +95,24 @@ public class LimboRefill : Refill, ICustomRefill
         On.Celeste.Actor.MoveV -= OnActorMoveV;
     }
 
-    private static bool OnActorMoveH(On.Celeste.Actor.orig_MoveH orig, Actor self, float move, Collision onCollide, Solid pusher)
-    {
-        if (self is Player player && LimboTimer > 0f)
-        {
+    private static bool OnActorMoveH(On.Celeste.Actor.orig_MoveH orig, Actor self, float move, Collision onCollide, Solid pusher) {
+        if (self is Player player && LimboTimer > 0f) {
             LimboColliderList collList;
             player.Collider = collList = new LimboColliderList(player.Collider);
             var res = orig(self, move, onCollide, pusher);
             player.Collider = collList.OriginalCollider;
             return res;
-        }
-        else { return orig(self, move, onCollide, pusher); }
+        } else { return orig(self, move, onCollide, pusher); }
     }
 
-    private static bool OnActorMoveV(On.Celeste.Actor.orig_MoveV orig, Actor self, float move, Collision onCollide, Solid pusher)
-    {
-        if (self is Player player && LimboTimer > 0f)
-        {
+    private static bool OnActorMoveV(On.Celeste.Actor.orig_MoveV orig, Actor self, float move, Collision onCollide, Solid pusher) {
+        if (self is Player player && LimboTimer > 0f) {
             LimboColliderList collList;
             player.Collider = collList = new LimboColliderList(player.Collider);
             var res = orig(self, move, onCollide, pusher);
             player.Collider = collList.OriginalCollider;
             return res;
-        }
-        else { return orig(self, move, onCollide, pusher); }
+        } else { return orig(self, move, onCollide, pusher); }
     }
 
     internal static bool DenyEntityCollisions(Entity ent)
@@ -135,22 +121,19 @@ public class LimboRefill : Refill, ICustomRefill
     private static bool OnPlayerColliderCheck(On.Celeste.PlayerCollider.orig_Check orig, PlayerCollider self, Player player)
         => !DenyEntityCollisions(self.Entity) && orig(self, player);
 
-    private static void Player_Render(On.Celeste.Player.orig_Render orig, Player self)
-    {
+    private static void Player_Render(On.Celeste.Player.orig_Render orig, Player self) {
         if (!(LimboTimer > 0))
             orig(self);
     }
 
     public static float LimboTimer { get; internal set; }
 
-    private static void CreateTrail(Player player)
-    {
+    private static void CreateTrail(Player player) {
         Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
         TrailManager.Add(player, scale, player.Hair.GetHairColor(0) * (0.4f + Math.Clamp(1.0f - LimboTimer / RefreshLimboLength, 0.0f, 1.0f) * 0.6f));
     }
 
-    private static void Player_CreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player)
-    {
+    private static void Player_CreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player) {
         if (LimboTimer > 0)
             CreateTrail(player);
         else
@@ -158,33 +141,28 @@ public class LimboRefill : Refill, ICustomRefill
     }
     static float oldTimer;
 
-    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self) {
         orig(self);
 
         if (LimboTimer > 0 && self.Scene.OnInterval(0.05f))
             CreateTrail(self);
 
-        if (LimboTimer > 0 && (Input.MoveX != 0 || Input.MoveY != 0 || Input.Jump.Check || Input.Dash.Check || Input.Grab.Check || Input.CrouchDash.Check))
-        {
+        if (LimboTimer > 0 && (Input.MoveX != 0 || Input.MoveY != 0 || Input.Jump.Check || Input.Dash.Check || Input.Grab.Check || Input.CrouchDash.Check)) {
             LimboTimer = Math.Max(LimboTimer, RefreshLimboLength);
         }
         LimboTimer -= Engine.DeltaTime;
-        if (oldTimer > 0 && LimboTimer <= 0)
-        {
+        if (oldTimer > 0 && LimboTimer <= 0) {
             self.Play("event:/game/06_reflection/feather_state_end");
         }
         oldTimer = LimboTimer;
     }
 
-    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self)
-    {
+    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self) {
         LimboTimer = 0f;
         orig(self);
     }
 
-    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
-    {
+    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
         LimboTimer = 0f;
         orig(self);
     }

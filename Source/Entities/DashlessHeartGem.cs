@@ -15,20 +15,16 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class DashlessHeartGem(EntityData data, Vector2 offset) : HeartGem(data, offset)
 {
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.HeartGem.OnPlayer += OnPlayerHook;
     }
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         On.Celeste.HeartGem.OnPlayer -= OnPlayerHook;
     }
 
-    private static void OnPlayerHook(On.Celeste.HeartGem.orig_OnPlayer orig, HeartGem self, Player player)
-    {
-        if (self is DashlessHeartGem && !(self.collected || (self.Scene as Level).Frozen))
-        {
+    private static void OnPlayerHook(On.Celeste.HeartGem.orig_OnPlayer orig, HeartGem self, Player player) {
+        if (self is DashlessHeartGem && !(self.collected || (self.Scene as Level).Frozen)) {
             self.Collect(player);
             return;
         }

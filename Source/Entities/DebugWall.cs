@@ -17,8 +17,7 @@ public class DebugWall : Entity
     readonly int MyWidth;
     readonly int MyHeight;
 
-    public DebugWall(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public DebugWall(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Background = data.Bool("Background");
         MyWidth = data.Width / 8;
         MyHeight = data.Height / 8;
@@ -30,24 +29,19 @@ public class DebugWall : Entity
     }
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         On.Celeste.Editor.LevelTemplate.ctor_LevelData += OnCtorLevelData;
     }
 
     [OnUnload]
-    internal static void UnloadHooks()
-    {
+    internal static void UnloadHooks() {
         On.Celeste.Editor.LevelTemplate.ctor_LevelData -= OnCtorLevelData;
     }
 
-    private static void OnCtorLevelData(On.Celeste.Editor.LevelTemplate.orig_ctor_LevelData orig, Editor.LevelTemplate self, LevelData data)
-    {
+    private static void OnCtorLevelData(On.Celeste.Editor.LevelTemplate.orig_ctor_LevelData orig, Editor.LevelTemplate self, LevelData data) {
         orig(self, data);
-        foreach (EntityData entData in data.Entities)
-        {
-            if (entData.Name == "ScugHelper/DebugWall")
-            {
+        foreach (EntityData entData in data.Entities) {
+            if (entData.Name == "ScugHelper/DebugWall") {
                 Rectangle rect = new((int)entData.Position.X / 8, (int)entData.Position.Y / 8, entData.Width / 8, entData.Height / 8);
                 if (entData.Bool("Background")) self.backs.Add(rect);
                 else self.solids.Add(rect);

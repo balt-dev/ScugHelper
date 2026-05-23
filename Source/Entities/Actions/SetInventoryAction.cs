@@ -15,10 +15,8 @@ public class SetInventoryAction(EntityData data, Vector2 _) : Entity(), IAction
     public bool backpack = data.Bool("Backpack", true);
     public bool noRefills = data.Bool("NoRefills", false);
     
-    public void Alert(Level level)
-    {
-        level.Session.Inventory = new PlayerInventory()
-        {
+    public void Alert(Level level) {
+        level.Session.Inventory = new PlayerInventory() {
             Dashes = dashes,
             DreamDash = dreamDash,
             Backpack = backpack,

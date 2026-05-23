@@ -8,8 +8,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 public class ActionTrigger(EntityData data, Vector2 offset) : Trigger(data, offset) {
     public readonly string[] Targets = IAction.GetTargets(data);
     public readonly bool Once = data.Bool("Once");
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         ActionManager.AlertActions(Targets, player.level);
         if (Once) RemoveSelf();
     }

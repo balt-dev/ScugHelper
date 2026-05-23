@@ -20,8 +20,7 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     private readonly bool FlipFacing = data.Bool("FlipFacing", false);
     private readonly bool TeleportCamera = data.Bool("TeleportCamera", true);
     private readonly string Flag = data.String("Flag");
-    internal static readonly ParticleType ParticleType = new(Player.P_DashA)
-    {
+    internal static readonly ParticleType ParticleType = new(Player.P_DashA) {
         Color = Color.White,
         Color2 = Color.Transparent,
         FadeMode = ParticleType.FadeModes.Linear,
@@ -41,8 +40,7 @@ public class TeleportGate(EntityData data, Vector2 offset) : AbstractGate(data, 
         SceneAs<Level>().ParticlesFG.Emit(ParticleType, 1, particlePos, Vector2.Zero);
     }
 
-    public override void OnTrigger(Player player)
-    {
+    public override void OnTrigger(Player player) {
         Level level = SceneAs<Level>();
         if (Flag is string flag && !level.Session.GetFlag(flag)) return;
         Add(new Coroutine(TeleportTrigger.TeleportPlayer(player, TeleportPosition, Silent, KeepX, KeepY, TeleportCamera, FlipFacing, Delay, ReloadRoom)));

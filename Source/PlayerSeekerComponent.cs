@@ -15,8 +15,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     static readonly PlayerSeeker _; // For ctrl+click
 
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.Player.Update += OnUpdate;
         On.Celeste.Player.Die += OnDie;
         On.Celeste.Player.Render += OnRender;
@@ -27,51 +26,43 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         On.Celeste.Solid.HasPlayerRider += OnHasPlayerRider;
     }
 
-    private static bool OnHasPlayerRider(On.Celeste.Solid.orig_HasPlayerRider orig, Solid self)
-    {
+    private static bool OnHasPlayerRider(On.Celeste.Solid.orig_HasPlayerRider orig, Solid self) {
         if (self is MoveBlock block && self.Scene.Tracker.GetEntity<Player>()?.Get<PlayerSeekerComponent>() is not null)
             return block.triggered;
         return orig(self);
     }
 
-    private static PlayerDeadBody OnDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
-    {
+    private static PlayerDeadBody OnDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats) {
         if (self?.Components?.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp && comp.disableDeath) return null;
         return orig(self, direction, evenIfInvincible, registerDeathInStats);
     }
 
-    private static void OnBoosterPlayer(On.Celeste.Booster.orig_OnPlayer orig, Booster self, Player player)
-    {
+    private static void OnBoosterPlayer(On.Celeste.Booster.orig_OnPlayer orig, Booster self, Player player) {
         if (player.Get<PlayerSeekerComponent>() is not null) return;
         orig(self, player);
     }
 
-    private static void OnAttackPlayer(On.Celeste.Seeker.orig_OnAttackPlayer orig, Seeker self, Player player)
-    {
+    private static void OnAttackPlayer(On.Celeste.Seeker.orig_OnAttackPlayer orig, Seeker self, Player player) {
         if (player.Get<PlayerSeekerComponent>() is not null) return;
         orig(self, player);
     }
-    private static void OnBouncePlayer(On.Celeste.Seeker.orig_OnBouncePlayer orig, Seeker self, Player player)
-    {
+    private static void OnBouncePlayer(On.Celeste.Seeker.orig_OnBouncePlayer orig, Seeker self, Player player) {
         if (player.Get<PlayerSeekerComponent>() is not null) return;
         orig(self, player);
     }
 
-    private static bool OnCanSeePlayer(On.Celeste.Seeker.orig_CanSeePlayer orig, Seeker self, Player player)
-    {
+    private static bool OnCanSeePlayer(On.Celeste.Seeker.orig_CanSeePlayer orig, Seeker self, Player player) {
         return player?.Get<PlayerSeekerComponent>() is null && orig(self, player);
     }
 
-    private static void OnRender(On.Celeste.Player.orig_Render orig, Player self)
-    {
+    private static void OnRender(On.Celeste.Player.orig_Render orig, Player self) {
         if (self.Get<PlayerSeekerComponent>() is PlayerSeekerComponent pleeker)
             pleeker.Render(self);
         else
             orig(self);
     }
 
-    private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self) {
         if (self.Get<PlayerSeekerComponent>() is PlayerSeekerComponent pleeker)
             pleeker.Update(self);
         else
@@ -99,10 +90,8 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     private StateMachine oldStateMachine;
     private bool added;
 
-    public override void Added(Entity entity)
-    {
-        if (entity is Player self)
-        {
+    public override void Added(Entity entity) {
+        if (entity is Player self) {
             self.calledDashEvents = true;
             player = self;
             if (playSound) Audio.Play("event:/game/05_mirror_temple/seeker_playercontrolstart");
@@ -123,15 +112,11 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             added = true;
             var sol = new Solid(Vector2.Zero, 0, 0, false);
             player.TrySquishWiggle(new CollisionData() { Hit = sol, Pusher = sol, TargetPosition = self.Position }, 10, 10);
-        }
-        else RemoveSelf();
+        } else RemoveSelf();
     }
-    public override void Removed(Entity entity)
-
-    {
+    public override void Removed(Entity entity) {
         added = false;
-        if (entity is Player self)
-        {
+        if (entity is Player self) {
             self.Play("event:/game/06_reflection/feather_state_end");
             self.SceneAs<Level>().Particles.Emit(Seeker.P_Attack, 32, self.Center, new(5, 7), Calc.Random.NextAngle());
             self.Collider = oldCollider;
@@ -159,8 +144,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
     public void CreateTrail(Player self) => CreateTrail(self, Seeker.TrailColor);
 
-    public void CreateTrail(Player self, Color color)
-    {
+    public void CreateTrail(Player self, Color color) {
         Vector2 scale = sprite.Scale;
         sprite.Scale.X *= (float)self.Facing;
         dummySeeker.Position = self.Position;
@@ -173,8 +157,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
     private static readonly FieldInfo FramesAlive = typeof(Player).GetField("framesAlive", BindingFlags.NonPublic | BindingFlags.Instance);
 
-    private void Update(Player self)
-    {
+    private void Update(Player self) {
         if (!added) return;
         if (!self.Dead) FramesAlive.SetValue(self, (int)FramesAlive.GetValue(self) + 1);
         var scene = self.Scene;
@@ -200,21 +183,16 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         }
         disableDeath = false;
 
-        foreach (Trigger entity in player.Scene.Tracker.GetEntities<Trigger>())
-        {
-            if (player.CollideCheck(entity))
-            {
-                if (!entity.Triggered)
-                {
+        foreach (Trigger entity in player.Scene.Tracker.GetEntities<Trigger>()) {
+            if (player.CollideCheck(entity)) {
+                if (!entity.Triggered) {
                     entity.Triggered = true;
                     player.triggersInside.Add(entity);
                     entity.OnEnter(player);
                 }
 
                 entity.OnStay(player);
-            }
-            else if (entity.Triggered)
-            {
+            } else if (entity.Triggered) {
                 player.triggersInside.Remove(entity);
                 entity.Triggered = false;
                 entity.OnLeave(player);
@@ -238,33 +216,24 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             Vector2 position = self.Position;
 
             DreamBlock dreamBlock = self.CollideFirst<DreamBlock>();
-            if (dreamBlock == null)
-            {
-                if (self.DreamDashedIntoSolid())
-                {
-                    if (SaveData.Instance.Assists.Invincible)
-                    {
+            if (dreamBlock == null) {
+                if (self.DreamDashedIntoSolid()) {
+                    if (SaveData.Instance.Assists.Invincible) {
                         self.Position = position;
                         self.Speed *= -1f;
                         self.Play("event:/game/general/assist_dreamblockbounce");
-                    }
-                    else
+                    } else
                         self.Die(Vector2.Zero);
-                }
-                else
-                {
+                } else {
                     dreamDashing = false;
 
                     player.Stop(player.dreamSfxLoop);
                     player.Play("event:/char/madeline/dreamblock_exit");
                 }
-            }
-            else
-            {
+            } else {
                 self.dreamBlock = dreamBlock;
 
-                if (level.OnInterval(0.02f))
-                {
+                if (level.OnInterval(0.02f)) {
                     DisplacementRenderer.Burst burst = level.Displacement.AddBurst(self.Center, 0.3f, 0f, 40f);
                     burst.WorldClipCollider = dreamBlock.Collider;
                     burst.WorldClipPadding = 2;
@@ -277,34 +246,28 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             if (self.dashAttackTimer <= 0f)
                 sprite.Play("spotted");
 
-            if (trailTimerA > 0f)
-            {
+            if (trailTimerA > 0f) {
                 trailTimerA -= Engine.DeltaTime;
                 if (trailTimerA <= 0f)
                     CreateTrail(self);
             }
 
-            if (trailTimerB > 0f)
-            {
+            if (trailTimerB > 0f) {
                 trailTimerB -= Engine.DeltaTime;
                 if (trailTimerB <= 0f)
                     CreateTrail(self);
             }
 
-            if (scene.OnInterval(0.04f))
-            {
+            if (scene.OnInterval(0.04f)) {
                 Vector2 vector = self.Speed.SafeNormalize();
                 self.SceneAs<Level>().Particles.Emit(Seeker.P_Attack, 2, self.Position + vector * 4f, Vector2.One * 4f, vector.Angle());
             }
-        }
-        else
-        {
+        } else {
             Vector2 vector2 = level.InCutscene ? Vector2.UnitY : Input.Aim.Value.SafeNormalize();
             float mul = self.SwimCheck() ? 0.4f : 1f;
             self.Speed += vector2 * 600f * Engine.DeltaTime * mul;
             float num = self.Speed.Length();
-            if (num > 120f)
-            {
+            if (num > 120f) {
                 num = Calc.Approach(num, 120f, Engine.DeltaTime * 700f);
                 self.Speed = self.Speed.SafeNormalize(num);
             }
@@ -324,8 +287,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
                 Dash(self, Input.Aim.Value.EightWayNormal());
         }
         self.LastBooster = self.CurrentBooster = null;
-        if (!self.calledDashEvents)
-        {
+        if (!self.calledDashEvents) {
             self.calledDashEvents = true;
 
             SaveData.Instance.TotalDashes++;
@@ -346,11 +308,9 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
         // Actor.Update
         self.LiftSpeed = Vector2.Zero;
-        if (self.liftSpeedTimer > 0f)
-        {
+        if (self.liftSpeedTimer > 0f) {
             self.liftSpeedTimer -= Engine.DeltaTime;
-            if (self.liftSpeedTimer <= 0f)
-            {
+            if (self.liftSpeedTimer <= 0f) {
                 self.lastLiftSpeed = Vector2.Zero;
             }
         }
@@ -364,23 +324,18 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
     static readonly Color[] colors = [Calc.HexToColor("FFEF11"), Calc.HexToColor("FF00D0"), Calc.HexToColor("08a310"), Calc.HexToColor("5fcde4"), Calc.HexToColor("7fb25e"), Calc.HexToColor("E0564C"), Calc.HexToColor("5b6ee1"), Calc.HexToColor("CC3B3B"), Calc.HexToColor("7daa64")];
     private static Color RandomDreamColor;
-    private static void RandomizeDreamColor()
-    {
+    private static void RandomizeDreamColor() {
         RandomDreamColor = Calc.Random.Choose(colors);
     }
 
-    private void OnSeekerCollide(CollisionData data)
-    {
+    private void OnSeekerCollide(CollisionData data) {
 
-        if (player.dashAttackTimer <= 0f)
-        {
-            if (data.Direction.X != 0f)
-            {
+        if (player.dashAttackTimer <= 0f) {
+            if (data.Direction.X != 0f) {
                 player.Speed.X = 0f;
             }
 
-            if (data.Direction.Y != 0f)
-            {
+            if (data.Direction.Y != 0f) {
                 player.Speed.Y = 0f;
             }
 
@@ -404,81 +359,62 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         float direction;
         Vector2 position;
         Vector2 positionRange;
-        if (data.Direction.X > 0f)
-        {
+        if (data.Direction.X > 0f) {
             direction = MathF.PI;
             position = new Vector2(player.Right, player.Y);
             positionRange = Vector2.UnitY * 4f;
-        }
-        else if (data.Direction.X < 0f)
-        {
+        } else if (data.Direction.X < 0f) {
             direction = 0f;
             position = new Vector2(player.Left, player.Y);
             positionRange = Vector2.UnitY * 4f;
-        }
-        else if (data.Direction.Y > 0f)
-        {
+        } else if (data.Direction.Y > 0f) {
             direction = -MathF.PI / 2f;
             position = new Vector2(player.X, player.Bottom);
             positionRange = Vector2.UnitX * 4f;
-        }
-        else
-        {
+        } else {
             direction = MathF.PI / 2f;
             position = new Vector2(player.X, player.Top);
             positionRange = Vector2.UnitX * 4f;
         }
 
         player.SceneAs<Level>().Particles.Emit(Seeker.P_HitWall, 12, position, positionRange, direction);
-        if (data.Hit is SeekerBarrier)
-        {
+        if (data.Hit is SeekerBarrier) {
             (data.Hit as SeekerBarrier).OnReflectSeeker();
             Audio.Play("event:/game/05_mirror_temple/seeker_hit_lightwall", player.Position);
-        }
-        else
-        {
+        } else {
             Audio.Play("event:/game/05_mirror_temple/seeker_hit_normal", player.Position);
         }
 
-        if (data.Direction.X != 0f)
-        {
+        if (data.Direction.X != 0f) {
             player.Speed.X *= -0.8f;
             sprite.Scale = new Vector2(0.6f, 1.4f);
-        }
-        else if (data.Direction.Y != 0f)
-        {
+        } else if (data.Direction.Y != 0f) {
             player.Speed.Y *= -0.8f;
             sprite.Scale = new Vector2(1.4f, 0.6f);
         }
 
-        if (data.Hit is TempleCrackedBlock)
-        {
+        if (data.Hit is TempleCrackedBlock) {
             Celeste.Freeze(0.15f);
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
             (data.Hit as TempleCrackedBlock).Break(player.Position);
         }
 
-        if (data.Hit is DashSwitch dashSwitch)
-        {
+        if (data.Hit is DashSwitch dashSwitch) {
             dashSwitch.OnDashed(null, Vector2.UnitX * Math.Sign(player.DashDir.X));
             dashSwitch.OnDashed(null, Vector2.UnitY * Math.Sign(player.DashDir.Y));
         }
     }
 
-    private void OnCollideH(CollisionData data)
-    {
+    private void OnCollideH(CollisionData data) {
         OnSeekerCollide(data);
     }
 
-    private void OnCollideV(CollisionData data)
-    {
+    private void OnCollideV(CollisionData data) {
         OnSeekerCollide(data);
     }
 
-    public void Dash(Player self, Vector2 dir)
-    {
-        if (self.dashAttackTimer <= 0f)
-        {
+    public void Dash(Player self, Vector2 dir) {
+        if (self.dashAttackTimer <= 0f) {
             CreateTrail(self);
             trailTimerA = 0.1f;
             trailTimerB = 0.25f;
@@ -490,8 +426,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         if (self.DashDir == Vector2.Zero)
             self.DashDir.X = Math.Sign((int)self.Facing);
 
-        if (self.DashDir.X != 0f)
-        {
+        if (self.DashDir.X != 0f) {
             self.Facing = (Facings)Math.Sign(self.DashDir.X);
         }
 
@@ -506,12 +441,10 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             sprite.Scale = new Vector2(1.4f, 0.6f);
     }
 
-    private void Render(Player self)
-    {
+    private void Render(Player self) {
         if (!added) return;
         if (dreamDashing) return;
-        if (!SaveData.Instance.Assists.InvisibleMotion || !(self.Speed.LengthSquared() > 100f))
-        {
+        if (!SaveData.Instance.Assists.InvisibleMotion || !(self.Speed.LengthSquared() > 100f)) {
             Vector2 scale = sprite.Scale;
             sprite.Scale.X *= (float)self.Facing;
             sprite.Render();
@@ -522,8 +455,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     #endregion
 
     [Command("pleeker", "Toggles the player seeker component.")]
-    internal static void Pleeker()
-    {
+    internal static void Pleeker() {
         if (Engine.Scene.Tracker.GetEntity<Player>() is not Player player) return;
         if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent pleeker) player.Remove(pleeker);
         else player.Add(new PlayerSeekerComponent());

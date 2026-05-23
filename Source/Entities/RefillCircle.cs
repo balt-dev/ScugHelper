@@ -22,8 +22,7 @@ public class RefillCircle : Entity
     private readonly VertexLight Light;
     private VirtualRenderTarget? bakedTexture;
 
-    public RefillCircle(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
-    {
+    public RefillCircle(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         Tag |= Tags.TransitionUpdate;
         Depth = 5000;
         ID = id.ID;
@@ -39,18 +38,15 @@ public class RefillCircle : Entity
         Add(Light = new VertexLight(Vector2.One * Radius, Color.White, 0.5f, (int) Radius, (int) Radius + 32));
     }
 
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         Refill closestRefill = null;
         foreach (Entity entity in scene.Entities)
             if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;
 
-        if (closestRefill == null)
-        {
-            switch (FallbackRefillType)
-            {
+        if (closestRefill == null) {
+            switch (FallbackRefillType) {
                 case "green":
                     scene.Add(closestRefill = new Refill(Position, false, FallbackRefillOneUse));
                     break;
@@ -73,8 +69,7 @@ public class RefillCircle : Entity
                     scene.Add(closestRefill = new HiccupRefill(Position, FallbackRefillOneUse));
                     break;
             }
-            if (closestRefill is null)
-            {
+            if (closestRefill is null) {
                 Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill rectangle...");
                 RemoveSelf();
                 return;
@@ -85,8 +80,7 @@ public class RefillCircle : Entity
         refill = closestRefill;
     }
 
-    public void OnPlayer(Player player)
-    {
+    public void OnPlayer(Player player) {
         if (refill is null) return;
         if (refill.respawnTimer > 0f) return;
         foreach (PlayerCollider collider in refill.Components.GetAll<PlayerCollider>().ToArray())
@@ -94,8 +88,7 @@ public class RefillCircle : Entity
         if (refill.Scene == null) RemoveSelf();
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         refill?.Position = Center + refill.Center - refill.Position;
         refill?.light.Position = Center + refill.Center - refill.Position;
@@ -103,10 +96,8 @@ public class RefillCircle : Entity
         Light.Alpha = (refill?.sprite.Visible ?? false) ? 1.0f : 0.0f;
     }
 
-    internal void BakeTexture()
-    {
-        if (bakedTexture is null)
-        {
+    internal void BakeTexture() {
+        if (bakedTexture is null) {
             var oldTargets = Engine.Graphics.GraphicsDevice.GetRenderTargets();
 
             Engine.Graphics.GraphicsDevice.SetRenderTarget(bakedTexture = VirtualContent.CreateRenderTarget($"refillCirclePrerender_{ID}", (int)Radius * 2, (int)Radius * 2));
@@ -117,24 +108,19 @@ public class RefillCircle : Entity
         }
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (refill is null) return;
         refill.sprite.Y = refill.flash.Y = refill.outline.Y = 0;
         if (!(refill.sprite.Visible || refill.outline.Visible)) { return; }
-        if (!refill.sprite.Visible)
-        {
+        if (!refill.sprite.Visible) {
             int res = (int) (Math.Clamp(Radius / 4, 1, 8) * 4);
-            for (int i = 0; i < res; i += 2)
-            {
+            for (int i = 0; i < res; i += 2) {
                 var point = Position + Vector2.One * Radius + Calc.AngleToVector(i * 2f * MathF.PI / res, Radius);
                 var nextPoint = Position + Vector2.One * Radius + Calc.AngleToVector((i + 1) * 2f * MathF.PI / res, Radius);
                 Draw.Line(point, nextPoint, Color.White);
             }
-        }
-        else
-        {
+        } else {
             Draw.Circle(Position + Vector2.One * Radius, Radius, OutlineColor, 32);
             
             GameplayRenderer.End();
@@ -167,11 +153,9 @@ public class RefillCircle : Entity
         GFX.DrawIndexedVertices(matrix, points.ToArray(), points.Count, indices.ToArray(), resolution);
     }
 
-    internal void OnRenderBloom()
-    {
+    internal void OnRenderBloom() {
         if (refill is null) return;
-        if (refill.sprite.Visible)
-        {
+        if (refill.sprite.Visible) {
             if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White * InfillOpacity);
             Draw.Circle(Position + Vector2.One * Radius, Radius, Color.White, 32);
         }

@@ -10,8 +10,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/SeekerRefill")]
 public class SeekerRefill : Refill, ICustomRefill
 {
-    public SeekerRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
-    {
+    public SeekerRefill(Vector2 position, bool oneUse) : base(position, false, oneUse) {
         Depth = -100;
         Remove(outline);
         Remove(sprite);
@@ -27,21 +26,18 @@ public class SeekerRefill : Refill, ICustomRefill
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
     public SeekerRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse")) { }
 
-    public override void Render()
-    {
+    public override void Render() {
         if (sprite.Visible) sprite.DrawOutline();
         base.Render();
     }
-    public void CustomOnPlayer(Player player)
-    {
+    public void CustomOnPlayer(Player player) {
         if (player.Get<PlayerSeekerComponent>() is null) {
             Audio.Play("event:/game/general/diamond_touch", Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
@@ -50,8 +46,7 @@ public class SeekerRefill : Refill, ICustomRefill
             respawnTimer = 2.5f;
         }
     }
-    public IEnumerator NewRefillRoutine(Player player)
-    {
+    public IEnumerator NewRefillRoutine(Player player) {
         Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;

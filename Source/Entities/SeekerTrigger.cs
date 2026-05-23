@@ -18,14 +18,12 @@ public class SeekerTrigger(EntityData data, Vector2 offset) : Trigger(data, offs
         Apply(player);
         
     }
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         if (Global) return;
         Apply(player);
     }
 
-    private void Apply(Player player)
-    {
+    private void Apply(Player player) {
         var comp = player.Get<PlayerSeekerComponent>();
         if (State && comp is null)
             player.Add(new PlayerSeekerComponent(playSound: false));

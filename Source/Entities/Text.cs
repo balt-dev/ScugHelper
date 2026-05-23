@@ -99,8 +99,7 @@ internal class DeathsHereStringPart : StringPart
 }
 internal class TimeStringPart : StringPart
 {
-    internal override string Format(Level level, Player? player)
-    {
+    internal override string Format(Level level, Player? player) {
         var totalTicks = level.Session.Time;
         var totalMsecs = totalTicks / 10000;
         var msecs = totalMsecs % 1000;
@@ -128,24 +127,19 @@ public partial class Text : Entity
 
     internal static MTexture[] glyphTexturesSmall;
     internal static MTexture[] glyphTexturesTiny;
-    static Text()
-    {
+    static Text() {
         var textAtlas = GFX.Game["smallFont"];
         var glyphList = new List<MTexture>();
-        for (int y = 0; y < 6; y++)
-        {
-            for (int x = 0; x < 16; x++)
-            {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 16; x++) {
                 glyphList.Add(new(textAtlas, x * 4, y * 6, 3, 5));
             }
         }
         glyphTexturesSmall = glyphList.ToArray();
         textAtlas = GFX.Game["tinyFont"];
         glyphList = [];
-        for (int y = 0; y < 6; y++)
-        {
-            for (int x = 0; x < 16; x++)
-            {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 16; x++) {
                 glyphList.Add(new(textAtlas, x * 4, y * 5, 3, 4));
             }
         }
@@ -162,8 +156,7 @@ public partial class Text : Entity
     private StringPart[]? parts;
     private string? renderedString;
 
-    public Text(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public Text(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Depth = data.Int("Depth", 10);
         InfillColor = data.HexColor("Infill", Color.White);
         OutlineColor = data.HexColor("Outline", Color.Black);
@@ -185,8 +178,7 @@ public partial class Text : Entity
         ConstructString(level);
     }
 
-    private void CompileStringParts()
-    {
+    private void CompileStringParts() {
         List<StringPart> partList = [];
         var span = FormatString.AsSpan();
         var matches = stringPartRegex.Matches(FormatString).AsEnumerable();
@@ -198,8 +190,7 @@ public partial class Text : Entity
             var groups = match.Groups;
             var qualifier = groups[1]?.Value;
             var key = groups[2].Value;
-            StringPart newPart = qualifier switch
-            {
+            StringPart newPart = qualifier switch {
                 null or "" => new LocalizedStringPart(key),
                 "flag" => new FlagStringPart(key),
                 "counter" => new CounterStringPart(key),
@@ -227,25 +218,21 @@ public partial class Text : Entity
         if (lastSpan.Length > 0) partList.Add(new RawStringPart(lastSpan.ToString()));
         parts = partList.ToArray();
     }
-    private void ConstructString(Level level)
-    {
+    private void ConstructString(Level level) {
         if (parts == null) return;
         Player? player = level.Tracker.GetEntity<Player>();
         renderedString = parts.Select(part => part.Format(level, player)).Aggregate((a, b) => a + b);
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (RequiresUpdate) ConstructString(SceneAs<Level>());
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (Flag is string flag && (!SceneAs<Level>().Session.GetFlag(flag) ^ InvertFlag)) return;
-        if (DrawOutline)
-        {
+        if (DrawOutline) {
             RenderText(new Vector2(-1, -1), OutlineColor);
             RenderText(new Vector2(-1, 0), OutlineColor);
             RenderText(new Vector2(-1, 1), OutlineColor);
@@ -262,12 +249,10 @@ public partial class Text : Entity
         RenderText(renderedString, Position + offset, color);
     }
 
-    internal static void RenderText(string renderedString, Vector2 offset, Color color)
-    {
+    internal static void RenderText(string renderedString, Vector2 offset, Color color) {
         if (renderedString == null) return;
         Vector2 printHead = Vector2.Zero;
-        foreach (var chr in renderedString.AsEnumerable())
-        {
+        foreach (var chr in renderedString.AsEnumerable()) {
             if (chr == '\n') { printHead.X = 0; printHead.Y += ScugHelperModule.Settings.AlternativeFont ? 6 : 5; continue; }
             int codepoint = chr;
             if (codepoint < 32) { continue; }
@@ -287,8 +272,7 @@ public partial class Text : Entity
         using var stream = new FileStream("textdump.json", FileMode.Create);
         var writer = new Utf8JsonWriter(stream);
         writer.WriteStartObject();
-        foreach (var room in data.Levels)
-        {
+        foreach (var room in data.Levels) {
             writer.WriteStartArray(room.Name);
             foreach (var entData in room.Entities)
                 if (entData.Name == "ScugHelper/Text")

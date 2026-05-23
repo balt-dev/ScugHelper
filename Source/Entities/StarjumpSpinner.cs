@@ -18,8 +18,7 @@ public class StarjumpSpinner : Entity
 
     public bool AttachToSolid;
 
-    public StarjumpSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
-    {
+    public StarjumpSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         ID = id.ID;
         Depth = -8500;
         AttachToSolid = data.Bool("AttachToSolid");
@@ -31,27 +30,22 @@ public class StarjumpSpinner : Entity
         fgTex = GFX.Game.GetAtlasSubtextures(spriteDir + "/fg_white");
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         scene.Tracker.GetEntity<StarjumpOutlineRenderer>()?.Track(this);
     }
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         CreateSpinnerSprites(scene);
     }
 
-    public override void Removed(Scene scene)
-    {
+    public override void Removed(Scene scene) {
         base.Removed(scene);
         scene.Tracker.GetEntity<StarjumpOutlineRenderer>()?.Untrack(this);
     }
 
-    private void AddFiller(Vector2 offset)
-    {
-        Image image = new(Calc.Random.Choose(bgTex))
-        {
+    private void AddFiller(Vector2 offset) {
+        Image image = new(Calc.Random.Choose(bgTex)) {
             Position = offset,
             Rotation = Calc.Random.Choose(0, 1, 2, 3) * (MathF.PI / 2f),
             Color = Color.Gray
@@ -61,8 +55,7 @@ public class StarjumpSpinner : Entity
         Add(image);
     }
 
-    private void CreateSpinnerSprites(Scene scene)
-    {
+    private void CreateSpinnerSprites(Scene scene) {
         Calc.PushRandom(RandomSeed);
         foreach (StarjumpSpinner entity in scene.Tracker.GetEntities<StarjumpSpinner>())
             if (entity.ID > ID && entity.AttachToSolid == AttachToSolid && (entity.Position - Position).LengthSquared() < 576f)
@@ -85,8 +78,7 @@ public class StarjumpSpinner : Entity
         Calc.PopRandom();
     }
 
-    public bool SolidCheck(Vector2 position)
-    {
+    public bool SolidCheck(Vector2 position) {
         if (AttachToSolid) return false;
 
         foreach (Solid item in Scene.CollideAll<Solid>(position))

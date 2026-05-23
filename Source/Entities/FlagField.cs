@@ -13,11 +13,9 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/FlagField")]
 public class FlagField : Solid
 {
-    internal class FlagFieldColliderList : ColliderList
-    {
+    internal class FlagFieldColliderList : ColliderList {
         private readonly FlagField field;
-        public FlagFieldColliderList(FlagField field)
-        {
+        public FlagFieldColliderList(FlagField field) {
             colliders = [field.Collider];
             this.field = field;
         }
@@ -46,8 +44,7 @@ public class FlagField : Solid
     internal float CollideTimer;
 
     public FlagField(EntityData data, Vector2 offset)
-        : base(data.Position + offset, data.Width, data.Height, false)
-    {
+        : base(data.Position + offset, data.Width, data.Height, false) {
         Depth = -20000;
         SurfaceSoundIndex = 32;
         Flag = data.String("Flag");
@@ -60,8 +57,7 @@ public class FlagField : Solid
         Add(new CustomBloom(OnRenderBloom));
     }
     
-    private bool BeginPulse()
-    {
+    private bool BeginPulse() {
         CollideTimer = CollidePulseLength;
         return true;
     }
@@ -73,10 +69,8 @@ public class FlagField : Solid
         ParticleSpeed = Collidable ? TangibleSpeed : IntangibleSpeed;
     }
 
-    public override void Render()
-    {
-        if (!Invisible)
-        {
+    public override void Render() {
+        if (!Invisible) {
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color * 0.3f * FillMultiplier * FillMultiplier);
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * (CollideTimer / CollidePulseLength * 0.1f) * FillMultiplier);
             WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * 0.5f * FillMultiplier);
@@ -91,8 +85,7 @@ public class FlagField : Solid
     
     public bool ShouldCollide(Level? level = null) => (level ?? SceneAs<Level>())?.Session.GetFlag(Flag) == FlagState;
 
-    public override void Update()
-    {
+    public override void Update() {
         Collidable = ShouldCollide();
         FillMultiplier = Calc.Approach(FillMultiplier, Collidable ? TangibleOpacity : IntangibleOpacity, Engine.DeltaTime / 0.1f);
         ParticleSpeed = Calc.Approach(ParticleSpeed, Collidable ? TangibleSpeed : IntangibleSpeed, Engine.DeltaTime / 0.35f);
@@ -101,8 +94,7 @@ public class FlagField : Solid
         int num = speeds.Length;
         float height = Height;
         int i = 0;
-        for (int count = particles.Count; i < count; i++)
-        {
+        for (int count = particles.Count; i < count; i++) {
             Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime * ParticleSpeed;
             value.Y %= height - 1f;
             particles[i] = value;
@@ -110,8 +102,7 @@ public class FlagField : Solid
         base.Update();
     }
 
-    public void OnRenderBloom()
-    {
+    public void OnRenderBloom() {
         if (Visible && !Invisible) // lol
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * 0.1f);
     }

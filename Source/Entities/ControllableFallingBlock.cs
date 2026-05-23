@@ -17,22 +17,19 @@ public class ControllableFallingBlock : FallingBlock
     protected int FallDirection = 1;
     protected bool AllowChangeInMidair = true;
 
-    public ControllableFallingBlock(EntityData data, Vector2 offset) : base(data, offset)
-    {
+    public ControllableFallingBlock(EntityData data, Vector2 offset) : base(data, offset) {
         AllowChangeInMidair = data.Bool("AllowChangeInMidair");
         Remove(Get<Coroutine>());
         Add(new Coroutine(MySequence()));
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (HasPlayerClimbing() && (AllowChangeInMidair || !HasStartedFalling))
             FallDirection = Input.MoveY.Value == 0 ? FallDirection : Input.MoveY.Value;
     }
     
-    public IEnumerator MySequence()
-    {
+    public IEnumerator MySequence() {
         while (!Triggered && (!PlayerFallCheck()))
             yield return null;
 
@@ -40,8 +37,7 @@ public class ControllableFallingBlock : FallingBlock
             FallDelay -= Engine.DeltaTime;
             yield return null;
 
-        while (true)
-        {
+        while (true) {
             HasStartedFalling = true;
             ShakeSfx();
             StartShaking();
@@ -49,20 +45,17 @@ public class ControllableFallingBlock : FallingBlock
 
             yield return 0.2f;
             float timer = 0.4f;
-            if (finalBoss)
-            {
+            if (finalBoss) {
                 timer = 0.2f;
             }
 
-            while (timer > 0f && PlayerWaitCheck())
-            {
+            while (timer > 0f && PlayerWaitCheck()) {
                 yield return null;
                 timer -= Engine.DeltaTime;
             }
 
             StopShaking();
-            for (int i = 2; i < Width; i += 4)
-            {
+            for (int i = 2; i < Width; i += 4) {
                 if (Scene.CollideCheck<Solid>(TopLeft + new Vector2(i, -2f)))
                     SceneAs<Level>().Particles.Emit(P_FallDustA, 2, new Vector2(X + i, Y), Vector2.One * 4f, MathF.PI / 2f);
 
@@ -70,16 +63,14 @@ public class ControllableFallingBlock : FallingBlock
             }
 
             float speed = 0f;
-            while (true)
-            {
+            while (true) {
                 float maxSpeed = (finalBoss ? 130f : 160f) * FallDirection;
                 Level level = SceneAs<Level>();
                 speed = Calc.Approach(speed, maxSpeed, 500f * Engine.DeltaTime);
                 if (MoveVCollideSolids(speed * Engine.DeltaTime, thruDashBlocks: true))
                     break;
 
-                if (Top > level.Bounds.Bottom + 16 || (Top > level.Bounds.Bottom - 1 && CollideCheck<Solid>(Position + new Vector2(0f, FallDirection))))
-                {
+                if (Top > level.Bounds.Bottom + 16 || (Top > level.Bounds.Bottom - 1 && CollideCheck<Solid>(Position + new Vector2(0f, FallDirection)))) {
                     FallingBlock fallingBlock = this;
                     FallingBlock fallingBlock2 = this;
                     bool collidable = false;

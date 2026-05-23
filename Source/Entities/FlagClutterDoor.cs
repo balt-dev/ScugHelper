@@ -22,8 +22,7 @@ public class FlagClutterDoor : ClutterDoor
     public readonly bool TargetState;
     bool flagStateLastUpdate;
 
-    public FlagClutterDoor(EntityData data, Vector2 offset, Session session) : base(data, offset, session)
-    {
+    public FlagClutterDoor(EntityData data, Vector2 offset, Session session) : base(data, offset, session) {
         Collider = new Hitbox(32, 32);
         sprite.Position = new(Collider.Width / 2, Collider.Height / 2);
         Color = (ClutterBlock.Colors)(-1);
@@ -35,14 +34,12 @@ public class FlagClutterDoor : ClutterDoor
     }
 
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.ClutterDoor.Update += OnUpdate;
         On.Celeste.ClutterDoor.IsLocked += OnIsLocked;
     }
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         On.Celeste.ClutterDoor.Update -= OnUpdate;
         On.Celeste.ClutterDoor.IsLocked -= OnIsLocked;
     }
@@ -51,22 +48,19 @@ public class FlagClutterDoor : ClutterDoor
         => self is FlagClutterDoor flagDoor ? session.GetFlag(flagDoor.Flag) != flagDoor.TargetState : orig(self, session);
 
 
-    void LoudUnlock()
-    {
+    void LoudUnlock() {
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
         Audio.Play("event:/game/03_resort/forcefield_vanish", Position);
         sprite.Play("open");
         Collidable = false;
     }
 
-    void InstantLock()
-    {
+    void InstantLock() {
         Visible = true;
         sprite.Play("idle");
         Collidable = true;
     }
-    void Lock()
-    {
+    void Lock() {
         Visible = true;
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
         Audio.Play("event:/game/03_resort/forcefield_bump", Position);
@@ -74,16 +68,14 @@ public class FlagClutterDoor : ClutterDoor
         Collidable = true;
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (SceneAs<Level>().Session.GetFlag(Flag) == TargetState && flagStateLastUpdate != TargetState) LoudUnlock();
         else if (SceneAs<Level>().Session.GetFlag(Flag) != TargetState && flagStateLastUpdate == TargetState) Lock();
         flagStateLastUpdate = SceneAs<Level>().Session.GetFlag(Flag);
     }
     
-    private static void OnUpdate(On.Celeste.ClutterDoor.orig_Update orig, ClutterDoor self)
-    {
+    private static void OnUpdate(On.Celeste.ClutterDoor.orig_Update orig, ClutterDoor self) {
         orig(self);
         self.SurfaceSoundIndex = self.HasPlayerOnTop() ? 40 : 20; // Vanilla has no footsteps and I don't like that
     }

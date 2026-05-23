@@ -16,46 +16,39 @@ public class DebugViewTrigger(EntityData e, Vector2 offset) : Trigger(e, offset)
 {
     static bool ForceRenderDebug;
 
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         base.OnEnter(player);
         ForceRenderDebug = true;
     }
-    public override void OnLeave(Player player)
-    {
+    public override void OnLeave(Player player) {
         base.OnLeave(player);
         ForceRenderDebug = false;
     }
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         On.Celeste.Level.Reload += OnLevelReload;
         On.Celeste.LevelLoader.StartLevel += OnLevelLoaderStartLevel;
         IL.Celeste.GameplayRenderer.Render += RenderHook;
     }
     [OnUnload]
-    internal static void UnloadHooks()
-    {
+    internal static void UnloadHooks() {
         On.Celeste.Level.Reload -= OnLevelReload;
         On.Celeste.LevelLoader.StartLevel -= OnLevelLoaderStartLevel;
         IL.Celeste.GameplayRenderer.Render -= RenderHook;
     }
 
-    private static void OnLevelReload(On.Celeste.Level.orig_Reload orig, Level self)
-    {
+    private static void OnLevelReload(On.Celeste.Level.orig_Reload orig, Level self) {
         ForceRenderDebug = false;
         orig(self);
     }
 
-    private static void OnLevelLoaderStartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
-    {
+    private static void OnLevelLoaderStartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
         ForceRenderDebug = false;
         orig(self);
     }
 
-    private static void RenderHook(ILContext il)
-    {
+    private static void RenderHook(ILContext il) {
         ILCursor cur = new(il);
         if (!cur.TryGotoNext(MoveType.After, instr => instr.MatchLdfld<Monocle.Commands>("Open")))
             throw new InvalidOperationException("Hitbox view trigger failed to match IL code for the Render hook.");

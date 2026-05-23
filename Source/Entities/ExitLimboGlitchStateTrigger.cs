@@ -10,8 +10,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/ExitLimboGlitchStateTrigger")]
 public class ExitLimboGlitchStateTrigger(EntityData data, Vector2 offset) : Trigger(data, offset) {
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         player.Dead = false;
         player.Depth = 0;
         player.Collidable = true;

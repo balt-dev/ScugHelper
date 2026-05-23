@@ -18,8 +18,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
     private readonly int SpeedMinimum = data.Int("SpeedMinimum", 0);
     private static ILHook? hook_Player_orig_Update;
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         hook_Player_orig_Update = new ILHook(typeof(Player).GetMethod("orig_Update", BindingFlags.Public | BindingFlags.Instance)!, PlayerUpdateHook);
     }
     [OnUnload]
@@ -27,8 +26,7 @@ public class FastfallBlock(EntityData data, Vector2 offset, EntityID id) : Abstr
         hook_Player_orig_Update?.Dispose();
     }
 
-    private static void PlayerUpdateHook(ILContext il)
-    {
+    private static void PlayerUpdateHook(ILContext il) {
         ILCursor cur = new(il);
         if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             static instr => instr.MatchLdcI4(22),

@@ -9,8 +9,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 [CustomEntity("ScugHelper/PauseAction")]
 public class PauseAction() : Entity(), IAction
 {
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         if (level.Paused) return;
         level.Pause();
     }

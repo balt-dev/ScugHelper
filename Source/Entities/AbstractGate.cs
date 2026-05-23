@@ -27,8 +27,7 @@ public abstract class AbstractGate : Entity
     protected Vector2 lineDir;
     protected Vector2 lineNorm;
 
-    public AbstractGate(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public AbstractGate(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Angle = (float)(data.Float("Angle") * Math.PI / 180);
         Size = data.Float("Size");
         lineDir = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
@@ -41,14 +40,12 @@ public abstract class AbstractGate : Entity
     /// </summary>
     public abstract void OnTrigger(Player player);
 
-    public override void DebugRender(Camera camera)
-    {
+    public override void DebugRender(Camera camera) {
         base.DebugRender(camera);
         Draw.Line(Position - lineDir * Size / 2, Position + lineDir * Size / 2, Color.Cyan);
     }
 
-    private bool CheckLine(Vector2 a, Vector2 b)
-    {
+    private bool CheckLine(Vector2 a, Vector2 b) {
         var prevPos = a;
         var delta = b - prevPos;
         var d1 = Vector2.Dot(prevPos - Position, lineNorm);
@@ -61,23 +58,18 @@ public abstract class AbstractGate : Entity
         return Math.Abs(proj) <= Size / 2;
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         Player player = SceneAs<Level>().Tracker.GetEntity<Player>();
         if (player == null) return;
 
         if (CheckLine(player.PreviousPosition, player.Position))
             OnTrigger(player);
-        else
-        {
-            if (player.IsInverted())
-            {
+        else {
+            if (player.IsInverted()) {
                 if (CheckLine(player.PreviousPosition + player.BottomCenter - player.Position, player.BottomCenter))
                     OnTrigger(player);
-            }
-            else
-            {
+            } else {
                 if (CheckLine(player.PreviousPosition + player.TopCenter - player.Position, player.TopCenter))
                     OnTrigger(player);
             }

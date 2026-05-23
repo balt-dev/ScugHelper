@@ -15,8 +15,7 @@ public static class SandboxedLua {
 
     public static bool IsMainThread => System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadID;
 
-    internal static void LogLuaError(string message)
-    {
+    internal static void LogLuaError(string message) {
         Logger.Error(nameof(ScugHelperModule), $"[LUA] {message}");
         Engine.Commands.Open = true;
         Engine.Commands.Log($"[LUA] Error: {message}", Color.Red);
@@ -76,8 +75,7 @@ public static class SandboxedLua {
     private static void OnReloadLevel(Level level) => WipeCache();
     private static void OnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow) => WipeCache();
 
-    private static void WipeCache()
-    {
+    private static void WipeCache() {
         Lua lua = Instance;
 
         foreach (int ret in RequireResults.Values) {
@@ -88,8 +86,7 @@ public static class SandboxedLua {
 
     static readonly HashSet<string> ActivePaths = [];
 
-    private static int CustomRequire(nint luaState)
-    {
+    private static int CustomRequire(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         string path = lua.ToString(1).Replace(".", "/");
         lua.Pop(-1);
@@ -105,13 +102,11 @@ public static class SandboxedLua {
                 if (!Everest.Content.TryGet(path, out ModAsset metadata, true))
                     lua.Error($"failed to read file: {path}");
 
-                if (lua.LoadBuffer(metadata.Data, "luaRequire") != LuaStatus.OK)
-                {
+                if (lua.LoadBuffer(metadata.Data, "luaRequire") != LuaStatus.OK) {
                     string? errorMessage = lua.ToString(-1);
                     lua.Error($"failed to load file {path}: {errorMessage ?? "<could not convert error message to string>"}");
                 }
-                if (lua.PCall(0, 1, 0) != LuaStatus.OK)
-                {
+                if (lua.PCall(0, 1, 0) != LuaStatus.OK) {
                     string? errorMessage = lua.ToString(-1);
                     lua.Error($"failed to execute file {path}: {errorMessage ?? "<could not convert error message to string>"}");
                 }
@@ -125,8 +120,7 @@ public static class SandboxedLua {
         return 1;
     }
 
-    private static int CustomPrint(nint luaState)
-    {
+    private static int CustomPrint(nint luaState) {
         Lua lua = Lua.FromIntPtr(luaState);
         int argCount = lua.GetTop();
         List<string> strings = [];

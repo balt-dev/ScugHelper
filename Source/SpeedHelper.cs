@@ -18,8 +18,7 @@ public readonly struct SpeedAccessor
     private readonly Func<object, Vector2> Getter;
     private readonly Action<object, Vector2> Setter;
     private readonly object Object;
-    public readonly Vector2 Speed { get
-        {
+    public readonly Vector2 Speed { get {
             if (Getter == null) throw new NullReferenceException("Speed getter must not be null. Check you're not accidentally initializing the struct with null values.");
             var ret = Getter(Object);
             if (Object is Actor actor && actor.IsInverted()) ret = new(ret.X, -ret.Y);
@@ -32,8 +31,7 @@ public readonly struct SpeedAccessor
         }
     }
 
-    internal SpeedAccessor(Func<object, Vector2> getter, Action<object, Vector2> setter, object obj)
-    {
+    internal SpeedAccessor(Func<object, Vector2> getter, Action<object, Vector2> setter, object obj) {
         Getter = getter ?? throw new NullReferenceException("Speed getter must not be null. (in ctor)");
         Setter = setter ?? throw new NullReferenceException("Speed setter must not be null. (in ctor)");
         Object = obj ?? throw new NullReferenceException("Speed object must not be null."); ;
@@ -52,10 +50,8 @@ public readonly struct SpeedAccessor
 
     private static readonly ConcurrentDictionary<Type, ReflectionSpeedAccessorFactory?> SpeedAccessorCache = [];
 
-    public static SpeedAccessor? For(Entity obj)
-    {
-        switch (obj)
-        {
+    public static SpeedAccessor? For(Entity obj) {
+        switch (obj) {
             // TODO: Remove these when IHasSpeed is implemented on them
             case Player player: return new SpeedAccessor(player);
             case Solid solid: return new SpeedAccessor(solid);
@@ -84,8 +80,7 @@ public readonly struct SpeedAccessor
             ?? type.GetProperty("Velocity", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             ?? type.GetProperty("velocity", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             ?? type.GetProperty("hitSpeed", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        if (speedProperty != null && speedProperty.PropertyType == typeof(Vector2))
-        {
+        if (speedProperty != null && speedProperty.PropertyType == typeof(Vector2)) {
             var accessor = new ReflectionSpeedPropertyAccessorFactory(speedProperty);
             if (accessor.castedGetter != null && accessor.castedSetter != null) {
                 SpeedAccessorCache.TryAdd(type, accessor);
@@ -99,8 +94,7 @@ public readonly struct SpeedAccessor
             ?? type.GetField("Velocity", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             ?? type.GetField("velocity", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             ?? type.GetField("hitSpeed", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        if (speedField != null && speedField.FieldType == typeof(Vector2))
-        {
+        if (speedField != null && speedField.FieldType == typeof(Vector2)) {
             var accessor = new ReflectionSpeedFieldAccessorFactory(speedField);
             if (accessor.castedGetter != null && accessor.castedSetter != null) {
                 SpeedAccessorCache.TryAdd(type, accessor);
@@ -124,8 +118,7 @@ internal class ReflectionSpeedFieldAccessorFactory : ReflectionSpeedAccessorFact
     private readonly FieldInfo SpeedField;
     internal readonly Func<object, Vector2> castedGetter;
     internal readonly Action<object, Vector2> castedSetter;
-    public ReflectionSpeedFieldAccessorFactory(FieldInfo speedField)
-    {
+    public ReflectionSpeedFieldAccessorFactory(FieldInfo speedField) {
         SpeedField = speedField;
         castedGetter = (o) => (Vector2)(SpeedField.GetValue(o) ?? throw new Exception("Speed field was null."));
         castedSetter = (o, val) => SpeedField.SetValue(o, val);
@@ -140,16 +133,14 @@ internal class ReflectionSpeedPropertyAccessorFactory : ReflectionSpeedAccessorF
     internal readonly Func<object, Vector2>? castedGetter;
     internal readonly Action<object, Vector2>? castedSetter;
 
-    public ReflectionSpeedPropertyAccessorFactory(PropertyInfo speedProperty)
-    {
+    public ReflectionSpeedPropertyAccessorFactory(PropertyInfo speedProperty) {
         var getMethod = speedProperty.GetGetMethod(true);
         var setMethod = speedProperty.GetSetMethod(true);
         if (getMethod != null) castedGetter = (o) => (Vector2)getMethod.Invoke(o, null)!;
         if (setMethod != null) castedSetter = (o, val) => setMethod.Invoke(o, [val]);
     }
 
-    public override SpeedAccessor? For(Entity entity)
-    {
+    public override SpeedAccessor? For(Entity entity) {
         if (castedGetter == null || castedSetter == null) return null;
         return new SpeedAccessor(castedGetter, castedSetter, entity);
     }

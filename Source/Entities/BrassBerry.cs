@@ -30,8 +30,7 @@ class BrassBerry : Entity, IStrawberry
     private bool collected = false;
     private readonly bool isOwned;
 
-    public BrassBerry(EntityData data, Vector2 offset, EntityID gid)
-    {
+    public BrassBerry(EntityData data, Vector2 offset, EntityID gid) {
         ID = gid;
         Position = data.Position + offset;
 
@@ -45,8 +44,7 @@ class BrassBerry : Entity, IStrawberry
 
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (!(ScugHelperModule.Session.BrassBerryFollowing?.Equals(ID) ?? true)) {
             scene.Remove(this);
@@ -90,11 +88,9 @@ class BrassBerry : Entity, IStrawberry
     					collectTimer += Engine.DeltaTime;
     					if (collectTimer > 0.15f)
     						OnCollect();
-                    }
-                    else
+                    } else
                         collectTimer = Math.Min(collectTimer, 0f);
-                }
-                else if (Follower.FollowIndex > 0)
+                } else if (Follower.FollowIndex > 0)
                     collectTimer = -0.15f;
             }
         }
@@ -102,11 +98,9 @@ class BrassBerry : Entity, IStrawberry
         base.Update();
     }
 
-    private void OnAnimate(string id)
-    {
+    private void OnAnimate(string id) {
         int numFrames = 35;
-        if (sprite.CurrentAnimationFrame == numFrames - 4)
-        {
+        if (sprite.CurrentAnimationFrame == numFrames - 4) {
             lightTween.Start();
 
             bool visuallyObstructed = CollideCheck<FakeWall>() || CollideCheck<Solid>();
@@ -115,8 +109,7 @@ class BrassBerry : Entity, IStrawberry
         }
     }
 
-    public void OnPlayer(Player player)
-    {
+    public void OnPlayer(Player player) {
         if (Follower.Leader != null || collected)
             return;
 
@@ -130,8 +123,7 @@ class BrassBerry : Entity, IStrawberry
         ScugHelperModule.Session.BrassBerryFollowing = ID;
     }
 
-    public void OnCollect()
-    {
+    public void OnCollect() {
         if (collected)
             return;
         ScugHelperModule.Session.BrassBerryFollowing = null;
@@ -140,8 +132,7 @@ class BrassBerry : Entity, IStrawberry
 
         int collectIndex = 0;
 
-        if (Follower.Leader != null)
-        {
+        if (Follower.Leader != null) {
             Player player = Follower.Leader.Entity as Player;
             collectIndex = player.StrawberryCollectIndex;
             player.StrawberryCollectIndex++;
@@ -159,8 +150,7 @@ class BrassBerry : Entity, IStrawberry
         Add(new Coroutine(CollectRoutine(collectIndex), true));
     }
 
-    private IEnumerator CollectRoutine(int collectIndex)
-    {
+    private IEnumerator CollectRoutine(int collectIndex) {
         Tag = Tags.TransitionUpdate;
         Depth = -2000010;
 
@@ -174,14 +164,11 @@ class BrassBerry : Entity, IStrawberry
         yield break;
     }
 
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
-        if (ScugHelperModule.Session.BrassBerryFollowing != null)
-        {
+        if (ScugHelperModule.Session.BrassBerryFollowing != null) {
             Player player = scene.Tracker.GetEntity<Player>();
-            if (player == null)
-            {
+            if (player == null) {
                 Logger.Warn(nameof(ScugHelperModule), "Could not find Player to attach to!");
                 return;
             }
@@ -190,8 +177,7 @@ class BrassBerry : Entity, IStrawberry
     }
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         On.Celeste.Player.Added += PlayerAddHook;
         On.Celeste.Player.Update += PlayerUpdateHook;
     }
@@ -202,21 +188,17 @@ class BrassBerry : Entity, IStrawberry
         On.Celeste.Player.Update -= PlayerUpdateHook;
     }
 
-    private static void PlayerUpdateHook(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void PlayerUpdateHook(On.Celeste.Player.orig_Update orig, Player self) {
         self.level.Session.SetFlag("HasBrassBerry", ScugHelperModule.Session.BrassBerryFollowing != null);
         orig(self);
     }
 
-    private static void PlayerAddHook(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
-    {
+    private static void PlayerAddHook(On.Celeste.Player.orig_Added orig, Player self, Scene scene) {
         orig(self, scene);
         var following = ScugHelperModule.Session.BrassBerryFollowing;
-        if (following != null)
-        {
+        if (following != null) {
             BrassBerry berry = scene.Tracker.GetEntity<BrassBerry>();
-            if (berry == null)
-            {
+            if (berry == null) {
                 Logger.Info(nameof(ScugHelperModule), "Readding brass berry!");
                 var followID = (EntityID)following;
                 var data = new EntityData

@@ -13,15 +13,13 @@ public class ActionListenerCollider : Entity
     readonly string[] Groups;
     readonly Vector2 CollidePos;
 
-    public ActionListenerCollider(EntityData data, Vector2 offset): base(data.Position + offset)
-    {
+    public ActionListenerCollider(EntityData data, Vector2 offset): base(data.Position + offset) {
         Groups = IAction.GetGroups(data);
         CollidePos = data.FirstNodeNullable(offset) ?? throw new Exception("Action listener collider needs position to collide.");
         Add(new ActionListener(Groups, Alert));
     }
 
-    internal void Alert(Level level)
-    {
+    internal void Alert(Level level) {
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
         foreach (PlayerCollider collider in Scene.CollideAllByComponent<PlayerCollider>(CollidePos))
             collider.OnCollide(player);

@@ -22,8 +22,7 @@ public class GroundedRefill : Refill {
     }
     public GroundedRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("twoDash")) { }
 
-    public override void Update()
-    {
+    public override void Update() {
         respawnTimer = 100f;
         Player? player = SceneAs<Level>().Tracker.GetEntity<Player>();
         if (player != null && player.OnSafeGround)
@@ -31,8 +30,7 @@ public class GroundedRefill : Refill {
         base.Update();
         underline.Y = Collidable ? flash.Y : outline.Position.Y;
     }
-    public override void Render()
-    {
+    public override void Render() {
         if (Collidable)
             underline.DrawOutline();
         base.Render();
@@ -48,8 +46,7 @@ public class GroundedRefill : Refill {
         IL.Celeste.Refill.Respawn += RespawnHook;
     }
 
-    private static void LevelUpdateHook(On.Celeste.Level.orig_Update orig, Level self)
-    {
+    private static void LevelUpdateHook(On.Celeste.Level.orig_Update orig, Level self) {
         TimeSince += 1;
         orig(self);
     }

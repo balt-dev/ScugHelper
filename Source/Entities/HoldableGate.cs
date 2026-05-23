@@ -33,13 +33,11 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     private int updatesSinceTrigger = 999;
     private static readonly int GrabFrameLeniency = 4;
 
-    public override void OnTrigger(Player player)
-    {
+    public override void OnTrigger(Player player) {
         updatesSinceTrigger = 0;
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         updatesSinceTrigger += 1;
         base.Update();
         if (updatesSinceTrigger < GrabFrameLeniency) {
@@ -66,21 +64,18 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
         }
     }
 
-    private Vector2 PlatformAdd(int num)
-    {
+    private Vector2 PlatformAdd(int num) {
         return lineNorm * (int)Math.Round(Math.Sin(Scene.TimeActive + num * 0.2) * 1.8f);
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         if (!Triggered) {
             holdable.Entity.Position = Position + (holdable.Entity.Position - holdable.Entity.Center);
         }
         base.Render();
         var startPos = Position - lineDir * Size / 2;
         var endPos = Position + lineDir * Size / 2;
-        for (int i = 0; i < Size; i++)
-        {
+        for (int i = 0; i < Size; i++) {
             var pos = Vector2.Lerp(startPos, endPos, i / Size);
             Draw.Point(pos + PlatformAdd(i), Color.White * (Math.Abs(i - Size / 2) < Math.Max(holdable.Entity.Width, holdable.Entity.Height) ? 0.8f : 0.4f));
         }

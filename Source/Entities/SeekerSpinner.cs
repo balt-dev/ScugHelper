@@ -15,8 +15,7 @@ public class SeekerSpinner : Entity
     internal readonly int ID;
     public bool AttachToSolid;
 
-    public SeekerSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
-    {
+    public SeekerSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         ID = id.ID;
         Depth = -8500;
         AttachToSolid = data.Bool("AttachToSolid");
@@ -26,19 +25,16 @@ public class SeekerSpinner : Entity
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Track(this);
     }
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         CreateSpinnerSprites(scene);
     }
     
-    public override void Removed(Scene scene)
-    {
+    public override void Removed(Scene scene) {
         base.Removed(scene);
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Untrack(this);
     }
@@ -46,8 +42,7 @@ public class SeekerSpinner : Entity
     List<MTexture> bgTex = GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/bg");
     List<MTexture> fgTex = GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg");
 
-    private void AddFiller(Vector2 offset)
-    {
+    private void AddFiller(Vector2 offset) {
         Image image = new(Calc.Random.Choose(bgTex)) {
             Position = offset,
             Rotation = Calc.Random.Choose(0, 1, 2, 3) * (MathF.PI / 2f),
@@ -58,8 +53,7 @@ public class SeekerSpinner : Entity
         Add(image);
     }
 
-    private void CreateSpinnerSprites(Scene scene)
-    {
+    private void CreateSpinnerSprites(Scene scene) {
         Calc.PushRandom(RandomSeed);
         // This is the vanilla implementation. O(n^2). Jesus.
         foreach (SeekerSpinner entity in scene.Tracker.GetEntities<SeekerSpinner>())
@@ -83,10 +77,8 @@ public class SeekerSpinner : Entity
         Calc.PopRandom();
     }
 
-    private void OnPlayer(Player player)
-    {
-        if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp)
-        {
+    private void OnPlayer(Player player) {
+        if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp) {
             comp.disableDeath = false;
             player.Die(-player.Speed.SafeNormalize(Vector2.UnitY));
         }

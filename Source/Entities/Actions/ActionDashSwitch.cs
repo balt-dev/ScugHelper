@@ -13,22 +13,17 @@ public class ActionDashSwitch(EntityData data, Vector2 offset, EntityID id) : Da
     readonly string[] Targets = IAction.GetTargets(data);
     
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.DashSwitch.OnDashed += OnDashed;
     }
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         On.Celeste.DashSwitch.OnDashed -= OnDashed;
     }
     
-    private static DashCollisionResults OnDashed(On.Celeste.DashSwitch.orig_OnDashed orig, DashSwitch self, Player player, Vector2 direction)
-    {
-        if (self is ActionDashSwitch actionSwitch)
-        {
-            if (!self.pressed && direction == self.pressDirection)
-            {
+    private static DashCollisionResults OnDashed(On.Celeste.DashSwitch.orig_OnDashed orig, DashSwitch self, Player player, Vector2 direction) {
+        if (self is ActionDashSwitch actionSwitch) {
+            if (!self.pressed && direction == self.pressDirection) {
                 Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
                 Audio.Play("event:/game/05_mirror_temple/button_activate", self.Position);
                 self.sprite.Play("push");
@@ -44,8 +39,7 @@ public class ActionDashSwitch(EntityData data, Vector2 offset, EntityID id) : Da
             }
     
             return DashCollisionResults.NormalCollision;
-        }
-        else return orig(self, player, direction);
+        } else return orig(self, player, direction);
     }
     
 }

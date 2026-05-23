@@ -25,8 +25,7 @@ public class MacabreBooster : Booster
     private readonly bool DuckMusic;
 
     public MacabreBooster(EntityData data, Vector2 offset, EntityID gid)
-        : base(data, offset)
-    {
+        : base(data, offset) {
         red = true;
         DuckMusic = data.Bool("DuckMusic", true);
         LaunchSpeed = data.Float("speed", 240);
@@ -46,8 +45,7 @@ public class MacabreBooster : Booster
     private static ILHook? PlayerRedDashCoroHook;
 
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.Player.Bounce += BounceHook;
         On.Celeste.Player.SuperBounce += SuperBounceHook;
         On.Celeste.Player.SideBounce += SideBounceHook;
@@ -61,8 +59,7 @@ public class MacabreBooster : Booster
     }
 
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         On.Celeste.Player.Bounce -= BounceHook;
         On.Celeste.Player.SuperBounce -= SuperBounceHook;
         On.Celeste.Player.SideBounce -= SideBounceHook;
@@ -77,16 +74,13 @@ public class MacabreBooster : Booster
 
     static bool wasInBooster = false;
 
-    private static void UpdateHook(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void UpdateHook(On.Celeste.Player.orig_Update orig, Player self) {
         orig(self);
-        if (self.LastBooster is not null && self.LastBooster is MacabreBooster && self.LastBooster.Scene != self.Scene)
-        {
+        if (self.LastBooster is not null && self.LastBooster is MacabreBooster && self.LastBooster.Scene != self.Scene) {
             self.LastBooster = null;
             self.StateMachine.State = Player.StNormal;
         }
-        if (self.LastBooster != null && self.LastBooster is MacabreBooster booster && booster.BoostingPlayer)
-        {
+        if (self.LastBooster != null && self.LastBooster is MacabreBooster booster && booster.BoostingPlayer) {
             wasInBooster = true;
             if (booster.DuckMusic) Level.PauseSnapshot ??= Audio.CreateSnapshot("snapshot:/pause_menu");
             booster.cannotUseTimer = 0.45f;
@@ -94,127 +88,97 @@ public class MacabreBooster : Booster
             self.Speed += booster.Acceleration * Engine.DeltaTime;
             self.Speed.X = Math.Clamp(self.Speed.X, -booster.SpeedLimit.X, booster.SpeedLimit.X);
             self.Speed.Y = Math.Clamp(self.Speed.Y, -booster.SpeedLimit.Y, booster.SpeedLimit.Y);
-        }
-        else if (wasInBooster)
-        {
+        } else if (wasInBooster) {
             wasInBooster = false;
-            if (Level.PauseSnapshot is not null)
-            {
+            if (Level.PauseSnapshot is not null) {
                 Audio.ReleaseSnapshot(Level.PauseSnapshot);
                 Level.PauseSnapshot = null;
             }
         }
     }
 
-    public static void HBoundsHook(On.Celeste.Player.orig_OnBoundsH orig, Player self)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster booster)
-        {
+    public static void HBoundsHook(On.Celeste.Player.orig_OnBoundsH orig, Player self) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster booster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end", // works better for both verison
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
-        }
-        else
+        } else
             orig(self);
     }
 
-    public static void VBoundsHook(On.Celeste.Player.orig_OnBoundsV orig, Player self)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster booster)
-        {
+    public static void VBoundsHook(On.Celeste.Player.orig_OnBoundsV orig, Player self) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster booster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
-        }
-        else
+        } else
             orig(self);
     }
 
-    public static void HCollideHook(On.Celeste.Player.orig_OnCollideH orig, Player self, CollisionData data)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster)
-        {
+    public static void HCollideHook(On.Celeste.Player.orig_OnCollideH orig, Player self, CollisionData data) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
-        }
-        else
+        } else
             orig(self, data);
     }
 
-    public static void VCollideHook(On.Celeste.Player.orig_OnCollideV orig, Player self, CollisionData data)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster)
-        {
+    public static void VCollideHook(On.Celeste.Player.orig_OnCollideV orig, Player self, CollisionData data) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
-        }
-        else
+        } else
             orig(self, data);
     }
 
-    public static void BounceHook(On.Celeste.Player.orig_Bounce orig, Player self, float fromY)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster)
-        {
+    public static void BounceHook(On.Celeste.Player.orig_Bounce orig, Player self, float fromY) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
-        }
-        else
-        {
+        } else {
             orig(self, fromY);
         }
     }
 
-    public static void SuperBounceHook(On.Celeste.Player.orig_SuperBounce orig, Player self, float fromY)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster)
-        {
+    public static void SuperBounceHook(On.Celeste.Player.orig_SuperBounce orig, Player self, float fromY) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
-        }
-        else
-        {
+        } else {
             orig(self, fromY);
         }
     }
 
-    public static bool SideBounceHook(On.Celeste.Player.orig_SideBounce orig, Player self, int dir, float fromX, float fromY)
-    {
-        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster)
-        {
+    public static bool SideBounceHook(On.Celeste.Player.orig_SideBounce orig, Player self, int dir, float fromX, float fromY) {
+        if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster) {
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
             self.Die(-self.Speed.SafeNormalize(Vector2.UnitY));
             return true;
-        }
-
-        else
-
-        {
+        } else {
             return orig(self, dir, fromX, fromY);
         }
     }
 
-    private static void ExplodeLaunchILHook(ILContext ctx)
-    {
+    private static void ExplodeLaunchILHook(ILContext ctx) {
         ILCursor cur = new(ctx);
         if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             instr => instr.MatchCall<SlashFx>("Burst"),
@@ -222,10 +186,8 @@ public class MacabreBooster : Booster
         ))
             throw new InvalidOperationException("Macabre boosters failed to match IL code for the ExplodeLaunch hook.");
         cur.EmitLdarg0();
-        static bool Delegate(Player self)
-        {
-            if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster)
-            {
+        static bool Delegate(Player self) {
+            if ((self.LastBooster?.BoostingPlayer ?? false) && self.LastBooster is MacabreBooster) {
                 Audio.Play(
                     "event:/game/05_mirror_temple/redbooster_end",
                     self.LastBooster.sprite.RenderPosition
@@ -242,17 +204,14 @@ public class MacabreBooster : Booster
         cur.MarkLabel(label);
     }
 
-    private static void OnPlayerDashCoro(ILContext il)
-    {
+    private static void OnPlayerDashCoro(ILContext il) {
         ILCursor cursor = new(il);
-        static float ReplaceFloat(float orig, Player self)
-        {
+        static float ReplaceFloat(float orig, Player self) {
             if (self.CurrentBooster is MacabreBooster boost)
                 return boost.LaunchSpeed;
             return orig;
         }
-        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float)instr.Operand == 240f))
-        {
+        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float)instr.Operand == 240f)) {
             cursor.EmitLdloc1();
             cursor.EmitDelegate(ReplaceFloat);
         }

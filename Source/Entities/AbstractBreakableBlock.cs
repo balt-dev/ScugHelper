@@ -19,8 +19,7 @@ public abstract class AbstractBreakableBlock : Solid
     protected readonly EntityID id;
 
     public AbstractBreakableBlock(Vector2 position, char tiletype, float width, float height, bool blendIn, bool permanent, EntityID id)
-        : base(position, width, height, safe: true)
-    {
+        : base(position, width, height, safe: true) {
         DashBlock _;
         Depth = -12999;
         tileType = tiletype;
@@ -33,20 +32,15 @@ public abstract class AbstractBreakableBlock : Solid
         SurfaceSoundIndex = SurfaceIndex.TileToIndex[tileType];
     }
     public AbstractBreakableBlock(EntityData data, Vector2 offset, EntityID id)
-        : this(data.Position + offset, data.Char("tiletype", '3'), data.Width, data.Height, data.Bool("blendin"), data.Bool("permanent", true), id)
-    {
+        : this(data.Position + offset, data.Char("tiletype", '3'), data.Width, data.Height, data.Bool("blendin"), data.Bool("permanent", true), id) {
     }
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         TileGrid tileGrid;
-        if (!blendIn)
-        {
+        if (!blendIn) {
             tileGrid = GFX.FGAutotiler.GenerateBox(tileType, (int)width / 8, (int)height / 8).TileGrid;
             Add(new LightOcclude());
-        }
-        else
-        {
+        } else {
             Level level = SceneAs<Level>();
             Rectangle tileBounds = level.Session.MapData.TileBounds;
             VirtualMap<char> solidsData = level.SolidsData;
@@ -66,10 +60,8 @@ public abstract class AbstractBreakableBlock : Solid
     }
     
     
-    public void Break(Vector2 from, bool playSound = true, bool playDebrisSound = true)
-    {
-        if (playSound)
-        {
+    public void Break(Vector2 from, bool playSound = true, bool playDebrisSound = true) {
+        if (playSound) {
             if (tileType == '1')
                 Audio.Play("event:/game/general/wall_break_dirt", Position);
             else if (tileType == '3')
@@ -80,10 +72,8 @@ public abstract class AbstractBreakableBlock : Solid
                 Audio.Play("event:/game/general/wall_break_stone", Position);
         }
 
-        for (int i = 0; i < Width / 8f; i++)
-        {
-            for (int j = 0; j < Height / 8f; j++)
-            {
+        for (int i = 0; i < Width / 8f; i++) {
+            for (int j = 0; j < Height / 8f; j++) {
                 Scene.Add(Engine.Pooler.Create<Debris>().Init(Position + new Vector2(4 + i * 8, 4 + j * 8), tileType, playDebrisSound).BlastFrom(from));
             }
         }
@@ -94,8 +84,7 @@ public abstract class AbstractBreakableBlock : Solid
         else
             RemoveSelf();
     }
-    public void RemoveAndFlagAsGone()
-    {
+    public void RemoveAndFlagAsGone() {
         RemoveSelf();
         SceneAs<Level>().Session.DoNotLoad.Add(id);
     }

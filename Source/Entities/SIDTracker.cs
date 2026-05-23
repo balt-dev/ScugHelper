@@ -6,8 +6,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 internal class NameTracker() : Component(true, true)
 {
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (Entity is null) return;
         string key = Entity.GetType().FullName ?? "null";

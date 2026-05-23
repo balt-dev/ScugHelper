@@ -10,8 +10,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/RefillField")]
 public class RefillField : Entity
 {
-    public enum RefillType
-    {
+    public enum RefillType {
         Midair,
         Overcharge,
         Limbo
@@ -22,14 +21,12 @@ public class RefillField : Entity
     public bool State { get; protected set; }
     public RefillType Refill { get; protected set; }
 
-    public RefillField(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public RefillField(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Depth = 100;
         Collidable = true;
         Refill = data.Enum<RefillType>("RefillType");
         State = data.Bool("State", true);
-        if (data.Bool("CoverRoom", false))
-        {
+        if (data.Bool("CoverRoom", false)) {
             Visible = false;
             Position = data.Level.Position;
             Collider = new Hitbox(data.Level.Bounds.Width + 256, data.Level.Bounds.Height + 256, -128, -128);
@@ -41,8 +38,7 @@ public class RefillField : Entity
         Add(new PlayerCollider(OnPlayer));
     }
 
-    private void OnPlayer(Player player)
-    {
+    private void OnPlayer(Player player) {
         switch (Refill) {
             case RefillType.Midair:
                 MidairRefill.MidairDashCount = State ? 1 : 0;
@@ -58,10 +54,8 @@ public class RefillField : Entity
 
     private static readonly float SineMovement = 2.0f;
 
-    public override void Render()
-    {
-        Color infill = Refill switch
-        {
+    public override void Render() {
+        Color infill = Refill switch {
             RefillType.Midair => Color.Blue,
             RefillType.Overcharge => OverchargeRefill.TrailColor,
             RefillType.Limbo => Color.Black,
@@ -74,21 +68,18 @@ public class RefillField : Entity
         base.Render();
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         Add(new CustomBloom(OnRenderBloom));
     }
 
     private float Elapsed = 0;
-    public override void Update()
-    {
+    public override void Update() {
         Elapsed += Engine.DeltaTime;
         int num = speeds.Length;
         float height = Height;
         int i = 0;
-        for (int count = particles.Count; i < count; i++)
-        {
+        for (int count = particles.Count; i < count; i++) {
             Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
             value.Y %= height - 1f;
             particles[i] = value;
@@ -96,8 +87,7 @@ public class RefillField : Entity
         base.Update();
     }
 
-    public void OnRenderBloom()
-    {
+    public void OnRenderBloom() {
         if (Visible)
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f, Color.White * 0.3f);
     }

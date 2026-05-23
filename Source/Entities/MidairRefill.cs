@@ -23,8 +23,7 @@ internal static class Ext {
 [CustomEntity("ScugHelper/MidairRefill")]
 public class MidairRefill : Refill, ICustomRefill
 {
-    public MidairRefill(Vector2 position, bool oneUse) : base(position, false, oneUse)
-    {
+    public MidairRefill(Vector2 position, bool oneUse) : base(position, false, oneUse) {
         Depth = -100;
         Remove(outline);
         Remove(sprite);
@@ -40,21 +39,18 @@ public class MidairRefill : Refill, ICustomRefill
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
     public MidairRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse")) { }
 
-    public override void Render()
-    {
+    public override void Render() {
         if (sprite.Visible) sprite.DrawOutline();
         base.Render();
     }
-    public void CustomOnPlayer(Player player)
-    {
+    public void CustomOnPlayer(Player player) {
         if (MidairDashCount == 0) {
             Audio.Play("event:/game/general/diamond_touch", Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
@@ -63,8 +59,7 @@ public class MidairRefill : Refill, ICustomRefill
             respawnTimer = 2.5f;
         }
     }
-    public IEnumerator NewRefillRoutine(Player player)
-    {
+    public IEnumerator NewRefillRoutine(Player player) {
         Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;
@@ -132,8 +127,7 @@ public class MidairRefill : Refill, ICustomRefill
             orig(player);
     }
 
-    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self) {
         orig(self);
 
         if (MidairDashCount > 0 && self.Scene.OnInterval(0.1f))
@@ -141,8 +135,7 @@ public class MidairRefill : Refill, ICustomRefill
     }
 
     // For supers and hypers
-    private static void DashUpdateHook(ILContext il)
-    {
+    private static void DashUpdateHook(ILContext il) {
         ILCursor cur = new(il);
 
         ILLabel? label = null;
@@ -160,8 +153,7 @@ public class MidairRefill : Refill, ICustomRefill
         cur.MoveAfterLabels();
         cur.Emit(OpCodes.Ldarg_0);
         cur.EmitDelegate(static (Player player) => {
-            if (Input.Jump.Pressed && UseMidairDash())
-            {
+            if (Input.Jump.Pressed && UseMidairDash()) {
                 player.SuperJump();
                 return true;
             }
@@ -255,14 +247,12 @@ public class MidairRefill : Refill, ICustomRefill
     private static void DoWallbounce(Player player) {
         player.SuperWallJump((int) player.Facing);
     }
-    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self)
-    {
+    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self) {
         MidairDashCount = 0;
         orig(self);
     }
 
-    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
-    {
+    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
         MidairDashCount = 0;
         orig(self);
     }

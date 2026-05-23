@@ -12,22 +12,19 @@ internal class SpeedTracker() : Component(true, true)
     public override void Added(Entity ent) {
         base.Added(ent);
         var access = SpeedAccessor.For(ent);
-        if (access is not SpeedAccessor speedAccessor)
-        {
+        if (access is not SpeedAccessor speedAccessor) {
             RemoveSelf();
             return;
         }
         Logger.Info(nameof(ScugHelperModule), $"Attached speed tracker to entity of type {ent.GetType()}!");
         accessor = speedAccessor;
     }
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (accessor is not SpeedAccessor access) return;
         TrackedSpeed = access.Speed;
     }
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (Entity is null) return;
         if (TrackedSpeed is not Vector2 speed) return;

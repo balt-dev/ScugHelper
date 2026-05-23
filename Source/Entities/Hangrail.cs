@@ -43,8 +43,7 @@ public class HangRail : Actor
     private readonly Vector2 Direction;
     private bool noLiftBoost = true;
 
-    public HangRail(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public HangRail(EntityData data, Vector2 offset) : base(data.Position + offset) {
         DoGravity = data.Bool("StartWithGravity");
         TakeStamina = data.Bool("TakesStamina", true);
 
@@ -69,8 +68,7 @@ public class HangRail : Actor
         Add(Sprite = GFX.SpriteBank.Create(data.String("Sprite", "hangrail")));
         Sprite.Play("idle");
         Sprite.CenterOrigin();
-        Add(Hold = new()
-        {
+        Add(Hold = new() {
             SpeedGetter = () => Speed,
             SpeedSetter = (value) => Speed = value,
             OnPickup = OnPickup,
@@ -93,8 +91,7 @@ public class HangRail : Actor
 
     private void OnSwat(HoldableCollider collider, int arg2) => OnRelease(Vector2.Zero);
 
-    private void OnRelease(Vector2 vector)
-    {
+    private void OnRelease(Vector2 vector) {
         if (Hold.Holder is not Player player) return;
         player.SetAdjustedSpeed(RetentionSpeed);
         if (!noLiftBoost) player.LiftSpeed = RetentionSpeed;
@@ -105,8 +102,7 @@ public class HangRail : Actor
 
     private void OnCarry(Vector2 vector) { }
 
-    private void OnPickup()
-    {
+    private void OnPickup() {
         Hold.Holder?.StateMachine.State = Player.StNormal;
         Vector2 holderSpeed = Hold.Holder.AdjustedSpeed();
         if (
@@ -140,8 +136,7 @@ public class HangRail : Actor
         DoGravity = true;
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         Collidable = NoGrabTimer <= 0f && !(Scene.Tracker.GetEntity<Player>() is Player pl && (pl.Stamina <= 0f || pl.OnGround()));
         if (GravityHelperImports.IsInverted(this))
@@ -153,12 +148,9 @@ public class HangRail : Actor
         Hold.Holder?.minHoldTimer = 0f;
 
         // Make absolutely sure we're still on the track
-        if (End == Start)
-        {
+        if (End == Start) {
             Position = Start = End;
-        }
-        else
-        {
+        } else {
             if (DoGravity)
                 Speed.Y = Calc.Approach(Speed.Y, GravityHelperImports.IsInverted(this) ? -MaxFall : MaxFall, Gravity * Engine.DeltaTime);
 
@@ -173,58 +165,47 @@ public class HangRail : Actor
             float progress = Vector2.Dot(Position - Start, End - Start) / (End - Start).LengthSquared();
             Position = Start + (End - Start) * progress;
             float angleDifference = 1 - Math.Abs(Vector2.Dot((Position - Start).SafeNormalize(), Direction));
-            if (progress < 0 || progress > 1)
-            {
+            if (progress < 0 || progress > 1) {
                 if (progress < 0) Position = Start + Direction * 0.1f;
                 else Position = End - Direction * 0.1f;
                 Vector2 oldSpeed = Speed;
                 Speed = Vector2.Zero;
-                if (oldSpeed.Length() > HoldSpeedLimit)
-                {
+                if (oldSpeed.Length() > HoldSpeedLimit) {
                     NoGrabTimer = GrabCooldown;
-                    if (Hold.Holder is Player p)
-                    {
+                    if (Hold.Holder is Player p) {
                         p.Drop();
                         p.jumpGraceTimer = Player.JumpGraceTime;
                     }
                     if (Math.Abs(oldSpeed.X) > TiltSpriteThreshold)
                         Sprite.Play(oldSpeed.X < 0 ? "swingLeft" : "swingRight");
                 }
-            }
-            else
+            } else
                 Speed = (Position - oldPos) / Engine.DeltaTime;
             if (angleDifference > 0.1 && End != Start)
                 if (Hold.Holder is Player p) p.Drop();
         }
-        if (RetentionSpeed.LengthSquared() > Speed.LengthSquared())
-        {
+        if (RetentionSpeed.LengthSquared() > Speed.LengthSquared()) {
             if (RetentionTimer <= 0f) RetentionTimer = RetentionTime;
-            else
-            {
+            else {
                 RetentionTimer -= Engine.DeltaTime;
                 if (RetentionTimer <= 0f) RetentionSpeed = GravityHelperImports.IsInverted(this) ? new(Speed.X, -Speed.Y) : Speed;
             }
-        }
-        else
-        {
+        } else {
             RetentionSpeed = GravityHelperImports.IsInverted(this) ? new(Speed.X, -Speed.Y) : Speed;
             RetentionTimer = 0f;
         }
 
         float movementTarget = 0f;
         // Move the player to us
-        if (Hold.Holder is Player player)
-        {
+        if (Hold.Holder is Player player) {
             player.StateMachine.State = Player.StNormal;
             if (player.Stamina <= 0f) player.Drop();
-            else
-            {
+            else {
                 if (TakeStamina) player.Stamina -= StaminaCost * Engine.DeltaTime;
                 player.SetAdjustedSpeed(RetentionSpeed);
                 float playerOffset = player.IsInverted() ? -PlayerOffset : PlayerOffset;
                 if (Start == End) player.Position = Position + Vector2.UnitY * playerOffset;
-                else
-                {
+                else {
                     player.MoveToX(Position.X, OnBonkH);
                     if (player.IsInverted())
                         player.MoveV(-(float)((double)(Position.Y + playerOffset) - player.Position.Y - player.movementCounter.Y), OnBonkV); // Inverted MoveToY
@@ -232,8 +213,7 @@ public class HangRail : Actor
                         player.MoveToY(Position.Y + playerOffset, OnBonkV);
                 }
                 movementTarget = Input.MoveX * PlayerMaxSpeed;
-                if (Input.Jump.Pressed)
-                {
+                if (Input.Jump.Pressed) {
                     Input.Jump.ConsumePress();
                     noLiftBoost = true;
                     player.Drop();
@@ -245,23 +225,20 @@ public class HangRail : Actor
         }
         if (Sprite.CurrentAnimationID is "idle" or "pushLeft" or "pushRight")
             Sprite.Play(Speed.X > TiltSpriteThreshold ? "pushRight" : Speed.X < -TiltSpriteThreshold ? "pushLeft" : "idle");
-        if (Start != End)
-        {
+        if (Start != End) {
             Speed.X = Calc.Approach(Speed.X, movementTarget, Friction * Engine.DeltaTime);
             Speed.Y = Calc.Approach(Speed.Y, 0, Friction * Engine.DeltaTime);
         }
 
     }
 
-    private void OnBonkH(CollisionData data)
-    {
+    private void OnBonkH(CollisionData data) {
         if (Hold.Holder is not Player player) return;
         NoGrabTimer = GrabCooldown;
         player.Drop();
     }
 
-    private void OnBonkV(CollisionData data)
-    {
+    private void OnBonkV(CollisionData data) {
         if (Hold.Holder is not Player player) return;
         NoGrabTimer = GrabCooldown;
         player.Drop();
@@ -269,8 +246,7 @@ public class HangRail : Actor
 
     private static readonly float FRAC_SQRT_2_2 = MathF.Sqrt(2) / 2;
 
-    public override void Render()
-    {
+    public override void Render() {
         DrawRope(ropeSlices, Start - Vector2.UnitX, End - Vector2.UnitX, Color.Black);
         DrawRope(ropeSlices, Start + Vector2.UnitX, End + Vector2.UnitX, Color.Black);
         DrawRope(ropeSlices, Start - Vector2.UnitY, End - Vector2.UnitY, Color.Black);
@@ -282,32 +258,25 @@ public class HangRail : Actor
         tieTexture.DrawCentered(End);
     }
 
-    public override void DebugRender(Camera camera)
-    {
+    public override void DebugRender(Camera camera) {
         base.DebugRender(camera);
         Draw.Line(Start, End, Color.Cyan);
     }
 
-    internal static void DrawRope(MTexture[] ropeSlices, Vector2 start, Vector2 end, Color color)
-    {
+    internal static void DrawRope(MTexture[] ropeSlices, Vector2 start, Vector2 end, Color color) {
         if (start == end) return;
         var dir = (end - start).SafeNormalize();
-        if (Math.Abs(dir.X) < FRAC_SQRT_2_2)
-        {
+        if (Math.Abs(dir.X) < FRAC_SQRT_2_2) {
             // Vertical rope
-            for (int y = (int)Math.Min(start.Y, end.Y) + 1; y < (int)Math.Max(start.Y, end.Y); y++)
-            {
+            for (int y = (int)Math.Min(start.Y, end.Y) + 1; y < (int)Math.Max(start.Y, end.Y); y++) {
                 int x = (int)(start.X + dir.X / dir.Y * (y - start.Y));
                 int index = ((y % ropeSlices.Length) + ropeSlices.Length) % ropeSlices.Length;
                 MTexture tex = ropeSlices[index];
                 tex.Draw(new(x, y), new(0, tex.Height / 2), color, 1, MathF.PI / 2);
             }
-        }
-        else
-        {
+        } else {
             // Horizontal rope
-            for (int x = (int)Math.Min(start.X, end.X) + 1; x < (int)Math.Max(start.X, end.X); x++)
-            {
+            for (int x = (int)Math.Min(start.X, end.X) + 1; x < (int)Math.Max(start.X, end.X); x++) {
                 int y = (int)(start.Y + dir.Y / dir.X * (x - start.X));
                 int index = ((x % ropeSlices.Length) + ropeSlices.Length) % ropeSlices.Length;
                 MTexture tex = ropeSlices[index];
@@ -317,26 +286,22 @@ public class HangRail : Actor
     }
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         On.Celeste.Player.Throw += OnThrow;
     }
 
 
     [OnUnload]
-    internal static void UnloadHooks()
-    {
+    internal static void UnloadHooks() {
         On.Celeste.Player.Throw -= OnThrow;
     }
 
-    private static void OnThrow(On.Celeste.Player.orig_Throw orig, Player self)
-    {
+    private static void OnThrow(On.Celeste.Player.orig_Throw orig, Player self) {
         var ent = self.Holding?.Entity;
         Vector2 oldSpeed = self.Speed;
         orig(self);
         Vector2 deltaSpeed = self.Speed - oldSpeed;
-        if (ent is HangRail hangrail)
-        {
+        if (ent is HangRail hangrail) {
             self.Speed = self.LiftSpeed = hangrail.RetentionSpeed;
             hangrail.Speed.X -= deltaSpeed.X / 2;
             self.Speed.X -= deltaSpeed.X / 2;

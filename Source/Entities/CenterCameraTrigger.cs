@@ -21,47 +21,40 @@ public class CenterCameraTrigger(EntityData data, Vector2 offset) : Trigger(data
 
     private static Vector2 CameraOffsetLerp = Vector2.Zero;
 
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         CenterCameraX = DoCenterX;
         CenterCameraY = DoCenterY;
     }
-    public override void OnLeave(Player player)
-    {
+    public override void OnLeave(Player player) {
         CenterCameraX = false;
         CenterCameraY = false;
     }
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         On.Celeste.Level.Reload += OnLevelReload;
         On.Celeste.LevelLoader.StartLevel += OnLevelLoaderStartLevel;
     }
     [OnUnload]
-    internal static void UnloadHooks()
-    {
+    internal static void UnloadHooks() {
         On.Celeste.Level.Reload -= OnLevelReload;
         On.Celeste.LevelLoader.StartLevel -= OnLevelLoaderStartLevel;
     }
 
-    private static void OnLevelReload(On.Celeste.Level.orig_Reload orig, Level self)
-    {
+    private static void OnLevelReload(On.Celeste.Level.orig_Reload orig, Level self) {
         CenterCameraX = CenterCameraY = false;
         CenterCameraXEffectiveness = CenterCameraYEffectiveness = 0f;
         orig(self);
     }
 
-    private static void OnLevelLoaderStartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
-    {
+    private static void OnLevelLoaderStartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
         CenterCameraX = CenterCameraY = false;
         CenterCameraXEffectiveness = CenterCameraYEffectiveness = 0f;
         orig(self);
     }
 
     // Called by CameraBlocker.cs, right before camera blockers process their stuff
-    internal static void OnLevelUpdate(Level self)
-    {
+    internal static void OnLevelUpdate(Level self) {
         bool shouldCenterX = CenterCameraX || ScugHelperModule.Settings.AlwaysCenterCameraX;
         bool shouldCenterY = CenterCameraY || ScugHelperModule.Settings.AlwaysCenterCameraY;
         CenterCameraXEffectiveness = float.Lerp(CenterCameraXEffectiveness, shouldCenterX ? 1 : 0, 1 - MathF.Pow(LerpTightness, Engine.DeltaTime));

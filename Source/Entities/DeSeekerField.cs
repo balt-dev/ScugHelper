@@ -19,8 +19,7 @@ public class DeSeekerField : Entity
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
-    public DeSeekerField(Vector2 position, float width, float height) : base(position)
-    {
+    public DeSeekerField(Vector2 position, float width, float height) : base(position) {
         Depth = 100;
         Collidable = true;
         Collider = new Hitbox(width, height);
@@ -31,15 +30,12 @@ public class DeSeekerField : Entity
     }
 
     public DeSeekerField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height)
-    { }
+        : this(data.Position + offset, data.Width, data.Height) { }
 
     private static readonly float SineMovement = 2.0f;
 
-    public override void Render()
-    {
-        if (!Invisible)
-        {
+    public override void Render() {
+        if (!Invisible) {
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Seeker.TrailColor * 0.3f);
             foreach (Vector2 particle in particles)
                 Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
@@ -48,15 +44,13 @@ public class DeSeekerField : Entity
         base.Render();
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         Add(new CustomBloom(OnRenderBloom));
     }
 
     private float Elapsed = 0;
-    public override void Update()
-    {
+    public override void Update() {
         Elapsed += Engine.DeltaTime;
         if (BouncedBooster) {
             BounceTimer = BouncePulseLength;
@@ -67,8 +61,7 @@ public class DeSeekerField : Entity
         int num = speeds.Length;
         float height = Height;
         int i = 0;
-        for (int count = particles.Count; i < count; i++)
-        {
+        for (int count = particles.Count; i < count; i++) {
             Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
             value.Y %= height - 1f;
             particles[i] = value;
@@ -76,8 +69,7 @@ public class DeSeekerField : Entity
         base.Update();
     }
 
-    public void OnRenderBloom()
-    {
+    public void OnRenderBloom() {
         if (Visible && !Invisible) // lol
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }

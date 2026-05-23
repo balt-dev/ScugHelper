@@ -13,8 +13,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, offset)
 {
     private Refill refill;
-    private ParticleType pType = new(Player.P_DashA)
-    {
+    private ParticleType pType = new(Player.P_DashA) {
         Color = data.HexColor("lineColor", Color.White) * 0.6f,
         Color2 = Color.Transparent,
         FadeMode = ParticleType.FadeModes.Linear,
@@ -25,8 +24,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
         LifeMax = 2f,
     };
 
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         Collider = new Hitbox(32, 32, -16, -16);
         // Refills aren't Tracked.
         Refill closestRefill = null;
@@ -34,8 +32,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
             if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;
         Collider = null;
-        if (closestRefill == null)
-        {
+        if (closestRefill == null) {
             Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill gate...");
             RemoveSelf();
             return;
@@ -45,8 +42,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
         refill = closestRefill;
     }
 
-    public override void OnTrigger(Player player)
-    {
+    public override void OnTrigger(Player player) {
         if (refill == null) return;
         if (refill.respawnTimer > 0f) return;
         foreach (PlayerCollider collider in refill.Components.GetAll<PlayerCollider>().ToArray())
@@ -54,8 +50,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
         if (refill.Scene == null) RemoveSelf();
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (refill == null) return;
         if (refill.respawnTimer > 0f) return;
@@ -66,8 +61,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
         SceneAs<Level>().ParticlesFG.Emit(pType, 1, particlePos, Vector2.Zero);
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (refill == null) return;
         if (refill.respawnTimer > 0f) return;

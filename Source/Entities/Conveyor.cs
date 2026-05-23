@@ -25,8 +25,7 @@ public class Conveyor : Entity
     private float elapsed;
     private int TotalFrames = 1;
 
-    public Conveyor(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public Conveyor(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Tag = Tags.TransitionUpdate;
         Depth = 1999;
         Flip = data.Bool("Flip");
@@ -40,11 +39,9 @@ public class Conveyor : Entity
         tiles = BuildTiles();
     }
 
-    public List<Sprite> BuildTiles()
-    {
+    public List<Sprite> BuildTiles() {
         List<Sprite> list = [];
-        for (int i = 0; i < Width; i += 4)
-        {
+        for (int i = 0; i < Width; i += 4) {
             Sprite sprite = new(GFX.Game, SpritePath + (i == Width - 4 ? "/right" : i == 0 ? "/left" : "/middle")) { Position = new Vector2(i, Flip ? 0 : 4), Origin = Vector2.Zero, FlipY = Flip };
             sprite.AddLoop("idle", "", 1f / 60f);
             sprite.Play("idle");
@@ -57,8 +54,7 @@ public class Conveyor : Entity
     }
 
 
-    public override void Update()
-    {
+    public override void Update() {
         PositionIdleSfx();
         if (SceneAs<Level>().Transitioning) return;
         base.Update();
@@ -66,10 +62,8 @@ public class Conveyor : Entity
         foreach (Sprite tile in tiles)
             tile.SetAnimationFrame((((int)(elapsed * TargetSpeed) % TotalFrames) + TotalFrames) % TotalFrames);
 
-        foreach (var kvp in Scene.Tracker.Entities)
-        {
-            foreach (Entity entity in kvp.Value)
-            {
+        foreach (var kvp in Scene.Tracker.Entities) {
+            foreach (Entity entity in kvp.Value) {
                 if (entity is not Actor actor) break;
                 if (!CollideCheck(entity)) continue;
                 if (!actor.OnGround()) continue;
@@ -78,11 +72,9 @@ public class Conveyor : Entity
             }
         }
     }
-    public void PositionIdleSfx()
-    {
+    public void PositionIdleSfx() {
         Player player = Scene.Tracker.GetEntity<Player>();
-        if (player != null)
-        {
+        if (player != null) {
             idleSfx.Position = Calc.ClosestPointOnLine(Position, Position + new Vector2(Width, 0f), player.Center) - Position;
             idleSfx.UpdateSfxPosition();
         }

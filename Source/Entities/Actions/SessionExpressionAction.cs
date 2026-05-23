@@ -16,21 +16,18 @@ public class SessionExpressionAction : Entity, IAction
     private readonly string Target;
     private readonly string Expression;
     public SessionExpressionAction(EntityData data, Vector2 _): base() {
-        if (!FrostHelperImports.IsLoaded)
-        {
+        if (!FrostHelperImports.IsLoaded) {
             ActionManager.LogError($"FrostHelper is not loaded! Session Expression actions won't work.");
             return;
         }
         Target = data.String("Target").Trim();
         Expression = data.String("Expression").Trim();
-        if (!FrostHelperImports.TryCreateSessionExpression(Expression, out SessionExpression!))
-        {
+        if (!FrostHelperImports.TryCreateSessionExpression(Expression, out SessionExpression!)) {
             ActionManager.LogError($"FrostHelper session expression failed to compile: {Expression}");
             return;
         }
     }
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         if (!FrostHelperImports.IsLoaded) return;
         if (SessionExpression is null) return;
         Player? player = level.Tracker.GetEntity<Player>();
@@ -53,8 +50,7 @@ public class SessionExpressionAction : Entity, IAction
                     SessionValueKind.Flag;
                 string realTarget = Target.TrimStart(['#', '@']).Trim();
 
-                switch (kind)
-                {
+                switch (kind) {
                     case SessionValueKind.Flag: level.Session.SetFlag(realTarget, FrostHelperImports.GetBoolSessionExpressionValue(SessionExpression, level.Session)); break;
                     case SessionValueKind.Counter: level.Session.SetCounter(realTarget, FrostHelperImports.GetIntSessionExpressionValue(SessionExpression, level.Session)); break;
                     case SessionValueKind.Slider: level.Session.SetSlider(realTarget, FrostHelperImports.GetFloatSessionExpressionValue(SessionExpression, level.Session)); break;

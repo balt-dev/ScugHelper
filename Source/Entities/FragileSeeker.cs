@@ -12,17 +12,14 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/FragileSeeker")]
 public class FragileSeeker : Seeker
 {
-    public FragileSeeker(Vector2 position, Vector2[] patrolPoints) : base(position, patrolPoints)
-    {
+    public FragileSeeker(Vector2 position, Vector2[] patrolPoints) : base(position, patrolPoints) {
         sprite.RemoveSelf();
         Add(sprite = GFX.SpriteBank.Create("fragileSeeker"));
         sprite.OnLastFrame = f =>
         {
-            if (flipAnimations.Contains(f) && spriteFacing != facing)
-            {
+            if (flipAnimations.Contains(f) && spriteFacing != facing) {
                 spriteFacing = facing;
-                if (nextSprite != null)
-                {
+                if (nextSprite != null) {
                     sprite.Play(nextSprite);
                     nextSprite = null;
                 }
@@ -50,21 +47,17 @@ public class FragileSeeker : Seeker
 
     static readonly Color NewTrailColor = Calc.HexToColor("c717d7");
 
-    private static void OnTrail(On.Celeste.Seeker.orig_CreateTrail orig, Seeker self)
-    {
-        if (self is FragileSeeker)
-        {
+    private static void OnTrail(On.Celeste.Seeker.orig_CreateTrail orig, Seeker self) {
+        if (self is FragileSeeker) {
             Vector2 scale = self.sprite.Scale;
             self.sprite.Scale *= 1f - 0.3f * self.scaleWiggler.Value;
             self.sprite.Scale.X *= self.spriteFacing;
             TrailManager.Add(self, NewTrailColor, 0.5f, frozenUpdate: false, useRawDeltaTime: false);
             self.sprite.Scale = scale;
-        }
-        else orig(self);
+        } else orig(self);
     }
 
-    private static void OnBounce(On.Celeste.Seeker.orig_GotBouncedOn orig, Seeker self, Entity entity)
-    {
+    private static void OnBounce(On.Celeste.Seeker.orig_GotBouncedOn orig, Seeker self, Entity entity) {
         if (self is FragileSeeker fragSeeker) {
             IEnumerator Coro() {
                 yield return 0.3f;

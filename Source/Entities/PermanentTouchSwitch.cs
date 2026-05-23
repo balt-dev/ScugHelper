@@ -24,17 +24,14 @@ public class SaveTouchSwitchesTrigger(EntityData data, Vector2 offset) : Trigger
                 sw.Switch.Activate();
         }
     }
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         base.OnEnter(player);
-        foreach (var id in ToSave)
-        {
+        foreach (var id in ToSave) {
             player.level.Session.SetFlag($"ScugHelper.TouchSwitch.{id}");
         }
     }
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         Everest.Events.Level.OnLoadLevel += OnLoadLevel;
         On.Celeste.TouchSwitch.TurnOn += OnTurnOn;
     }
@@ -47,8 +44,7 @@ public class SaveTouchSwitchesTrigger(EntityData data, Vector2 offset) : Trigger
         On.Celeste.TouchSwitch.TurnOn -= OnTurnOn;
     }
 
-    private static void OnTurnOn(On.Celeste.TouchSwitch.orig_TurnOn orig, TouchSwitch self)
-    {
+    private static void OnTurnOn(On.Celeste.TouchSwitch.orig_TurnOn orig, TouchSwitch self) {
         orig(self);
         ToSave.Add(self.SourceId);
     }

@@ -13,8 +13,7 @@ public class LimboGlitchStateTrigger(EntityData data, Vector2 offset) : Trigger(
     readonly bool LockStateMachine = data.Bool("LockStateMachine", true);
     readonly bool DetachSprite = data.Bool("DetachSprite", true);
 
-    public override void OnEnter(Player player)
-    {
+    public override void OnEnter(Player player) {
         if (DetachSprite) {
             var dummyEntity = new LimboDummyEntity(player.Position);
             player.Sprite.Entity = dummyEntity;
@@ -23,8 +22,7 @@ public class LimboGlitchStateTrigger(EntityData data, Vector2 offset) : Trigger(
         }
         player.Dead = true;
         player.Depth = -1000000;
-        if (LockStateMachine)
-        {
+        if (LockStateMachine) {
             player.StateMachine.State = Player.StNormal;
             player.StateMachine.Locked = true;
         }

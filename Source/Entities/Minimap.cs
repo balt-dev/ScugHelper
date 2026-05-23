@@ -30,18 +30,15 @@ public class MinimapEntity : Entity
     private static readonly float ReturnTime = 0.4f;
 
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         Everest.Events.LevelLoader.OnLoadingThread += OnLevelLoad;
     }
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         Everest.Events.LevelLoader.OnLoadingThread -= OnLevelLoad;
     }
 
-    private static void OnLevelLoad(Level level)
-    {
+    private static void OnLevelLoad(Level level) {
         level.Add(new MinimapEntity());
     }
 
@@ -57,44 +54,37 @@ public class MinimapEntity : Entity
     {
         get => ScugHelperModule.Settings.Minimap.Minimap && focusToggle;
     }
-    public MinimapEntity() : base()
-    {
+    public MinimapEntity() : base() {
         Camera = new(ScugHelperModule.Settings.Minimap.MinimapWidth, ScugHelperModule.Settings.Minimap.MinimapHeight);
         Tag |= Tags.Global | Tags.HUD | Tags.TransitionUpdate | Tags.FrozenUpdate;
         Add(new BeforeRenderHook(BeforeRender));
         ScugHelperModule.Session.RenderedEditorOnce = false;
     }
-    public override void Awake(Scene scene)
-    {
+    public override void Awake(Scene scene) {
         base.Awake(scene);
         focusToggle = false;
         templates = (scene as Level).Session.MapData.Levels.Select((data) => new LevelTemplate(data)).ToList();
         Camera.Zoom = ZoomTarget = (scene as Level).Camera.Zoom * 4f;
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (!ScugHelperModule.Settings.Minimap.Minimap) { focusToggle = false; return; }
         var levelCam = SceneAs<Level>().Camera;
         if (ScugHelperModule.Settings.Minimap is null) throw new Exception("Minimap null!?");
         if (ScugHelperModule.Settings.MinimapBind is null) throw new Exception("Minimap bind null!?");
-        if (ScugHelperModule.Settings.MinimapBind.Pressed)
-        {
+        if (ScugHelperModule.Settings.MinimapBind.Pressed) {
             ScugHelperModule.Settings.MinimapBind.ConsumePress();
             focusToggle = !focusToggle;
         }
 
-        if (Focused)
-        {
+        if (Focused) {
             Speed = Calc.Approach(Speed, Input.Aim.Value * CameraSpeed / Camera.Zoom, CameraAcceleration / Camera.Zoom * Engine.RawDeltaTime);
-            if (ScugHelperModule.Settings.MinimapZoomIn.Pressed)
-            {
+            if (ScugHelperModule.Settings.MinimapZoomIn.Pressed) {
                 ScugHelperModule.Settings.MinimapZoomIn.ConsumePress();
                 ZoomTarget *= 2f;
             }
-            if (ScugHelperModule.Settings.MinimapZoomOut.Pressed)
-            {
+            if (ScugHelperModule.Settings.MinimapZoomOut.Pressed) {
                 ScugHelperModule.Settings.MinimapZoomOut.ConsumePress();
                 ZoomTarget *= 0.5f;
             }
@@ -102,9 +92,7 @@ public class MinimapEntity : Entity
             Opacity = float.Lerp(Opacity, ScugHelperModule.Settings.Minimap.FocusedOpacity, 1f - MathF.Pow(0.0001f, Engine.RawDeltaTime));
             oldPosition = Camera.Position;
             unfocusedTimer = 0f;
-        }
-        else
-        {
+        } else {
             Speed = Vector2.Zero;
             float positionFac = 1 - MathF.Pow(1 - Math.Clamp(unfocusedTimer / ReturnTime, 0.0f, 1.0f), 3);
             Vector2 camSize = new(levelCam.Viewport.Bounds.Width, levelCam.Viewport.Bounds.Height);
@@ -120,8 +108,7 @@ public class MinimapEntity : Entity
     VirtualRenderTarget buffer;
     private float ZoomTarget;
 
-    public void BeforeRender()
-    {
+    public void BeforeRender() {
         if (!ScugHelperModule.Settings.Minimap.Minimap) return;
         
         var level = SceneAs<Level>();
@@ -130,8 +117,7 @@ public class MinimapEntity : Entity
         Vector2 viewportOffset = new(Camera.Viewport.Width / Camera.Zoom / 2, Camera.Viewport.Height / Camera.Zoom / 2);
         Camera.Position -= viewportOffset;
         
-        if (!ScugHelperModule.Session.RenderedEditorOnce)
-        {
+        if (!ScugHelperModule.Session.RenderedEditorOnce) {
             // GameHelper compat
             VirtualRenderTarget scratchBuffer = VirtualContent.CreateRenderTarget("minimap-scratch", settings.MinimapWidth, settings.MinimapHeight);
             Engine.Graphics.GraphicsDevice.SetRenderTarget(scratchBuffer);
@@ -149,8 +135,7 @@ public class MinimapEntity : Entity
 
         Engine.Graphics.GraphicsDevice.Clear(Color.Black);
 
-        foreach (var temp in templates)
-        {
+        foreach (var temp in templates) {
             if (!temp.Rect.Intersects(new Rectangle((int)Camera.Left, (int)Camera.Top, (int)(Camera.Right - Camera.Left), (int)(Camera.Bottom - Camera.Top)))) continue;
             try
             {
@@ -176,8 +161,7 @@ public class MinimapEntity : Entity
 
 
 
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (!ScugHelperModule.Settings.Minimap.Minimap) return;
 

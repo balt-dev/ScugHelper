@@ -9,8 +9,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 [CustomEntity("ScugHelper/SnowballAction")]
 public class SnowballAction() : Entity(), IAction
 {
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         Snowball snowball = [new OneshotSnowballComponent(true, false)];
         level.Add(snowball);
     }

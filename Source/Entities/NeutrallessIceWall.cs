@@ -20,11 +20,9 @@ public class NeutrallessWallBooster : WallBooster
 
     private static ILHook? wallJumpHook;
 
-    public NeutrallessWallBooster(EntityData data, Vector2 offset) : base(data, offset)
-    {
+    public NeutrallessWallBooster(EntityData data, Vector2 offset) : base(data, offset) {
         tiles = BuildNeutrallessSprite(Facing == Facings.Left);
-        Add(new StaticMover
-        {
+        Add(new StaticMover {
             SolidChecker = IsRiding,
             OnShake = OnShake,
             OnEnable = OnEnable,
@@ -32,45 +30,37 @@ public class NeutrallessWallBooster : WallBooster
         });
         Collider = Facing == Facings.Left ? new Hitbox(4f, data.Height) : new Hitbox(4f, data.Height, 4f);
     }
-    public bool IsRiding(Solid solid)
-    {
-        return Facing switch
-        {
+    public bool IsRiding(Solid solid) {
+        return Facing switch {
             Facings.Left => CollideCheckOutside(solid, Position - Vector2.UnitX),
             Facings.Right => CollideCheckOutside(solid, Position + Vector2.UnitX * 7),
             _ => false,
         };
     }
 
-    public void OnEnable()
-    {
+    public void OnEnable() {
         Active = Visible = Collidable = true;
     }
 
-    public void OnDisable()
-    {
+    public void OnDisable() {
         Active = Collidable = false;
         Visible = false;
     }
-    public void OnShake(Vector2 amount)
-    {
+    public void OnShake(Vector2 amount) {
         imageOffset += amount;
     }
-    public override void Render()
-    {
+    public override void Render() {
         Vector2 position = Position;
         Position += imageOffset;
         base.Render();
         Position = position;
     }
 
-    public List<Sprite> BuildNeutrallessSprite(bool left)
-    {
+    public List<Sprite> BuildNeutrallessSprite(bool left) {
         foreach (var tile in tiles)
             tile.RemoveSelf();
         List<Sprite> list = [];
-        for (int i = 0; i < Height; i += 8)
-        {
+        for (int i = 0; i < Height; i += 8) {
             string id;
             if (i == 0) id = "neutrallessWallBoosterTop";
             else if (!(i + 16 > Height)) id = "neutrallessWallBoosterMid";
@@ -98,8 +88,7 @@ public class NeutrallessWallBooster : WallBooster
     }
 
 
-    private static void ModWallJump(ILContext il)
-    {
+    private static void ModWallJump(ILContext il) {
         ILCursor cursor = new(il);
 
         if (!cursor.TryGotoNextBestFit(MoveType.After, 16,

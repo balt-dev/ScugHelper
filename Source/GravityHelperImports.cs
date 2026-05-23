@@ -18,8 +18,7 @@ public static class GravityHelperImports
 
     public static bool IsInverted(this Actor self) => IsActorInverted is not null && IsActorInverted(self);
     public static bool PlayerInverted() => IsPlayerInverted is not null && IsPlayerInverted();
-    public static void SetPlayerInverted(bool value)
-    {
+    public static void SetPlayerInverted(bool value) {
         if (SetPlayerGravity is not null) SetPlayerGravity(value ? 1 : 0, 1f);
     }
     public static Vector2 AdjustedSpeed(this Player self) => self.IsInverted() ? new Vector2(self.Speed.X, -self.Speed.Y) : self.Speed;
@@ -27,8 +26,7 @@ public static class GravityHelperImports
     public static void SetAdjustedSpeed(this Player self, float x, float y) => self.Speed = self.IsInverted() ? new Vector2(x, -y) : new(x, y);
 
 
-    public static bool IsLoaded
-    {
+    public static bool IsLoaded {
         get => IsActorInverted is not null
         && SetPlayerGravity is not null
         && IsPlayerInverted is not null;

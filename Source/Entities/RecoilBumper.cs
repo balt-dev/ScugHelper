@@ -30,8 +30,7 @@ public class RecoilBumper : Actor, IHasSpeed
     private Collision onCollideV;
 
     public RecoilBumper(EntityData data, Vector2 offset)
-        : base(data.Position + offset)
-    {
+        : base(data.Position + offset) {
         LiftSpeedGraceTime = 1f / 30f;
         Mass = data.Float("Mass", 2f);
         Drag = data.Float("Drag", 200f);
@@ -68,21 +67,17 @@ public class RecoilBumper : Actor, IHasSpeed
         bumper.Speed += 2 * m1 * mass_factor * dot_over_len2 * delta_p;
     }
 
-    public bool HitSpring(Spring spring)
-    {
-        switch (spring.Orientation)
-        {
+    public bool HitSpring(Spring spring) {
+        switch (spring.Orientation) {
             default:
-                if (Speed.Y >= 0f)
-                {
+                if (Speed.Y >= 0f) {
                     Speed.Y = -MathF.Max(MathF.Abs(Speed.Y), 224f);
                     MoveTowardsX(spring.CenterX, 4f);
                     return true;
                 }
                 return false;
             case Spring.Orientations.WallLeft:
-                if (Speed.X <= 60f)
-                {
+                if (Speed.X <= 60f) {
                     Speed.X = -MathF.Max(MathF.Abs(Speed.X), 224f);
                     MoveTowardsY(spring.CenterY, 4f);
                     return true;
@@ -90,8 +85,7 @@ public class RecoilBumper : Actor, IHasSpeed
 
                 return false;
             case Spring.Orientations.WallRight:
-                if (Speed.X >= -60f)
-                {
+                if (Speed.X >= -60f) {
                     Speed.X = MathF.Max(MathF.Abs(Speed.X), 224f);
                     MoveTowardsY(spring.CenterY, 4f);
                     return true;
@@ -103,8 +97,7 @@ public class RecoilBumper : Actor, IHasSpeed
 
     private Vector2 prevLiftSpeed;
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (LiftSpeed.Length() < prevLiftSpeed.Length())
             Speed += prevLiftSpeed;
@@ -113,19 +106,15 @@ public class RecoilBumper : Actor, IHasSpeed
         foreach (RecoilBumperCollider component in Scene.Tracker.GetComponents<RecoilBumperCollider>())
             component.Check(this);
 
-        if (respawnTimer > 0f)
-        {
+        if (respawnTimer > 0f) {
             respawnTimer -= Engine.DeltaTime;
-            if (respawnTimer <= 0f)
-            {
+            if (respawnTimer <= 0f) {
                 light.Visible = true;
                 bloom.Visible = true;
                 sprite.Play("on");
                 Audio.Play("event:/game/06_reflection/pinballbumper_reset", Position);
             }
-        }
-        else if (Scene.OnInterval(0.05f))
-        {
+        } else if (Scene.OnInterval(0.05f)) {
             float dir = Calc.Random.NextAngle();
             SceneAs<Level>().Particles.Emit(Bumper.P_Ambience, 1, Center + Calc.AngleToVector(dir, 8), Vector2.One * 2f, dir);
         }
@@ -140,24 +129,20 @@ public class RecoilBumper : Actor, IHasSpeed
         Speed = Calc.Approach(Speed, Vector2.Zero, Drag * Engine.DeltaTime);
     }
 
-    private void OnCollideV(CollisionData data)
-    {
+    private void OnCollideV(CollisionData data) {
         if (data.Hit is DashSwitch button)
             button.OnDashCollide(null, Vector2.UnitY * Math.Sign(Speed.Y));
         Speed.Y *= -1;
     }
 
-    private void OnCollideH(CollisionData data)
-    {
+    private void OnCollideH(CollisionData data) {
         if (data.Hit is DashSwitch button)
             button.OnDashCollide(null, Vector2.UnitX * Math.Sign(Speed.X));
         Speed.X *= -1;
     }
 
-    public void OnPlayer(Player player)
-    {
-        if (respawnTimer <= 0f)
-        {
+    public void OnPlayer(Player player) {
+        if (respawnTimer <= 0f) {
             Audio.Play("event:/game/09_core/pinballbumper_hit", Position);
 
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
@@ -188,10 +173,8 @@ public class RecoilBumper : Actor, IHasSpeed
     }
 
 
-    public override void OnSquish(CollisionData data)
-    {
-        if (!TrySquishWiggle(data, 3, 3))
-        {
+    public override void OnSquish(CollisionData data) {
+        if (!TrySquishWiggle(data, 3, 3)) {
             data.Hit.Add(new Coroutine(CrushSoundRoutine(Position)));
             SceneAs<Level>().ParticlesFG.Emit(Bumper.P_Launch, 100, Position, Vector2.One * 16f, data.Direction.Angle());
             RemoveSelf();
@@ -219,20 +202,17 @@ public class RecoilBumper : Actor, IHasSpeed
         On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;
     }
 
-    private static void TouchSwitchCtorHook(On.Celeste.TouchSwitch.orig_ctor_Vector2 orig, TouchSwitch self, Vector2 position)
-    {
+    private static void TouchSwitchCtorHook(On.Celeste.TouchSwitch.orig_ctor_Vector2 orig, TouchSwitch self, Vector2 position) {
         orig(self, position);
         self.Add(new RecoilBumperCollider(bumper => self.TurnOn()));
     }
 
-    private static void SpringCtorHook(On.Celeste.Spring.orig_ctor_Vector2_Orientations_bool orig, Spring self, Vector2 position, Spring.Orientations orientation, bool playerCanUse)
-    {
+    private static void SpringCtorHook(On.Celeste.Spring.orig_ctor_Vector2_Orientations_bool orig, Spring self, Vector2 position, Spring.Orientations orientation, bool playerCanUse) {
         orig(self, position, orientation, playerCanUse);
         self.Add(new RecoilBumperCollider(bumper => { if (bumper.HitSpring(self)) self.BounceAnimate(); }));
     }
 
-    private static bool CircleCollide(On.Monocle.Grid.orig_Collide_Circle orig, Grid self, Circle circle)
-    {
+    private static bool CircleCollide(On.Monocle.Grid.orig_Collide_Circle orig, Grid self, Circle circle) {
         if (circle is GridCircle)
             return self.Collide(circle.Bounds);
         else return orig(self, circle);

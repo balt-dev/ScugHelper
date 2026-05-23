@@ -19,8 +19,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/LimboField")]
 public class LimboField : Solid
 {
-    internal class LimboFieldColliderList : ColliderList
-    {
+    internal class LimboFieldColliderList : ColliderList {
         private readonly LimboField field;
         public LimboFieldColliderList(LimboField field) {
             colliders = [field.Collider];
@@ -46,8 +45,7 @@ public class LimboField : Solid
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
-    public LimboField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false)
-    {
+    public LimboField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false) {
         Depth = -20000;
         Collider = new LimboFieldColliderList(this);
         Collidable = true;
@@ -57,15 +55,12 @@ public class LimboField : Solid
     }
 
     public LimboField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"))
-    { }
+        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible")) { }
 
     private static readonly float SineMovement = 2.0f;
 
-    public override void Render()
-    {
-        if (!Invisible)
-        {
+    public override void Render() {
+        if (!Invisible) {
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.3f);
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * (BounceTimer / BouncePulseLength * 0.4f));
             var outlineColor = Color.Black;
@@ -77,15 +72,13 @@ public class LimboField : Solid
         base.Render();
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         Add(new CustomBloom(OnRenderBloom));
     }
 
     private float Elapsed = 0;
-    public override void Update()
-    {
+    public override void Update() {
         Elapsed += Engine.DeltaTime;
         if (HitPlayer) {
             BounceTimer = BouncePulseLength;
@@ -96,8 +89,7 @@ public class LimboField : Solid
         int num = speeds.Length;
         float height = Height;
         int i = 0;
-        for (int count = particles.Count; i < count; i++)
-        {
+        for (int count = particles.Count; i < count; i++) {
             Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
             value.Y %= height - 1f;
             particles[i] = value;
@@ -105,8 +97,7 @@ public class LimboField : Solid
         base.Update();
     }
 
-    public void OnRenderBloom()
-    {
+    public void OnRenderBloom() {
         if (Visible && !Invisible) // lol
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }

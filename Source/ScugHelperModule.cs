@@ -21,8 +21,7 @@ public class ScugHelperModule : EverestModule
     public override Type SessionType => typeof(ScugHelperModuleSession);
     public static ScugHelperModuleSession Session => (ScugHelperModuleSession)Instance._Session;
 
-    public ScugHelperModule()
-    {
+    public ScugHelperModule() {
         Instance = this;
 #if DEBUG
         // debug builds use verbose logging
@@ -33,8 +32,7 @@ public class ScugHelperModule : EverestModule
 #endif
     }
 
-    public override void Load()
-    {
+    public override void Load() {
         // TODO: apply any hooks that should always be active
         typeof(FrostHelperImports).ModInterop();
         typeof(GravityHelperImports).ModInterop();
@@ -43,27 +41,23 @@ public class ScugHelperModule : EverestModule
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
     }
 
-    public override void Unload()
-    {
+    public override void Unload() {
         // TODO: unapply any hooks applied in Load()
         LifecycleMethods.OnUnload();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int -= OnSquishWiggle;
     }
 
-    private static void OnPlayerSeekerCollideHook(On.Celeste.PlayerSeeker.orig_OnCollide orig, PlayerSeeker self, CollisionData data)
-    {
+    private static void OnPlayerSeekerCollideHook(On.Celeste.PlayerSeeker.orig_OnCollide orig, PlayerSeeker self, CollisionData data) {
         orig(self, data);
-        if (Settings.PlayerSeekerDashSwitchFix && data.Hit is DashSwitch dashSwitch)
-        {
+        if (Settings.PlayerSeekerDashSwitchFix && data.Hit is DashSwitch dashSwitch) {
             Logger.Info(nameof(ScugHelperModule), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
             dashSwitch.OnDashed(null, Vector2.UnitX * Math.Sign(self.dashDirection.X));
             dashSwitch.OnDashed(null, Vector2.UnitY * Math.Sign(self.dashDirection.Y));
         }
     }
 
-    private static bool OnSquishWiggle(On.Celeste.Actor.orig_TrySquishWiggle_CollisionData_int_int orig, Actor self, CollisionData data, int wiggleX, int wiggleY)
-    {
+    private static bool OnSquishWiggle(On.Celeste.Actor.orig_TrySquishWiggle_CollisionData_int_int orig, Actor self, CollisionData data, int wiggleX, int wiggleY) {
         if (KillingSeeker) return false;
         return orig(self, data, wiggleX, wiggleY);
     }
@@ -71,12 +65,10 @@ public class ScugHelperModule : EverestModule
 
     static bool KillingSeeker;
 
-    public static void KillSeeker(Seeker self)
-    {
+    public static void KillSeeker(Seeker self) {
         KillingSeeker = true;
         var solid = new Solid(Vector2.Zero, 0, 0, false);
-        self.SquishCallback(new CollisionData()
-        {
+        self.SquishCallback(new CollisionData() {
             Direction = Vector2.Zero,
             Moved = Vector2.Zero,
             TargetPosition = self.Position,
@@ -87,8 +79,7 @@ public class ScugHelperModule : EverestModule
     }
 
     static readonly Dictionary<string, Type?> TypeCache = [];
-    internal static Type? GetTypeOfEntity(EntityData data)
-    {
+    internal static Type? GetTypeOfEntity(EntityData data) {
         if (TypeCache.TryGetValue(data.Name, out var res)) return res;
         var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
         if (type is not Type ty)
@@ -98,8 +89,7 @@ public class ScugHelperModule : EverestModule
     }
 
     static readonly Dictionary<Type, IReadOnlySet<string>> NameCache = [];
-    internal static IReadOnlySet<string> GetNamesOfEntity(Entity entity)
-    {
+    internal static IReadOnlySet<string> GetNamesOfEntity(Entity entity) {
         var type = entity.GetType();
         if (NameCache.TryGetValue(type, out var res)) return res;
         var sids = EntityRegistry.GetKnownSidsFromType(entity.GetType());
@@ -109,8 +99,7 @@ public class ScugHelperModule : EverestModule
 
     internal static Effect OutlineFX;
 
-    public override void LoadContent(bool firstLoad)
-    {
+    public override void LoadContent(bool firstLoad) {
         base.LoadContent(firstLoad);
 
         OutlineFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Shaders/outline.cso", true).Data);

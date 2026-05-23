@@ -10,8 +10,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class CollideGate(EntityData data, Vector2 offset) : AbstractGate(data, offset) {
     private Vector2 CollidePosition = data.FirstNodeNullable(offset) ?? throw new NullReferenceException("Collide gate does not have a collide position node.");
 
-    public override void OnTrigger(Player player)
-    {
+    public override void OnTrigger(Player player) {
         Level level = SceneAs<Level>();
         foreach (PlayerCollider collider in Scene.CollideAllByComponent<PlayerCollider>(CollidePosition))
             collider.OnCollide(player);

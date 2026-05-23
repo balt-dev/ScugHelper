@@ -9,8 +9,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 [CustomEntity("ScugHelper/PlayerKillAction")]
 public class PlayerKillAction() : Entity(), IAction
 {
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
         if (!player.Dead) player.Die(Vector2.Zero);
     }

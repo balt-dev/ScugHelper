@@ -9,8 +9,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/GliderFizzleGate")]
 public class GliderFizzleGate : AbstractGate
 {
-    private static readonly ParticleType pType = new(Player.P_DashA)
-    {
+    private static readonly ParticleType pType = new(Player.P_DashA) {
         Color = Color.White,
         Color2 = Color.Transparent,
         FadeMode = ParticleType.FadeModes.Linear,
@@ -21,19 +20,16 @@ public class GliderFizzleGate : AbstractGate
         LifeMax = 1f,
     };
 
-    public GliderFizzleGate(EntityData data, Vector2 offset) : base(data, offset)
-    {
+    public GliderFizzleGate(EntityData data, Vector2 offset) : base(data, offset) {
         Add(new CustomBloom(RenderBloom));
     }
 
-    public override void DebugRender(Camera camera)
-    {
+    public override void DebugRender(Camera camera) {
         base.DebugRender(camera);
         Draw.Line(Position - lineDir * Size / 2, Position + lineDir * Size / 2, Color.Cyan);
     }
 
-    private bool CheckLine(Vector2 a, Vector2 b)
-    {
+    private bool CheckLine(Vector2 a, Vector2 b) {
         var prevPos = a;
         var delta = b - prevPos;
         var d1 = Vector2.Dot(prevPos - Position, lineNorm);
@@ -46,12 +42,10 @@ public class GliderFizzleGate : AbstractGate
         return Math.Abs(proj) <= Size / 2;
     }
 
-    private static void Fizzle(Glider self)
-    {
+    private static void Fizzle(Glider self) {
         self.destroyed = true;
         self.Collidable = false;
-        if (self.Hold.IsHeld)
-        {
+        if (self.Hold.IsHeld) {
             Vector2 speed = self.Hold.Holder.Speed;
             self.Hold.Holder.Drop();
             self.Speed = speed * 0.333f;
@@ -62,54 +56,39 @@ public class GliderFizzleGate : AbstractGate
     }
 
     [OnLoad]
-    public static void LoadHooks()
-    {
+    public static void LoadHooks() {
         On.Celeste.Glider.Update += OnGliderUpdate;
     }
 
     [OnUnload]
-    public static void UnloadHooks()
-    {
+    public static void UnloadHooks() {
         On.Celeste.Glider.Update -= OnGliderUpdate;
     }
 
     // We do this here instead of in our own update to heavily reduce the amount of entities we need to check.
     // It's still O(n^2), but the constant factor is massively reduced, since Gliders aren't marked as [Tracked].
-    private static void OnGliderUpdate(On.Celeste.Glider.orig_Update orig, Glider self)
-    {
+    private static void OnGliderUpdate(On.Celeste.Glider.orig_Update orig, Glider self) {
         var oldPos = self.Position;
         orig(self);
         var newPos = self.Position;
         if (self.destroyed) return;
 
-        foreach (GliderFizzleGate gate in self.Scene.Tracker.GetEntities<GliderFizzleGate>())
-        {
-            if (gate.CheckLine(oldPos, newPos))
-            { Fizzle(self); break; }
-            else
-            {
-                if (self.IsInverted())
-                {
-                    if (gate.CheckLine(oldPos + self.BottomCenter - newPos, self.BottomCenter))
-                    { Fizzle(self); break; }
-                }
-                else
-                {
-                    if (gate.CheckLine(oldPos + self.TopCenter - newPos, self.TopCenter))
-                    { Fizzle(self); break; }
+        foreach (GliderFizzleGate gate in self.Scene.Tracker.GetEntities<GliderFizzleGate>()) {
+            if (gate.CheckLine(oldPos, newPos)) { Fizzle(self); break; } else {
+                if (self.IsInverted()) {
+                    if (gate.CheckLine(oldPos + self.BottomCenter - newPos, self.BottomCenter)) { Fizzle(self); break; }
+                } else {
+                    if (gate.CheckLine(oldPos + self.TopCenter - newPos, self.TopCenter)) { Fizzle(self); break; }
                 }
             }
         }
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
 
-        if (Scene.OnInterval(0.02f))
-        {
-            for (int i = 0; i < Size / 64; i++)
-            {
+        if (Scene.OnInterval(0.02f)) {
+            for (int i = 0; i < Size / 64; i++) {
                 var startPos = Position - lineDir * Size / 2;
                 var endPos = Position + lineDir * Size / 2;
                 var particlePos = startPos + Calc.Random.NextFloat() * (endPos - startPos);
@@ -118,22 +97,19 @@ public class GliderFizzleGate : AbstractGate
         }
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         var startPos = Position - lineDir * Size / 2;
         var endPos = Position + lineDir * Size / 2;
         Draw.Line(startPos, endPos, pType.Color * 0.2f, 3);
     }
     
-    public void RenderBloom()
-    {
+    public void RenderBloom() {
         var startPos = Position - lineDir * Size / 2;
         var endPos = Position + lineDir * Size / 2;
         Draw.Line(startPos, endPos, pType.Color, 3);
     }
 
-    public override void OnTrigger(Player player)
-    {
+    public override void OnTrigger(Player player) {
         if (player.Holding?.Entity is Glider glider) Fizzle(glider);
     }
 }

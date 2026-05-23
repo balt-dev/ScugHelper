@@ -9,10 +9,8 @@ namespace Celeste.Mod.ScugHelper;
 
 public static class Sideflip
 {
-    public static bool Enabled
-    {
-        get
-        {
+    public static bool Enabled {
+        get {
             if (ScugHelperModule.Settings.SideflippingEverywhere) return true;
             if (Monocle.Engine.Scene is not Level level) return false;
             return level.Session.GetFlag("ScugHelper-AllowSideflipping");
@@ -31,8 +29,7 @@ public static class Sideflip
     internal static int FramesSinceSwap = 100;
 
     [OnLoad]
-    internal static void LoadHooks()
-    {
+    internal static void LoadHooks() {
         On.Celeste.Player.Update += OnUpdate;
         On.Celeste.Player.Jump += OnJump_Sideflip;
     }
@@ -42,8 +39,7 @@ public static class Sideflip
         On.Celeste.Player.Jump -= OnJump_Sideflip;
     }
 
-    private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self)
-    {
+    private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self) {
         orig(self);
         FramesSinceSwap++;
         int inputX = Input.MoveX.Value;
@@ -51,15 +47,13 @@ public static class Sideflip
         if (FramesSinceNonZero > SwapFrameLeniency) LastNonZeroX = 0;
         if (inputX != 0) FramesSinceNonZero = 0;
         if (LastNonZeroX == 0) { LastNonZeroX = inputX; return; }
-        if (inputX != 0)
-        {
+        if (inputX != 0) {
             if (inputX != LastNonZeroX) FramesSinceSwap = 0;
             LastNonZeroX = inputX;
         }
     }
 
-    private static void OnJump_Sideflip(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx)
-    {
+    private static void OnJump_Sideflip(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx) {
         bool wasNormal = self.StateMachine.State == Player.StNormal;
         if (Enabled && wasNormal && FramesSinceSwap <= JumpFrameLeniency) {
             Input.Jump.ConsumeBuffer();

@@ -12,8 +12,7 @@ public class SeekerSpikes : Spikes
         "ScugHelper/SeekerSpikes-Left" => Directions.Left,
         "ScugHelper/SeekerSpikes-Down" => Directions.Down,
         "ScugHelper/SeekerSpikes-Right" => Directions.Right
-    })
-    {
+    }) {
         Remove(pc);
         Add(new PlayerCollider(OnPlayer));
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
@@ -23,16 +22,13 @@ public class SeekerSpikes : Spikes
         base.Added(scene);
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Track(this);
     }
-    public override void Removed(Scene scene)
-    {
+    public override void Removed(Scene scene) {
         base.Removed(scene);
         scene.Tracker.GetEntity<SeekerBarrierMaskRenderer>()?.Untrack(this);
     }
     
-    private void OnPlayer(Player player)
-    {
-        if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp)
-        {
+    private void OnPlayer(Player player) {
+        if (player.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp) {
             comp.disableDeath = false;
             player.Die(-player.Speed.SafeNormalize(Vector2.UnitY));
         }

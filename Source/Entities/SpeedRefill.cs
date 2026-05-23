@@ -25,23 +25,19 @@ public class SpeedRefill : Refill, ICustomRefill
     public static SpriteSettings GetVectorAnglePrefix(Vector2 vec) {
         float rawAngle = (vec.Angle().ToDeg() + 90 + 360) % 360;
         SpriteSettings settings = new() { Prefix = "", HFlip = false, VFlip = false, Rot90 = false};
-        if ((rawAngle % 180) >= 45 && ((rawAngle < 180 && rawAngle % 180 < 90) || (rawAngle > 180 && rawAngle % 180 <= 90)))
-        {
+        if ((rawAngle % 180) >= 45 && ((rawAngle < 180 && rawAngle % 180 < 90) || (rawAngle > 180 && rawAngle % 180 <= 90))) {
             settings.VFlip = true;
             settings.HFlip = true;
         }
-        if (rawAngle >= 180)
-        {
+        if (rawAngle >= 180) {
             settings.HFlip = !settings.HFlip;
             rawAngle = 360 - rawAngle;
         }
-        if (rawAngle >= 90)
-        {
+        if (rawAngle >= 90) {
             settings.VFlip = !settings.VFlip;
             rawAngle = 180 - rawAngle;
         }
-        if (rawAngle >= 45)
-        {
+        if (rawAngle >= 45) {
             settings.VFlip = !settings.VFlip;
             settings.Rot90 = true;
             rawAngle = 90 - rawAngle;
@@ -53,8 +49,7 @@ public class SpeedRefill : Refill, ICustomRefill
         return settings;
     }
 
-    public SpeedRefill(Vector2 position, Vector2 speed, bool oneUse) : base(position, false, oneUse)
-    {
+    public SpeedRefill(Vector2 position, Vector2 speed, bool oneUse) : base(position, false, oneUse) {
         Depth = -100;
         SpeedToSet = speed;
         Remove(outline);
@@ -75,18 +70,15 @@ public class SpeedRefill : Refill, ICustomRefill
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
 
-    public override void Render()
-    {
+    public override void Render() {
         outline.Visible = true;
-        if (sprite.Visible)
-        {
+        if (sprite.Visible) {
             outline.Position = sprite.Position;
             outline.DrawOutline(Color.Black);
             outline.Render();
@@ -94,16 +86,14 @@ public class SpeedRefill : Refill, ICustomRefill
         }
         base.Render();
     }
-    public void CustomOnPlayer(Player player)
-    {
+    public void CustomOnPlayer(Player player) {
         Audio.Play("event:/game/general/diamond_touch", Position);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
         Collidable = false;
         Add(new Coroutine(NewRefillRoutine(player)));
         respawnTimer = 2.5f;
     }
-    public IEnumerator NewRefillRoutine(Player player)
-    {
+    public IEnumerator NewRefillRoutine(Player player) {
         Celeste.Freeze(0.05f);
         yield return null;
         sprite.Visible = false;
@@ -125,14 +115,12 @@ public class SpeedRefill : Refill, ICustomRefill
     }
 
     [Command("speedrefilltest", "Spawns speed refills around the player at every angle.")]
-    internal static void SpeedRefillTest()
-    {
+    internal static void SpeedRefillTest() {
         if (Engine.Scene is not Level level) return;
         Player? maybePlayer = level.Tracker.GetEntity<Player>();
         if (maybePlayer is not Player player) return;
         Vector2 pos = player.Position - Vector2.UnitY * 80f;
-        for (float i = 0; i < 360; i += 3)
-        {
+        for (float i = 0; i < 360; i += 3) {
             float angle = ((float)i).ToRad();
             Vector2 unitVec = new(MathF.Cos(angle), MathF.Sin(angle));
             Vector2 deltaVec = unitVec * (60f - i % 8 * 6f);

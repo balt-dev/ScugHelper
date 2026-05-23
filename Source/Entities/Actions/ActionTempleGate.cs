@@ -13,10 +13,8 @@ public class ActionTempleGate : TempleGate
     readonly string[] CloseGroups;
     public static readonly Types ActionType = (Types)(-0x5C068197);
     public ActionTempleGate(EntityData data, Vector2 offset, EntityID id)
-        : base(data.Position + offset, data.Height, ActionType, data.Attr("sprite", "default"), id.Level)
-    {
-        if (data.Bool("startOpen", false))
-        {
+        : base(data.Position + offset, data.Height, ActionType, data.Attr("sprite", "default"), id.Level) {
+        if (data.Bool("startOpen", false)) {
             drawHeight = Height;
             SetHeight(0);
             open = true;

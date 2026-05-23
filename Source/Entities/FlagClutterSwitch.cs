@@ -19,8 +19,7 @@ public class FlagClutterSwitch : ClutterSwitch
     public readonly string Flag;
     public readonly bool TargetState;
 
-    public FlagClutterSwitch(EntityData data, Vector2 offset) : base(data.Position + offset, (ClutterBlock.Colors)(-1))
-    {
+    public FlagClutterSwitch(EntityData data, Vector2 offset) : base(data.Position + offset, (ClutterBlock.Colors)(-1)) {
         OnDashCollide = NewOnDashed;
         Flag = data.String("Flag", "");
         TargetState = data.Bool("TargetState", true);
@@ -29,14 +28,12 @@ public class FlagClutterSwitch : ClutterSwitch
         icon.CenterOrigin();
         icon.Position = new Vector2(16f, 8f);
     }
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         if (SceneAs<Level>().Session.GetFlag(Flag) == TargetState) BePressed();
     }
 
-    public void BeUnpressed()
-    {
+    public void BeUnpressed() {
         pressed = false;
         sprite.Scale.X = 1f;
         atY -= 10f;
@@ -48,17 +45,14 @@ public class FlagClutterSwitch : ClutterSwitch
         vertexLight.EndRadius = 64;
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         if (SceneAs<Level>().Session.GetFlag(Flag) == TargetState && !pressed) BePressed();
         else if (SceneAs<Level>().Session.GetFlag(Flag) != TargetState && pressed) BeUnpressed();
     }
 
-    public DashCollisionResults NewOnDashed(Player player, Vector2 direction)
-    {
-        if (!pressed && direction == Vector2.UnitY)
-        {
+    public DashCollisionResults NewOnDashed(Player player, Vector2 direction) {
+        if (!pressed && direction == Vector2.UnitY) {
             Celeste.Freeze(0.2f);
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
             Level level = player.level;
@@ -75,8 +69,7 @@ public class FlagClutterSwitch : ClutterSwitch
         return DashCollisionResults.NormalCollision;
     }
 
-    public IEnumerator FlagAbsorbRoutine(Player player)
-    {
+    public IEnumerator FlagAbsorbRoutine(Player player) {
         Add(cutsceneSfx = new SoundSource());
         float duration = 0.9f;
         cutsceneSfx.Play("event:/game/03_resort/clutterswitch_books");

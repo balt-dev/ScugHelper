@@ -14,8 +14,7 @@ public class CustomField : Solid
     internal class CustomFieldColliderList : ColliderList
     {
         private readonly CustomField field;
-        public CustomFieldColliderList(CustomField field)
-        {
+        public CustomFieldColliderList(CustomField field) {
             colliders = [field.Collider];
             this.field = field;
         }
@@ -24,8 +23,7 @@ public class CustomField : Solid
         public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
         public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
 
-        private bool CheckEntity(Entity entity)
-        {
+        private bool CheckEntity(Entity entity) {
             bool res = field.Types.Contains(entity.GetType().FullName ?? "") ^ field.Invert;
             field.HitEntity |= res;
             return res;
@@ -46,8 +44,7 @@ public class CustomField : Solid
     internal float BounceTimer;
 
     public CustomField(EntityData data, Vector2 offset)
-        : base(data.Position + offset, data.Width, data.Height, false)
-    {
+        : base(data.Position + offset, data.Width, data.Height, false) {
         Depth = -20000;
         Types = data.String("Types").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Invert = data.Bool("Invert");
@@ -60,10 +57,8 @@ public class CustomField : Solid
     }
 
 
-    public override void Render()
-    {
-        if (!Invisible)
-        {
+    public override void Render() {
+        if (!Invisible) {
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color * 0.3f);
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * (BounceTimer / BouncePulseLength * 0.1f));
             WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.5f);
@@ -74,31 +69,25 @@ public class CustomField : Solid
         base.Render();
     }
 
-    public override void Added(Scene scene)
-    {
+    public override void Added(Scene scene) {
         base.Added(scene);
         Add(new CustomBloom(OnRenderBloom));
     }
 
     private float Elapsed = 0;
 
-    public override void Update()
-    {
+    public override void Update() {
         Elapsed += Engine.DeltaTime;
-        if (HitEntity)
-        {
+        if (HitEntity) {
             BounceTimer = BouncePulseLength;
             HitEntity = false;
-        }
-        else
-        {
+        } else {
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
         }
         int num = speeds.Length;
         float height = Height;
         int i = 0;
-        for (int count = particles.Count; i < count; i++)
-        {
+        for (int count = particles.Count; i < count; i++) {
             Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
             value.Y %= height - 1f;
             particles[i] = value;
@@ -106,8 +95,7 @@ public class CustomField : Solid
         base.Update();
     }
 
-    public void OnRenderBloom()
-    {
+    public void OnRenderBloom() {
         if (Visible && !Invisible) // lol
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.1f);
     }

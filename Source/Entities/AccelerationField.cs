@@ -17,8 +17,7 @@ public class AccelerationField : Entity
     private readonly List<FieldParticle> FieldParticles = [];
 
     public AccelerationField(EntityData data, Vector2 offset)
-     : base(data.Position + offset)
-    {
+     : base(data.Position + offset) {
         Depth = -10000;
         Add(new CustomBloom(OnRenderBloom));
         Collider = new Hitbox(data.Width, data.Height);
@@ -30,8 +29,7 @@ public class AccelerationField : Entity
     }
 
     private float Elapsed = 0;
-    public override void Update()
-    {
+    public override void Update() {
         base.Update();
         Elapsed += Engine.DeltaTime;
 
@@ -39,10 +37,8 @@ public class AccelerationField : Entity
             if (!FieldParticles[i].Step(this))
                 FieldParticles[i] = new(Calc.Random.Range(TopLeft, BottomRight));
 
-        foreach (var kvp in Scene.Tracker.Entities)
-        {
-            foreach (Entity entity in kvp.Value)
-            {
+        foreach (var kvp in Scene.Tracker.Entities) {
+            foreach (Entity entity in kvp.Value) {
                 if (entity is SolidTiles) break;
                 if (entity is Decal) break;
                 if (!Everywhere && !CollideCheck(entity)) continue;
@@ -57,8 +53,7 @@ public class AccelerationField : Entity
     private static readonly Color FieldOutlineColor = Color.AliceBlue * 0.2f;
     private static readonly float SineMovement = -2.0f;
 
-    public override void Render()
-    {
+    public override void Render() {
         base.Render();
         if (Everywhere) return;
 
@@ -69,8 +64,7 @@ public class AccelerationField : Entity
             particle.Render();
     }
 
-    public void OnRenderBloom()
-    {
+    public void OnRenderBloom() {
         if (!Everywhere) WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, Color.White * 0.3f);
     }
 }
@@ -83,8 +77,7 @@ internal class FieldParticle(Vector2 pos)
     private readonly float Lifetime = Calc.Random.Range(0.3f, 0.6f);
     private static readonly Color ParticleColor = Color.AliceBlue;
 
-    internal bool Step(AccelerationField field)
-    {
+    internal bool Step(AccelerationField field) {
         Speed = Calc.Approach(Speed, Vector2.Zero, field.Drag * Engine.DeltaTime);
         Speed += field.Acceleration * Engine.DeltaTime;
         Position += Speed * Engine.DeltaTime;
@@ -98,8 +91,7 @@ internal class FieldParticle(Vector2 pos)
         Elapsed += Engine.DeltaTime;
         return Elapsed <= Lifetime;
     }
-    internal void Render()
-    {
+    internal void Render() {
         Draw.Point(Position, Color.Lerp(ParticleColor, Color.Transparent, Elapsed / Lifetime));
     }
 }

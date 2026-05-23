@@ -24,8 +24,7 @@ public class NoTilesController() : Entity()
         On.Celeste.Autotiler.GenerateOverlay -= OnGenerateOverlay;
         IL.Celeste.LevelLoader.LoadingThread -= ILLoadingThread;
     }
-    private static void ILLoadingThread(ILContext il)
-    {
+    private static void ILLoadingThread(ILContext il) {
         ILCursor cur = new(il);
 
         ILLabel EndTiles = cur.DefineLabel();
@@ -47,15 +46,11 @@ public class NoTilesController() : Entity()
         cur.MarkLabel(EndTiles);
     }
 
-    internal static bool CheckForAnyNTC(LevelLoader loader, MapData mapData)
-    {
+    internal static bool CheckForAnyNTC(LevelLoader loader, MapData mapData) {
         Level level = loader.Level;
-        foreach (LevelData levelData in mapData.Levels)
-        {
-            foreach (EntityData entityData in levelData.Entities)
-            {
-                if (entityData.Name == "ScugHelper/NoTilesController")
-                {
+        foreach (LevelData levelData in mapData.Levels) {
+            foreach (EntityData entityData in levelData.Entities) {
+                if (entityData.Name == "ScugHelper/NoTilesController") {
                     SetUpNoTiles(level, mapData);
                     return true;
                 }
@@ -64,8 +59,7 @@ public class NoTilesController() : Entity()
         return false;
     }
 
-    private static void SetUpNoTiles(Level self, MapData mapData)
-    {
+    private static void SetUpNoTiles(Level self, MapData mapData) {
         Vector2 position = new(mapData.TileBounds.X, mapData.TileBounds.Y);
         self.BgTiles = new BackgroundTiles(position, self.BgData = new VirtualMap<char>(0, 0, '0'));
         self.SolidTiles = new SolidTiles(position, self.SolidsData = new VirtualMap<char>(0, 0, '0'));
@@ -77,14 +71,12 @@ public class NoTilesController() : Entity()
         }
     }
     
-    private static Autotiler.Generated OnGenerateOverlay(On.Celeste.Autotiler.orig_GenerateOverlay orig, Autotiler self, char id, int x, int y, int tilesX, int tilesY, VirtualMap<char> mapData)
-    {
+    private static Autotiler.Generated OnGenerateOverlay(On.Celeste.Autotiler.orig_GenerateOverlay orig, Autotiler self, char id, int x, int y, int tilesX, int tilesY, VirtualMap<char> mapData) {
         if (mapData.Columns == 0 || mapData.Rows == 0) {
             TileGrid tileGrid = new(8, 8, 0, 0);
             AnimatedTiles animatedTiles = new(0, 0, GFX.AnimatedTilesBank);
             return new Autotiler.Generated { TileGrid = tileGrid, SpriteOverlay = animatedTiles };
-        }
-        else
+        } else
             return orig(self, id, x, y, tilesX, tilesY, mapData);
     }
 }

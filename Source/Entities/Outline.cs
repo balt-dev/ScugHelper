@@ -25,8 +25,7 @@ public class Outline : Entity
     private readonly EntityID ID;
     private VirtualRenderTarget? bakedTexture;
 
-    public Outline(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
-    {
+    public Outline(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         ID = id;
         Collidable = false;
         Collider = new Hitbox(data.Width, data.Height);
@@ -54,14 +53,12 @@ public class Outline : Entity
             Draw.SpriteBatch.Begin();
                     
             Draw.Rect(InnerMargin, InnerMargin, Width - InnerMargin * 2, Height - InnerMargin * 2, Color * InnerOpacity);
-            for (int x = CornerSize + CornerSpace; x <= Width - (CornerSize + CornerSpace + LineSize); x += LineSize + SpaceSize)
-            {
+            for (int x = CornerSize + CornerSpace; x <= Width - (CornerSize + CornerSpace + LineSize); x += LineSize + SpaceSize) {
                 Draw.Line(x, 0, x + LineSize, 0, Color);
                 Draw.Line(x, Height - 1, x + LineSize, Height - 1, Color);
             }
     
-            for (int y = CornerSize + CornerSpace; y + LineSize <= Height - (CornerSize + CornerSpace); y += LineSize + SpaceSize)
-            {
+            for (int y = CornerSize + CornerSpace; y + LineSize <= Height - (CornerSize + CornerSpace); y += LineSize + SpaceSize) {
                 Draw.Line(1, y, 1, y + LineSize, Color);
                 Draw.Line(Width, y, Width, y + LineSize, Color);
             }

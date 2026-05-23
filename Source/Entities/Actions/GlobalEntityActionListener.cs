@@ -10,8 +10,7 @@ public class GlobalEntityActionListener : Entity, IAction {
     public readonly string[] Groups;
     internal List<PlayerCollider> colliders = [];
 
-    public GlobalEntityActionListener(EntityData data, Vector2 offset) : base(data.Position + offset)
-    {
+    public GlobalEntityActionListener(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Collider = new Hitbox(data.Width, data.Height);
         Groups = IAction.GetGroups(data);
     }
@@ -22,8 +21,7 @@ public class GlobalEntityActionListener : Entity, IAction {
             coll.Update();
         }
     }
-    public void Alert(Level level)
-    {
+    public void Alert(Level level) {
         if (level.Tracker.GetEntity<Player>() is not Player player) return;
         foreach (PlayerCollider coll in colliders) {
             coll.Entity.Scene = level;
