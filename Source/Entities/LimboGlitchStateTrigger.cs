@@ -23,7 +23,6 @@ public class LimboGlitchStateTrigger(EntityData data, Vector2 offset) : Trigger(
         player.Dead = true;
         player.Depth = -1000000;
         if (LockStateMachine) {
-            player.StateMachine.State = Player.StNormal;
             player.StateMachine.Locked = true;
         }
         player.Collidable = false;
