@@ -195,7 +195,7 @@ class BrassBerry : Entity, IStrawberry
         On.Celeste.Player.Added += PlayerAddHook;
         On.Celeste.Player.Update += PlayerUpdateHook;
     }
-    
+
     [OnUnload]
     internal static void UnloadHooks() {
         On.Celeste.Player.Added -= PlayerAddHook;

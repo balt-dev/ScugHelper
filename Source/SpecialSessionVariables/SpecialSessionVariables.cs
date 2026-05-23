@@ -10,7 +10,7 @@ namespace Celeste.Mod.ScugHelper.SpecialSessionVariables;
 
 public static class SpecialSessionVariables
 {
-    static Dictionary<string, SpecialFlag> flags = new([
+    static readonly Dictionary<string, SpecialFlag> flags = new([
         new("ScugHelper.PlayerDead", new PlayerDeadFlag()),
         new("ScugHelper.HasGolden", new HasGoldenFlag()),
         new("ScugHelper.RestartedFromGolden", new RestartedFromGoldenFlag()),
@@ -31,13 +31,14 @@ public static class SpecialSessionVariables
         new("ScugHelper.GravityHelper.Enabled", new GravityHelperEnabledFlag()),
         new("ScugHelper.InBooster", new InBoosterFlag()),
     ]);
-    static Dictionary<string, SpecialCounter> counters = new([
+    static readonly Dictionary<string, SpecialCounter> counters = new([
         new("ScugHelper.DeathCount", new DeathCounter()),
         new("ScugHelper.DeathHereCount", new HereDeathCounter()),
         new("ScugHelper.PlayerState", new PlayerStateCounter()),
         new("ScugHelper.PlayerDashes", new PlayerDashesCounter()),
         new("ScugHelper.PlayerMaxDashes", new PlayerMaxDashesCounter()),
         new("ScugHelper.PlayerTotalDashes", new PlayerTotalDashesCounter()),
+        new("ScugHelper.EpochTime", new EpochTimeCounter()),
         new("ScugHelper.LevelX", new LevelXCounter()),
         new("ScugHelper.LevelY", new LevelYCounter()),
         new("ScugHelper.LevelWidth", new LevelWidthCounter()),
@@ -46,7 +47,7 @@ public static class SpecialSessionVariables
         new("ScugHelper.CassetteBlockIndex", new CassetteBlockIndexCounter()),
         new("ScugHelper.CoreMode", new CoreModeCounter()),
     ]);
-    static Dictionary<string, SpecialSlider> sliders = new([
+    static readonly Dictionary<string, SpecialSlider> sliders = new([
         new("ScugHelper.TimeRate", new TimeRateSlider()),
         new("ScugHelper.PlayerX", new PlayerXSlider()),
         new("ScugHelper.PlayerY", new PlayerYSlider()),

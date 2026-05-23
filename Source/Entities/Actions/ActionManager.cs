@@ -152,7 +152,7 @@ public static class ActionManager
         }
     }
 
-    private static object? TryConstructEntity(EntityData data, LevelData room, out Type? type)
+    public static object? TryConstructEntity(EntityData data, LevelData room, out Type? type)
     {
         type = null;
         if (ScugHelperModule.GetTypeOfEntity(data) is not Type ty) return null;
@@ -175,7 +175,10 @@ public static class ActionManager
                 kind = ConstructorKind.ThreeArg;
                 val = ty.GetConstructor([typeof(EntityData), typeof(Vector2), typeof(EntityID)]);
             }
-            if (val is not ConstructorInfo constr) throw new Exception($"Action type {ty} must have a valid constructor.");
+            if (val is not ConstructorInfo constr) {
+                Logger.Warn(nameof(ScugHelperModule), $"Could not find a constructor for entity with type {ty}.");
+                return null;
+            }
             ConstructorCache.TryAdd(ty, (constr, kind));
             constructor = constr;
         }

@@ -2,12 +2,17 @@ using Celeste.Mod.ScugHelper.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Monocle;
+using YamlDotNet.Serialization;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Celeste.Mod.ScugHelper;
 
 public class ScugHelperModuleSettings : EverestModuleSettings
 {
     [SettingInGame(false)]
+    [YamlIgnore]
     public TextMenuExt.SubMenu ShowcaseMaps { get; set; } = null;
 
     public MinimapMenu Minimap { get; set; } = new();
@@ -70,6 +75,11 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     public bool AlwaysCenterCameraX { get; set; } = false;
     public bool AlwaysCenterCameraY { get; set; } = false;
+
+
+    [YamlIgnore]
+    [SettingSubText("Please don't.")]
+    public static bool GladelineApocalypse { get; set; } = false;
 }
 
 [SettingSubMenu]

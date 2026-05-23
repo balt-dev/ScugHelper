@@ -25,7 +25,7 @@ return {
         entity.nodes = entity.nodes or { x = entity.x + 16, y = entity.y }
         local deltaX = entity.nodes[1].x - entity.x
         local deltaY = entity.nodes[1].y - entity.y
-        local deltaLength = math.sqrt(deltaX * deltaX + deltaY * deltaY)
+        local deltaLength = math.max(math.sqrt(deltaX * deltaX + deltaY * deltaY), 1)
 
         local angleVector = { X = deltaX / deltaLength, Y = deltaY / deltaLength }
         local rawAngleVector = { X = angleVector.X, Y = angleVector.Y }
@@ -73,7 +73,7 @@ return {
         local nodeX, nodeY = entity.nodes[1].x or entity.x, entity.nodes[1].y or entity.y
         local deltaX = nodeX - entity.x
         local deltaY = nodeY - entity.y
-        local deltaLength = math.sqrt(deltaX * deltaX + deltaY * deltaY)
+        local deltaLength = math.max(math.sqrt(deltaX * deltaX + deltaY * deltaY), 1)
 
         local angleVector = { X = deltaX / deltaLength, Y = deltaY / deltaLength }
         local rawAngleVector = { X = angleVector.X, Y = angleVector.Y }
@@ -97,7 +97,7 @@ return {
         local nodeX, nodeY = entity.nodes[1].x or entity.x, entity.nodes[1].y or entity.y
         local deltaX = nodeX - entity.x
         local deltaY = nodeY - entity.y
-        local deltaLength = math.sqrt(deltaX * deltaX + deltaY * deltaY)
+        local deltaLength = math.max(math.sqrt(deltaX * deltaX + deltaY * deltaY), 1)
 
         local angleVector = { X = deltaX / deltaLength, Y = deltaY / deltaLength }
         local rawAngleVector = { X = angleVector.X, Y = angleVector.Y }

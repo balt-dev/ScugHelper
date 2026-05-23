@@ -191,6 +191,14 @@ internal class CoreModeCounter : SpecialCounter
     public override int GetValue(Level level) => (int)level.CoreMode;
     public override void SetValue(Level level, int value) => level.CoreMode = (Session.CoreModes) Math.Clamp(value, 0, 2);
 }
+internal class EpochTimeCounter : SpecialCounter
+{
+    public override int GetValue(Level level) {
+        TimeSpan epochTicks = new(new DateTime(2020, 1, 1).Ticks);
+        TimeSpan unixTicks = new TimeSpan(DateTime.Now.Ticks) - epochTicks;
+        return (int)unixTicks.TotalSeconds;
+    }
+}
 
 internal class TimeRateSlider : SpecialSlider
 {
@@ -200,12 +208,12 @@ internal class TimeRateSlider : SpecialSlider
 internal class PlayerXSlider : SpecialSlider
 {
     public override float GetValue(Level level) => level.GetPlayer()?.X ?? 0f;
-    public override void SetValue(Level level, float value) { if (level.GetPlayer() is not Player player) return; bool oldNaive = player.TreatNaive; player.TreatNaive = true; player.MoveToX(value); player.TreatNaive = oldNaive; }
+    public override void SetValue(Level level, float value) { if (level.GetPlayer() is not Player player) return; player.Position.X = MathF.Round(value); }
 }
 internal class PlayerYSlider : SpecialSlider
 {
     public override float GetValue(Level level) => level.GetPlayer()?.Y ?? 0f;
-    public override void SetValue(Level level, float value) { if (level.GetPlayer() is not Player player) return; bool oldNaive = player.TreatNaive; player.TreatNaive = true; player.MoveToY(value); player.TreatNaive = oldNaive; }
+    public override void SetValue(Level level, float value) { if (level.GetPlayer() is not Player player) return; player.Position.Y = MathF.Round(value); }
 }
 internal class PlayerSpeedXSlider : SpecialSlider
 {
