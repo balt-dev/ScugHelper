@@ -119,6 +119,8 @@ public class PinballBooster : Booster
         else if (wasSquareHitbox)
         {
             self.Collider = self.normalHitbox;
+            var sol = new Solid(Vector2.Zero, 0, 0, false);
+            self.TrySquishWiggle(new CollisionData() { Hit = sol, Pusher = sol, TargetPosition = self.Position }, 1, 10);
             wasSquareHitbox = false;
         }
     }
