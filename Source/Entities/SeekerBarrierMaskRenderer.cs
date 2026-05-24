@@ -70,6 +70,7 @@ public class SeekerBarrierMaskRenderer : Entity
 
     public override void Update() {
         base.Update();
+        if (Entities.Count == 0) return;
         var newCamPosition = SceneAs<Level>().Camera.Position;
         var deltaCam = newCamPosition - lastCamPosition;
         int count = particles.Length;
@@ -88,6 +89,7 @@ public class SeekerBarrierMaskRenderer : Entity
     Color[] pixelData;
 
     public void BeforeRender() {
+        if (Entities.Count == 0) return;
         buffer ??= VirtualContent.CreateRenderTarget("seeker-barrier-mask-renderer", BufferWidth, BufferHeight);
 
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
@@ -119,6 +121,7 @@ public class SeekerBarrierMaskRenderer : Entity
 
     public override void Render() {
         base.Render();
+        if (Entities.Count == 0) return;
         if (buffer is not null) {
             var cam = (Scene as Level).Camera;
 
@@ -136,6 +139,7 @@ public class SeekerBarrierMaskRenderer : Entity
     }
 
     private void OnRenderBloom() {
+        if (Entities.Count == 0) return;
         if (buffer is not null) {
             var cam = (Scene as Level).Camera;
 

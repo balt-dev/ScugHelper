@@ -79,10 +79,13 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     public bool AlwaysCenterCameraX { get; set; } = false;
     public bool AlwaysCenterCameraY { get; set; } = false;
 
+    [SettingSubText("Makes all room transitions instant. Increases IGT by 0.65 seconds on transition to compensate.")]
+    public bool InstantRoomTransitions { get; set; } = false;
+
 
     [YamlIgnore]
     [SettingSubText("Please don't.")]
-    public static bool GladelineApocalypse { get; set; } = false;
+    public bool GladelineApocalypse { get; set; } = false;
 }
 
 [SettingSubMenu]

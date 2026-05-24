@@ -67,6 +67,7 @@ public class StarjumpOutlineRenderer : Entity
     VirtualRenderTarget buffer;
 
     public void BeforeRender() {
+        if (Entities.Count == 0) return;
         buffer ??= VirtualContent.CreateRenderTarget("starjump-outline-renderer", BufferWidth, BufferHeight);
 
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
@@ -89,6 +90,7 @@ public class StarjumpOutlineRenderer : Entity
 
     public override void Render() {
         base.Render();
+        if (Entities.Count == 0) return;
         if (buffer is not null) {
             var cam = (Scene as Level).Camera;
 
@@ -100,11 +102,12 @@ public class StarjumpOutlineRenderer : Entity
             GameplayRenderer.Begin();
         }
     }
-    
+
     private void RenderBloom() {
         if (!control.Bloom) return;
+        if (Entities.Count == 0) return;
         var cam = (Scene as Level).Camera;
-        
+
         GameplayRenderer.End();
         ScugHelperModule.OutlineFX.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
