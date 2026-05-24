@@ -263,28 +263,28 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
                 self.SceneAs<Level>().Particles.Emit(Seeker.P_Attack, 2, self.Position + vector * 4f, Vector2.One * 4f, vector.Angle());
             }
         } else {
-            Vector2 vector2 = level.InCutscene ? Vector2.UnitY : Input.Aim.Value.SafeNormalize();
+            Vector2 input = MinimapEntity.Focused ? Vector2.Zero : level.InCutscene ? Vector2.UnitY : Input.Aim.Value.SafeNormalize();
             float mul = self.SwimCheck() ? 0.4f : 1f;
-            self.Speed += vector2 * 600f * Engine.DeltaTime * mul;
+            self.Speed += input * 600f * Engine.DeltaTime * mul;
             float num = self.Speed.Length();
             if (num > 120f) {
                 num = Calc.Approach(num, 120f, Engine.DeltaTime * 700f);
                 self.Speed = self.Speed.SafeNormalize(num);
             }
 
-            if (vector2.Y == 0f)
+            if (input.Y == 0f)
                 self.Speed.Y = Calc.Approach(self.Speed.Y, 0f, 400f * Engine.DeltaTime);
 
-            if (vector2.X == 0f)
+            if (input.X == 0f)
                 self.Speed.X = Calc.Approach(self.Speed.X, 0f, 400f * Engine.DeltaTime);
 
             int num2 = Math.Sign((int)self.Facing);
             int num3 = Math.Sign(self.Speed.X);
-            if (num3 != 0 && num2 != num3 && Math.Sign(Input.Aim.Value.X) == Math.Sign(self.Speed.X) && Math.Abs(self.Speed.X) > 20f && sprite.CurrentAnimationID != "flipMouth" && sprite.CurrentAnimationID != "flipEyes")
+            if (num3 != 0 && num2 != num3 && Math.Sign(input.X) == Math.Sign(self.Speed.X) && Math.Abs(self.Speed.X) > 20f && sprite.CurrentAnimationID != "flipMouth" && sprite.CurrentAnimationID != "flipEyes")
                 sprite.Play("flipMouth");
 
-            if (Input.Dash.Pressed && !level.InCutscene)
-                Dash(self, Input.Aim.Value.EightWayNormal());
+            if (Input.Dash.Pressed && !level.InCutscene && !MinimapEntity.Focused)
+                Dash(self, input);
         }
         self.LastBooster = self.CurrentBooster = null;
         if (!self.calledDashEvents) {
@@ -414,6 +414,8 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     }
 
     public void Dash(Player self, Vector2 dir) {
+        dir = self.CorrectDashPrecision(dir);
+        
         if (self.dashAttackTimer <= 0f) {
             CreateTrail(self);
             trailTimerA = 0.1f;

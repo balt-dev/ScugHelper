@@ -66,6 +66,9 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingName("Focus Minimap")]
     [DefaultButtonBinding([], [Keys.M])]
     public ButtonBinding MinimapBind { get; set; } = new();
+    [SettingName("Hide Minimap")]
+    [DefaultButtonBinding([], [Keys.N])]
+    public ButtonBinding MinimapVisibleBind { get; set; } = new();
     [SettingName("Zoom Minimap In")]
     [DefaultButtonBinding([], [Keys.OemMinus])]
     public ButtonBinding MinimapZoomIn { get; set; } = new();

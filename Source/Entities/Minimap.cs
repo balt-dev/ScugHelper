@@ -49,10 +49,15 @@ public class MinimapEntity : Entity
 
     private Vector2 oldPosition;
     private static bool focusToggle = false;
+    private static bool visibleToggle = true;
     private static float unfocusedTimer = 100f;
     internal static bool Focused
     {
         get => ScugHelperModule.Settings.Minimap.Minimap && focusToggle;
+    }
+    internal static bool Visible
+    {
+        get => ScugHelperModule.Settings.Minimap.Minimap && (focusToggle || visibleToggle);
     }
     public MinimapEntity() : base() {
         Camera = new(ScugHelperModule.Settings.Minimap.MinimapWidth, ScugHelperModule.Settings.Minimap.MinimapHeight);
@@ -77,6 +82,10 @@ public class MinimapEntity : Entity
             ScugHelperModule.Settings.MinimapBind.ConsumePress();
             focusToggle = !focusToggle;
         }
+        if (ScugHelperModule.Settings.MinimapVisibleBind.Pressed) {
+            ScugHelperModule.Settings.MinimapVisibleBind.ConsumePress();
+            visibleToggle = !visibleToggle;
+        }
 
         if (Focused) {
             Speed = Calc.Approach(Speed, Input.Aim.Value * CameraSpeed / Camera.Zoom, CameraAcceleration / Camera.Zoom * Engine.RawDeltaTime);
@@ -99,7 +108,7 @@ public class MinimapEntity : Entity
             Vector2 levelCamCenter = levelCam.Position + camSize / 2;
             Camera.Position = Vector2.Lerp(oldPosition, levelCamCenter / 8f, positionFac);
             ZoomTarget = levelCam.Zoom * 4f;
-            Opacity = float.Lerp(Opacity, ScugHelperModule.Settings.Minimap.UnfocusedOpacity, 1f - MathF.Pow(0.0001f, Engine.RawDeltaTime));
+            Opacity = float.Lerp(Opacity, visibleToggle ? ScugHelperModule.Settings.Minimap.UnfocusedOpacity : 0f, 1f - MathF.Pow(0.0001f, Engine.RawDeltaTime));
             unfocusedTimer += Engine.RawDeltaTime;
         }
         Camera.Zoom = float.Lerp(Camera.Zoom, ZoomTarget, 1f - MathF.Pow(0.1f, Engine.RawDeltaTime));

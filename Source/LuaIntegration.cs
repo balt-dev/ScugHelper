@@ -49,11 +49,23 @@ internal static class LuaIntegration
 
         lua.PushCFunction(LuaPerlinNoise);
         lua.SetField(-2, "perlin");
+        lua.PushCFunction(LuaHashPosition);
+        lua.SetField(-2, "hashPosition");
 
         lua.PushBoolean(false);
         lua.SetField(-2, "__metatable");
         lua.PushCFunction(ReadOnlyTable);
         lua.SetField(-2, "__newindex");
+    }
+
+    private static int LuaHashPosition(nint luaState)
+    {
+        Lua lua = Lua.FromIntPtr(luaState);
+        int a = (int) (lua.ToIntegerX(1) ?? 0);
+        int b = (int) (lua.ToIntegerX(2) ?? 0);
+        int c = (int) (lua.ToIntegerX(3) ?? 0);
+        lua.PushInteger((long) Utils.HashPosition(a, b, c));
+        return 1;
     }
 
     private static int LuaPerlinNoise(nint luaState) {

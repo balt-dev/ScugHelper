@@ -37,7 +37,7 @@ public class TeleportTrigger(EntityData data, Vector2 offset) : Trigger(data, of
                 break;
             }
         }
-        if (LevelTPName == null) { player.Die(Vector2.Zero); yield break; }
+        LevelTPName ??= level.Session.LevelData.Name;
 
         if (Delay > 0.0f) yield return Delay;
 
