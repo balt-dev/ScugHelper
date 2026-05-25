@@ -444,3 +444,13 @@ entities.ScugHelper/ProceduralTilemap.attributes.description.FilePath=Path to th
 entities.ScugHelper/ProceduralTilemap.attributes.description.Seed=An integer seed to pass to the procedural generation functions.
 
 triggers.ScugHelper/RegenerateProceduralTilemapsTrigger.placements.name.trigger=Regenerate Procedural Tilemaps [Advanced]
+
+entities.ScugHelper/ProximityTempleEye.placements.name.normal=Proximity Temple Eye
+entities.ScugHelper/ProximityTempleEye.placements.description.normal=Temple eye that is closed by default, only opening when the tracked entity is near.
+
+triggers.ScugHelper/InputSpamTrigger.placements.name.trigger=Input Spam Trigger
+triggers.ScugHelper/InputSpamTrigger.placements.description.trigger=Forces a certain input to be pressed every frame.
+
+
+entities.ScugHelper/ElsewhereWatchtower.placements.name.normal=Elsewhere Watchtower
+entities.ScugHelper/ElsewhereWatchtower.placements.description.normal=Watchtower that starts at a defined position.

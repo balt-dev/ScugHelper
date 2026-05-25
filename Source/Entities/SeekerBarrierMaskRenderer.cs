@@ -31,8 +31,8 @@ public class SeekerBarrierMaskRenderer : Entity
     protected static readonly float[] speeds = [12f, 20f, 40f];
     private static readonly int BufferWidth = 512;
     private static readonly int BufferHeight = 512;
-    private static readonly int ParticleWidth = 512;
-    private static readonly int ParticleHeight = 512;
+    private static readonly int ParticleWidth = 128;
+    private static readonly int ParticleHeight = 128;
     protected static readonly Vector2[] particles = new Vector2[ParticleWidth * ParticleHeight / 16];
 
     static SeekerBarrierMaskRenderer() {

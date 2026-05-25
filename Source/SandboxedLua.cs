@@ -23,7 +23,7 @@ public static class SandboxedLua {
 
     static bool InitializedLua = false;
     internal static Scene? ActiveScene;
-    static readonly Lua LuaInstance = new(false);
+    static Lua LuaInstance = new(false);
 
     public static Lua Instance {
         get {
@@ -32,6 +32,13 @@ public static class SandboxedLua {
         }
     }
 
+    [Command("initlua", "Reinitializes the ScugHelper Lua instance.")]
+    internal static void CmdInitLua() {
+        LuaInstance = new(false);
+        InitializedLua = false;
+        InitLua();
+    }
+    
     [OnLoad]
     internal static void InitLua() {
         if (InitializedLua) return;
@@ -51,11 +58,32 @@ public static class SandboxedLua {
                 _G[needsNuke] = nil
             end
 
-            setmetatable(_G, {
+            math = setmetatable({}, { __metatable = false, __index = math, __newindex = function() error "cannot modify math module" end })
+            string = setmetatable({}, { __metatable = false, __index = string, __newindex = function() error "cannot modify string module" end })
+            table = setmetatable({}, { __metatable = false, __index = table, __newindex = function() error "cannot modify table module" end })
+            utf8 = setmetatable({}, { __metatable = false, __index = utf8, __newindex = function() error "cannot modify utf8 module" end })
+
+            _G = setmetatable({}, {
                 __metatable = false,
-                __newindex = function(t, key) return "cannot create global variable " .. tostring(varKey) .. " - globals are disallowed, use locals only" end
+                __index = _G,
+                __newindex = function(t, key) error("cannot create or modify global variable " .. tostring(key) .. " - changing global state is disallowed, use locals only") end
             })
         """);
+    }
+
+    [Command("runlua", "Runs some lua in the ScugHelper sandboxed Lua instance.")]
+    internal static void RunLua(string chunk) {
+        if (chunk is null) return;
+        Lua lua = Instance;
+        Engine.Commands.Log(chunk);
+        var res = lua.LoadString(chunk, "debugCommand");
+        if (res is not LuaStatus.OK) {
+            throw new LuaException($"failed to load chunk: {res}");
+        }
+        if (lua.PCall(0, 0, 0) != LuaStatus.OK) {
+            string? errorMessage = lua.ToString(-1);
+            throw new LuaException($"failed to execute: {errorMessage ?? "<could not convert error message to string>"}");
+        }
     }
 
     internal static readonly Dictionary<string, int> RequireResults = [];
@@ -124,14 +152,48 @@ public static class SandboxedLua {
         Lua lua = Lua.FromIntPtr(luaState);
         int argCount = lua.GetTop();
         List<string> strings = [];
-        for (int i = 1; i <= argCount; i++)
-            strings.Add(lua.ToString(i));
+        for (int i = 1; i <= argCount; i++) {
+            lua.PushCopy(i);
+            strings.Add(LuaValueToString(lua));
+        }
 
         Logger.Info(nameof(ScugHelperModule), $"[LUA] {string.Join('\t', strings)}");
         Engine.Commands.Open = true;
-        Engine.Commands.Log($"[LUA] {string.Join('\t', strings)}", Color.White);
+        Engine.Commands.Log($"[LUA] {string.Join('\t', strings).Replace("\t", "    ")}", Color.White);
 
-        return 1;
+        return 0;
+    }
+
+    private const int DepthLimit = 3;
+
+    public static string LuaValueToString(Lua lua) => LuaValueToString(lua, 0);
+
+    private static string LuaValueToString(Lua lua, int depth) {
+        if (!lua.IsTable(-1)) {
+            string res = lua.ToString(-1) ?? $"[{lua.TypeName(lua.Type(-1))}]";;
+            lua.Pop(1);
+            return res;
+        }
+        if (depth > DepthLimit) return "...";
+
+        StringBuilder builder = new();
+        builder.Append("{ ");
+        lua.PushNil();
+        bool first = true;
+        while (lua.Next(-2)) {
+            if (!first) builder.Append(", ");
+            first = false;
+            lua.PushCopy(-2);
+            string key = lua.ToString(-1) ?? $"[{lua.TypeName(lua.Type(-1))}]";
+            lua.Pop(1);
+            builder.Append($"{key} = ");
+            string value = LuaValueToString(lua, depth + 1);
+            builder.Append(value);
+        }
+        lua.Pop(1);
+        builder.Append(" }");
+
+        return builder.ToString();
     }
 }
 

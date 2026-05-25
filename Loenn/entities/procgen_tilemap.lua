@@ -2,7 +2,7 @@ local drawableRect = require("structs.drawable_rectangle")
 
 return {
     name = "ScugHelper/ProceduralTilemap",
-    depth = 100000,
+    depth = -1000000,
     placements = {
         {
             name = "static",
