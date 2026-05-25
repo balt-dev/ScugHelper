@@ -454,3 +454,6 @@ triggers.ScugHelper/InputSpamTrigger.placements.description.trigger=Forces a cer
 
 entities.ScugHelper/ElsewhereWatchtower.placements.name.normal=Elsewhere Watchtower
 entities.ScugHelper/ElsewhereWatchtower.placements.description.normal=Watchtower that starts at a defined position.
+
+triggers.ScugHelper/UnstuckTrigger.placements.name.trigger=Unstuck
+triggers.ScugHelper/UnstuckTrigger.placements.description.normal=Every frame the player is inside this trigger, tries to move the player out of any solids if they're in any, and kills them if it can't.
