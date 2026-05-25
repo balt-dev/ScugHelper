@@ -11,23 +11,25 @@ return {
             data = {
                 width = 8,
                 height = 8,
-                StartX = 0.5,
-                StartY = 0.5,
-                EndX = 0.5,
-                EndY = 0.5
+                StartX = -0.25,
+                StartY = -0.25,
+                EndX = 0.25,
+                EndY = 0.25
             }
         },
     },
-
+    fieldOrder = {"x", "y", "width", "height", "StartX", "StartY", "EndX", "EndY"},
     sprite = function(room, entity)
         return drawableFunc.fromFunction(function()
             drawing.callKeepOriginalColor(function()
-                local left   = entity.x + math.min(math.max(entity.StartX, -0.5), 0.5)
-                local top    = entity.y + math.min(math.max(entity.StartY, -0.5), 0.5)
-                local width  = entity.width - math.min(math.max(-entity.EndX, -0.5), 0.5) - math.min(math.max(entity.StartX, -0.5), 0.5) - 1
-                local height = entity.height - math.min(math.max(-entity.EndY, -0.5), 0.5) - math.min(math.max(entity.StartY, -0.5), 0.5) - 1
-                love.graphics.setColor(1, 0, 0, 1)
-                love.graphics.rectangle("line", left, top, width, height)
+                love.graphics.setColor(1, 0.2, 0.2, 1)
+                love.graphics.rectangle("fill", entity.x, entity.y, entity.width, entity.height)
+                love.graphics.setColor(0.2, 1, 1, 1)
+                for x = 0.5, entity.width, 1 do
+                    for y = 0.5, entity.height, 1 do
+                        love.graphics.rectangle("fill", entity.x + entity.StartX + x, entity.y + entity.StartY + y, entity.EndX - entity.StartX, entity.EndY - entity.StartY)
+                    end
+                end
             end)
         end)
     end,

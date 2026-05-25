@@ -24,20 +24,14 @@ public class SubpixelKillField : Entity
         Depth = 100;
         Collidable = true;
         Collider = new Hitbox(Math.Max(data.Width, 2f), Math.Max(data.Height, 2f));
-        var innerCollider = new Hitbox(Math.Max(data.Width, 2f) - 2, Math.Max(data.Height, 2f) - 2, 1, 1);
         Add(new PlayerCollider(OnPlayer));
-        Add(new PlayerCollider((player) => player.Die(Vector2.Zero), innerCollider));
     }
 
     private void OnPlayer(Player player) {
-        float approxXOffset = player.movementCounter.X - Position.X;
-        float approxYOffset = player.movementCounter.Y - Position.Y;
-        float approxHCenter = player.Center.X + approxXOffset;
-        float approxVCenter = player.Center.Y + approxYOffset;
-        if (approxHCenter < Width / 2 && player.movementCounter.X < StartX) return;
-        if (approxHCenter >= Width / 2 && player.movementCounter.X > EndX) return;
-        if (approxVCenter < Height / 2 && player.movementCounter.Y < StartY) return;
-        if (approxVCenter >= Height / 2 && player.movementCounter.Y > EndY) return;
+        if (player.movementCounter.X > StartX) return;
+        if (player.movementCounter.X < EndX) return;
+        if (player.movementCounter.Y > StartY) return;
+        if (player.movementCounter.Y < EndY) return;
         player.Die(Vector2.Zero);
     }
 }
