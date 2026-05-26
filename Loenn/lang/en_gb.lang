@@ -458,6 +458,9 @@ entities.ScugHelper/ElsewhereWatchtower.placements.description.normal=Watchtower
 triggers.ScugHelper/UnstuckTrigger.placements.name.trigger=Unstuck
 triggers.ScugHelper/UnstuckTrigger.placements.description.normal=Every frame the player is inside this trigger, tries to move the player out of any solids if they're in any, and kills them if it can't.
 
+entities.ScugHelper/FlagListener.placements.name.normal=Action - Flag Listener
+entities.ScugHelper/FlagListener.placements.description.normal=Alerts a set of action groups when a flag becomes a given state.
+
 triggers.ScugHelper/SandboxedLuaTrigger.placements.name.trigger=Sandboxed Lua Trigger [Advanced]
 triggers.ScugHelper/SandboxedLuaTrigger.placements.decription.trigger=Calls some defined lua function for OnEnter, OnStay, and OnLeave.
 
@@ -475,10 +478,6 @@ entities.ScugHelper/SandboxedLuaListener.attributes.description.InlineLua=Typing
 entities.ScugHelper/SandboxedLuaConditionAction.attributes.description.InlineLua=Typing a Lua chunk here will have this use the contents of this variable directly instead of reading from the given filepath.
 entities.ScugHelper/SandboxedLuaAction.attributes.description.InlineLua=Typing a Lua chunk here will have this use the contents of this variable directly instead of reading from the given filepath.
 
-entities.ScugHelper/SandboxedLuaListener.placements.name.normal=Action - Sandboxed Lua Listener [Advanced]
-entities.ScugHelper/SandboxedLuaListener.placements.description.normal=Alerts a set of action groups when the result of the given Lua file's function becomes true.
-entities.ScugHelper/SandboxedLuaConditionAction.placements.name.normal=Action - Sandboxed Lua Condition [Advanced]
-entities.ScugHelper/SandboxedLuaConditionAction.placements.description.normal=When alerted, alerts the given action groups if the given Lua file's function returns true.
 entities.ScugHelper/SandboxedLuaAction.placements.name.normal=Action - Sandboxed Lua [Advanced]
 entities.ScugHelper/SandboxedLuaAction.placements.description.normal=When alerted, runs the given Lua file.
 entities.ScugHelper/SandboxedLuaGate.placements.name.normal=Sandboxed Lua Gate [Advanced]

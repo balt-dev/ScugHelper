@@ -42,13 +42,17 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Uses an alternative font for text entities.")]
     public bool AlternativeFont { get; set; } = false;
+    
+    [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.")]
+    public bool PlayerSeekerDashSwitchFix { get; set; } = true;
 
     [SettingNumberInput(allowNegatives: false, maxLength: 5)]
     [SettingSubText("Adjusts how much squash and stretch pinball boosters have.")]
     public float PinballBoosterSquash { get; set; } = 1.45f;
-
-    [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.")]
-    public bool PlayerSeekerDashSwitchFix { get; set; } = true;
+    
+    [SettingSubText("The maximum amount of time any given Lua script execution can take, in seconds.")]
+    [SettingNumberInput(allowNegatives: false, maxLength: 3)]
+    public int LuaTimeLimit { get; set; } = 3;
 
     [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]
     public bool SideflippingEverywhere { get; set; } = false;
@@ -61,7 +65,6 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Replaces all spinners with seekers. Good luck :)")]
     public SpinnerSeekerState SpinnersAreSeekers { get; set; } = SpinnerSeekerState.Off;
-
 
     [SettingName("Focus Minimap")]
     [DefaultButtonBinding([], [Keys.M])]
@@ -82,9 +85,8 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingSubText("Makes all room transitions instant. Increases IGT by 0.65 seconds on transition to compensate.")]
     public bool InstantRoomTransitions { get; set; } = false;
 
-
     [YamlIgnore]
-    [SettingSubText("Please don't.")]
+    [SettingSubText("Please don't. Requires a restart to fix.")]
     public bool GladelineApocalypse { get; set; } = false;
 }
 

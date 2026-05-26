@@ -1,10 +1,10 @@
-Weight - Each entity assigned a weight via DynamicData.For(ent).Set("ScugHelper.Weight", <weight>);
-Pressure Plate - When weight > set amount, set flag to target state, otherwise opposite
-Set Weight Controller - Sets the weight of an entity by its name, in a list format of `<name>=<value>,...`
-
 Kickpad - Horizontal solid attacher, sets speed to |speed|*Facing when on top or jumped from
 Update Recoil Bumpers to properly collide with the tile grid
-[DONE] Run Sandboxed Lua Trigger [Advanced] - Lua file that returns a function for OnEnter, OnStay, and OnLeave, make scughelper.flags/counters/sliders not readonly tables (the Lua API can only mutate outside state via flags/counters/sliders)
 Wheat - Decorative tall grass entity
-Wormgrass - The stuff from Rain World, decreases DynamicData.For(player)."ScugHelper.Health" from 100, lowers jump height, slows walk/run/dash speed when inside by health, kill at 0 health
+Wormgrass - The stuff from Rain World, decreases player.GetOrInitHealthComponent().Health from 100, lowers jump height, slows walk/run/dash speed when inside by health, kill at 0 health
+
+[SCRAPPED] Weight - Each entity assigned a weight via DynamicData.For(ent).Set("ScugHelper.Weight", <weight>);
+[SCRAPPED] Pressure Plate - When weight > set amount, set flag to target state, otherwise opposite
+[SCRAPPED] Set Weight Controller - Sets the weight of an entity by its name, in a list format of `<name>=<value>,...`
+[DONE] Run Sandboxed Lua Trigger [Advanced] - Lua file that returns a function for OnEnter, OnStay, and OnLeave, make scughelper.flags/counters/sliders not readonly tables (the Lua API can only mutate outside state via flags/counters/sliders)
 [DONE] Make each entity rerun the chunk

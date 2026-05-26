@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace Celeste.Mod.ScugHelper;
 
@@ -28,6 +29,7 @@ public static class SandboxedLua {
     public static Lua Instance {
         get {
             //if (!IsMainThread) throw new InvalidOperationException("Cannot access the sandboxed Lua instance outside of the main thread.");
+            LuaStopwatch = Stopwatch.StartNew();
             return LuaInstance.MainThread;
         }
     }
@@ -48,6 +50,8 @@ public static class SandboxedLua {
 
         Instance.OpenLibs();
 
+        Instance.SetHook(LuaHook, LuaHookMask.Count, 4096);
+
         Instance.PushCFunction(CustomRequire);
         Instance.SetGlobal("require");
 
@@ -58,7 +62,7 @@ public static class SandboxedLua {
         Instance.SetGlobal("scughelper");
 
         Instance.DoString("""
-            for _, needsNuke in ipairs { "os", "io", "debug", "package", "loadfile", "load", "loadstring", "dofile", "coroutine", "module", "collectgarbage", "newproxy", "getfenv", "setfenv", "rawget", "rawset" } do
+            for _, needsNuke in ipairs { "os", "io", "debug", "package", "loadfile", "load", "loadstring", "dofile", "coroutine", "module", "collectgarbage", "newproxy", "getfenv", "setfenv", "rawget", "rawset", "pcall", "xpcall" } do
                 _G[needsNuke] = nil
             end
 
@@ -72,6 +76,16 @@ public static class SandboxedLua {
                 __newindex = function(t, key) error("cannot create or modify global variable " .. tostring(key) .. " - changing global state is disallowed, use locals only") end
             })
         """);
+    }
+
+    static Stopwatch LuaStopwatch = Stopwatch.StartNew();
+
+    private static void LuaHook(nint luaState, nint ar)
+    {
+        Lua lua = Lua.FromIntPtr(luaState);
+        if (LuaStopwatch.Elapsed.Ticks > ScugHelperModule.Settings.LuaTimeLimit * 10_000_000) {
+            lua.Error("execution time limit reached - increase the time limit in the mod settings if need be");
+        }
     }
 
     [Command("runlua", "Runs some lua in the ScugHelper sandboxed Lua instance.")]
