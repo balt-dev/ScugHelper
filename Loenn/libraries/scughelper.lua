@@ -93,6 +93,7 @@ T.colors = function(name)
     return ({
         playerAction = { 1, 0.5, 0.5, 1 },
         expressionAction = { 0.5, 1, 1, 1 },
+        luaAction = { 0.1, 0.1, 1, 1 },
         metaAction = { 1, 1, 1, 1 },
     })[name]
 end

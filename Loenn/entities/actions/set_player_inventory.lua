@@ -23,7 +23,7 @@ return {
                     tostring(entity.Backpack),
                     tostring(entity.NoRefills)
                 ),
-                entity.x, entity.y, entity.width, entity.height, nil, 0.25
+                entity.x + 2, entity.y + 2, nil, nil, nil, 0.25
             ),
             scughelper.unfuckedRect(entity, scughelper.colors "playerAction")
         }

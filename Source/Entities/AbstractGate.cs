@@ -73,7 +73,6 @@ public abstract class AbstractGate : Entity
                 if (CheckLine(player.PreviousPosition + player.TopCenter - player.Position, player.TopCenter))
                     OnTrigger(player);
             }
-
         }
     }
 }

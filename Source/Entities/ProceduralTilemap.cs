@@ -122,54 +122,40 @@ public class ProceduralTilemap : Platform
         try
         {
             Lua lua = SandboxedLua.Instance;
-            SandboxedLua.ActiveScene = scene;
+            SandboxedLua.LoadFile(scene, filePath, $"ProceduralTilemap::{ID}");
+            foreach (string arg in Arguments)
+                lua.PushString(arg);
+            if (lua.PCall(Arguments.Length, 1, 0) != LuaStatus.OK) {
+                string? errorMessage = lua.ToString(-1);
+                throw new LuaException($"Failed to execute file {filePath}: {errorMessage ?? "<could not convert error message to string>"}");
+            }
+            if (!lua.IsTable(-1)) {
+                lua.Pop(1);
+                throw new LuaException($"Failed to execute file {filePath}: File must return a table.");
+            }
+            
+            lua.GetField(-1, "before");
+            if (lua.IsNil(-1)) lua.Pop(1);
+            else if (lua.IsFunction(-1)) callbacks.beforeFuncRef = lua.Ref(LuaRegistry.Index);
+            else {
+                lua.Pop(1);
+                throw new LuaException($"Failed to execute file {filePath}: Returned field 'before' must be a function or nil.");
+            }
 
-            if (!CallbackCache.TryGetValue(ID, out callbacks)) {
+            lua.GetField(-1, "foreground");
+            if (lua.IsNil(-1)) lua.Pop(1);
+            else if (lua.IsFunction(-1)) callbacks.foregroundFuncRef = lua.Ref(LuaRegistry.Index);
+            else {
+                lua.Pop(1);
+                throw new LuaException($"Failed to execute file {filePath}: Returned field 'foreground' must be a function or nil.");
+            }
 
-                // We do this here so it's on the main thread
-                if (!Everest.Content.TryGet(filePath, out ModAsset metadata, true))
-                    throw new LuaException($"Failed to read file: {filePath}");
-
-                if (lua.LoadBuffer(metadata.Data, "proceduralTilemap") != LuaStatus.OK) {
-                    string? errorMessage = lua.ToString(-1);
-                    throw new LuaException($"Failed to load file {filePath}: {errorMessage ?? "<could not convert error message to string>"}");
-                }
-                foreach (string arg in Arguments)
-                    lua.PushString(arg);
-                if (lua.PCall(Arguments.Length, 1, 0) != LuaStatus.OK) {
-                    string? errorMessage = lua.ToString(-1);
-                    throw new LuaException($"Failed to execute file {filePath}: {errorMessage ?? "<could not convert error message to string>"}");
-                }
-                if (!lua.IsTable(-1)) {
-                    lua.Pop(1);
-                    throw new LuaException($"Failed to execute file {filePath}: File must return a table.");
-                }
-                
-                lua.GetField(-1, "before");
-                if (lua.IsNil(-1)) lua.Pop(1);
-                else if (lua.IsFunction(-1)) callbacks.beforeFuncRef = lua.Ref(LuaRegistry.Index);
-                else {
-                    lua.Pop(1);
-                    throw new LuaException($"Failed to execute file {filePath}: Returned field 'before' must be a function or nil.");
-                }
-
-                lua.GetField(-1, "foreground");
-                if (lua.IsNil(-1)) lua.Pop(1);
-                else if (lua.IsFunction(-1)) callbacks.foregroundFuncRef = lua.Ref(LuaRegistry.Index);
-                else {
-                    lua.Pop(1);
-                    throw new LuaException($"Failed to execute file {filePath}: Returned field 'foreground' must be a function or nil.");
-                }
-
-                lua.GetField(-1, "background");
-                if (lua.IsNil(-1)) lua.Pop(1);
-                else if (lua.IsFunction(-1)) callbacks.backgroundFuncRef = lua.Ref(LuaRegistry.Index);
-                else {
-                    lua.Pop(1);
-                    throw new LuaException($"Failed to execute file {filePath}: Returned field 'background' must be a function or nil.");
-                }
-
-                CallbackCache.Add(ID, callbacks);
+            lua.GetField(-1, "background");
+            if (lua.IsNil(-1)) lua.Pop(1);
+            else if (lua.IsFunction(-1)) callbacks.backgroundFuncRef = lua.Ref(LuaRegistry.Index);
+            else {
+                lua.Pop(1);
+                throw new LuaException($"Failed to execute file {filePath}: Returned field 'background' must be a function or nil.");
             }
         } catch (Exception err) {
             SandboxedLua.ActiveScene = null;
@@ -191,12 +177,13 @@ public class ProceduralTilemap : Platform
             SandboxedLua.ActiveScene = scene;
             
             if (callbacks.beforeFuncRef is int beforeFunc) {
+                int errorHandler = SandboxedLua.PushErrorHandler(lua);
                 lua.RawGetInteger(LuaRegistry.Index, beforeFunc);
                 lua.PushInteger(XOffset);
                 lua.PushInteger(YOffset);
                 lua.PushInteger(TileWidth);
                 lua.PushInteger(TileHeight);
-                if (lua.PCall(4, 0, 0) != LuaStatus.OK) {
+                if (lua.PCall(4, 0, errorHandler) != LuaStatus.OK) {
                     string? errorMessage = lua.ToString(-1);
                     throw new LuaException($"At {filePath} before({XOffset}, {YOffset}, {TileWidth}, {TileHeight}): " + (errorMessage ?? "<could not convert to string>"));
                 }
@@ -211,12 +198,13 @@ public class ProceduralTilemap : Platform
                     int logicalX = x + XOffset;
                     int logicalY = y + YOffset;
                     if (callbacks.foregroundFuncRef is int fgFunc) {
+                        int errorHandler = SandboxedLua.PushErrorHandler(lua);
                         lua.RawGetInteger(LuaRegistry.Index, fgFunc);
                         lua.PushInteger(logicalX);
                         lua.PushInteger(logicalY);
                         lua.PushInteger(TileWidth);
                         lua.PushInteger(TileHeight);
-                        if (lua.PCall(4, 1, 0) != LuaStatus.OK) {
+                        if (lua.PCall(4, 1, errorHandler) != LuaStatus.OK) {
                             string? errorMessage = lua.ToString(-1);
                             throw new LuaException($"At {filePath} foreground({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): " + (errorMessage ?? "<could not convert to string>"));
                         }
@@ -224,12 +212,13 @@ public class ProceduralTilemap : Platform
                         lua.Pop(-1);
                     }
                     if (callbacks.backgroundFuncRef is int bgFunc) {
+                        int errorHandler = SandboxedLua.PushErrorHandler(lua);
                         lua.RawGetInteger(LuaRegistry.Index, bgFunc);
                         lua.PushInteger(logicalX);
                         lua.PushInteger(logicalY);
                         lua.PushInteger(TileWidth);
                         lua.PushInteger(TileHeight);
-                        if (lua.PCall(4, 1, 0) != LuaStatus.OK) {
+                        if (lua.PCall(4, 1, errorHandler) != LuaStatus.OK) {
                             string? errorMessage = lua.ToString(-1);
                             throw new LuaException($"At {filePath} background({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): " + (errorMessage ?? "<could not convert to string>"));
                         }

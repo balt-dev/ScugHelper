@@ -36,15 +36,19 @@ public static class ActionManager
     /// Triggers the callback of any actions with any of the given groups.
     /// Actions will always wait at least one frame to be triggered.
     /// </summary>
-    public static void AlertActions(string[] groups, Level? level) {
-        foreach (string group in groups) {
+    public static void AlertActions(string[] groups, Level? level)
+    {
+        foreach (string group in groups)
+        {
             if (actionMap.TryGetValue(group, out var actions))
                 foreach (var action in actions)
                     dummy.Add(new Coroutine(ActionBuffer(action, level)));
-            if (level is Level lv)
-                foreach (ActionListener listener in lv.Tracker.GetComponents<ActionListener>())
-                    if (listener.Groups.Contains(group))
-                        listener.Alert(level);
+            try {
+                if (level is Level lv)
+                    foreach (ActionListener listener in lv.Tracker.GetComponents<ActionListener>())
+                        if (listener.Groups.Contains(group))
+                            listener.Alert(level);
+            } catch (KeyNotFoundException) { }
         }
     }
 
@@ -63,15 +67,18 @@ public static class ActionManager
     private static readonly ConcurrentDictionary<Type, (ConstructorInfo, ConstructorKind)> ConstructorCache = [];
     private static ActionDummy dummy = [];
 
-    internal static void RegisterAction(Session session, EntityData data, LevelData room) {
+    internal static void RegisterAction(Level level, EntityData data, LevelData room) {
         var ty = ScugHelperModule.GetTypeOfEntity(data);
         if (!ty?.GetInterfaces().Contains(typeof(IAction)) ?? true) return;
         int id = data.ID;
-        session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = id });
+        level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = id });
         string[] groups = IAction.GetGroups(data);
         float? delay = data.Float("Delay");
         if (delay <= 0) delay = null;
         object? action = TryConstructEntity(data, room, out _);
+        if (action is not Entity actionEnt) throw new Exception($"Constructor for action type {ty} must return an implementer of Entity.");
+        actionEnt.Added(level);
+        actionEnt.Awake(level);
         if (action is not IAction iAction) throw new Exception($"Constructor for action type {ty} must return an implementer of IActor.");
         if (!idSet.Add(id)) return;
         updaters.Add(iAction.ActionUpdate);
@@ -87,9 +94,11 @@ public static class ActionManager
                     continue;
                 }
                 if (trigger.Collider.Collide(data.Position + room.Position)) {
-                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     listener.triggers.Add(trigger);
                     globalEnts.Add(trigger);
+                    listener.Added(level);
+                    listener.Awake(level);
                 }
             }
         }
@@ -100,9 +109,11 @@ public static class ActionManager
                     continue;
                 }
                 if (trigger.Collider.Collide(data.Position + room.Position)) {
-                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     actListener.triggers.Add(trigger);
                     globalEnts.Add(trigger);
+                    trigger.Added(level);
+                    trigger.Awake(level);
                 }
             }
         }
@@ -114,9 +125,11 @@ public static class ActionManager
                 }
                 if (entity.Get<PlayerCollider>() is not PlayerCollider collider) continue;
                 if (entActListener.Collider.Collide(entData.Position + room.Position)) {
-                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     entActListener.colliders.Add(collider);
                     globalEnts.Add(entity);
+                    entity.Added(level);
+                    entity.Awake(level);
                 }
             }
         }
@@ -124,8 +137,10 @@ public static class ActionManager
             foreach (var entData in room.Entities) {
                 if (TryConstructEntity(entData, room, out _) is not Entity entity) continue;
                 if (entGlobalizer.Collider.Collide(entData.Position + room.Position)) {
-                    session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
+                    level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     globalEnts.Add(entity);
+                    entity.Added(level);
+                    entity.Awake(level);
                 }
             }
         }
@@ -190,7 +205,7 @@ public static class ActionManager
             MapData data = level.Session.MapData;
             foreach (var room in data.Levels)
                 foreach (var entData in room.Entities)
-                    RegisterAction(level.Session, entData, room);
+                    RegisterAction(level, entData, room);
         }
 
         foreach (var trigger in globalEnts)

@@ -17,7 +17,7 @@ return {
         return {
             drawableText.fromText(
                 ("Action: PlaySound\n%s (%.3fs)\n%s"):format(entity.Groups, entity.Delay, entity.Path),
-                entity.x, entity.y, entity.width, entity.height, nil, 0.25
+                entity.x + 2, entity.y + 2, nil, nil, nil, 0.25
             ),
             scughelper.unfuckedRect(entity, scughelper.colors "playerAction")
         }

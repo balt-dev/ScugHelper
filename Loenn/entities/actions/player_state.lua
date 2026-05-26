@@ -20,7 +20,7 @@ return {
         return {
             drawableText.fromText(
                 ("Action: Set Player State\n%s (%.3fs)\n%s"):format(entity.Groups, entity.Delay, scughelper.playerStateNames[entity.State] or tostring(entity.State)),
-                entity.x, entity.y, entity.width, entity.height, nil, 0.25
+                entity.x + 2, entity.y + 2, nil, nil, nil, 0.25
             ),
             scughelper.unfuckedRect(entity, scughelper.colors "playerAction")
         }

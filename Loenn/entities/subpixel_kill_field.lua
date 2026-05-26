@@ -23,13 +23,13 @@ return {
         return drawableFunc.fromFunction(function()
             drawing.callKeepOriginalColor(function()
                 love.graphics.setColor(1, 0.2, 0.2, 1)
-                love.graphics.rectangle("fill", entity.x, entity.y, entity.width, entity.height)
-                love.graphics.setColor(0.2, 1, 1, 1)
-                for x = 0.5, entity.width, 1 do
-                    for y = 0.5, entity.height, 1 do
-                        love.graphics.rectangle("fill", entity.x + entity.StartX + x, entity.y + entity.StartY + y, entity.EndX - entity.StartX, entity.EndY - entity.StartY)
-                    end
-                end
+                love.graphics.rectangle("line", entity.x, entity.y, entity.width, entity.height)
+                --love.graphics.setColor(0.2, 1, 1, 1)
+                --for x = 0.5, entity.width, 1 do
+                --    for y = 0.5, entity.height, 1 do
+                --        love.graphics.rectangle("fill", entity.x + entity.StartX + x, entity.y + entity.StartY + y, entity.EndX - entity.StartX, entity.EndY - entity.StartY)
+                --    end
+                --end
             end)
         end)
     end,

@@ -1,3 +1,4 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local drawableRect = require("structs.drawable_rectangle")
 
 return {
@@ -14,10 +15,17 @@ return {
         },
     },
     ignoredFields = function(entity)
-        if (entity.MoveWithPlayer) then
-            return {"_name", "_id", "originX", "originY", "MoveWithPlayer", "width", "height"}
+        if entity.__eula == nil then entity.__eula = false end
+        if entity.__eula or scughelper.eulaAccepted then
+            entity.__eula = false
+            scughelper.eulaAccepted = true
+            if (entity.MoveWithPlayer) then
+                return {"_name", "_id", "originX", "originY", "__eula", "MoveWithPlayer", "width", "height"}
+            else
+                return {"_name", "_id", "originX", "originY", "__eula", "MoveWithPlayer"}
+            end
         else
-            return {"_name", "_id", "originX", "originY", "MoveWithPlayer"}
+            return {"_name", "_id", "originX", "originY", "Arguments", "FilePath", "MoveWithPlayer", "x", "y", "width", "height", "Seed"}
         end
     end,
     fieldInformation = {

@@ -28,10 +28,8 @@ public class SubpixelKillField : Entity
     }
 
     private void OnPlayer(Player player) {
-        if (player.movementCounter.X > StartX) return;
-        if (player.movementCounter.X < EndX) return;
-        if (player.movementCounter.Y > StartY) return;
-        if (player.movementCounter.Y < EndY) return;
+        if (player.movementCounter.X > StartX && player.movementCounter.X < EndX) return;
+        if (player.movementCounter.Y > StartY && player.movementCounter.Y < EndY) return;
         player.Die(Vector2.Zero);
     }
 }
