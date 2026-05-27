@@ -78,6 +78,7 @@ public class RefillCircle : Entity
         closestRefill.Position = Position + closestRefill.Center - closestRefill.Position;
         closestRefill.Collider = new Hitbox(0, 0);
         refill = closestRefill;
+        refill.Add(new RefillRectangle.StaticRefillComponent(false, false));
     }
 
     public void OnPlayer(Player player) {

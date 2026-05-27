@@ -4,7 +4,7 @@ local drawableText = require("structs.drawable_text")
 
 return {
     name = "ScugHelper/SandboxedLuaAction",
-    depth = -100,
+    depth = -1e10,
     placements = {
         {
             name = "normal",

@@ -24,19 +24,39 @@ public class Conveyor : Entity
     private readonly StaticMover staticMover;
     private float elapsed;
     private int TotalFrames = 1;
+    private Vector2 imageOffset;
 
     public Conveyor(EntityData data, Vector2 offset) : base(data.Position + offset) {
         Tag = Tags.TransitionUpdate;
         Depth = 1999;
         Flip = data.Bool("Flip");
         Collider = new Hitbox(data.Width, 2f, 0, Flip ? 0f : 6f);
-        Add(staticMover = new StaticMover());
+        Add(staticMover = new StaticMover {
+            SolidChecker = IsRiding,
+            OnShake = OnShake,
+            OnEnable = OnEnable,
+            OnDisable = OnDisable
+        });
         Add(idleSfx = new SoundSource());
         idleSfx.Play("event:/env/local/09_core/conveyor_idle");
         SpritePath = data.String("SpritePath", "objects/ScugHelper/conveyor");
         TargetSpeed = data.Float("TargetSpeed", 120);
         SpriteRate = TargetSpeed / 60f;
         tiles = BuildTiles();
+    }
+
+    public bool IsRiding(Solid solid) => Flip ? CollideCheckOutside(solid, Position - Vector2.UnitY) : CollideCheckOutside(solid, Position + Vector2.UnitY);
+
+    public void OnEnable() {
+        Active = Visible = Collidable = true;
+    }
+
+    public void OnDisable() {
+        Active = Collidable = false;
+        Visible = false;
+    }
+    public void OnShake(Vector2 amount) {
+        imageOffset += amount;
     }
 
     public List<Sprite> BuildTiles() {
@@ -78,5 +98,10 @@ public class Conveyor : Entity
             idleSfx.Position = Calc.ClosestPointOnLine(Position, Position + new Vector2(Width, 0f), player.Center) - Position;
             idleSfx.UpdateSfxPosition();
         }
+    }
+    public override void Render() {
+        Position += imageOffset;
+        base.Render();
+        Position -= imageOffset;
     }
 }

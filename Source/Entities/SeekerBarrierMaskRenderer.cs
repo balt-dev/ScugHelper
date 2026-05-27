@@ -31,8 +31,8 @@ public class SeekerBarrierMaskRenderer : Entity
     protected static readonly float[] speeds = [12f, 20f, 40f];
     private static readonly int BufferWidth = 512;
     private static readonly int BufferHeight = 512;
-    private static readonly int ParticleWidth = 128;
-    private static readonly int ParticleHeight = 128;
+    private static readonly int ParticleWidth = 512;
+    private static readonly int ParticleHeight = 512;
     protected static readonly Vector2[] particles = new Vector2[ParticleWidth * ParticleHeight / 16];
 
     static SeekerBarrierMaskRenderer() {
@@ -131,7 +131,7 @@ public class SeekerBarrierMaskRenderer : Entity
                 Vector2 part = particles[i];
                 for (int x = 0; x < BufferWidth / ParticleWidth; x += ParticleWidth)
                     for (int y = 0; y < BufferHeight / ParticleHeight; y += ParticleHeight)
-                        if (CheckParticle(part))
+                        if (CheckParticle(part + new Vector2(x * ParticleWidth, y * ParticleHeight)))
                             Draw.Pixel.Draw(part + cam.Position, Vector2.Zero, Color.White * 0.5f);
             }
 

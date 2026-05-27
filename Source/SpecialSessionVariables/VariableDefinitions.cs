@@ -236,3 +236,7 @@ internal class PlayerStaminaSlider : SpecialSlider
     public override float GetValue(Level level) => level.GetPlayer()?.Stamina ?? 0f;
     public override void SetValue(Level level, float value) { if (level.GetPlayer() is Player player) player.Stamina = value; }
 }
+internal class SessionTimeSlider : SpecialSlider
+{
+    public override float GetValue(Level level) => (float) TimeSpan.FromTicks(level.Session.Time).TotalSeconds;
+}

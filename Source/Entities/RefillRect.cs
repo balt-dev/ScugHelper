@@ -3,6 +3,7 @@ using Celeste.Mod.Entities;
 using Monocle;
 using System;
 using System.Linq;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -124,6 +125,7 @@ public class RefillRectangle : Entity
         closestRefill.Position = Position + closestRefill.Center - closestRefill.Position;
         closestRefill.Collider = new Hitbox(0, 0);
         refill = closestRefill;
+        refill.Add(new StaticRefillComponent(false, false));
     }
 
     public void OnPlayer(Player player) {
@@ -136,6 +138,7 @@ public class RefillRectangle : Entity
 
     public override void Update() {
         base.Update();
+        refill?.sine.counter = 0;
         refill?.Position = Center + refill.Center - refill.Position;
         refill?.Collidable = false;
     }
@@ -143,7 +146,6 @@ public class RefillRectangle : Entity
     public override void Render() {
         base.Render();
         if (refill is null) return;
-        refill.sprite.Y = refill.flash.Y = refill.outline.Y = 0;
         if (!(refill.sprite.Visible || refill.outline.Visible)) { return; }
         if (!refill.sprite.Visible) {
             if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White);
@@ -160,4 +162,17 @@ public class RefillRectangle : Entity
             Draw.Rect(Left + 2, Top + 2, Width - 4, Height - 4, Color.White * InfillOpacity);
         }
     }
+    
+    [Tracked]
+    internal class StaticRefillComponent(bool active, bool visible) : Component(active, visible) {}
+
+    [OnLoad] internal static void LoadHooks() => On.Celeste.Refill.UpdateY += OnUpdateY;
+    [OnUnload] internal static void UnloadHooks() => On.Celeste.Refill.UpdateY -= OnUpdateY;
+
+    private static void OnUpdateY(On.Celeste.Refill.orig_UpdateY orig, Refill self)
+    {
+        if (self.Get<StaticRefillComponent>() is not null) self.sprite.Y = self.flash.Y = self.outline.Y = self.light.Y = self.bloom.Y = 0;
+        else orig(self);
+    }
 }
+

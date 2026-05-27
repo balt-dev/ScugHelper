@@ -48,6 +48,7 @@ public static class SpecialSessionVariables
         new("ScugHelper.CoreMode", new CoreModeCounter()),
     ]);
     static readonly Dictionary<string, SpecialSlider> sliders = new([
+        new("ScugHelper.SessionTime", new SessionTimeSlider()),
         new("ScugHelper.TimeRate", new TimeRateSlider()),
         new("ScugHelper.PlayerX", new PlayerXSlider()),
         new("ScugHelper.PlayerY", new PlayerYSlider()),

@@ -483,3 +483,6 @@ entities.ScugHelper/SandboxedLuaAction.placements.description.normal=When alerte
 entities.ScugHelper/SandboxedLuaGate.placements.name.normal=Sandboxed Lua Gate [Advanced]
 entities.ScugHelper/SandboxedLuaGate.placements.description.normal=When crossed, runs the given Lua file.
 
+entities.ScugHelper/Kickpad.placements.name.normal=Kickpad
+entities.ScugHelper/Kickpad.placements.description.normal=Sets the player's velocity direction to their facing direction when jumped on.
+

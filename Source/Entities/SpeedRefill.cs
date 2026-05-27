@@ -101,10 +101,8 @@ public class SpeedRefill : Refill, ICustomRefill
         player.SetAdjustedSpeed(SpeedToSet);
         var positionTarget = Center + (player.Position - player.Center);
         var oldNaive = player.TreatNaive;
-        player.TreatNaive = true;
-        player.MoveToX(positionTarget.X);
-        player.MoveToY(positionTarget.Y);
-        player.TreatNaive = oldNaive;
+        player.X = MathF.Round(positionTarget.X);
+        player.Y = MathF.Round(positionTarget.Y);
         if (!(player.LastBooster is PinballBooster pinball && pinball.BoostingPlayer && pinball.ConsumeBounce())) player.StateMachine.State = Player.StLaunch;
         yield return 0.05f;
         float num = player.Speed.Angle();

@@ -66,6 +66,21 @@ public class RecoilBumper : Actor, IHasSpeed
         Speed -= 2 * m2 * mass_factor * dot_over_len2 * delta_p;
         bumper.Speed += 2 * m1 * mass_factor * dot_over_len2 * delta_p;
     }
+    
+    private void OnPointCollide(Vector2 point) {
+        if (Center == point) return;
+    
+        Vector2 delta_p = Center - point;
+        float dist = delta_p.Length();
+        float overlap = 12f - dist;
+    
+        Vector2 norm = delta_p / dist;
+        Vector2 movement = norm * overlap;
+        MoveH(movement.X);
+        MoveV(movement.Y);
+    
+        Speed -= 2 * Vector2.Dot(Speed, norm) * norm;
+    }
 
     public bool HitSpring(Spring spring) {
         switch (spring.Orientation) {
