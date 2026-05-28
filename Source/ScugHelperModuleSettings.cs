@@ -54,6 +54,10 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingNumberInput(allowNegatives: false, maxLength: 3)]
     public int LuaTimeLimit { get; set; } = 3;
 
+    [SettingSubText("The maximum amount of memory any given Lua script execution can use, in megabytes.")]
+    [SettingNumberInput(allowNegatives: false, maxLength: 3)]
+    public int LuaMemoryLimit { get; set; } = 16;
+
     [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]
     public bool SideflippingEverywhere { get; set; } = false;
 
@@ -82,7 +86,7 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     public bool AlwaysCenterCameraX { get; set; } = false;
     public bool AlwaysCenterCameraY { get; set; } = false;
 
-    [SettingSubText("Makes all room transitions instant. Increases IGT by 0.65 seconds on transition to compensate.")]
+    [SettingSubText("Makes all room transitions instant. Increases IGT by 0.68 seconds on transition to compensate.")]
     public bool InstantRoomTransitions { get; set; } = false;
 
     [YamlIgnore]

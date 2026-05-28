@@ -36,6 +36,7 @@ public class ScugHelperModule : EverestModule
         // TODO: apply any hooks that should always be active
         typeof(FrostHelperImports).ModInterop();
         typeof(GravityHelperImports).ModInterop();
+        typeof(ExtendedVariantModeImports).ModInterop();
         LifecycleMethods.OnLoad();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;

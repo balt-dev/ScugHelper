@@ -10,54 +10,61 @@ namespace Celeste.Mod.ScugHelper.SpecialSessionVariables;
 
 public static class SpecialSessionVariables
 {
-    static readonly Dictionary<string, SpecialFlag> flags = new([
-        new("ScugHelper.PlayerDead", new PlayerDeadFlag()),
-        new("ScugHelper.HasGolden", new HasGoldenFlag()),
-        new("ScugHelper.RestartedFromGolden", new RestartedFromGoldenFlag()),
-        new("ScugHelper.StartedFromBeginning", new StartedFromBeginningFlag()),
-        new("ScugHelper.PlayerOnGround", new PlayerOnGroundFlag()),
-        new("ScugHelper.PlayerOnSafeGround", new PlayerOnSafeGroundFlag()),
-        new("ScugHelper.PlayerDashAttacking", new PlayerDashAttackingFlag()),
-        new("ScugHelper.IsPlayerSeeker", new IsPlayerSeekerFlag()),
-        new("ScugHelper.DreamBlocksEnabled", new DreamBlocksEnabledFlag()),
-        new("ScugHelper.HasMidair", new HasMidairFlag()),
-        new("ScugHelper.HasOvercharge", new HasOverchargeFlag()),
-        new("ScugHelper.InLimbo", new HasLimboFlag()),
-        new("ScugHelper.SaveQuitDisabled", new SaveQuitDisabledFlag()),
-        new("ScugHelper.PlayerHolding", new PlayerHoldingFlag()),
-        new("ScugHelper.PlayerDucking", new PlayerDuckingFlag()),
-        new("ScugHelper.GravityHelper.PlayerInverted", new PlayerInvertedFlag()),
-        new("ScugHelper.FrostHelper.Enabled", new FrostHelperEnabledFlag()),
-        new("ScugHelper.GravityHelper.Enabled", new GravityHelperEnabledFlag()),
-        new("ScugHelper.InBooster", new InBoosterFlag()),
-    ]);
-    static readonly Dictionary<string, SpecialCounter> counters = new([
-        new("ScugHelper.DeathCount", new DeathCounter()),
-        new("ScugHelper.DeathHereCount", new HereDeathCounter()),
-        new("ScugHelper.PlayerState", new PlayerStateCounter()),
-        new("ScugHelper.PlayerDashes", new PlayerDashesCounter()),
-        new("ScugHelper.PlayerMaxDashes", new PlayerMaxDashesCounter()),
-        new("ScugHelper.PlayerTotalDashes", new PlayerTotalDashesCounter()),
-        new("ScugHelper.EpochTime", new EpochTimeCounter()),
-        new("ScugHelper.LevelX", new LevelXCounter()),
-        new("ScugHelper.LevelY", new LevelYCounter()),
-        new("ScugHelper.LevelWidth", new LevelWidthCounter()),
-        new("ScugHelper.LevelHeight", new LevelHeightCounter()),
-        new("ScugHelper.FPS", new FPSCounter()),
-        new("ScugHelper.CassetteBlockIndex", new CassetteBlockIndexCounter()),
-        new("ScugHelper.CoreMode", new CoreModeCounter()),
-    ]);
-    static readonly Dictionary<string, SpecialSlider> sliders = new([
-        new("ScugHelper.SessionTime", new SessionTimeSlider()),
-        new("ScugHelper.TimeRate", new TimeRateSlider()),
-        new("ScugHelper.PlayerX", new PlayerXSlider()),
-        new("ScugHelper.PlayerY", new PlayerYSlider()),
-        new("ScugHelper.PlayerSpeedX", new PlayerSpeedXSlider()),
-        new("ScugHelper.PlayerSpeedY", new PlayerSpeedYSlider()),
-        new("ScugHelper.PlayerSubpixelX", new PlayerSubpixelXSlider()),
-        new("ScugHelper.PlayerSubpixelY", new PlayerSubpixelYSlider()),
-        new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
-    ]);
+    internal static readonly Dictionary<string, SpecialFlag> flags;
+    internal static readonly Dictionary<string, SpecialCounter> counters;
+    internal static readonly Dictionary<string, SpecialSlider> sliders;
+    
+    static SpecialSessionVariables() {
+        flags = new([
+            new("ScugHelper.PlayerDead", new PlayerDeadFlag()),
+            new("ScugHelper.HasGolden", new HasGoldenFlag()),
+            new("ScugHelper.RestartedFromGolden", new RestartedFromGoldenFlag()),
+            new("ScugHelper.StartedFromBeginning", new StartedFromBeginningFlag()),
+            new("ScugHelper.PlayerOnGround", new PlayerOnGroundFlag()),
+            new("ScugHelper.PlayerOnSafeGround", new PlayerOnSafeGroundFlag()),
+            new("ScugHelper.PlayerDashAttacking", new PlayerDashAttackingFlag()),
+            new("ScugHelper.IsPlayerSeeker", new IsPlayerSeekerFlag()),
+            new("ScugHelper.DreamBlocksEnabled", new DreamBlocksEnabledFlag()),
+            new("ScugHelper.HasMidair", new HasMidairFlag()),
+            new("ScugHelper.HasOvercharge", new HasOverchargeFlag()),
+            new("ScugHelper.InLimbo", new HasLimboFlag()),
+            new("ScugHelper.SaveQuitDisabled", new SaveQuitDisabledFlag()),
+            new("ScugHelper.PlayerHolding", new PlayerHoldingFlag()),
+            new("ScugHelper.PlayerDucking", new PlayerDuckingFlag()),
+            new("ScugHelper.GravityHelper.PlayerInverted", new PlayerInvertedFlag()),
+            new("ScugHelper.FrostHelper.Enabled", new FrostHelperEnabledFlag()),
+            new("ScugHelper.GravityHelper.Enabled", new GravityHelperEnabledFlag()),
+            new("ScugHelper.InBooster", new InBoosterFlag()),
+        ]);
+        counters = new([
+            new("ScugHelper.DeathCount", new DeathCounter()),
+            new("ScugHelper.DeathHereCount", new HereDeathCounter()),
+            new("ScugHelper.PlayerState", new PlayerStateCounter()),
+            new("ScugHelper.PlayerDashes", new PlayerDashesCounter()),
+            new("ScugHelper.PlayerMaxDashes", new PlayerMaxDashesCounter()),
+            new("ScugHelper.PlayerTotalDashes", new PlayerTotalDashesCounter()),
+            new("ScugHelper.EpochTime", new EpochTimeCounter()),
+            new("ScugHelper.LevelX", new LevelXCounter()),
+            new("ScugHelper.LevelY", new LevelYCounter()),
+            new("ScugHelper.LevelWidth", new LevelWidthCounter()),
+            new("ScugHelper.LevelHeight", new LevelHeightCounter()),
+            new("ScugHelper.FPS", new FPSCounter()),
+            new("ScugHelper.CassetteBlockIndex", new CassetteBlockIndexCounter()),
+            new("ScugHelper.CoreMode", new CoreModeCounter()),
+        ]);
+        sliders = new([
+            new("ScugHelper.SessionTime", new SessionTimeSlider()),
+            new("ScugHelper.TimeRate", new TimeRateSlider()),
+            new("ScugHelper.PlayerX", new PlayerXSlider()),
+            new("ScugHelper.PlayerY", new PlayerYSlider()),
+            new("ScugHelper.PlayerSpeedX", new PlayerSpeedXSlider()),
+            new("ScugHelper.PlayerSpeedY", new PlayerSpeedYSlider()),
+            new("ScugHelper.PlayerSubpixelX", new PlayerSubpixelXSlider()),
+            new("ScugHelper.PlayerSubpixelY", new PlayerSubpixelYSlider()),
+            new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
+        ]);
+        ExtVarInterop.LoadVariables();
+    }
 
     private static Hook OnSliderObjectGetValue = null!;
     private static Hook OnSliderObjectSetValue = null!;

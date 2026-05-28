@@ -49,8 +49,8 @@ entities.ScugHelper/DashlessHeartGem.placements.description.crystal_heart=Crysta
 entities.ScugHelper/RecoilBumper.placements.name.normal=Recoil Bumper
 entities.ScugHelper/RecoilBumper.placements.description.normal=Bumper that bounces backwards when hit.
 
-entities.ScugHelper/AccelerationField.placements.name.normal=Acceleration Field
-entities.ScugHelper/AccelerationField.placements.description.normal=Accelerates any entites within.
+entities.ScugHelper/NewAccelerationField.placements.name.normal=Acceleration Field
+entities.ScugHelper/NewAccelerationField.placements.description.normal=Accelerates any compatible entites within to a given speed.
 
 entities.ScugHelper/GroundedRefill.placements.name.one_dash=Grounded Refill
 entities.ScugHelper/GroundedRefill.placements.name.two_dashes=Grounded Refill (Two Dashes)
@@ -452,8 +452,8 @@ triggers.ScugHelper/InputSpamTrigger.placements.name.trigger=Input Spam Trigger
 triggers.ScugHelper/InputSpamTrigger.placements.description.trigger=Forces a certain input to be pressed every frame.
 
 
-entities.ScugHelper/ElsewhereWatchtower.placements.name.normal=Elsewhere Watchtower
-entities.ScugHelper/ElsewhereWatchtower.placements.description.normal=Watchtower that starts at a defined position.
+entities.ScugHelper/ElsewhereWatchtower.placements.name.watchtower=Elsewhere Watchtower
+entities.ScugHelper/ElsewhereWatchtower.placements.description.watchtower=Watchtower that starts at a defined position.
 
 triggers.ScugHelper/UnstuckTrigger.placements.name.trigger=Unstuck
 triggers.ScugHelper/UnstuckTrigger.placements.description.normal=Every frame the player is inside this trigger, tries to move the player out of any solids if they're in any, and kills them if it can't.
@@ -464,14 +464,14 @@ entities.ScugHelper/FlagListener.placements.description.normal=Alerts a set of a
 triggers.ScugHelper/SandboxedLuaTrigger.placements.name.trigger=Sandboxed Lua Trigger [Advanced]
 triggers.ScugHelper/SandboxedLuaTrigger.placements.decription.trigger=Calls some defined lua function for OnEnter, OnStay, and OnLeave.
 
-triggers.ScugHelper/SandboxedLuaTrigger.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis trigger requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this trigger.\nIf you cause an infinite loop or out of memory error, it WILL hard crash the game.\n\nTo use this trigger, check the box and reopen the config.\nYou will not see this for the rest of the session.
-entities.ScugHelper/ProceduralTilemap.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis entity requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this entity.\nIf you cause an infinite loop or out of memory error, it WILL hard crash the game.\n\nTo use this entity, check the box and reopen the config.\nYou will not see this for the rest of the session.
-entities.ScugHelper/SandboxedLuaAction.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\nIf you cause an infinite loop or out of memory error, it WILL hard crash the game.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
+triggers.ScugHelper/SandboxedLuaTrigger.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis trigger requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this trigger.\n\nTo use this trigger, check the box and reopen the config.\nYou will not see this for the rest of the session.
+entities.ScugHelper/ProceduralTilemap.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis entity requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this entity.\n\nTo use this entity, check the box and reopen the config.\nYou will not see this for the rest of the session.
+entities.ScugHelper/SandboxedLuaAction.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
 not see this for the rest of the session.
-entities.ScugHelper/SandboxedLuaConditionAction.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\nIf you cause an infinite loop or out of memory error, it WILL hard crash the game.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
+entities.ScugHelper/SandboxedLuaConditionAction.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
 not see this for the rest of the session.
-entities.ScugHelper/SandboxedLuaListener.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\nIf you cause an infinite loop or out of memory error, it WILL hard crash the game.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
-entities.ScugHelper/SandboxedLuaGate.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\nIf you cause an infinite loop or out of memory error, it WILL hard crash the game.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
+entities.ScugHelper/SandboxedLuaListener.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
+entities.ScugHelper/SandboxedLuaGate.attributes.name.__eula=EULA [READ BEFORE USING]\n\nWarning!\nThis action requires knowledge of the Lua programming language.\nYou are on your own if you use this. Please do not disturb other modders about helping with the Lua API.\nPlease read the ScugHelper wiki and the documentation of Lua before using this action.\n\nTo use this action, check the box and reopen the config.\nYou will not see this for the rest of the session.
 
 entities.ScugHelper/SandboxedLuaGate.attributes.description.InlineLua=Typing a Lua chunk here will have this use the contents of this variable directly instead of reading from the given filepath.
 entities.ScugHelper/SandboxedLuaListener.attributes.description.InlineLua=Typing a Lua chunk here will have this use the contents of this variable directly instead of reading from the given filepath.
@@ -486,3 +486,5 @@ entities.ScugHelper/SandboxedLuaGate.placements.description.normal=When crossed,
 entities.ScugHelper/Kickpad.placements.name.normal=Kickpad
 entities.ScugHelper/Kickpad.placements.description.normal=Sets the player's velocity direction to their facing direction when jumped on.
 
+entities.ScugHelper/InstantFlagBlock.placements.name.normal=Instant Flag Block
+entities.ScugHelper/InstantFlagBlock.placements.description.normal=Instantly disappears or reappears based on a flag.

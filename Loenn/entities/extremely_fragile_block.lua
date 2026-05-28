@@ -3,7 +3,7 @@ local fakeTilesHelper = require("helpers.fake_tiles")
 local extremelyFragileBlock = {}
 
 extremelyFragileBlock.name = "ScugHelper/ExtremelyFragileBlock"
-extremelyFragileBlock.depth = 0
+extremelyFragileBlock.depth = -10000
 
 function extremelyFragileBlock.placements()
     return {
@@ -18,7 +18,7 @@ function extremelyFragileBlock.placements()
     }
 end
 
-extremelyFragileBlock.sprite = fakeTilesHelper.getEntitySpriteFunction("tiletype", "blendin")
+extremelyFragileBlock.sprite = fakeTilesHelper.getEntitySpriteFunction("tiletype", "blendin", "tilesFg")
 extremelyFragileBlock.fieldInformation = fakeTilesHelper.getFieldInformation("tiletype")
 
 return extremelyFragileBlock

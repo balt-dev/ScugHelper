@@ -3,7 +3,7 @@ local fakeTilesHelper = require("helpers.fake_tiles")
 local fastfallBlock = {}
 
 fastfallBlock.name = "ScugHelper/FastfallBlock"
-fastfallBlock.depth = 0
+fastfallBlock.depth = -10000
 
 function fastfallBlock.placements()
     return {
@@ -19,7 +19,7 @@ function fastfallBlock.placements()
     }
 end
 
-fastfallBlock.sprite = fakeTilesHelper.getEntitySpriteFunction("tiletype", "blendin")
+fastfallBlock.sprite = fakeTilesHelper.getEntitySpriteFunction("tiletype", "blendin", "tilesFg")
 fastfallBlock.fieldInformation = fakeTilesHelper.getFieldInformation("tiletype")
 
 return fastfallBlock

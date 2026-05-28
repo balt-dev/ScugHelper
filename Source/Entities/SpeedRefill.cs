@@ -100,7 +100,6 @@ public class SpeedRefill : Refill, ICustomRefill
         Depth = 8999;
         player.SetAdjustedSpeed(SpeedToSet);
         var positionTarget = Center + (player.Position - player.Center);
-        var oldNaive = player.TreatNaive;
         player.X = MathF.Round(positionTarget.X);
         player.Y = MathF.Round(positionTarget.Y);
         if (!(player.LastBooster is PinballBooster pinball && pinball.BoostingPlayer && pinball.ConsumeBounce())) player.StateMachine.State = Player.StLaunch;

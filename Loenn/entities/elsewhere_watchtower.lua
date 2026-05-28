@@ -14,7 +14,8 @@ watchtower.placements = {
     alternativeName = {"lookout", "binoculars"},
     data = {
         summit = false,
-        onlyY = false
+        onlyY = false,
+        flagWhileUsing = ""
     }
 }
 watchtower.nodeSprite = function(room, entity, node, nodeIndex)

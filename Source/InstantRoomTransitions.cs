@@ -31,7 +31,7 @@ internal static class InstantRoomTransitions
         )) throw new Exception("Failed to hook for instant level transitions.");
         static float SwapForInstant(float orig, Level level) {
             if (ScugHelperModule.Settings.InstantRoomTransitions) {
-                long transitionTicks = TimeSpan.FromSeconds(0.65).Ticks;
+                long transitionTicks = TimeSpan.FromSeconds(40 * 0.17).Ticks;
                 SaveData.Instance.AddTime(level.Session.Area, transitionTicks);
                 if (!level.Completed && level.TimerStarted) level.Session.Time += transitionTicks;
                 return 1.0f;

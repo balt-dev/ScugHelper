@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Celeste.Mod.ScugHelper;
 
@@ -76,6 +77,35 @@ public static class SandboxedLua {
                 __newindex = function(t, key) error("cannot create or modify global variable " .. tostring(key) .. " - changing global state is disallowed, use locals only") end
             })
         """);
+
+        nint ud = 0;
+        var luaAlloc = Instance.GetAllocFunction(ref ud);
+        Instance.SetAllocFunction(Alloc, ref ud);
+    }
+
+    static long AllocatedLuaMemory = 0;
+
+    static nint Alloc(nint ud, nint ptr, nuint osize, nuint nsize) {
+        AllocatedLuaMemory = Math.Max(0, AllocatedLuaMemory);
+        try {
+            if (AllocatedLuaMemory + (long) (nsize - osize) > ((long) ScugHelperModule.Settings.LuaMemoryLimit) * 1024 * 1024)
+                throw new OutOfMemoryException();
+            unsafe {
+                if (nsize == 0) {
+                    AllocatedLuaMemory -= (long) osize;
+                    NativeMemory.Free((void*)ptr);
+                    return 0;
+                }
+                else {
+                    AllocatedLuaMemory += (long) (nsize - osize);
+                    return (nint)NativeMemory.Realloc((void*)ptr, nsize);
+                }
+            }
+        } catch (OutOfMemoryException) {
+            AllocatedLuaMemory = 0;
+            Instance.Error("out of memory - increase the memory limit in the mod settings if need be");
+            return 0; // unreachable
+        }
     }
 
     static Stopwatch LuaStopwatch = Stopwatch.StartNew();
@@ -83,7 +113,7 @@ public static class SandboxedLua {
     private static void LuaHook(nint luaState, nint ar)
     {
         Lua lua = Lua.FromIntPtr(luaState);
-        if (LuaStopwatch.Elapsed.Ticks > ScugHelperModule.Settings.LuaTimeLimit * 10_000_000) {
+        if (LuaStopwatch.Elapsed.Ticks > ScugHelperModule.Settings.LuaTimeLimit * TimeSpan.TicksPerSecond) {
             lua.Error("execution time limit reached - increase the time limit in the mod settings if need be");
         }
     }
