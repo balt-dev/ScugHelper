@@ -119,6 +119,10 @@ internal class SessionExpressionStringPart : StringPart
     internal override string Format(Level level, Player? player)
         => FrostHelperImports.GetSessionExpressionValue(expr, level.Session).ToString() ?? "";
 }
+internal class DebugStringPart : StringPart
+{
+    internal override string Format(Level level, Player? player) => ScugHelperModule.DebugText;
+}
 
 [Tracked]
 [CustomEntity("ScugHelper/Text")]
@@ -210,6 +214,7 @@ public partial class Text : Entity
                 "deathRoomCount" => new DeathsHereStringPart(),
                 "time" => new TimeStringPart(),
                 "expr" when FrostHelperImports.IsLoaded => new SessionExpressionStringPart(key),
+                "__debug" => new DebugStringPart(),
                 _ => new RawStringPart($"{{{qualifier}:{key}}}")
             };
             partList.Add(newPart);

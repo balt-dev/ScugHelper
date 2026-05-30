@@ -63,6 +63,8 @@ public static class SandboxedLua {
         Instance.SetGlobal("scughelper");
 
         Instance.DoString("""
+            os.setlocale("C")
+
             for _, needsNuke in ipairs { "os", "io", "debug", "package", "loadfile", "load", "loadstring", "dofile", "coroutine", "module", "collectgarbage", "newproxy", "getfenv", "setfenv", "rawget", "rawset", "pcall", "xpcall" } do
                 _G[needsNuke] = nil
             end

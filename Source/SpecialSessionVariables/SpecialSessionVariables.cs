@@ -4,6 +4,7 @@ using System.Reflection;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Monocle;
 using MonoMod.RuntimeDetour;
+using MonoMod.Utils;
 #nullable enable
 
 namespace Celeste.Mod.ScugHelper.SpecialSessionVariables;
@@ -35,6 +36,11 @@ public static class SpecialSessionVariables
             new("ScugHelper.FrostHelper.Enabled", new FrostHelperEnabledFlag()),
             new("ScugHelper.GravityHelper.Enabled", new GravityHelperEnabledFlag()),
             new("ScugHelper.InBooster", new InBoosterFlag()),
+            new("ScugHelper.DashHeld", new ButtonHeldFlag(Input.Dash)),
+            new("ScugHelper.JumpHeld", new ButtonHeldFlag(Input.Jump)),
+            new("ScugHelper.GrabHeld", new ButtonHeldFlag(Input.Grab)),
+            new("ScugHelper.CrouchDashHeld", new ButtonHeldFlag(Input.CrouchDash)),
+            new("ScugHelper.TalkHeld", new ButtonHeldFlag(Input.Talk)),
         ]);
         counters = new([
             new("ScugHelper.DeathCount", new DeathCounter()),
@@ -57,11 +63,14 @@ public static class SpecialSessionVariables
             new("ScugHelper.TimeRate", new TimeRateSlider()),
             new("ScugHelper.PlayerX", new PlayerXSlider()),
             new("ScugHelper.PlayerY", new PlayerYSlider()),
+            new("ScugHelper.AimX", new AimXSlider()),
+            new("ScugHelper.AimY", new AimYSlider()),
             new("ScugHelper.PlayerSpeedX", new PlayerSpeedXSlider()),
             new("ScugHelper.PlayerSpeedY", new PlayerSpeedYSlider()),
             new("ScugHelper.PlayerSubpixelX", new PlayerSubpixelXSlider()),
             new("ScugHelper.PlayerSubpixelY", new PlayerSubpixelYSlider()),
             new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
+            new("ScugHelper.SpecialSessionVariableUpdatePeriod", new SSVUpdatePeriodSlider())
         ]);
         ExtVarInterop.LoadVariables();
     }
@@ -79,18 +88,15 @@ public static class SpecialSessionVariables
         On.Celeste.Session.IncrementCounter += OnIncrementCounter;
         OnSliderObjectGetValue = new(typeof(Session.Slider).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance)!, OnSliderObjectGet);
         OnSliderObjectSetValue = new(typeof(Session.Slider).GetMethod("set_Value", BindingFlags.Public | BindingFlags.Instance)!, OnSliderObjectSet);
-        On.Celeste.Level.Update += OnUpdate;
+        Everest.Events.LevelLoader.OnLoadingThread += OnLevelInit;
     }
 
-    static bool NoOverride;
-    private static void OnUpdate(On.Celeste.Level.orig_Update orig, Level self) {
-        // Annoyingly slow but we do this to support legacy stuff
-        NoOverride = true;
-        foreach (var kvp in flags) self.Session.SetFlag(kvp.Key, kvp.Value.GetValue(self));
-        foreach (var kvp in counters) self.Session.SetCounter(kvp.Key, kvp.Value.GetValue(self));
-        foreach (var kvp in sliders) self.Session.SetSlider(kvp.Key, kvp.Value.GetValue(self));
-        NoOverride = false;
-        orig(self);
+    private static void OnLevelInit(Level level) {
+        foreach (var kvp in flags) level.Session.SetFlag(kvp.Key, kvp.Value.GetValue(level));
+        foreach (var kvp in counters) level.Session.SetCounter(kvp.Key, kvp.Value.GetValue(level));
+        foreach (var kvp in sliders) level.Session.SetSlider(kvp.Key, kvp.Value.GetValue(level));
+        if (level.Tracker.GetEntitiesTrackIfNeeded<SSVUpdater>().Count is 0)
+            level.Add(new SSVUpdater(level));
     }
 
     [OnUnload]
@@ -102,46 +108,47 @@ public static class SpecialSessionVariables
         On.Celeste.Session.IncrementCounter -= OnIncrementCounter;
         OnSliderObjectGetValue.Dispose();
         OnSliderObjectSetValue.Dispose();
+        Everest.Events.LevelLoader.OnLoadingThread -= OnLevelInit;
     }
 
     private static bool OnGetFlag(On.Celeste.Session.orig_GetFlag orig, Session self, string flag) {
-        if (!NoOverride && flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) return specialFlag.GetValue(level);
+        if (flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) return specialFlag.GetValue(level);
         else return orig(self, flag);
     }
 
     private static int OnGetCounter(On.Celeste.Session.orig_GetCounter orig, Session self, string counter) {
-        if (!NoOverride && counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) return specialCounter.GetValue(level);
+        if (counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) return specialCounter.GetValue(level);
         else return orig(self, counter);
     }
 
     private static float OnGetSlider(On.Celeste.Session.orig_GetSlider orig, Session self, string slider) {
-        if (!NoOverride && slider is not null && Engine.Scene is Level level && sliders.TryGetValue(slider, out var specialSlider)) return specialSlider.GetValue(level);
+        if (slider is not null && Engine.Scene is Level level && sliders.TryGetValue(slider, out var specialSlider)) return specialSlider.GetValue(level);
         else return orig(self, slider);
     }
 
     private static void OnSetFlag(On.Celeste.Session.orig_SetFlag orig, Session self, string flag, bool value) {
-        if (!NoOverride && flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) specialFlag.SetValue(level, value);
+        if (flag is not null && Engine.Scene is Level level && flags.TryGetValue(flag, out var specialFlag)) specialFlag.SetValue(level, value);
         else orig(self, flag, value);
     }
 
     private static void OnSetCounter(On.Celeste.Session.orig_SetCounter orig, Session self, string counter, int value) {
-        if (!NoOverride && counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, value);
+        if (counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, value);
         else orig(self, counter, value);
     }
 
     private static void OnIncrementCounter(On.Celeste.Session.orig_IncrementCounter orig, Session self, string counter) {
-        if (!NoOverride && counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, specialCounter.GetValue(level) + 1);
+        if (counter is not null && Engine.Scene is Level level && counters.TryGetValue(counter, out var specialCounter)) specialCounter.SetValue(level, specialCounter.GetValue(level) + 1);
         else orig(self, counter);
     }
 
     private static float OnSliderObjectGet(Func<Session.Slider, float> orig, Session.Slider self) {
-        if (!NoOverride && sliders.TryGetValue(self.Name, out var specialSlider))
+        if (sliders.TryGetValue(self.Name, out var specialSlider))
             return (Engine.Scene is Level level) ? specialSlider.GetValue(level) : 0f;
         return orig(self);
     }
 
     private static void OnSliderObjectSet(Action<Session.Slider, float> orig, Session.Slider self, float value) {
-        if (!NoOverride && sliders.TryGetValue(self.Name, out var specialSlider)) {
+        if (sliders.TryGetValue(self.Name, out var specialSlider)) {
             if (Engine.Scene is Level level) specialSlider.SetValue(level, value);
         } else orig(self, value);
     }
@@ -168,4 +175,27 @@ public static class SpecialSessionVariables
     internal static void CmdSetCounter(string name, int value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetCounter(name, value); }
     [Command("setslider", "Sets the value of a slider.")]
     internal static void CmdSetSlider(string name, float value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetSlider(name, value); }
+
+    [Tracked]
+    private class SSVUpdater : Entity
+    {
+        private Level level;
+
+        public SSVUpdater(Level level) {
+            Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
+            Depth = int.MaxValue;
+            this.level = level;
+        }
+        
+        public override void Update() {
+            base.Update();
+            if (!level.OnInterval(ScugHelperModule.Settings.SpecialSessionVariableUpdatePeriod)) return;
+            // Annoyingly slow but we do this to support stuff that doesn't use the Get/Set API
+            foreach (var kvp in flags) { if (kvp.Value.GetValue(level)) level.Session.Flags.Add(kvp.Key); else level.Session.Flags.Remove(kvp.Key); }
+            foreach (var counter in level.Session.Counters)
+                if (counters.TryGetValue(counter.Key, out var special)) counter.Value = special.GetValue(level);
+            foreach (var slider in level.Session.Sliders)
+                if (sliders.TryGetValue(slider.Key, out var special)) DynamicData.For(slider.Value).Set("_Value", special.GetValue(level));
+        }
+    }
 }

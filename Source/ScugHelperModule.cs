@@ -63,6 +63,7 @@ public class ScugHelperModule : EverestModule
         return orig(self, data, wiggleX, wiggleY);
     }
 
+    internal static string DebugText = "<unset>";
 
     static bool KillingSeeker;
 

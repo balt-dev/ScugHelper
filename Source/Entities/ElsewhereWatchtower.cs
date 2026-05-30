@@ -96,8 +96,6 @@ public class ElsewhereLookout : Lookout {
         cur.EmitLdloc1();
         cur.EmitDelegate(MoveCameraBack);
         cur.EmitBrtrue(label);
-
-        Logger.Log(nameof(ScugHelperModule), il.ToString());
     }
 
     private class StaticCameraComponent(Camera camera, Vector2 cameraPos) : Component(true, true)

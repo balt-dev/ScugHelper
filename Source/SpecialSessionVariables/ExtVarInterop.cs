@@ -182,7 +182,7 @@ internal static class ExtVarInterop
     }
 
     private class FloatExtVarSlider(string name) : SpecialSlider {
-        public override float GetValue(Level level) { Logger.Log(nameof(ScugHelperModule), name); return ExtendedVariantModeImports.GetFloatVariant(name); }
+        public override float GetValue(Level level) => ExtendedVariantModeImports.GetFloatVariant(name);
         public override void SetValue(Level level, float value) => ExtendedVariantModeImports.SetFloatVariant(name, value);
     }
     

@@ -126,6 +126,10 @@ internal class PlayerDuckingFlag : SpecialFlag
     public override bool GetValue(Level level) => level.GetPlayer()?.Ducking ?? false;
 }
 
+internal class ButtonHeldFlag(VirtualButton button) : SpecialFlag {
+    public override bool GetValue(Level level) => button?.Check ?? false;
+}
+
 internal class PlayerStateCounter : SpecialCounter
 {
     public override int GetValue(Level level) => level.GetPlayer()?.StateMachine.State ?? -1;
@@ -239,4 +243,14 @@ internal class PlayerStaminaSlider : SpecialSlider
 internal class SessionTimeSlider : SpecialSlider
 {
     public override float GetValue(Level level) => (float) TimeSpan.FromTicks(level.Session.Time).TotalSeconds;
+}
+internal class SSVUpdatePeriodSlider : SpecialSlider
+{
+    public override float GetValue(Level level) => ScugHelperModule.Settings.SpecialSessionVariableUpdatePeriod;
+}
+internal class AimXSlider : SpecialSlider {
+    public override float GetValue(Level level) => Input.Aim.Value.X;
+}
+internal class AimYSlider : SpecialSlider {
+    public override float GetValue(Level level) => Input.Aim.Value.Y;
 }

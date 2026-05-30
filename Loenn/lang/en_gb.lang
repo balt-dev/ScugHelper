@@ -488,3 +488,5 @@ entities.ScugHelper/Kickpad.placements.description.normal=Sets the player's velo
 
 entities.ScugHelper/InstantFlagBlock.placements.name.normal=Instant Flag Block
 entities.ScugHelper/InstantFlagBlock.placements.description.normal=Instantly disappears or reappears based on a flag.
+
+entities.ScugHelper/BytebeatCassetteSongController.placements.name.normal=Bytebeat Cassette Song Controller
