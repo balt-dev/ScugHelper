@@ -244,10 +244,6 @@ internal class SessionTimeSlider : SpecialSlider
 {
     public override float GetValue(Level level) => (float) TimeSpan.FromTicks(level.Session.Time).TotalSeconds;
 }
-internal class SSVUpdatePeriodSlider : SpecialSlider
-{
-    public override float GetValue(Level level) => ScugHelperModule.Settings.SpecialSessionVariableUpdatePeriod;
-}
 internal class AimXSlider : SpecialSlider {
     public override float GetValue(Level level) => Input.Aim.Value.X;
 }

@@ -23,8 +23,4 @@ public class CountEntitiesTrigger(EntityData e, Vector2 offset) : Trigger(e, off
         base.OnEnter(player);
         CountEntities(player.level);
     }
-    public override void OnStay(Player player) {
-        base.OnStay(player);
-        CountEntities(player.level);
-    }
 }

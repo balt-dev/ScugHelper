@@ -9,13 +9,13 @@ using MonoMod.Utils;
 
 namespace Celeste.Mod.ScugHelper.SpecialSessionVariables;
 
-public static class SpecialSessionVariables
+public static class SSV
 {
     internal static readonly Dictionary<string, SpecialFlag> flags;
     internal static readonly Dictionary<string, SpecialCounter> counters;
     internal static readonly Dictionary<string, SpecialSlider> sliders;
     
-    static SpecialSessionVariables() {
+    static SSV() {
         flags = new([
             new("ScugHelper.PlayerDead", new PlayerDeadFlag()),
             new("ScugHelper.HasGolden", new HasGoldenFlag()),
@@ -70,7 +70,6 @@ public static class SpecialSessionVariables
             new("ScugHelper.PlayerSubpixelX", new PlayerSubpixelXSlider()),
             new("ScugHelper.PlayerSubpixelY", new PlayerSubpixelYSlider()),
             new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
-            new("ScugHelper.SpecialSessionVariableUpdatePeriod", new SSVUpdatePeriodSlider())
         ]);
         ExtVarInterop.LoadVariables();
     }
@@ -95,8 +94,6 @@ public static class SpecialSessionVariables
         foreach (var kvp in flags) level.Session.SetFlag(kvp.Key, kvp.Value.GetValue(level));
         foreach (var kvp in counters) level.Session.SetCounter(kvp.Key, kvp.Value.GetValue(level));
         foreach (var kvp in sliders) level.Session.SetSlider(kvp.Key, kvp.Value.GetValue(level));
-        if (level.Tracker.GetEntitiesTrackIfNeeded<SSVUpdater>().Count is 0)
-            level.Add(new SSVUpdater(level));
     }
 
     [OnUnload]
@@ -175,27 +172,4 @@ public static class SpecialSessionVariables
     internal static void CmdSetCounter(string name, int value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetCounter(name, value); }
     [Command("setslider", "Sets the value of a slider.")]
     internal static void CmdSetSlider(string name, float value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetSlider(name, value); }
-
-    [Tracked]
-    private class SSVUpdater : Entity
-    {
-        private Level level;
-
-        public SSVUpdater(Level level) {
-            Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
-            Depth = int.MaxValue;
-            this.level = level;
-        }
-        
-        public override void Update() {
-            base.Update();
-            if (!level.OnInterval(ScugHelperModule.Settings.SpecialSessionVariableUpdatePeriod)) return;
-            // Annoyingly slow but we do this to support stuff that doesn't use the Get/Set API
-            foreach (var kvp in flags) { if (kvp.Value.GetValue(level)) level.Session.Flags.Add(kvp.Key); else level.Session.Flags.Remove(kvp.Key); }
-            foreach (var counter in level.Session.Counters)
-                if (counters.TryGetValue(counter.Key, out var special)) counter.Value = special.GetValue(level);
-            foreach (var slider in level.Session.Sliders)
-                if (sliders.TryGetValue(slider.Key, out var special)) DynamicData.For(slider.Value).Set("_Value", special.GetValue(level));
-        }
-    }
 }

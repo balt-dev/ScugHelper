@@ -9,7 +9,7 @@ internal static class ExtVarInterop
     internal static void LoadVariables()
     {
         Logger.Log(nameof(ScugHelperModule), "Loading Extended Variants variables!");
-        SpecialSessionVariables.flags[$"ScugHelper.ExtendedVariantMode.Enabled"] = new ExtVarEnabledFlag();
+        SSV.flags[$"ScugHelper.ExtendedVariantMode.Enabled"] = new ExtVarEnabledFlag();
         foreach (string name in (string[]) [
             "DashAssist",
             "Hiccups",
@@ -91,7 +91,7 @@ internal static class ExtVarInterop
             "UpsideDown",
             "WalllessWallbounce",
             "WindCrouchMove"
-        ]) SpecialSessionVariables.flags[$"ScugHelper.ExtendedVariantMode.{name}"] = new BooleanExtVarFlag(name);
+        ]) SSV.flags[$"ScugHelper.ExtendedVariantMode.{name}"] = new BooleanExtVarFlag(name);
         foreach (string name in (string[]) [
             "VanillaGameSpeed",
             "JumpCount",
@@ -109,7 +109,7 @@ internal static class ExtVarInterop
             "Stamina",
             "WallBounceDistance",
             "WallJumpDistance"
-        ]) SpecialSessionVariables.counters[$"ScugHelper.ExtendedVariantMode.{name}"] = new IntExtVarCounter(name);
+        ]) SSV.counters[$"ScugHelper.ExtendedVariantMode.{name}"] = new IntExtVarCounter(name);
         foreach (string name in (string[]) [
             "AirFriction",
             "AnxietyEffect",
@@ -168,7 +168,7 @@ internal static class ExtVarInterop
             "WaterSurfaceSpeedX",
             "WaterSurfaceSpeedY",
             "ZoomLevel"
-        ]) SpecialSessionVariables.sliders[$"ScugHelper.ExtendedVariantMode.{name}"] = new FloatExtVarSlider(name);
+        ]) SSV.sliders[$"ScugHelper.ExtendedVariantMode.{name}"] = new FloatExtVarSlider(name);
     }
 
     private class BooleanExtVarFlag(string name) : SpecialFlag {

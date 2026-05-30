@@ -13,7 +13,11 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 #nullable enable
 
-internal abstract class StringPart { internal abstract string Format(Level level, Player? player); }
+internal abstract class StringPart {
+    internal string CachedValue;
+    internal Color? Color = null;
+    internal abstract string Format(Level level, Player? player);
+}
 internal class RawStringPart(string value) : StringPart
 {
     public string Value = value.Replace("\\\\", "\0").Replace("\\{", "{").Replace("\\}", "}").Replace("\\n", "\n").Replace("\0", "\\");
@@ -111,7 +115,7 @@ internal class TimeStringPart : StringPart
 }
 internal class SessionExpressionStringPart : StringPart
 {
-    public SessionExpressionStringPart(String raw) {
+    public SessionExpressionStringPart(string raw) {
         if (!FrostHelperImports.TryCreateSessionExpression(raw, out expr))
             throw new Exception($"Session expression is invalid. {raw}");
     }
@@ -123,32 +127,17 @@ internal class DebugStringPart : StringPart
 {
     internal override string Format(Level level, Player? player) => ScugHelperModule.DebugText;
 }
+internal class ColorStringPart : StringPart {
+    public ColorStringPart(string hex) => Color = Calc.HexToColor(hex);
+    internal override string Format(Level level, Player? player) => "";
+}
 
 [Tracked]
 [CustomEntity("ScugHelper/Text")]
 public partial class Text : Entity
 {
 
-    internal static MTexture[] glyphTexturesSmall;
-    internal static MTexture[] glyphTexturesTiny;
-    static Text() {
-        var textAtlas = GFX.Game["smallFont"];
-        var glyphList = new List<MTexture>();
-        for (int y = 0; y < 6; y++) {
-            for (int x = 0; x < 16; x++) {
-                glyphList.Add(new(textAtlas, x * 4, y * 6, 3, 5));
-            }
-        }
-        glyphTexturesSmall = glyphList.ToArray();
-        textAtlas = GFX.Game["tinyFont"];
-        glyphList = [];
-        for (int y = 0; y < 6; y++) {
-            for (int x = 0; x < 16; x++) {
-                glyphList.Add(new(textAtlas, x * 4, y * 5, 3, 4));
-            }
-        }
-        glyphTexturesTiny = glyphList.ToArray();
-    }
+    internal MTexture[] glyphTextures;
 
     private readonly Color InfillColor;
     private readonly string? Flag;
@@ -156,21 +145,39 @@ public partial class Text : Entity
     private readonly Color OutlineColor;
     private readonly bool DrawOutline;
     public readonly string FormatString;
-    public readonly bool RequiresUpdate;
+    public readonly float UpdateFrequency;
     private StringPart[]? parts;
     private string? renderedString;
+    private int GlyphWidth;
+    private int GlyphHeight;
 
     public Text(EntityData data, Vector2 offset) : base(data.Position + offset) {
+        Tag |= Tags.TransitionUpdate | Tags.FrozenUpdate;
         Depth = data.Int("Depth", 10);
         InfillColor = data.HexColor("Infill", Color.White);
         OutlineColor = data.HexColor("Outline", Color.Black);
         DrawOutline = data.Bool("DrawOutline", false);
         FormatString = data.String("Value", "<string unset>");
-        RequiresUpdate = data.Bool("RequiresUpdate", false);
+        UpdateFrequency = data.Bool("RequiresUpdate", false) ? 0.01f : data.Float("UpdateFrequency", 0.1f);
         Flag = data.String("Flag")?.Trim();
         InvertFlag = data.Bool("InvertFlag", false);
         if (Flag is string flag && flag.Length == 0) Flag = null;
+        var fontTexture = data.String("FontTexture", "objects/ScugHelper/text/smallFont");
+        SliceFont(fontTexture);
         CompileStringParts();
+    }
+
+    private void SliceFont(string fontTexturePath) {
+        var textAtlas = GFX.Game[fontTexturePath];
+        GlyphWidth = textAtlas.Width / 16 - 1;
+        GlyphHeight = textAtlas.Height / 6 - 1;
+        var glyphList = new List<MTexture>();
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 16; x++) {
+                glyphList.Add(new(textAtlas, x * (GlyphWidth + 1), y * (GlyphHeight + 1), GlyphWidth, GlyphHeight));
+            }
+        }
+        glyphTextures = glyphList.ToArray();
     }
 
     [GeneratedRegex(@"(?<!\\)\{(?:([^:}]*):)?([^\}]*)\}")]
@@ -178,7 +185,7 @@ public partial class Text : Entity
     private static readonly Regex stringPartRegex = StringPartRegex();
 
     public override void Awake(Scene scene) {
-        if (scene is not Level level) { RemoveSelf(); return; }
+        if (scene is not Level level) { Logger.Warn(nameof(ScugHelperModule), "Tried to add Text to a non-level. Removing."); RemoveSelf(); return; }
         ConstructString(level);
     }
 
@@ -214,6 +221,7 @@ public partial class Text : Entity
                 "deathRoomCount" => new DeathsHereStringPart(),
                 "time" => new TimeStringPart(),
                 "expr" when FrostHelperImports.IsLoaded => new SessionExpressionStringPart(key),
+                "color" => new ColorStringPart(key),
                 "__debug" => new DebugStringPart(),
                 _ => new RawStringPart($"{{{qualifier}:{key}}}")
             };
@@ -226,12 +234,12 @@ public partial class Text : Entity
     private void ConstructString(Level level) {
         if (parts == null) return;
         Player? player = level.Tracker.GetEntity<Player>();
-        renderedString = parts.Select(part => part.Format(level, player)).Aggregate((a, b) => a + b);
+        foreach (StringPart part in parts) part.CachedValue = part.Format(level, player);
     }
 
     public override void Update() {
         base.Update();
-        if (RequiresUpdate) ConstructString(SceneAs<Level>());
+        if (UpdateFrequency > 0 && Scene.OnRawInterval(UpdateFrequency)) ConstructString(SceneAs<Level>());
     }
 
     public override void Render() {
@@ -249,43 +257,30 @@ public partial class Text : Entity
         }
         RenderText(Vector2.Zero, InfillColor);
     }
-
-    internal void RenderText(Vector2 offset, Color color) {
-        RenderText(renderedString, Position + offset, color);
+    
+    public override void DebugRender(Camera camera) {
+        base.DebugRender(camera);
+        Draw.Circle(Position, 2, Color.Cyan, 8);
+        RenderText(Vector2.Zero, Color.White, forceColor: true);
     }
 
-    internal static void RenderText(string renderedString, Vector2 offset, Color color) {
-        if (renderedString == null) return;
+    internal void RenderText(Vector2 offset, Color color, bool forceColor = false) {
+        if (parts is null) return;
         Vector2 printHead = Vector2.Zero;
-        foreach (var chr in renderedString.AsEnumerable()) {
-            if (chr == '\n') { printHead.X = 0; printHead.Y += ScugHelperModule.Settings.AlternativeFont ? 6 : 5; continue; }
-            int codepoint = chr;
-            if (codepoint < 32) { continue; }
-            var index = Math.Clamp(codepoint, 32, 127) - 32;
-            var tex = (ScugHelperModule.Settings.AlternativeFont ? glyphTexturesSmall : glyphTexturesTiny)[index];
-            tex.Draw(offset + printHead, Vector2.Zero, color);
-            printHead.X += 4;
+        Color currentColor = color;
+        foreach (var part in parts) {
+            string cachedChars = part.CachedValue;
+            currentColor = forceColor ? color : (part.Color is not Color partColor ? currentColor : new(color.ToVector4() * partColor.ToVector4()));
+            foreach (char chr in cachedChars) {
+                if (chr == '\n') { printHead.X = 0; printHead.Y += GlyphHeight + 1; continue; }
+                int codepoint = chr;
+                if (codepoint < 32) { continue; }
+                var index = Math.Clamp(codepoint, 32, 127) - 32;
+                var tex = glyphTextures[index];
+                tex.Draw(offset + Position + printHead, Vector2.Zero, currentColor);
+                printHead.X += GlyphWidth + 1;
+            }
         }
-    }
-
-
-    [Command("dumptext", "Dumps the raw strings of all text entities in the map to Celeste/textdump.json")]
-    internal static void DumpText() {
-        Scene scene = Engine.Instance.scene;
-        if (scene is not Level level) return;
-        MapData data = level.Session.MapData;
-        using var stream = new FileStream("textdump.json", FileMode.Create);
-        var writer = new Utf8JsonWriter(stream);
-        writer.WriteStartObject();
-        foreach (var room in data.Levels) {
-            writer.WriteStartArray(room.Name);
-            foreach (var entData in room.Entities)
-                if (entData.Name == "ScugHelper/Text")
-                    writer.WriteStringValue(entData.String("Value") ?? "");
-            writer.WriteEndArray();
-        }
-        writer.WriteEndObject();
-        writer.Flush();
     }
 }
 

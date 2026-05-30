@@ -37,8 +37,17 @@ entities.ScugHelper/SpeedcheckGate.placements.description.normal=Checks the play
 entities.ScugHelper/HoldableGate.placements.name.normal=Holdable Gate
 entities.ScugHelper/HoldableGate.placements.description.normal=Extends the holdable's grab range to where the gate is crossed.
 
-entities.ScugHelper/Text.placements.name.normal=Text
-entities.ScugHelper/Text.placements.description.normal=Arbitrary in-game text.
+entities.ScugHelper/Text.placements.name.normal=Text (Small)
+entities.ScugHelper/Text.placements.name.tiny=Text (Tiny)
+entities.ScugHelper/Text.placements.name.techno=Text (Techno)
+entities.ScugHelper/Text.placements.name.blocky=Text (Blocky)
+entities.ScugHelper/Text.placements.name.custom=Text (Custom)
+entities.ScugHelper/Text.placements.description.normal=Arbitrary in-game text with a 5x3 font.
+entities.ScugHelper/Text.placements.description.tiny=Arbitrary in-game text with a 4x3 font.
+entities.ScugHelper/Text.placements.description.techno=Arbitrary in-game text with a 5x5 font.
+entities.ScugHelper/Text.placements.description.blocky=Arbitrary in-game text with a 6x4 font.
+entities.ScugHelper/Text.placements.description.custom=Arbitrary in-game text with a custom font.
+entities.ScugHelper/Text.attributes.description.UpdateFrequency=How often the text should update. Set to 0 to disable updating.
 
 entities.ScugHelper/SquareGem.placements.name.normal=Square Gem
 entities.ScugHelper/SquareGem.placements.description.normal=Indestructible bouncy crystal.
@@ -489,4 +498,5 @@ entities.ScugHelper/Kickpad.placements.description.normal=Sets the player's velo
 entities.ScugHelper/InstantFlagBlock.placements.name.normal=Instant Flag Block
 entities.ScugHelper/InstantFlagBlock.placements.description.normal=Instantly disappears or reappears based on a flag.
 
-entities.ScugHelper/BytebeatCassetteSongController.placements.name.normal=Bytebeat Cassette Song Controller
+entities.ScugHelper/EagerSSVController.placements.name.normal=Eager Special Session Variable Controller
+entities.ScugHelper/EagerSSVController.placements.description.normal=Flushes the values of special session variables to the actual level session periodically. Use this if Special Session Variables break with other mods.

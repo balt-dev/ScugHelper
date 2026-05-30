@@ -39,12 +39,8 @@ public class ScugHelperModuleSettings : EverestModuleSettings
         menu.Add(ShowcaseMaps);
     }
 
-    [SettingSubText("Uses an alternative font for text entities.")]
-    public bool AlternativeFont { get; set; } = false;
-
-    [SettingNumberInput(allowNegatives: false, maxLength: 3)]
-    [SettingSubText("Sets the amount of time between when\nSpecial Session Variables flush their values.\nIncrease if you're having performance issues.\nMight break some maps if left too high.")]
-    public float SpecialSessionVariableUpdatePeriod { get; internal set; } = 1f / 20f;
+    [SettingSubText("Uses an alternate, smaller font for text entities.")]
+    public bool AlternateFont { get; set; } = false;
 
     [SettingSubText("The maximum amount of time any given Lua script execution can take, in seconds.")]
     [SettingNumberInput(allowNegatives: false, maxLength: 3)]
@@ -53,7 +49,7 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingSubText("The maximum amount of memory any given Lua script execution can use, in megabytes.")]
     [SettingNumberInput(allowNegatives: false, maxLength: 3)]
     public int LuaMemoryLimit { get; set; } = 16;
-    
+
     [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
 
@@ -65,7 +61,7 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Forces the Overcharge Refill's effect permanently.")]
     public bool AlwaysOvercharges { get; set; } = false;
-    
+
     [SettingNumberInput(allowNegatives: false, maxLength: 5)]
     [SettingSubText("Adjusts how much squash and stretch pinball boosters have.")]
     public float PinballBoosterSquash { get; set; } = 1.45f;
