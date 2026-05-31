@@ -39,9 +39,6 @@ public class ScugHelperModuleSettings : EverestModuleSettings
         menu.Add(ShowcaseMaps);
     }
 
-    [SettingSubText("Uses an alternate, smaller font for text entities.")]
-    public bool AlternateFont { get; set; } = false;
-
     [SettingSubText("The maximum amount of time any given Lua script execution can take, in seconds.")]
     [SettingNumberInput(allowNegatives: false, maxLength: 3)]
     public int LuaTimeLimit { get; set; } = 3;
@@ -50,7 +47,8 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingNumberInput(allowNegatives: false, maxLength: 3)]
     public int LuaMemoryLimit { get; set; } = 16;
 
-    [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.")]
+    
+    [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.\nThis will be turned into a Controller in a later update.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
 
     [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]

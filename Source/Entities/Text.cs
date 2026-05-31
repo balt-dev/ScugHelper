@@ -136,6 +136,12 @@ internal class ColorStringPart : StringPart {
 [CustomEntity("ScugHelper/Text")]
 public partial class Text : Entity
 {
+    internal enum OutlineType {
+        None,
+        Full,
+        Edge,
+        DropShadow
+    }
 
     internal MTexture[] glyphTextures;
 
@@ -143,20 +149,26 @@ public partial class Text : Entity
     private readonly string? Flag;
     private readonly bool InvertFlag;
     private readonly Color OutlineColor;
-    private readonly bool DrawOutline;
+    private readonly OutlineType Outline;
     public readonly string FormatString;
     public readonly float UpdateFrequency;
     private StringPart[]? parts;
     private string? renderedString;
     private int GlyphWidth;
     private int GlyphHeight;
+    private VirtualRenderTarget? bakedTexture;
+    private readonly int ID;
+    private int BufferWidth;
+    private int BufferHeight;
+    private bool WantsBakeTexture = true;
 
-    public Text(EntityData data, Vector2 offset) : base(data.Position + offset) {
+    public Text(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
+        ID = id.ID;
         Tag |= Tags.TransitionUpdate | Tags.FrozenUpdate;
         Depth = data.Int("Depth", 10);
         InfillColor = data.HexColor("Infill", Color.White);
         OutlineColor = data.HexColor("Outline", Color.Black);
-        DrawOutline = data.Bool("DrawOutline", false);
+        Outline = data.Enum("OutlineType", data.Bool("DrawOutline") ? OutlineType.Full : OutlineType.None);
         FormatString = data.String("Value", "<string unset>");
         UpdateFrequency = data.Bool("RequiresUpdate", false) ? 0.01f : data.Float("UpdateFrequency", 0.1f);
         Flag = data.String("Flag")?.Trim();
@@ -165,6 +177,37 @@ public partial class Text : Entity
         var fontTexture = data.String("FontTexture", "objects/ScugHelper/text/smallFont");
         SliceFont(fontTexture);
         CompileStringParts();
+        Add(new BeforeRenderHook(BakeTexture));
+    }
+
+    private void BakeTexture() {
+        if (WantsBakeTexture) {
+            WantsBakeTexture = false;
+            var oldTargets = Engine.Graphics.GraphicsDevice.GetRenderTargets();
+
+            if (bakedTexture is null || bakedTexture.Width < BufferWidth || bakedTexture.Height < BufferHeight) {
+                bakedTexture?.Dispose();
+                bakedTexture = VirtualContent.CreateRenderTarget($"bakedText_{ID}", BufferWidth, BufferHeight);
+            }
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(bakedTexture);
+            Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
+
+            Draw.SpriteBatch.Begin();
+
+            if (Outline is OutlineType.Full) RenderText(new Vector2(0, 0), OutlineColor);
+            if (Outline is OutlineType.Full or OutlineType.Edge) RenderText(new Vector2(0, 1), OutlineColor);
+            if (Outline is OutlineType.Full) RenderText(new Vector2(0, 2), OutlineColor);
+            if (Outline is OutlineType.Full or OutlineType.Edge) RenderText(new Vector2(1, 0), OutlineColor);
+            if (Outline is OutlineType.Full or OutlineType.Edge) RenderText(new Vector2(1, 2), OutlineColor);
+            if (Outline is OutlineType.Full) RenderText(new Vector2(2, 0), OutlineColor);
+            if (Outline is OutlineType.Full or OutlineType.Edge) RenderText(new Vector2(2, 1), OutlineColor);
+            if (Outline is OutlineType.Full or OutlineType.DropShadow) RenderText(new Vector2(2, 2), OutlineColor);
+            RenderText(new Vector2(1, 1), InfillColor);
+
+            Draw.SpriteBatch.End();
+
+            Engine.Graphics.GraphicsDevice.SetRenderTargets(oldTargets);
+        }
     }
 
     private void SliceFont(string fontTexturePath) {
@@ -189,19 +232,22 @@ public partial class Text : Entity
         ConstructString(level);
     }
 
-    private void CompileStringParts() {
+    private void CompileStringParts()
+    {
         List<StringPart> partList = [];
         var span = FormatString.AsSpan();
         var matches = stringPartRegex.Matches(FormatString).AsEnumerable();
         int cursor = 0;
-        foreach (var match in matches) {
+        foreach (var match in matches)
+        {
             var rawSpan = span[cursor..match.Index];
             if (rawSpan.Length > 0) partList.Add(new RawStringPart(rawSpan.ToString()));
             cursor = match.Index + match.Length;
             var groups = match.Groups;
             var qualifier = groups[1]?.Value;
             var key = groups[2].Value;
-            StringPart newPart = qualifier switch {
+            StringPart newPart = qualifier switch
+            {
                 null or "" => new LocalizedStringPart(key),
                 "flag" => new FlagStringPart(key),
                 "counter" => new CounterStringPart(key),
@@ -231,37 +277,38 @@ public partial class Text : Entity
         if (lastSpan.Length > 0) partList.Add(new RawStringPart(lastSpan.ToString()));
         parts = partList.ToArray();
     }
+
     private void ConstructString(Level level) {
         if (parts == null) return;
         Player? player = level.Tracker.GetEntity<Player>();
-        foreach (StringPart part in parts) part.CachedValue = part.Format(level, player);
+
+        float maxX = 0f;
+        Vector2 printHead = Vector2.Zero;
+        foreach (StringPart part in parts) {
+            string oldValue = part.CachedValue;
+            part.CachedValue = part.Format(level, player);
+            if (part.CachedValue != oldValue) WantsBakeTexture = true;
+
+            foreach (char chr in part.CachedValue) {
+                if (chr == '\n') { printHead.X = 0; printHead.Y += GlyphHeight + 1; }
+                else { printHead.X += GlyphWidth + 1; maxX = MathF.Max(maxX, printHead.X); }
+            }
+        }
+        BufferWidth = (int) maxX + 1;
+        BufferHeight = (int) printHead.Y + GlyphHeight + 1;
     }
 
     public override void Update() {
         base.Update();
+        WantsBakeTexture |= bakedTexture is null;
         if (UpdateFrequency > 0 && Scene.OnRawInterval(UpdateFrequency)) ConstructString(SceneAs<Level>());
     }
 
     public override void Render() {
         base.Render();
         if (Flag is string flag && (!SceneAs<Level>().Session.GetFlag(flag) ^ InvertFlag)) return;
-        if (DrawOutline) {
-            RenderText(new Vector2(-1, -1), OutlineColor);
-            RenderText(new Vector2(-1, 0), OutlineColor);
-            RenderText(new Vector2(-1, 1), OutlineColor);
-            RenderText(new Vector2(0, -1), OutlineColor);
-            RenderText(new Vector2(0, 1), OutlineColor);
-            RenderText(new Vector2(1, -1), OutlineColor);
-            RenderText(new Vector2(1, 0), OutlineColor);
-            RenderText(new Vector2(1, 1), OutlineColor);
-        }
-        RenderText(Vector2.Zero, InfillColor);
-    }
-    
-    public override void DebugRender(Camera camera) {
-        base.DebugRender(camera);
-        Draw.Circle(Position, 2, Color.Cyan, 8);
-        RenderText(Vector2.Zero, Color.White, forceColor: true);
+        if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position - Vector2.One, Color.White);
+        else Logger.Warn(nameof(ScugHelperModule), "Text bakedTexture is null?");
     }
 
     internal void RenderText(Vector2 offset, Color color, bool forceColor = false) {
@@ -277,7 +324,7 @@ public partial class Text : Entity
                 if (codepoint < 32) { continue; }
                 var index = Math.Clamp(codepoint, 32, 127) - 32;
                 var tex = glyphTextures[index];
-                tex.Draw(offset + Position + printHead, Vector2.Zero, currentColor);
+                tex.Draw(offset + printHead, Vector2.Zero, currentColor);
                 printHead.X += GlyphWidth + 1;
             }
         }

@@ -77,5 +77,10 @@ public class Outline : Entity
         base.Render();
         if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White);   
     }
+    
+    public override void Removed(Scene scene) {
+        base.Removed(scene);
+        bakedTexture?.Dispose();
+    }
 }
 #nullable restore

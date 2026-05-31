@@ -37,15 +37,19 @@ entities.ScugHelper/SpeedcheckGate.placements.description.normal=Checks the play
 entities.ScugHelper/HoldableGate.placements.name.normal=Holdable Gate
 entities.ScugHelper/HoldableGate.placements.description.normal=Extends the holdable's grab range to where the gate is crossed.
 
+entities.ScugHelper/Text.placements.name.default=Text (Large)
+entities.ScugHelper/Text.placements.name.blocky=Text (Normal)
 entities.ScugHelper/Text.placements.name.normal=Text (Small)
 entities.ScugHelper/Text.placements.name.tiny=Text (Tiny)
-entities.ScugHelper/Text.placements.name.techno=Text (Techno)
-entities.ScugHelper/Text.placements.name.blocky=Text (Blocky)
+entities.ScugHelper/Text.placements.name.tile=Text (Tile)
+entities.ScugHelper/Text.placements.name.techno=Text (Square)
 entities.ScugHelper/Text.placements.name.custom=Text (Custom)
 entities.ScugHelper/Text.placements.description.normal=Arbitrary in-game text with a 5x3 font.
 entities.ScugHelper/Text.placements.description.tiny=Arbitrary in-game text with a 4x3 font.
 entities.ScugHelper/Text.placements.description.techno=Arbitrary in-game text with a 5x5 font.
 entities.ScugHelper/Text.placements.description.blocky=Arbitrary in-game text with a 6x4 font.
+entities.ScugHelper/Text.placements.description.tile=Arbitrary in-game text with an 8x8 font.
+entities.ScugHelper/Text.placements.description.default=Arbitrary in-game text with an 8x5 font.
 entities.ScugHelper/Text.placements.description.custom=Arbitrary in-game text with a custom font.
 entities.ScugHelper/Text.attributes.description.UpdateFrequency=How often the text should update. Set to 0 to disable updating.
 
