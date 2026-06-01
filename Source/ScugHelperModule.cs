@@ -52,7 +52,7 @@ public class ScugHelperModule : EverestModule
     private static void OnPlayerSeekerCollideHook(On.Celeste.PlayerSeeker.orig_OnCollide orig, PlayerSeeker self, CollisionData data) {
         orig(self, data);
         if (Settings.PlayerSeekerDashSwitchFix && data.Hit is DashSwitch dashSwitch) {
-            Logger.Info(nameof(ScugHelperModule), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
+            Logger.Log(nameof(ScugHelperModule), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
             dashSwitch.OnDashed(null, Vector2.UnitX * Math.Sign(self.dashDirection.X));
             dashSwitch.OnDashed(null, Vector2.UnitY * Math.Sign(self.dashDirection.Y));
         }

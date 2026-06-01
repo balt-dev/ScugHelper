@@ -193,7 +193,6 @@ public class PinballBooster : Booster
 
     public static void VCollideHook(On.Celeste.Player.orig_OnCollideV orig, Player self, CollisionData data) {
         if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce)) {
-            Logger.Info(nameof(ScugHelperModule), "VCollide");
             if (self.Speed.Y > 0) {
                 //Dash corner correction
                 if ((self.StateMachine.State == Player.StDash || self.StateMachine.State == Player.StRedDash) && !self.dashStartedOnGround) {

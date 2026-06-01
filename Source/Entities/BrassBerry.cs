@@ -199,7 +199,7 @@ class BrassBerry : Entity, IStrawberry
         if (following != null) {
             BrassBerry berry = scene.Tracker.GetEntity<BrassBerry>();
             if (berry == null) {
-                Logger.Info(nameof(ScugHelperModule), "Readding brass berry!");
+                Logger.Log(nameof(ScugHelperModule), "Readding brass berry!");
                 var followID = (EntityID)following;
                 var data = new EntityData
                 {

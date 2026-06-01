@@ -295,7 +295,7 @@ public partial class Text : Entity
             }
         }
         BufferWidth = (int) maxX + 1;
-        BufferHeight = (int) printHead.Y + GlyphHeight + 1;
+        BufferHeight = (int) printHead.Y + GlyphHeight + 2;
     }
 
     public override void Update() {

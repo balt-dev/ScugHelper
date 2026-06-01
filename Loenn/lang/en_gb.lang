@@ -504,3 +504,6 @@ entities.ScugHelper/InstantFlagBlock.placements.description.normal=Instantly dis
 
 entities.ScugHelper/EagerSSVController.placements.name.normal=Eager Special Session Variable Controller
 entities.ScugHelper/EagerSSVController.placements.description.normal=Flushes the values of special session variables to the actual level session periodically. Use this if Special Session Variables break with other mods.
+
+triggers.ScugHelper/DashSnapConsistencyTrigger.placements.name.trigger=Snap To Consistent Dash Position
+triggers.ScugHelper/DashSnapConsistencyTrigger.placements.description.trigger=Snaps the player's position and subpixel to a given position when they dash. Snaps only Y if dashing horizontally, and snaps only X if dashing vertically.
