@@ -14,7 +14,7 @@ public static class SSV
     internal static readonly Dictionary<string, SpecialFlag> flags;
     internal static readonly Dictionary<string, SpecialCounter> counters;
     internal static readonly Dictionary<string, SpecialSlider> sliders;
-    
+
     static SSV() {
         flags = new([
             new("ScugHelper.PlayerDead", new PlayerDeadFlag()),
@@ -30,6 +30,8 @@ public static class SSV
             new("ScugHelper.HasOvercharge", new HasOverchargeFlag()),
             new("ScugHelper.InLimbo", new HasLimboFlag()),
             new("ScugHelper.SaveQuitDisabled", new SaveQuitDisabledFlag()),
+            new("ScugHelper.RetryDisabled", new RetryDisabledFlag()),
+            new("ScugHelper.PauseDisabled", new PauseDisabledFlag()),
             new("ScugHelper.PlayerHolding", new PlayerHoldingFlag()),
             new("ScugHelper.PlayerDucking", new PlayerDuckingFlag()),
             new("ScugHelper.GravityHelper.PlayerInverted", new PlayerInvertedFlag()),

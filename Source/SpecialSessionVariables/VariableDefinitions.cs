@@ -69,6 +69,16 @@ internal class SaveQuitDisabledFlag : SpecialFlag
     public override bool GetValue(Level level) => level.SaveQuitDisabled;
     public override void SetValue(Level level, bool value) => level.SaveQuitDisabled = value;
 }
+internal class RetryDisabledFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => !level.CanRetry;
+    public override void SetValue(Level level, bool value) => level.CanRetry = !value;
+}
+internal class PauseDisabledFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => level.PauseLock;
+    public override void SetValue(Level level, bool value) => level.PauseLock = value;
+}
 
 internal class IsPlayerSeekerFlag : SpecialFlag
 {

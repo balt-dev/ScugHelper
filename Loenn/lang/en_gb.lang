@@ -506,4 +506,14 @@ entities.ScugHelper/EagerSSVController.placements.name.normal=Eager Special Sess
 entities.ScugHelper/EagerSSVController.placements.description.normal=Flushes the values of special session variables to the actual level session periodically. Use this if Special Session Variables break with other mods.
 
 triggers.ScugHelper/DashSnapConsistencyTrigger.placements.name.trigger=Snap To Consistent Dash Position
-triggers.ScugHelper/DashSnapConsistencyTrigger.placements.description.trigger=Snaps the player's position and subpixel to a given position when they dash. Snaps only Y if dashing horizontally, and snaps only X if dashing vertically.
+triggers.ScugHelper/DashSnapConsistencyTrigger.placements.description.trigger=Snaps the player's position and subpixel to a given position when they dash.
+
+triggers.ScugHelper/RespawnEntitiesOnFlag.placements.name.trigger=Respawn Entities On Flag
+triggers.ScugHelper/RespawnEntitiesOnFlag.placements.description.trigger=Prevents any compatible entities in this trigger from respawning unless a given flag is set to a given value. Also removes the entity if it is present when the flag is removed.
+
+entities.ScugHelper/FlagSwitch.placements.name.both=Flag Switch (Both)
+entities.ScugHelper/FlagSwitch.placements.name.on=Flag Switch (Only On)
+entities.ScugHelper/FlagSwitch.placements.name.off=Flag Switch (Only Off)
+entities.ScugHelper/FlagSwitch.placements.description.both=Swaps a flag between two values when touched.
+entities.ScugHelper/FlagSwitch.placements.description.on=Turns a flag on when touched.
+entities.ScugHelper/FlagSwitch.placements.description.off=Turns a flag off when touched.

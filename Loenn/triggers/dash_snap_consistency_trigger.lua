@@ -9,7 +9,7 @@ return {
     placements = {
         {
             name = "trigger",
-            data = {width = 32, height = 32, SubpixelX = 0, SubpixelY = 0}
+            data = {width = 32, height = 32, SubpixelX = 0, SubpixelY = 0, AffectX = true, AffectY = true}
         },
     },
     fillColor = {0, 0, 0, 0},
