@@ -15,6 +15,7 @@ public class FlagSwitch : Entity {
     private const float Cooldown = 1.0f;
     private float CooldownTimer;
     private bool FlagState;
+    private bool Flash;
     private Level level;
 
     private bool Usable => AllowRevert || level.Session.GetFlag(Flag) != State;
@@ -23,12 +24,13 @@ public class FlagSwitch : Entity {
     {
         AllowRevert = data.Bool("AllowRevert", true);
         State = data.Bool("State", true);
+        Flash = data.Bool("Flash", true);
         Flag = data.String("Flag", "");
 
         Depth = 2000;
         Collider = new Hitbox(16f, 24f, -8f, -12f);
         Add(new PlayerCollider(OnPlayer));
-        Sprite = GFX.SpriteBank.Create("coreFlipSwitch");
+        Add(Sprite = GFX.SpriteBank.Create("coreFlipSwitch"));
         Sprite.Path = data.String("SpritePath", "objects/coreFlipSwitch") + "/";
     }
 
@@ -66,7 +68,7 @@ public class FlagSwitch : Entity {
             level.Session.SetFlag(Flag, !level.Session.GetFlag(Flag));
 
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
-            level.Flash(Color.White * 0.15f, drawPlayerOver: true);
+            if (Flash) level.Flash(Color.White * 0.15f, drawPlayerOver: true);
             Celeste.Freeze(0.05f);
             CooldownTimer = Cooldown;
         }
@@ -75,13 +77,11 @@ public class FlagSwitch : Entity {
     private bool LastFlagState;
 
     public override void Update() {
-        base.Update();
+        PlaySounds = true;
         LastFlagState = FlagState;
         FlagState = level.Session.GetFlag(Flag);
-        if (LastFlagState != FlagState) {
-            if (PlaySounds) Alarm.Set(this, 0.5f, () => PlaySounds = true);
-            SetSprite(true);
-        }
+        if (LastFlagState != FlagState) SetSprite(true);
         CooldownTimer -= Engine.DeltaTime;
+        base.Update();
     }
 }

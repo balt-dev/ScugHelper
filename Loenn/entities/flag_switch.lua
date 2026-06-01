@@ -20,7 +20,8 @@ flagToggle.placements = {
             AllowRevert = true,
             Flag = "ScugHelper.RetryDisabled",
             State = true,
-            SpritePath = "objects/coreFlipSwitch"
+            SpritePath = "objects/coreFlipSwitch",
+            Flash = false
         },
     },
     {
@@ -29,7 +30,8 @@ flagToggle.placements = {
             AllowRevert = false,
             Flag = "ScugHelper.RetryDisabled",
             State = true,
-            SpritePath = "objects/coreFlipSwitch"
+            SpritePath = "objects/coreFlipSwitch",
+            Flash = false
         },
     },
     {
@@ -38,7 +40,8 @@ flagToggle.placements = {
             AllowRevert = false,
             Flag = "ScugHelper.RetryDisabled",
             State = false,
-            SpritePath = "objects/coreFlipSwitch"
+            SpritePath = "objects/coreFlipSwitch",
+            Flash = false
         },
     }
 }
