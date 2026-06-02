@@ -355,3 +355,4 @@ MigrationBackup/
 # JetBrains Rider
 .idea
 
+raw_changelog.txt

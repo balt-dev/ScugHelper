@@ -290,10 +290,10 @@ public class ProceduralTilemap : SolidTiles
     public override void DebugRender(Camera camera) {
         base.DebugRender(camera);
         Draw.HollowRect(Bounds, Color.Cyan);
-        Draw.HollowRect(LeftCollider, Color.Pink);
-        Draw.HollowRect(TopCollider, Color.HotPink);
-        Draw.HollowRect(RightCollider, Color.LightPink);
-        Draw.HollowRect(BottomCollider, Color.DeepPink);
+        if (LeftCollider is not null) Draw.HollowRect(LeftCollider, Color.Pink);
+        if (TopCollider is not null) Draw.HollowRect(TopCollider, Color.HotPink);
+        if (RightCollider is not null) Draw.HollowRect(RightCollider, Color.LightPink);
+        if (BottomCollider is not null) Draw.HollowRect(BottomCollider, Color.DeepPink);
     }
 
     [OnLoad]
