@@ -74,6 +74,7 @@ public static class SSV
             new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
         ]);
         ExtVarInterop.LoadVariables();
+        CommunalHelperSSVInterop.LoadVariables();
     }
 
     private static Hook OnSliderObjectGetValue = null!;
@@ -92,10 +93,16 @@ public static class SSV
         Everest.Events.LevelLoader.OnLoadingThread += OnLevelInit;
     }
 
-    private static void OnLevelInit(Level level) {
-        foreach (var kvp in flags) level.Session.SetFlag(kvp.Key, kvp.Value.GetValue(level));
-        foreach (var kvp in counters) level.Session.SetCounter(kvp.Key, kvp.Value.GetValue(level));
-        foreach (var kvp in sliders) level.Session.SetSlider(kvp.Key, kvp.Value.GetValue(level));
+    private static void OnLevelInit(Level level) => FlushSSVStates(level);
+
+    public static void FlushSSVStates(Level level) {
+        foreach (var kvp in flags)
+            if (kvp.Value.GetValue(level)) level.Session.Flags.Add(kvp.Key); else level.Session.Flags.Remove(kvp.Key);
+        foreach (var counter in level.Session.Counters)
+            if (counters.TryGetValue(counter.Key, out var special)) counter.Value = special.GetValue(level);
+        foreach (var slider in level.Session.Sliders)
+            // Does not trigger Everest event, because it explodes performance into a million pieces
+            if (sliders.TryGetValue(slider.Key, out var special)) DynamicData.For(slider.Value).Set("_Value", special.GetValue(level));
     }
 
     [OnUnload]
@@ -154,24 +161,58 @@ public static class SSV
 
     [Command("getflag", "Gets the value of a flag.")]
     internal static void CmdGetFlag(string name) {
-        if (name is null || name == "") return;
-        Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetFlag(name)}");
+        if (name is null || name == "" || Engine.Scene is not Level level) return;
+        FlushSSVStates(level);
+        Engine.Commands.Log($"{name}: {level.Session.GetFlag(name)}");
     }
     [Command("getcounter", "Gets the value of a counter.")]
     internal static void CmdGetCounter(string name) {
-        if (name is null || name == "") return;
-        Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetCounter(name)}");
+        if (name is null || name == "" || Engine.Scene is not Level level) return;
+        FlushSSVStates(level);
+        Engine.Commands.Log($"{name}: {level.Session.GetCounter(name)}");
     }
     [Command("getslider", "Gets the value of a slider.")]
     internal static void CmdGetSlider(string name) {
-        if (name is null || name == "") return;
-        Engine.Commands.Log($"{name}: {(Engine.Scene as Level)?.Session.GetSlider(name)}");
+        if (name is null || name == "" || Engine.Scene is not Level level) return;
+        FlushSSVStates(level);
+        Engine.Commands.Log($"{name}: {level.Session.GetSlider(name)}");
     }
 
     [Command("setflag", "Sets the value of a flag.")]
-    internal static void CmdSetFlag(string name, bool value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetFlag(name, value); }
+    internal static void CmdSetFlag(string name, bool value) {
+        if (name is null || name == "" || Engine.Scene is not Level level) return;
+        FlushSSVStates(level);
+        level.Session.SetFlag(name, value);
+    }
     [Command("setcounter", "Sets the value of a counter.")]
-    internal static void CmdSetCounter(string name, int value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetCounter(name, value); }
+    internal static void CmdSetCounter(string name, int value) {
+        if (name is null || name == "" || Engine.Scene is not Level level) return;
+        FlushSSVStates(level);
+        level.Session.SetCounter(name, value);
+    }
     [Command("setslider", "Sets the value of a slider.")]
-    internal static void CmdSetSlider(string name, float value) { if (name is null || name == "") return; (Engine.Scene as Level)?.Session.SetSlider(name, value); }
+    internal static void CmdSetSlider(string name, float value) {
+        if (name is null || name == "" || Engine.Scene is not Level level) return;
+        FlushSSVStates(level);
+        level.Session.SetSlider(name, value);
+    }
+    
+    [Command("sessionvars", "Shows currently set flags, counters, and sliders. An optional first argument searches for values with a given string in their name.")]
+    internal static void ShowValues(string? search = null) {
+        if (Engine.Scene is not Level lv) return;
+        Session session = lv.Session;
+        FlushSSVStates(lv);
+        Engine.Commands.Log($"Flags:");
+        foreach (string flag in session.Flags)
+            if (search is null || flag.Contains(search))
+                Engine.Commands.Log($"- {flag}");
+        Engine.Commands.Log($"Counters:");
+        foreach (Session.Counter counter in session.Counters)
+            if (search is null || counter.Key.Contains(search))
+                Engine.Commands.Log($"- {counter.Key}: {counter.Value}");
+        Engine.Commands.Log($"Sliders:");
+        foreach (Session.Slider slider in session.Sliders.Values)
+            if (search is null || slider.Name.Contains(search))
+                Engine.Commands.Log($"- {slider.Name}: {slider.Value}");
+    }
 }

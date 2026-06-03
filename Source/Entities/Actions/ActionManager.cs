@@ -234,24 +234,6 @@ public static class ActionManager
         }
     }
 
-    [Command("sessionvars", "Shows currently set flags, counters, and sliders. An optional first argument searches for values with a given string in their name.")]
-    internal static void ShowValues(string? search = null) {
-        if (Engine.Scene is not Level lv) return;
-        Session session = lv.Session;
-        Engine.Commands.Log($"Flags:");
-        foreach (string flag in session.Flags)
-            if (search is null || flag.Contains(search))
-                Engine.Commands.Log($"- {flag}");
-        Engine.Commands.Log($"Counters:");
-        foreach (Session.Counter counter in session.Counters)
-            if (search is null || counter.Key.Contains(search))
-                Engine.Commands.Log($"- {counter.Key}: {counter.Value}");
-        Engine.Commands.Log($"Sliders:");
-        foreach (Session.Slider slider in session.Sliders.Values)
-            if (search is null || slider.Name.Contains(search))
-                Engine.Commands.Log($"- {slider.Name}: {slider.Value}");
-    }
-
     internal static void LogError(string message) {
 
         Logger.Error(nameof(ScugHelperModule), $"Action error: {message}");

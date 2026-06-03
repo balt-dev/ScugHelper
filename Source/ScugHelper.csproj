@@ -21,7 +21,7 @@
         <PackageReference Include="MonoMod.Patcher" Version="25.0.0-prerelease.2" />
         <PackageReference Include="CelesteAnalyzer" Version="*" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="CelesteMod.Roslyn.ModLifecycleAttributes" Version="*" />
     </ItemGroup>
@@ -32,6 +32,10 @@
         <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\YamlDotNet.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\KeraLua.dll" Private="false" />
+        <Reference Include="CommunalHelper">
+            <HintPath>$(CelestePrefix)\Mods\Cache\CommunalHelper.CommunalHelper.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
     </ItemGroup>
 
     <Target Name="CopyFiles" AfterTargets="Build" Inputs="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\$(AssemblyName).pdb" Outputs="..\bin\$(AssemblyName).dll;..\bin\$(AssemblyName).pdb">
