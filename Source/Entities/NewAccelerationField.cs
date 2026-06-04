@@ -4,10 +4,12 @@ using Celeste.Mod.Entities;
 using Monocle;
 using System;
 using System.Collections.Generic;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 
 #nullable enable
 namespace Celeste.Mod.ScugHelper.Entities;
 
+[Tracked]
 [CustomEntity("ScugHelper/NewAccelerationField")]
 public class NewAccelerationField : Entity
 {
@@ -32,12 +34,14 @@ public class NewAccelerationField : Entity
     private readonly List<FieldParticle> FieldParticles = [];
 
     public NewAccelerationField(EntityData data, Vector2 offset)
-     : base(data.Position + offset) {
+     : base(data.Position + offset)
+    
+    {
         Depth = -10000;
         Add(new CustomBloom(OnRenderBloom));
-        Collider = new Hitbox(data.Width, data.Height);
         Everywhere = data.Bool("Everywhere", false);
-        DrawParticles = data.Bool("DrawParticles", true);
+        Collider = Everywhere ? new Hitbox(1e20f, 1e20f, -1e19f, -1e19f) : new Hitbox(data.Width, data.Height);
+        DrawParticles = data.Bool("DrawParticles", true) && !Everywhere;
         FieldColor = data.HexColor("FieldColor", Color.LightBlue) * data.Float("FieldOpacity", 0.1f);
         OutlineColor = data.HexColor("OutlineColor", Color.AliceBlue) * data.Float("FieldOpacity", 0.2f);
         SpeedTarget = new(data.Float("TargetX", 0), data.Float("TargetY", 0));
@@ -58,18 +62,6 @@ public class NewAccelerationField : Entity
             for (int i = 0; i < FieldParticles.Count; i++)
                 if (!FieldParticles[i].Step(this))
                     FieldParticles[i] = new(Calc.Random.Range(TopLeft, BottomRight));
-
-        foreach (var kvp in Scene.Tracker.Entities) {
-            foreach (Entity entity in kvp.Value) {
-                if (entity is SolidTiles) break;
-                if (entity is Decal) break;
-                if (!Everywhere && !CollideCheck(entity)) continue;
-                if (SpeedAccessor.For(entity) is not SpeedAccessor accessor) break;
-                var spd = accessor.Speed;
-                AccelerateSpeed(ref spd);
-                accessor.Speed = spd;
-            }
-        }
     }
 
     private void AccelerateSpeed(ref Vector2 oldSpeed) {
@@ -132,6 +124,25 @@ public class NewAccelerationField : Entity
         }
         internal void Render() {
             Draw.Point(Position, Color.Lerp(ParticleColor, Color.Transparent, Elapsed / Lifetime));
+        }
+    }
+    
+    [OnLoad]
+    internal static void LoadHooks() => On.Monocle.Entity.Added += OnEntityAdded;
+    
+    private static void OnEntityAdded(On.Monocle.Entity.orig_Added orig, Entity self, Scene scene) {
+        orig(self, scene);
+        if (self is SolidTiles) return;
+        if (self is Decal) return;
+        if (SpeedAccessor.For(self) is SpeedAccessor accessor)
+            self.Add(new AccelerationFieldCollider(accessor));
+    }
+
+    private class AccelerationFieldCollider(SpeedAccessor accessor) : Component(true, false) {
+        public override void Update() {
+            var spd = accessor.Speed;
+            foreach (NewAccelerationField field in Entity.CollideAll<NewAccelerationField>()) field.AccelerateSpeed(ref spd);
+            accessor.Speed = spd;
         }
     }
 }

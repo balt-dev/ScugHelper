@@ -1,7 +1,7 @@
 initial = r"(.*? )?(\d+\.\d+\.\d+)\nbaltdev avatar\n(.*)\n"
-initial_sub = r"\n## \2\n"
+initial_sub = r"<VERSION>\n## \2\n"
 
-entry = r"(Bugfix|Optimization|Addition|Tweak|Overhaul|Refactor|Improvement|Removal)\n(.*)\n"
+entry = r"(Bugfix|Optimization|Addition|Tweak|Overhaul|Refactor|Improvement|Removal|Adjustment)\n(.*)\n"
 entry_sub = r"- **\1**: \2\n"
 
 files = r"Files\n\n.*\n\n"
@@ -16,7 +16,7 @@ raw = re.sub(initial, initial_sub, raw)
 raw = re.sub(entry, entry_sub, raw)
 raw = re.sub(files, files_sub, raw)
 
-entries = [entry.strip() for entry in raw.split("\n\n")]
+entries = [entry.strip() for entry in raw.split("<VERSION>")]
 
 with open("CHANGELOG.md", "w") as f:
     f.write("\n\n".join(entries[::-1]))

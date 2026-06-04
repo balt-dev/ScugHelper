@@ -1,3 +1,6 @@
+## 0.1.1
+- **Addition**: Add testing maps
+
 ## 0.1.2
 - **Addition**: Add randomizer support to the test maps because why the hell not
 
@@ -11,8 +14,7 @@
 - **Bugfix**: Player Seekers can now interact with Dash Switches
 
 ## 0.3.2
-Adjustment
-Make player seeker fix toggleable
+- **Adjustment**: Make player seeker fix toggleable
 
 ## 0.4.0
 - **Addition**: Text entities
@@ -105,10 +107,6 @@ Make player seeker fix toggleable
 ## 1.3.4
 - **Bugfix**: Cyclers now properly work with several more vanilla entities
 
-Actions are a major update to the mod. They allow level-global custom logic without the overhead of having to keep a global room loaded. (See: bits & bolts. No shade though, that mod is awesome.)
-Actions are never actually placed into a room when the level is loaded, and are instead stored in the ActionManager static class.
-The paradigm for Actions is inspired by Geometry Dash triggers and DiamondFire plot events.
-
 ## 2.0.1
 - **Addition**: Action System with several Action entities
 - **Overhaul**: Separated entities into proper namespaces under the hood
@@ -117,6 +115,10 @@ The paradigm for Actions is inspired by Geometry Dash triggers and DiamondFire p
 - **Improvement**: FrostHelper integration for Text entities
 - **Tweak**: Increased threshold for Tungsten Cube crush
 - **Optimization**: Cyclers and gates no longer draw every frame in Lönn
+
+Actions are a major update to the mod. They allow level-global custom logic without the overhead of having to keep a global room loaded. (See: bits & bolts. No shade though, that mod is awesome.)
+Actions are never actually placed into a room when the level is loaded, and are instead stored in the ActionManager static class.
+The paradigm for Actions is inspired by Geometry Dash triggers and DiamondFire plot events.
 
 ## 2.1.0
 - **Addition**: Custom Entity Field
@@ -194,10 +196,10 @@ The paradigm for Actions is inspired by Geometry Dash triggers and DiamondFire p
 - **Addition**: Rotating Seeker Spinner
 - **Addition**: Track Seeker Spinner
 
-The minimap is off by default, but can be toggled on in the mod settings.
-
 ## 2.10.0
 - **Addition**: Debug Minimap
+
+The minimap is off by default, but can be toggled on in the mod settings.
 
 ## 2.11.0
 - **Addition**: Static Moon Block
@@ -206,11 +208,11 @@ The minimap is off by default, but can be toggled on in the mod settings.
 ## 2.12.0
 - **Addition**: Hang Rails
 
-FUCK THAT BUG OH MY GODDDDDD
-
 ## 2.12.2
 - **Improvement**: Hang Rails are much more customizable
 - **Bugfix**: Limbo Refills no longer break with certain mods enabled
+
+FUCK THAT BUG OH MY GODDDDDD
 
 ## 2.13.0
 - **Addition**: Properly add the Collide Gate
@@ -247,11 +249,11 @@ FUCK THAT BUG OH MY GODDDDDD
 ## 2.15.3
 - **Addition**: Refill Rects
 
-Going to have to start deleting the oldest 2.x versions from now on, as GameBanana has a file limit. I'm keeping 2.0, though.
-
 ## 2.16.0
 - **Addition**: Jellyfish Fizzle Gate
 - **Addition**: Center Camera Trigger
+
+Going to have to start deleting the oldest 2.x versions from now on, as GameBanana has a file limit. I'm keeping 2.0, though.
 
 ## 2.16.1
 - **Improvement**: Made Pinball Boosters a bit more customizable
@@ -360,38 +362,38 @@ Going to have to start deleting the oldest 2.x versions from now on, as GameBana
 ## 2.25.1
 - **Bugfix**: Fix showcase map breaking without FrostHelper
 
-This one goes out to the like fifty people at my throat in the Celeste discord for having showcase maps in my helper
-
 ## 2.25.2
 - **Overhaul**: Move the showcase maps into the mod settings
 
-Go play Limbo by Somera :)
+This one goes out to the like fifty people at my throat in the Celeste discord for having showcase maps in my helper
 
 ## 2.26.0
 - **Addition**: Limbo Glitch State Trigger
 - **Addition**: Exit Limbo Glitch State Trigger
 - **Improvement**: Teleport triggers can now have a delay and/or always reload the room
 
+Go play Limbo by Somera :)
+
 ## 2.26.1
 - **Bugfix**: Fix inaccuracy with Limbo Glitch State Trigger not setting Player.Collidable = false
 - **Improvement**: Limbo Glitch State Trigger now has a toggle to lock the player's state machine
-
-Old angle bumpers will stay in maps, but can no longer be placed in Lönn. Migrate if possible.
 
 ## 2.27.0
 - **Refactor**: Deprecated old angle bumpers
 - **Overhaul**: Overhauled Angle Bumpers
 
+Old angle bumpers will stay in maps, but can no longer be placed in Lönn. Migrate if possible.
+
 ## 2.27.3
 - **Bugfix**: Fix angle bumpers with nodes on their center breaking Lönn
-
-Please read the wiki before using the procedural tilemaps.
 
 ## 2.28.0
 - **Addition**: Procedurally Generated Tilemap
 - **Bugfix**: Pinball boosters can no longer get you stuck in the ground when exiting square hitbox
 - **Improvement**: Limbo glitch state trigger no longer forces the player to StNormal
 - **Addition**: `ScugHelper.EpochTime` Special Counter
+
+Please read the wiki before using the procedural tilemaps.
 
 ## 2.28.1
 - **Bugfix**: Fixed Player Seeker moving with minimap focused
@@ -417,13 +419,10 @@ Please read the wiki before using the procedural tilemaps.
 - **Tweak**: Reworked Spam Input trigger
 - **Tweak**: Reworked Subpixel Killboxes
 
-100 updates :tada:
-
 ## 2.29.3
 - **Bugfix**: Fix subpixel killboxes
 
-This is the 100th update of ScugHelper, and with it I bring the power of Lua! It's sandboxed and limited (unlike LuaCutscenes >.>) to prevent bad actors from stealing your credit card info or something LMAO
-The Lua action, trigger, and gate are equivalent with the FrostHelper Session Expression Action suite in what they can do, but are generally more concise for complex logic - however, Lua is a programming language, and with it comes the woes of writing code. Session Expression actions are still there if you don't want to write any Lua.
+100 updates :tada:
 
 ## 2.30.0
 - **Addition**: Sandboxed Lua Trigger
@@ -432,6 +431,9 @@ The Lua action, trigger, and gate are equivalent with the FrostHelper Session Ex
 - **Improvement**: Lua now has a runtime limit
 - **Improvement**: Entities using Lua files now rerun the Lua file's chunk when loaded
 - **Addition**: New entity: Kickpad
+
+This is the 100th update of ScugHelper, and with it I bring the power of Lua! It's sandboxed and limited (unlike LuaCutscenes >.>) to prevent bad actors from stealing your credit card info or something LMAO
+The Lua action, trigger, and gate are equivalent with the FrostHelper Session Expression Action suite in what they can do, but are generally more concise for complex logic - however, Lua is a programming language, and with it comes the woes of writing code. Session Expression actions are still there if you don't want to write any Lua.
 
 ## 2.30.1
 - **Improvement**: Added memory allocation limit to Lua scripts
@@ -451,11 +453,11 @@ The Lua action, trigger, and gate are equivalent with the FrostHelper Session Ex
 ## 2.32.2
 - **Bugfix**: Fix Instant Room Transitions adding way more time than they should
 
-This is a breaking change for anyone who's using Special Session Variables at the moment. Please update responsibly, and if need be, add an Eager Special Session Variable Controller to your maps.
-
 ## 2.33.0
 - **Tweak**: Special Session Variables no longer save to the Session without an Eager Special Session Variable Controller in the room
 - **Overhaul**: Text entities now have a font set by the mapper
+
+This is a breaking change for anyone who's using Special Session Variables at the moment. Please update responsibly, and if need be, add an Eager Special Session Variable Controller to your maps.
 
 ## 2.33.1
 - **Optimization**: Text Entities now prebake their texture on change to prevent renderer churn
@@ -476,3 +478,12 @@ This is a breaking change for anyone who's using Special Session Variables at th
 
 ## 2.34.6
 - **Bugfix**: Fix static procedural tilemaps crashing the game when hitboxes are displayed
+
+## 2.35.0
+- **Addition**: CommunalHelper support
+
+## 2.35.1
+- **Optimization**: Heavily optimize acceleration fields
+
+Switched from scanning the scene every frame to checking on entity add and adding a component that does stuff for me. Remember, kids, push, not pull.
+
