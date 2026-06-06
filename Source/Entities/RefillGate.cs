@@ -12,7 +12,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/RefillGate")]
 public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, offset)
 {
-    private Refill refill;
+    private Refill? refill;
     private ParticleType pType = new(Player.P_DashA) {
         Color = data.HexColor("lineColor", Color.White) * 0.6f,
         Color2 = Color.Transparent,
@@ -27,7 +27,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
     public override void Awake(Scene scene) {
         Collider = new Hitbox(32, 32, -16, -16);
         // Refills aren't Tracked.
-        Refill closestRefill = null;
+        Refill? closestRefill = null;
         foreach (Entity entity in scene.Entities)
             if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;

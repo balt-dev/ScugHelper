@@ -1,3 +1,5 @@
+#pragma warning disable
+
 using Microsoft.Xna.Framework;
 using Celeste;
 using Celeste.Mod.Entities;

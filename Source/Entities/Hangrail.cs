@@ -104,7 +104,7 @@ public class HangRail : Actor
 
     private void OnPickup() {
         Hold.Holder?.StateMachine.State = Player.StNormal;
-        Vector2 holderSpeed = Hold.Holder.AdjustedSpeed();
+        Vector2 holderSpeed = Hold.Holder?.AdjustedSpeed() ?? Vector2.Zero;
         if (
             (
                 (
@@ -132,7 +132,7 @@ public class HangRail : Actor
             )
         ) holderSpeed.Y = 0;
         Speed = holderSpeed;
-        Hold.Holder.Speed = Vector2.Zero;
+        Hold.Holder?.Speed = Vector2.Zero;
         DoGravity = true;
     }
 

@@ -141,7 +141,10 @@ public class NewAccelerationField : Entity
     private class AccelerationFieldCollider(SpeedAccessor accessor) : Component(true, false) {
         public override void Update() {
             var spd = accessor.Speed;
-            foreach (NewAccelerationField field in Entity.CollideAll<NewAccelerationField>()) field.AccelerateSpeed(ref spd);
+            var allFields = Entity.Scene.Tracker.GetEntitiesTrackIfNeeded<NewAccelerationField>();
+            foreach (NewAccelerationField field in allFields)
+                if (field.CollideCheck(Entity))
+                    field.AccelerateSpeed(ref spd);
             accessor.Speed = spd;
         }
     }

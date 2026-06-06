@@ -3,10 +3,10 @@ using MonoMod.ModInterop;
 [ModImportName("ExtendedVariantMode")]
 public static class ExtendedVariantModeImports {
     public delegate object GetCurrentVariantValueDelegate(string variantString);
-    public static GetCurrentVariantValueDelegate GetCurrentVariantValue;
+    public static GetCurrentVariantValueDelegate GetCurrentVariantValue = null!;
 
     public delegate void TriggerVariantDelegate(string variantString, object newValue, bool revertOnDeath);
-    public static TriggerVariantDelegate TriggerVariant;
+    public static TriggerVariantDelegate TriggerVariant = null!;
 
     public static bool IsLoaded => GetCurrentVariantValue is not null && TriggerVariant is not null;
 

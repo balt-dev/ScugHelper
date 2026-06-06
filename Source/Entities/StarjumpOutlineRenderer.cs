@@ -45,7 +45,7 @@ public class StarjumpOutlineRenderer : Entity
         Entities.Remove(ent);
     }
 
-    StarjumpSpinnerColorController control;
+    StarjumpSpinnerColorController? control;
 
     public override void Awake(Scene scene) {
         base.Awake(scene);
@@ -64,7 +64,7 @@ public class StarjumpOutlineRenderer : Entity
             entity.Visible = false;
     }
 
-    VirtualRenderTarget buffer;
+    VirtualRenderTarget? buffer;
 
     public void BeforeRender() {
         if (Entities.Count == 0) return;
@@ -72,7 +72,7 @@ public class StarjumpOutlineRenderer : Entity
 
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
 
-        var cam = (Scene as Level).Camera;
+        var cam = (Scene as Level)!.Camera;
 
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, null, cam.Matrix);
 
@@ -91,25 +91,27 @@ public class StarjumpOutlineRenderer : Entity
     public override void Render() {
         base.Render();
         if (Entities.Count == 0) return;
-        if (buffer is not null) {
-            var cam = (Scene as Level).Camera;
+        if (control is null) return;
+        if (buffer is null) return;
+        var cam = (Scene as Level)!.Camera;
 
-            GameplayRenderer.End();
-            ScugHelperModule.OutlineFX.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
-            Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
-            Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, control.Color, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
-            Draw.SpriteBatch.End();
-            GameplayRenderer.Begin();
-        }
+        GameplayRenderer.End();
+        ScugHelperModule.OutlineFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
+        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
+        Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, control.Color, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
+        Draw.SpriteBatch.End();
+        GameplayRenderer.Begin();
     }
 
     private void RenderBloom() {
+        if (control is null) return;
+        if (buffer is null) return;
         if (!control.Bloom) return;
         if (Entities.Count == 0) return;
-        var cam = (Scene as Level).Camera;
+        var cam = (Scene as Level)!.Camera;
 
         GameplayRenderer.End();
-        ScugHelperModule.OutlineFX.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
+        ScugHelperModule.OutlineFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
         Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();

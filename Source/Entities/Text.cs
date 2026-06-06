@@ -14,7 +14,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 #nullable enable
 
 internal abstract class StringPart {
-    internal string CachedValue;
+    internal string? CachedValue;
     internal Color? Color = null;
     internal abstract string Format(Level level, Player? player);
 }
@@ -121,7 +121,7 @@ internal class SessionExpressionStringPart : StringPart
     }
     public object? expr;
     internal override string Format(Level level, Player? player)
-        => FrostHelperImports.GetSessionExpressionValue(expr, level.Session).ToString() ?? "";
+        => expr is null ? "" : FrostHelperImports.GetSessionExpressionValue(expr, level.Session).ToString() ?? "";
 }
 internal class DebugStringPart : StringPart
 {
@@ -143,7 +143,7 @@ public partial class Text : Entity
         DropShadow
     }
 
-    internal MTexture[] glyphTextures;
+    internal MTexture[]? glyphTextures;
 
     private readonly Color InfillColor;
     private readonly string? Flag;
@@ -153,7 +153,6 @@ public partial class Text : Entity
     public readonly string FormatString;
     public readonly float UpdateFrequency;
     private StringPart[]? parts;
-    private string? renderedString;
     private int GlyphWidth;
     private int GlyphHeight;
     private VirtualRenderTarget? bakedTexture;
@@ -285,7 +284,7 @@ public partial class Text : Entity
         float maxX = 0f;
         Vector2 printHead = Vector2.Zero;
         foreach (StringPart part in parts) {
-            string oldValue = part.CachedValue;
+            string oldValue = part.CachedValue!;
             part.CachedValue = part.Format(level, player);
             if (part.CachedValue != oldValue) WantsBakeTexture = true;
 
@@ -316,14 +315,14 @@ public partial class Text : Entity
         Vector2 printHead = Vector2.Zero;
         Color currentColor = color;
         foreach (var part in parts) {
-            string cachedChars = part.CachedValue;
+            string cachedChars = part.CachedValue!;
             currentColor = forceColor ? color : (part.Color is not Color partColor ? currentColor : new(color.ToVector4() * partColor.ToVector4()));
             foreach (char chr in cachedChars) {
                 if (chr == '\n') { printHead.X = 0; printHead.Y += GlyphHeight + 1; continue; }
                 int codepoint = chr;
                 if (codepoint < 32) { continue; }
                 var index = Math.Clamp(codepoint, 32, 127) - 32;
-                var tex = glyphTextures[index];
+                var tex = glyphTextures![index];
                 tex.Draw(offset + printHead, Vector2.Zero, currentColor);
                 printHead.X += GlyphWidth + 1;
             }

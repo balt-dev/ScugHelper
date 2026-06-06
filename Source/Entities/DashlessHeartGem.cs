@@ -24,7 +24,7 @@ public class DashlessHeartGem(EntityData data, Vector2 offset) : HeartGem(data, 
     }
 
     private static void OnPlayerHook(On.Celeste.HeartGem.orig_OnPlayer orig, HeartGem self, Player player) {
-        if (self is DashlessHeartGem && !(self.collected || (self.Scene as Level).Frozen)) {
+        if (self is DashlessHeartGem && !(self.collected || (self.Scene as Level)!.Frozen)) {
             self.Collect(player);
             return;
         }

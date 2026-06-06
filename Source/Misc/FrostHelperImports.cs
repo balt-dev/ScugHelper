@@ -7,19 +7,19 @@ using MonoMod.ModInterop;
 public static class FrostHelperImports
 {
     public delegate bool TryCreateSessionExpressionDelegate(string str, [NotNullWhen(true)] out object? expression);
-    public static TryCreateSessionExpressionDelegate TryCreateSessionExpression;
+    public static TryCreateSessionExpressionDelegate TryCreateSessionExpression = null!;
 
     public delegate int GetIntSessionExpressionValueDelegate(object expression, Session session);
-    public static GetIntSessionExpressionValueDelegate GetIntSessionExpressionValue;
+    public static GetIntSessionExpressionValueDelegate GetIntSessionExpressionValue = null!;
 
     public delegate float GetFloatSessionExpressionValueDelegate(object expression, Session session);
-    public static GetFloatSessionExpressionValueDelegate GetFloatSessionExpressionValue;
+    public static GetFloatSessionExpressionValueDelegate GetFloatSessionExpressionValue = null!;
 
     public delegate bool GetBoolSessionExpressionValueDelegate(object expression, Session session);
-    public static GetBoolSessionExpressionValueDelegate GetBoolSessionExpressionValue;
+    public static GetBoolSessionExpressionValueDelegate GetBoolSessionExpressionValue = null!;
 
     public delegate object GetSessionExpressionValueDelegate(object expression, Session session);
-    public static GetSessionExpressionValueDelegate GetSessionExpressionValue;
+    public static GetSessionExpressionValueDelegate GetSessionExpressionValue = null!;
 
     public static bool IsLoaded {
         get => TryCreateSessionExpression is not null

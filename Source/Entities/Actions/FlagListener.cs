@@ -19,7 +19,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 public class FlagListener(EntityData data, Vector2 _) : Entity(), IAction
 {
     private readonly string[] Targets = IAction.GetTargets(data);
-    private readonly bool State;
+    private readonly bool State = data.Bool("State");
     private bool? stateLastTick;
     readonly string? flag = data.String("Flag");
 

@@ -11,7 +11,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/RefillCircle")]
 public class RefillCircle : Entity
 {
-    Refill refill;
+    Refill? refill;
     public readonly Color OutlineColor;
     public readonly Color InfillColor;
     public readonly float InfillOpacity;
@@ -19,7 +19,7 @@ public class RefillCircle : Entity
     readonly string? FallbackRefillType;
     readonly bool FallbackRefillOneUse;
     public readonly float Radius;
-    private readonly VertexLight Light;
+    private readonly VertexLight? Light;
     private VirtualRenderTarget? bakedTexture;
 
     public RefillCircle(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
@@ -40,12 +40,12 @@ public class RefillCircle : Entity
 
     public override void Awake(Scene scene) {
         base.Awake(scene);
-        Refill closestRefill = null;
+        Refill? closestRefill = null;
         foreach (Entity entity in scene.Entities)
             if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;
 
-        if (closestRefill == null) {
+        if (closestRefill is null) {
             switch (FallbackRefillType) {
                 case "green":
                     scene.Add(closestRefill = new Refill(Position, false, FallbackRefillOneUse));
@@ -94,7 +94,7 @@ public class RefillCircle : Entity
         refill?.Position = Center + refill.Center - refill.Position;
         refill?.light.Position = Center + refill.Center - refill.Position;
         refill?.Collidable = false;
-        Light.Alpha = (refill?.sprite.Visible ?? false) ? 1.0f : 0.0f;
+        Light?.Alpha = (refill?.sprite.Visible ?? false) ? 1.0f : 0.0f;
     }
 
     internal void BakeTexture() {
@@ -142,7 +142,7 @@ public class RefillCircle : Entity
             points.Add(new(new(angle.X, angle.Y, 0), color));
         }
         
-        var matrix = (Scene as Level).Camera?.Matrix ?? Matrix.Identity;
+        var matrix = (Scene as Level)!.Camera?.Matrix ?? Matrix.Identity;
         
         List<int> indices = [];
         for (int i = 1; i <= resolution; i++) {

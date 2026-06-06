@@ -16,8 +16,8 @@ public class SquareCrystal : Actor, IHasSpeed
     public EntityID GID;
     public Color InfillColor { get; protected set; }
 
-    private Sprite fillSprite;
-    private Sprite glareSprite;
+    private Sprite? fillSprite;
+    private Sprite? glareSprite;
     private Wiggler scaleWiggler;
     private Wiggler moveWiggler;
     private float bounceSfxDelay;
@@ -38,8 +38,8 @@ public class SquareCrystal : Actor, IHasSpeed
         DoGravity = data.Bool("Gravity", false);
 
         Add(scaleWiggler = Wiggler.Create(0.5f, 4f, f => {
-            fillSprite.Scale = Vector2.One * (1f + f * 0.3f);
-            glareSprite.Scale = Vector2.One * (1f + f * 0.3f);
+            fillSprite?.Scale = Vector2.One * (1f + f * 0.3f);
+            glareSprite?.Scale = Vector2.One * (1f + f * 0.3f);
         }));
         moveWiggler = Wiggler.Create(0.8f, 2f);
         moveWiggler.StartZero = true;
@@ -80,8 +80,8 @@ public class SquareCrystal : Actor, IHasSpeed
 
         moveWiggler.Start();
         scaleWiggler.Start();
-        fillSprite.Play(DoGravity ? "glint" : "spin", restart: true);
-        glareSprite.Play(DoGravity ? "glint" : "spin", restart: true);
+        fillSprite?.Play(DoGravity ? "glint" : "spin", restart: true);
+        glareSprite?.Play(DoGravity ? "glint" : "spin", restart: true);
         moveWiggleDir = (Center - player.Center).SafeNormalize(Vector2.UnitY);
         moveWiggleStart = Scene.TimeActive;
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
@@ -117,8 +117,8 @@ public class SquareCrystal : Actor, IHasSpeed
         MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
         bounceSfxDelay -= Engine.DeltaTime;
         float wiggleFac = wiggleSettleSpeed / (1f + (Scene.TimeActive - moveWiggleStart));
-        fillSprite.Position = wiggleFac * moveWiggleDir * moveWiggler.Value * -8f;
-        glareSprite.Position = wiggleFac * moveWiggleDir * moveWiggler.Value * -8f;
+        fillSprite?.Position = wiggleFac * moveWiggleDir * moveWiggler.Value * -8f;
+        glareSprite?.Position = wiggleFac * moveWiggleDir * moveWiggler.Value * -8f;
     }
 
     private void OnCollideV(CollisionData data) {

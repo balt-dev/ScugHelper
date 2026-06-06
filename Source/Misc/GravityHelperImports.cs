@@ -8,13 +8,13 @@ using MonoMod.ModInterop;
 public static class GravityHelperImports
 {
     public delegate bool IsActorInvertedDelegate(Actor actor);
-    public static IsActorInvertedDelegate IsActorInverted;
+    public static IsActorInvertedDelegate IsActorInverted = null!;
 
     public delegate void SetPlayerGravityDelegate(int gravityType, float momentumMultiplier);
-    public static SetPlayerGravityDelegate SetPlayerGravity;
+    public static SetPlayerGravityDelegate SetPlayerGravity = null!;
 
     public delegate bool IsPlayerInvertedDelegate();
-    public static IsPlayerInvertedDelegate IsPlayerInverted;
+    public static IsPlayerInvertedDelegate IsPlayerInverted = null!;
 
     public static bool IsInverted(this Actor self) => IsActorInverted is not null && IsActorInverted(self);
     public static bool PlayerInverted() => IsPlayerInverted is not null && IsPlayerInverted();

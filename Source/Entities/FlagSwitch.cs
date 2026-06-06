@@ -16,7 +16,7 @@ public class FlagSwitch : Entity {
     private float CooldownTimer;
     private bool FlagState;
     private bool Flash;
-    private Level level;
+    private Level level = null!;
 
     private bool Usable => AllowRevert || level.Session.GetFlag(Flag) != State;
 

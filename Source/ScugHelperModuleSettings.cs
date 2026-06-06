@@ -13,14 +13,14 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 {
     [SettingInGame(false)]
     [YamlIgnore]
-    public TextMenuExt.SubMenu ShowcaseMaps { get; set; } = null;
+    public TextMenuExt.SubMenu ShowcaseMaps { get; set; } = null!;
 
     public MinimapMenu Minimap { get; set; } = new();
 
     public void CreateShowcaseMapsEntry(TextMenu menu, bool inGame) {
         if (inGame) return;
         ShowcaseMaps = new(Dialog.Clean("ScugHelper_ShowcaseMaps"), false);
-        foreach (string mapSID in (string[]) ["1-ScugHelperTest", "2-Actions", "3-BrassBerryTest"]) {
+        foreach (string mapSID in (string[]) ["1-ScugHelperTest", "2-Showcase2", "100-Actions", "101-BrassBerryTest"]) {
             string fullSID = $"ScugHelper/ScugHelperTest/{mapSID}";
             AreaData data = AreaData.Get(fullSID);
             AreaKey area = data.ToKey(AreaMode.Normal);

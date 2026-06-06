@@ -81,7 +81,6 @@ public class FreezeRefill : Refill, ICustomRefill
             instr => instr.MatchBrtrue(out label)
         )) throw new InvalidOperationException("Freeze refills failed to match IL code for the EngineUpdate hook.");
         cur.EmitLdarg0();
-        Level _;
         cur.EmitDelegate(static (Engine engine) => {
             Frozen &= !(Input.Jump.Pressed || Input.Grab.Pressed || Input.Dash.Pressed || Input.Pause.Pressed || Input.CrouchDash.Pressed);
             if (Frozen && engine.scene is Level level) {

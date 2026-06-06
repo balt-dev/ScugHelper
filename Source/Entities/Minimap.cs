@@ -45,7 +45,7 @@ public class MinimapEntity : Entity
     internal Camera Camera;
     internal Vector2 Speed;
     internal float Opacity = ScugHelperModule.Settings.Minimap.UnfocusedOpacity;
-    internal List<LevelTemplate> templates;
+    internal List<LevelTemplate> templates = [];
 
     private Vector2 oldPosition;
     private static bool focusToggle = false;
@@ -55,7 +55,7 @@ public class MinimapEntity : Entity
     {
         get => ScugHelperModule.Settings.Minimap.Minimap && focusToggle;
     }
-    internal static bool Visible
+    internal static new bool Visible
     {
         get => ScugHelperModule.Settings.Minimap.Minimap && (focusToggle || visibleToggle);
     }
@@ -68,8 +68,8 @@ public class MinimapEntity : Entity
     public override void Awake(Scene scene) {
         base.Awake(scene);
         focusToggle = false;
-        templates = (scene as Level).Session.MapData.Levels.Select((data) => new LevelTemplate(data)).ToList();
-        Camera.Zoom = ZoomTarget = (scene as Level).Camera.Zoom * 4f;
+        templates = (scene as Level)!.Session.MapData.Levels.Select((data) => new LevelTemplate(data)).ToList();
+        Camera.Zoom = ZoomTarget = (scene as Level)!.Camera.Zoom * 4f;
     }
 
     public override void Update() {
@@ -114,7 +114,7 @@ public class MinimapEntity : Entity
         Camera.Zoom = float.Lerp(Camera.Zoom, ZoomTarget, 1f - MathF.Pow(0.1f, Engine.RawDeltaTime));
     }
 
-    VirtualRenderTarget buffer;
+    VirtualRenderTarget? buffer;
     private float ZoomTarget;
 
     public void BeforeRender() {
@@ -162,6 +162,8 @@ public class MinimapEntity : Entity
             Draw.SpriteBatch.DrawString(Draw.DefaultFont, $"{level.Session.LevelData.Name}", Camera.Position, Color.Yellow, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
             Draw.SpriteBatch.DrawString(Draw.DefaultFont, $"{player.X}, {player.Y}", Camera.Position + Vector2.UnitY * 6, Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
         }
+        foreach (ProceduralTilemap tilemap in level.Tracker.GetEntitiesTrackIfNeeded<ProceduralTilemap>())
+            tilemap.RenderDebug(Camera);
 
         Draw.SpriteBatch.End();
 
@@ -173,7 +175,7 @@ public class MinimapEntity : Entity
     public override void Render() {
         base.Render();
         if (!ScugHelperModule.Settings.Minimap.Minimap) return;
-
+        if (buffer is null) return;
         Draw.SpriteBatch.Draw(buffer.Target, new(ScugHelperModule.Settings.Minimap.MinimapX, ScugHelperModule.Settings.Minimap.MinimapY), null, Color.White * Opacity, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
     }
@@ -183,12 +185,12 @@ public class MinimapEntity : Entity
         buffer?.Dispose();
     }
 
-    private static Hook hookButtonCheck;
-    private static Hook hookButtonPressed;
-    private static Hook hookButtonReleased;
-    private static Hook hookGrabCheck;
-    private static Hook hookDashPressed;
-    private static Hook hookCrouchDashPressed;
+    private static Hook? hookButtonCheck;
+    private static Hook? hookButtonPressed;
+    private static Hook? hookButtonReleased;
+    private static Hook? hookGrabCheck;
+    private static Hook? hookDashPressed;
+    private static Hook? hookCrouchDashPressed;
 
     [OnLoad]
     public static void Load() {
@@ -196,14 +198,14 @@ public class MinimapEntity : Entity
         On.Celeste.Player.Update += BreakTheControls;
 
         // break Input.X.Check, Input.X.Pressed, Input.X.Released with X being Jump, Dash, Grab or CrouchDash
-        hookButtonCheck = new Hook(typeof(VirtualButton).GetMethod("get_Check"), HookOnButton);
-        hookButtonPressed = new Hook(typeof(VirtualButton).GetMethod("get_Pressed"), HookOnButton);
-        hookButtonReleased = new Hook(typeof(VirtualButton).GetMethod("get_Released"), HookOnButton);
+        hookButtonCheck = new Hook(typeof(VirtualButton).GetMethod("get_Check")!, HookOnButton);
+        hookButtonPressed = new Hook(typeof(VirtualButton).GetMethod("get_Pressed")!, HookOnButton);
+        hookButtonReleased = new Hook(typeof(VirtualButton).GetMethod("get_Released")!, HookOnButton);
 
         // break Input.GrabCheck and Input.DashPressed
-        hookGrabCheck = new Hook(typeof(Input).GetMethod("get_GrabCheck"), ModGrabResult);
-        hookDashPressed = new Hook(typeof(Input).GetMethod("get_DashPressed"), ModDashResult);
-        hookCrouchDashPressed = new Hook(typeof(Input).GetMethod("get_CrouchDashPressed"), ModDashResult);
+        hookGrabCheck = new Hook(typeof(Input).GetMethod("get_GrabCheck")!, ModGrabResult);
+        hookDashPressed = new Hook(typeof(Input).GetMethod("get_DashPressed")!, ModDashResult);
+        hookCrouchDashPressed = new Hook(typeof(Input).GetMethod("get_CrouchDashPressed")!, ModDashResult);
     }
 
     [OnUnload]

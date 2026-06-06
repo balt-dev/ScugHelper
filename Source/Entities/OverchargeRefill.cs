@@ -189,7 +189,7 @@ public class OverchargeRefill : Refill, ICustomRefill
 
     private static void OnPlayerDashCoro(ILContext il) {
         ILCursor cur = new(il);
-        ILLabel label = null!;
+        ILLabel? label = null;
 
         if (!cur.TryGotoNextBestFit(MoveType.Before, 16,
             static instr => instr.MatchLdloc1(),
@@ -221,7 +221,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (bgt.un)"); return;}
         cur.MoveAfterLabels();
         cur.EmitDelegate(HasOverchargeDash);
-        cur.EmitBrtrue(label);
+        cur.EmitBrtrue(label!);
     }
 
     [Command("giveovercharge", "Gives the player an overcharge dash.")]

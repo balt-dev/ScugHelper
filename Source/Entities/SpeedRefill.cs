@@ -16,7 +16,7 @@ public class SpeedRefill : Refill, ICustomRefill
     public SpeedRefill(EntityData data, Vector2 offset) : this(data.Position + offset, new(data.Float("SpeedX"), data.Float("SpeedY")), data.Bool("oneUse")) { }
 
     public struct SpriteSettings() {
-        public string Prefix;
+        public string? Prefix;
         public bool HFlip = false;
         public bool VFlip = false;
         public bool Rot90 = false;

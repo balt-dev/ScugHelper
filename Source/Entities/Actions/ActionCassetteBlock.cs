@@ -161,7 +161,7 @@ public class ActionCassetteBlock : Solid
 
     public void FindInGroup(ActionCassetteBlock block) {
         foreach (ActionCassetteBlock acb in Scene.Tracker.GetEntities<ActionCassetteBlock>()) {
-            if (acb != this && acb != block && acb.GroupHash == GroupHash && (acb.CollideRect(new Rectangle((int)block.X - 1, (int)block.Y, (int)block.Width + 2, (int)block.Height)) || acb.CollideRect(new Rectangle((int)block.X, (int)block.Y - 1, (int)block.Width, (int)block.Height + 2))) && !BlockGroup.Contains(acb)) {
+            if (acb != this && acb != block && acb.GroupHash == GroupHash && (acb.CollideRect(new Rectangle((int)block.X - 1, (int)block.Y, (int)block.Width + 2, (int)block.Height)) || acb.CollideRect(new Rectangle((int)block.X, (int)block.Y - 1, (int)block.Width, (int)block.Height + 2))) && !BlockGroup!.Contains(acb)) {
                 BlockGroup.Add(acb);
                 FindInGroup(acb);
                 acb.BlockGroup = BlockGroup;

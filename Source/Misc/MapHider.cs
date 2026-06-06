@@ -15,16 +15,16 @@ namespace Celeste.Mod.ScugHelper;
 public static class MapHider {
     private static readonly string HiddenLevelSet = "ScugHelper/ScugHelperTest";
 
-    private static ILHook hookOnLevelSetSwitch;
-    private static ILHook hookLevelSetPicker;
+    private static ILHook? hookOnLevelSetSwitch;
+    private static ILHook? hookLevelSetPicker;
 
     [OnLoad]
     internal static void LoadHooks() {
-        if (!HookUtils.TryDisableInlining(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter").GetStateMachineTarget()))
+        if (!HookUtils.TryDisableInlining(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter")!.GetStateMachineTarget()))
             throw new Exception("Failed to disable inlining for hiding maps");
-        hookOnLevelSetSwitch = new ILHook(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter").GetStateMachineTarget(), modLevelSetSwitch);
+        hookOnLevelSetSwitch = new ILHook(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter")!.GetStateMachineTarget()!, modLevelSetSwitch);
         hookLevelSetPicker = new ILHook(
-            typeof(Everest).Assembly.GetType("Celeste.Mod.UI.OuiFileSelectSlotLevelSetPicker").GetMethod("changeStartingLevelSet", BindingFlags.NonPublic | BindingFlags.Instance),
+            typeof(Everest).Assembly.GetType("Celeste.Mod.UI.OuiFileSelectSlotLevelSetPicker")!.GetMethod("changeStartingLevelSet", BindingFlags.NonPublic | BindingFlags.Instance)!,
             modFileSelectChangeStartingLevelSet);
     }
     [OnUnload]
@@ -39,7 +39,7 @@ public static class MapHider {
         // target check: areaData.LevelSet != levelSet
         if (!cursor.TryGotoNextBestFit(MoveType.After,
             instr => instr.MatchLdloc(6), // AreaData getting considered
-            instr => instr.MatchCall(typeof(AreaData).Assembly.GetType("Celeste.AreaDataExt"), "GetLevelSet") || instr.MatchCallvirt<AreaData>("get_LevelSet"),
+            instr => instr.MatchCall(typeof(AreaData).Assembly.GetType("Celeste.AreaDataExt")!, "GetLevelSet") || instr.MatchCallvirt<AreaData>("get_LevelSet"),
             instr => instr.MatchLdloc(3), // current level set
             instr => instr.MatchCall<string>("op_Inequality"))
         ) throw new Exception("Failed to match areaData.LevelSet != levelSet for hiding maps");
@@ -64,7 +64,7 @@ public static class MapHider {
             instr => instr.MatchLdarg(0),
             instr => instr.MatchLdsfld<AreaData>("Areas"),
             instr => instr.MatchLdloc(0),
-            instr => instr.OpCode == OpCodes.Callvirt && (instr.Operand as MethodReference).Name == "get_Item")
+            instr => instr.OpCode == OpCodes.Callvirt && (instr.Operand as MethodReference)!.Name == "get_Item")
         ) throw new Exception("Failed to match levelset move for hiding maps");
 
         cursor.Emit(OpCodes.Ldloc_0);

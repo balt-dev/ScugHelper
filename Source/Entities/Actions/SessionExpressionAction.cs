@@ -12,9 +12,9 @@ public class SessionExpressionAction : Entity, IAction
 {
     internal enum SessionValueKind { Flag, Counter, Slider };
 
-    private readonly object SessionExpression;
-    private readonly string Target;
-    private readonly string Expression;
+    private readonly object? SessionExpression = null;
+    private readonly string Target = "";
+    private readonly string Expression = "";
     public SessionExpressionAction(EntityData data, Vector2 _): base() {
         if (!FrostHelperImports.IsLoaded) {
             ActionManager.LogError($"FrostHelper is not loaded! Session Expression actions won't work.");

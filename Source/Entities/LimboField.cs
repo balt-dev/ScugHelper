@@ -41,7 +41,6 @@ public class LimboField : Solid
     protected List<Vector2> particles = [];
     private bool HitPlayer;
     private readonly bool Invisible;
-    private readonly bool Invert;
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 

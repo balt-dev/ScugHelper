@@ -150,7 +150,7 @@ public class MidStepPortals : Entity
         return false;
     }
 
-    public static bool ClobberedMoveVExact(Actor self, int moveV, Collision onCollide = null, Solid pusher = null) {
+    public static bool ClobberedMoveVExact(Actor self, int moveV, Collision? onCollide = null, Solid? pusher = null) {
         Vector2 targetPosition = self.Position + Vector2.UnitY * moveV;
         int moveDir = Math.Sign(moveV);
         int moveAmount = 0;

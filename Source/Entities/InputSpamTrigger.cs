@@ -22,7 +22,7 @@ public class InputSpamTrigger(EntityData data, Vector2 offset) : Trigger(data, o
     public override void OnEnter(Player player) => DynamicData.For(Button).Set("ScugHelper_ForceSpam", true);
     public override void OnLeave(Player player) => DynamicData.For(Button).Set("ScugHelper_ForceSpam", false);
 
-    static Hook HookOnVirtualButtonGetPressed;
+    static Hook? HookOnVirtualButtonGetPressed;
 
     private static bool OnVirtualButtonGetPressed(Func<VirtualButton, bool> orig, VirtualButton self)
     {
@@ -36,7 +36,7 @@ public class InputSpamTrigger(EntityData data, Vector2 offset) : Trigger(data, o
 
     [OnLoad]
     internal static void LoadHooks() {
-        HookOnVirtualButtonGetPressed = new(typeof(VirtualButton).GetProperty(nameof(VirtualButton.Pressed)).GetGetMethod(), OnVirtualButtonGetPressed);
+        HookOnVirtualButtonGetPressed = new(typeof(VirtualButton).GetProperty(nameof(VirtualButton.Pressed))!.GetGetMethod()!, OnVirtualButtonGetPressed);
         On.Celeste.LevelLoader.StartLevel += OnLevelLoaderStartLevel;
         On.Celeste.Level.LoadLevel += OnLevelLoadLevel;
     }

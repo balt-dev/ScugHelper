@@ -10,9 +10,9 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/HoldableGate")]
 public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, offset) {
-    private Holdable holdable;
-    private Collider actualPickupCollider;
-    private Collider actualCollider;
+    private Holdable? holdable;
+    private Collider? actualPickupCollider;
+    private Collider? actualCollider;
 
     public override void Awake(Scene scene) {
         Collider = new Hitbox(32, 32, -16, -16);
@@ -40,6 +40,7 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     public override void Update() {
         updatesSinceTrigger += 1;
         base.Update();
+        if (holdable is null) return;
         if (updatesSinceTrigger < GrabFrameLeniency) {
             Player player = SceneAs<Level>().Tracker.GetEntity<Player>();
             if (player != null && Input.GrabCheck && player.Holding == null && player.Pickup(holdable)) {
@@ -69,6 +70,7 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
     }
 
     public override void Render() {
+        if (holdable is null) return;
         if (!Triggered) {
             holdable.Entity.Position = Position + (holdable.Entity.Position - holdable.Entity.Center);
         }

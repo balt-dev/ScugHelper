@@ -33,7 +33,7 @@ public class RefillRectangle : Entity
         };
     }
 
-    Refill refill;
+    Refill? refill;
     public readonly Color OutlineColor;
     public readonly Color InfillColor;
     public readonly float InfillOpacity;
@@ -87,12 +87,12 @@ public class RefillRectangle : Entity
 
     public override void Awake(Scene scene) {
         base.Awake(scene);
-        Refill closestRefill = null;
+        Refill? closestRefill = null;
         foreach (Entity entity in scene.Entities)
             if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;
 
-        if (closestRefill == null) {
+        if (closestRefill is null) {
             switch (FallbackRefillType) {
                 case "green":
                     scene.Add(closestRefill = new Refill(Position, false, FallbackRefillOneUse));

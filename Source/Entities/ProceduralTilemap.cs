@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using KeraLua;
@@ -8,8 +7,6 @@ using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using System.Collections.Generic;
 using System.Linq;
 using MonoMod.Cil;
-using Celeste.Mod.ScugHelper.Entities.Actions;
-using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -23,8 +20,9 @@ public class ProceduralTilemap : SolidTiles
     private readonly EntityID ID;
     public readonly int TileWidth;
     public readonly int TileHeight;
-    public TileGrid BGGrid { get; internal set; }
-    public AnimatedTiles BGAnim { get; internal set; }
+    public TileGrid? BGGrid { get; internal set; }
+    public AnimatedTiles? BGAnim { get; internal set; }
+    VirtualMap<char>? BGTiles;
     public readonly bool AbsoluteX;
     public readonly bool AbsoluteY;
     public readonly bool MoveWithPlayer;
@@ -47,11 +45,11 @@ public class ProceduralTilemap : SolidTiles
     }
 
     static readonly Dictionary<EntityID, LuaCallbacks> CallbackCache = [];
-    private readonly Hitbox LeftCollider;
-    private readonly Hitbox TopCollider;
-    private readonly Hitbox RightCollider;
-    private readonly Hitbox BottomCollider;
-    Entity BackgroundRenderer;
+    private readonly Hitbox? LeftCollider;
+    private readonly Hitbox? TopCollider;
+    private readonly Hitbox? RightCollider;
+    private readonly Hitbox? BottomCollider;
+    Entity? BackgroundRenderer;
 
     public ProceduralTilemap(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset, new(0, 0, '0')) {
         Remove(Tiles);
@@ -198,8 +196,6 @@ public class ProceduralTilemap : SolidTiles
 
         base.Added(scene);
     }
-
-    VirtualMap<char> BGTiles;
 
     public bool GenerateAllTiles(Scene? scene = null) {
         scene ??= Scene;
@@ -361,6 +357,10 @@ public class ProceduralTilemap : SolidTiles
         scene ??= Scene;
         try
         {
+            if (BGTiles is null) throw new NullReferenceException("BGTiles is null.");
+            if (BGGrid is null) throw new NullReferenceException("BGGrid is null.");
+            if (BGAnim is null) throw new NullReferenceException("BGAnim is null.");
+            if (BackgroundRenderer is null) throw new NullReferenceException("BackgroundRenderer is null.");
             Lua lua = SandboxedLua.Instance;
             SandboxedLua.ActiveScene = scene;
 
@@ -501,6 +501,7 @@ public class ProceduralTilemap : SolidTiles
 
     private void GenerateTile(Lua lua, int logicalX, int logicalY, int targetX, int targetY)
     {
+        if (BGTiles is null) throw new NullReferenceException("BGTiles is null.");
         if (callbacks.foregroundFuncRef is int fgFunc)
         {
             int errorHandler = SandboxedLua.PushErrorHandler(lua);
@@ -533,5 +534,18 @@ public class ProceduralTilemap : SolidTiles
             if (lua.IsNil(-1)) { BGTiles[targetX, targetY] = '0'; } else if (lua.IsString(-1)) { BGTiles[targetX, targetY] = lua.ToString(-1).First(); } else { throw new LuaException($"At {filePath} background({logicalX}, {logicalY}, {TileWidth}, {TileHeight}): returned non-string non-nil value"); }
             lua.Pop(-1);
         }
+    }
+
+    internal void RenderDebug(Camera camera) {
+        if (BGTiles is null) throw new NullReferenceException("BGTiles is null.");
+        int offsetX = (int)X / 8;
+        int offsetY = (int)Y / 8;
+        for (int x = 0; x < TileWidth; x++)
+            for (int y = 0; y < TileHeight; y++) {
+                if (BGTiles[x, y] != '0')
+                    Draw.Pixel.Draw(new(offsetX + x, offsetY + y), Vector2.Zero, Color.HotPink * 0.1f);
+                if (tileTypes[x, y] != '0')
+                    Draw.Pixel.Draw(new(offsetX + x, offsetY + y), Vector2.Zero, Color.HotPink * 0.6f);
+            }
     }
 }

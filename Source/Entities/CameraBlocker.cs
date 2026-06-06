@@ -34,7 +34,7 @@ public class CameraBlocker : Solid, IComparable
         orig(self);
         CenterCameraTrigger.OnLevelUpdate(self);
 
-        CameraBlocker[] blockers = [.. self.Tracker.GetEntities<CameraBlocker>().Select(e => e as CameraBlocker)];
+        CameraBlocker[] blockers = [.. self.Tracker.GetEntities<CameraBlocker>().Select(e => e as CameraBlocker)!];
         Array.Sort(blockers);
         foreach (CameraBlocker blocker in blockers) {
             if (blocker.Flag is not null && blocker.State != self.Session.GetFlag(blocker.Flag))
@@ -63,5 +63,5 @@ public class CameraBlocker : Solid, IComparable
         }
     }
 
-    public int CompareTo(object other) => Priority.CompareTo((other as CameraBlocker).Priority);
+    public int CompareTo(object? other) => other is CameraBlocker b ? Priority.CompareTo(b.Priority) : throw new InvalidOperationException("Tried to compare non-CameraBlocker with CameraBlocker.");
 }

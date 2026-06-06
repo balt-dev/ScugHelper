@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 using Celeste.Mod.Entities;
+using System.Diagnostics;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/SeekerSpikes-Up", "ScugHelper/SeekerSpikes-Left", "ScugHelper/SeekerSpikes-Down", "ScugHelper/SeekerSpikes-Right")]
@@ -11,7 +12,8 @@ public class SeekerSpikes : Spikes
         "ScugHelper/SeekerSpikes-Up" => Directions.Up,
         "ScugHelper/SeekerSpikes-Left" => Directions.Left,
         "ScugHelper/SeekerSpikes-Down" => Directions.Down,
-        "ScugHelper/SeekerSpikes-Right" => Directions.Right
+        "ScugHelper/SeekerSpikes-Right" => Directions.Right,
+        _ => throw new UnreachableException()
     }) {
         Remove(pc);
         Add(new PlayerCollider(OnPlayer));

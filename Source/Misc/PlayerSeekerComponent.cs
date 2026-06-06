@@ -12,8 +12,6 @@ namespace Celeste.Mod.ScugHelper;
 [Tracked]
 public class PlayerSeekerComponent(bool playSound = true) : Component(false, false)
 {
-    static readonly PlayerSeeker _; // For ctrl+click
-
     [OnLoad]
     public static void LoadHooks() {
         On.Celeste.Player.Update += OnUpdate;
@@ -32,7 +30,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         return orig(self);
     }
 
-    private static PlayerDeadBody OnDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats) {
+    private static PlayerDeadBody? OnDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats) {
         if (self?.Components?.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp && comp.disableDeath) return null;
         return orig(self, direction, evenIfInvincible, registerDeathInStats);
     }
@@ -84,10 +82,10 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         private bool CheckEntity(Entity entity) => entity is not JumpThru;
     }
 
-    private Sprite sprite;
-    private Player player;
-    private Collider oldCollider;
-    private StateMachine oldStateMachine;
+    private Sprite? sprite;
+    private Player? player;
+    private Collider? oldCollider;
+    private StateMachine? oldStateMachine;
     private bool added;
 
     public override void Added(Entity entity) {
@@ -145,6 +143,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     public void CreateTrail(Player self) => CreateTrail(self, Seeker.TrailColor);
 
     public void CreateTrail(Player self, Color color) {
+        if (sprite is null) return;
         Vector2 scale = sprite.Scale;
         sprite.Scale.X *= (float)self.Facing;
         dummySeeker.Position = self.Position;
@@ -155,11 +154,11 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         sprite.Scale = scale;
     }
 
-    private static readonly FieldInfo FramesAlive = typeof(Player).GetField("framesAlive", BindingFlags.NonPublic | BindingFlags.Instance);
+    private static readonly FieldInfo FramesAlive = typeof(Player).GetField("framesAlive", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
     private void Update(Player self) {
         if (!added) return;
-        if (!self.Dead) FramesAlive.SetValue(self, (int)FramesAlive.GetValue(self) + 1);
+        if (!self.Dead) FramesAlive.SetValue(self, (int)FramesAlive.GetValue(self)! + 1);
         var scene = self.Scene;
         foreach (var barrier in scene.Tracker.GetEntities<SeekerBarrier>())
             barrier.Collidable = true;
@@ -171,7 +170,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         self.starFlyTimer = 0f;
         self.starFlyLoopSfx?.Stop();
         LimboRefill.LimboTimer = 0f;
-        sprite.FlipY = self.Sprite.FlipY;
+        sprite?.FlipY = self.Sprite.FlipY;
 
         Vector2 cameraPos = self.level.Camera.Position;
         Vector2 cameraTarget = self.CameraTarget;
@@ -183,29 +182,29 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         }
         disableDeath = false;
 
-        foreach (Trigger entity in player.Scene.Tracker.GetEntities<Trigger>()) {
-            if (player.CollideCheck(entity)) {
+        foreach (Trigger entity in self.Scene.Tracker.GetEntities<Trigger>()) {
+            if (self.CollideCheck(entity)) {
                 if (!entity.Triggered) {
                     entity.Triggered = true;
-                    player.triggersInside.Add(entity);
-                    entity.OnEnter(player);
+                    self.triggersInside.Add(entity);
+                    entity.OnEnter(self);
                 }
 
-                entity.OnStay(player);
+                entity.OnStay(self);
             } else if (entity.Triggered) {
-                player.triggersInside.Remove(entity);
+                self.triggersInside.Remove(entity);
                 entity.Triggered = false;
-                entity.OnLeave(player);
+                entity.OnLeave(self);
             }
         }
 
         self.PreviousPosition = self.Position;
 
-        Level level = scene as Level;
+        Level level = (scene as Level)!;
         self.StateMachine.state = Player.StNormal;
 
-        sprite.Scale.X = Calc.Approach(sprite.Scale.X, 1f, 2f * Engine.DeltaTime);
-        sprite.Scale.Y = Calc.Approach(sprite.Scale.Y, 1f, 2f * Engine.DeltaTime);
+        sprite?.Scale.X = Calc.Approach(sprite.Scale.X, 1f, 2f * Engine.DeltaTime);
+        sprite?.Scale.Y = Calc.Approach(sprite.Scale.Y, 1f, 2f * Engine.DeltaTime);
         if (dreamDashing) {
             self.NaiveMove(self.Speed * Engine.DeltaTime);
             if (self.Scene.OnInterval(Settings.Instance.DisableFlashes ? 0.3f : 0.04f))
@@ -227,8 +226,8 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
                 } else {
                     dreamDashing = false;
 
-                    player.Stop(player.dreamSfxLoop);
-                    player.Play("event:/char/madeline/dreamblock_exit");
+                    self.Stop(self.dreamSfxLoop);
+                    self.Play("event:/char/madeline/dreamblock_exit");
                 }
             } else {
                 self.dreamBlock = dreamBlock;
@@ -244,7 +243,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             self.Speed = Calc.Approach(self.Speed, Vector2.Zero, 800f * Engine.DeltaTime);
             self.dashAttackTimer -= Engine.DeltaTime;
             if (self.dashAttackTimer <= 0f)
-                sprite.Play("spotted");
+                sprite?.Play("spotted");
 
             if (trailTimerA > 0f) {
                 trailTimerA -= Engine.DeltaTime;
@@ -280,8 +279,8 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
             int num2 = Math.Sign((int)self.Facing);
             int num3 = Math.Sign(self.Speed.X);
-            if (num3 != 0 && num2 != num3 && Math.Sign(input.X) == Math.Sign(self.Speed.X) && Math.Abs(self.Speed.X) > 20f && sprite.CurrentAnimationID != "flipMouth" && sprite.CurrentAnimationID != "flipEyes")
-                sprite.Play("flipMouth");
+            if (num3 != 0 && num2 != num3 && Math.Sign(input.X) == Math.Sign(self.Speed.X) && Math.Abs(self.Speed.X) > 20f && sprite?.CurrentAnimationID != "flipMouth" && sprite?.CurrentAnimationID != "flipEyes")
+                sprite?.Play("flipMouth");
 
             if (Input.Dash.Pressed && !level.InCutscene && !MinimapEntity.Focused)
                 Dash(self, input);
@@ -315,7 +314,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
             }
         }
 
-        level.EnforceBounds(self);
+        level!.EnforceBounds(self);
         self.wasOnGround = false;
         
         foreach (var barrier in scene.Tracker.GetEntities<SeekerBarrier>())
@@ -329,7 +328,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     }
 
     private void OnSeekerCollide(CollisionData data) {
-
+        if (player is null) return;
         if (player.dashAttackTimer <= 0f) {
             if (data.Direction.X != 0f) {
                 player.Speed.X = 0f;
@@ -379,7 +378,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
         player.SceneAs<Level>().Particles.Emit(Seeker.P_HitWall, 12, position, positionRange, direction);
         if (data.Hit is SeekerBarrier) {
-            (data.Hit as SeekerBarrier).OnReflectSeeker();
+            (data.Hit as SeekerBarrier)!.OnReflectSeeker();
             Audio.Play("event:/game/05_mirror_temple/seeker_hit_lightwall", player.Position);
         } else {
             Audio.Play("event:/game/05_mirror_temple/seeker_hit_normal", player.Position);
@@ -387,16 +386,16 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
 
         if (data.Direction.X != 0f) {
             player.Speed.X *= -0.8f;
-            sprite.Scale = new Vector2(0.6f, 1.4f);
+            sprite?.Scale = new Vector2(0.6f, 1.4f);
         } else if (data.Direction.Y != 0f) {
             player.Speed.Y *= -0.8f;
-            sprite.Scale = new Vector2(1.4f, 0.6f);
+            sprite?.Scale = new Vector2(1.4f, 0.6f);
         }
 
         if (data.Hit is TempleCrackedBlock) {
             Celeste.Freeze(0.15f);
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
-            (data.Hit as TempleCrackedBlock).Break(player.Position);
+            (data.Hit as TempleCrackedBlock)!.Break(player.Position);
         }
 
         if (data.Hit is DashSwitch dashSwitch) {
@@ -433,24 +432,24 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
         }
 
         self.Speed = self.DashDir * 400f;
-        sprite.Play("attacking");
+        sprite?.Play("attacking");
         self.SceneAs<Level>().DirectionalShake(self.DashDir);
         Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
         Audio.Play("event:/game/05_mirror_temple/seeker_dash", self.Position);
         if (self.DashDir.X == 0f)
-            sprite.Scale = new Vector2(0.6f, 1.4f);
+            sprite?.Scale = new Vector2(0.6f, 1.4f);
         else
-            sprite.Scale = new Vector2(1.4f, 0.6f);
+            sprite?.Scale = new Vector2(1.4f, 0.6f);
     }
 
     private void Render(Player self) {
         if (!added) return;
         if (dreamDashing) return;
         if (!SaveData.Instance.Assists.InvisibleMotion || !(self.Speed.LengthSquared() > 100f)) {
-            Vector2 scale = sprite.Scale;
-            sprite.Scale.X *= (float)self.Facing;
-            sprite.Render();
-            sprite.Scale = scale;
+            Vector2 scale = sprite?.Scale ?? Vector2.One;
+            sprite?.Scale.X *= (float)self.Facing;
+            sprite?.Render();
+            sprite?.Scale = scale;
         }
     }
 

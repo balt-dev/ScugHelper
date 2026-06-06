@@ -155,7 +155,7 @@ public class NewAngleBumper : Bumper
 
     private static void ILUpdate(ILContext il) {
         ILCursor cur = new(il);
-        ILLabel label = null!;
+        ILLabel? label = null;
         if (!cur.TryGotoNextBestFit(MoveType.After,
             static match => match.MatchLdcR4(0.05f),
             static match => match.MatchCallOrCallvirt<Scene>(nameof(Scene.OnInterval)),
@@ -164,7 +164,7 @@ public class NewAngleBumper : Bumper
         static bool BumperCheck(Bumper self) => self is NewAngleBumper angleBumper && !angleBumper.EmitParticles;
         cur.EmitLdarg0();
         cur.EmitDelegate(BumperCheck);
-        cur.EmitBrtrue(label);
+        cur.EmitBrtrue(label!);
     }
 
     private static void OnUpdatePosition(On.Celeste.Bumper.orig_UpdatePosition orig, Bumper self) {

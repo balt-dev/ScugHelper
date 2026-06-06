@@ -13,7 +13,7 @@ namespace Celeste.Mod.ScugHelper;
 
 public class ScugHelperModule : EverestModule
 {
-    public static ScugHelperModule Instance { get; private set; }
+    public static ScugHelperModule Instance { get; private set; } = null!;
 
     public override Type SettingsType => typeof(ScugHelperModuleSettings);
     public static ScugHelperModuleSettings Settings => (ScugHelperModuleSettings)Instance._Settings;
@@ -99,7 +99,7 @@ public class ScugHelperModule : EverestModule
         return sids;
     }
 
-    internal static Effect OutlineFX;
+    internal static Effect? OutlineFX;
 
     public override void LoadContent(bool firstLoad) {
         base.LoadContent(firstLoad);

@@ -149,7 +149,7 @@ public class MidairRefill : Refill, ICustomRefill
             instr => instr.MatchBleUn(out label)
         )) throw new InvalidOperationException("Midair refills failed to match IL code for the Dash Update hook.");
 
-        cur.GotoLabel(label);
+        cur.GotoLabel(label!);
         cur.MoveAfterLabels();
         cur.Emit(OpCodes.Ldarg_0);
         cur.EmitDelegate(static (Player player) => {
@@ -222,7 +222,7 @@ public class MidairRefill : Refill, ICustomRefill
         cursor.Emit(OpCodes.Ldarg_0);
         cursor.Emit(OpCodes.Ldloc_S, (byte) 14);
         cursor.EmitDelegate(WalllessWallbounceNormalCheck);
-        cursor.Emit(OpCodes.Brtrue_S, cont);
+        cursor.Emit(OpCodes.Brtrue_S, cont!);
     }
 
     private static bool WalllessWallbounceDashCheck(Player player) {

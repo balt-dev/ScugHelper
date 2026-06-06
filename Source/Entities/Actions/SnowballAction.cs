@@ -19,6 +19,6 @@ internal class OneshotSnowballComponent(bool active, bool visible) : Component(a
 {
     public override void Update() {
         base.Update();
-        if ((Entity as Snowball).resetTimer > 0.5f) Entity.RemoveSelf();
+        if ((Entity as Snowball)!.resetTimer > 0.5f) Entity.RemoveSelf();
     }
 }

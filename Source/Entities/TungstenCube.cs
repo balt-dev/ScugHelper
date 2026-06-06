@@ -1,3 +1,5 @@
+#nullable enable
+
 using Microsoft.Xna.Framework;
 using Monocle;
 using Celeste.Mod.Entities;
@@ -206,7 +208,7 @@ public class TungstenCube : Actor, IHasSpeed
         On.Celeste.Player.SuperWallJump += CanSuperWallJumpHook;
         On.Celeste.Player.SuperBounce += BounceHook;
         On.Celeste.Player.SideBounce += SideBounceHook;
-        getCameraTargetHook = new(typeof(Player).GetProperty("CameraTarget", BindingFlags.Public | BindingFlags.Instance).GetGetMethod(), GetCameraTargetHook);
+        getCameraTargetHook = new(typeof(Player).GetProperty("CameraTarget", BindingFlags.Public | BindingFlags.Instance)!.GetGetMethod()!, GetCameraTargetHook);
     }
     [OnUnload]
     public static void UnloadHooks() {
@@ -221,12 +223,12 @@ public class TungstenCube : Actor, IHasSpeed
         On.Celeste.Player.SuperWallJump -= CanSuperWallJumpHook;
         On.Celeste.Player.SuperBounce -= BounceHook;
         On.Celeste.Player.SideBounce -= SideBounceHook;
-        getCameraTargetHook.Dispose();
+        getCameraTargetHook?.Dispose();
     }
 
     private static void GetCameraTargetHook(ILContext il) {
         ILCursor cur = new(il);
-        if (!cur.TryGotoNextBestFit(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)]))))
+        if (!cur.TryGotoNextBestFit(MoveType.After, static instr => instr.MatchCall(typeof(Vector2).GetConstructor([typeof(float), typeof(float)])!)))
             throw new Exception("Tungsten cube failed to match code for camera target offset hook.");
         cur.EmitLdarg0();
         cur.EmitLdloc1();

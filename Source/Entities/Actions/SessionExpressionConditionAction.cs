@@ -10,9 +10,9 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 [CustomEntity("ScugHelper/SessionExpressionConditionAction")]
 public class SessionExpressionConditionAction : Entity, IAction
 {
-    private readonly object SessionExpression;
-    private readonly string[] Targets;
-    private readonly string Expression;
+    private readonly object? SessionExpression;
+    private readonly string[] Targets = [];
+    private readonly string Expression = "";
     private readonly bool Invert;
     public SessionExpressionConditionAction(EntityData data, Vector2 _): base() {
         if (!FrostHelperImports.IsLoaded) {

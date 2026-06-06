@@ -28,11 +28,11 @@ public class ElsewhereLookout : Lookout {
         nodes = array == null || array.Count == 0 ? null : [.. array];
     }
 
-    static ILHook HookILLookoutLookRoutine;
+    static ILHook? HookILLookoutLookRoutine;
 
     [OnLoad]
     internal static void LoadHooks() {
-        HookILLookoutLookRoutine = new(typeof(Lookout).GetMethod(nameof(LookRoutine), BindingFlags.NonPublic | BindingFlags.Instance).GetStateMachineTarget(), ILLookoutLookRoutine);
+        HookILLookoutLookRoutine = new(typeof(Lookout).GetMethod(nameof(LookRoutine), BindingFlags.NonPublic | BindingFlags.Instance)!.GetStateMachineTarget()!, ILLookoutLookRoutine);
     }
 
     [OnUnload]
@@ -62,7 +62,7 @@ public class ElsewhereLookout : Lookout {
         cur.EmitLdloc1();
         cur.EmitDelegate(MoveCamera);
 
-        ILLabel label = null!;
+        ILLabel? label = null;
 
         if (!cur.TryGotoNext(MoveType.After, static match => match.MatchLdstr("event:/ui/game/lookout_off")))
             throw new Exception("Failed to hook for elsewhere watchtowers.");
@@ -95,7 +95,7 @@ public class ElsewhereLookout : Lookout {
         
         cur.EmitLdloc1();
         cur.EmitDelegate(MoveCameraBack);
-        cur.EmitBrtrue(label);
+        cur.EmitBrtrue(label!);
     }
 
     private class StaticCameraComponent(Camera camera, Vector2 cameraPos) : Component(true, true)

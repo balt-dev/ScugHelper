@@ -517,3 +517,28 @@ entities.ScugHelper/FlagSwitch.placements.name.off=Flag Switch (Only Off)
 entities.ScugHelper/FlagSwitch.placements.description.both=Swaps a flag between two values when touched.
 entities.ScugHelper/FlagSwitch.placements.description.on=Turns a flag on when touched.
 entities.ScugHelper/FlagSwitch.placements.description.off=Turns a flag off when touched.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+entities.ScugHelper/HoldableTrajectoryController.placements.name.normal=Holdable Trajectory Controller
+entities.ScugHelper/HoldableTrajectoryController.placements.description.normal=Changes the trajectory of thrown holdables.

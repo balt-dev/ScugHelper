@@ -10,11 +10,11 @@ namespace Celeste.Mod.ScugHelper;
 
 internal static class InstantRoomTransitions
 {
-    private static ILHook ILLevelorig_Transition;
+    private static ILHook? ILLevelorig_Transition;
 
     [OnLoad]
     public static void LoadHooks() {
-        ILLevelorig_Transition = new(typeof(Level).GetMethod("orig_TransitionRoutine", BindingFlags.NonPublic | BindingFlags.Instance).GetStateMachineTarget(), ILLevelTransition);
+        ILLevelorig_Transition = new(typeof(Level).GetMethod("orig_TransitionRoutine", BindingFlags.NonPublic | BindingFlags.Instance)!.GetStateMachineTarget()!, ILLevelTransition);
     }
 
     [OnUnload]

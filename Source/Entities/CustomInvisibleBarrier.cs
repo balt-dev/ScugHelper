@@ -18,7 +18,6 @@ public class CustomInvisibleBarrier : InvisibleBarrier
     public readonly bool FlagState;
 
     public CustomInvisibleBarrier(EntityData data, Vector2 offset) : base(data, offset) {
-        Player _;
         SurfaceSoundIndex = data.Int("SurfaceSoundIndex", 33);
         Flag = data.String("Flag");
         FlagState = data.Bool("FlagState");

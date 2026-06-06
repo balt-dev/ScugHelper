@@ -11,8 +11,8 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 public class SessionExpressionListener : Entity, IAction
 {
     private readonly object? SessionExpression;
-    public readonly string[] Targets;
-    private readonly string Expression;
+    public readonly string[] Targets = [];
+    private readonly string Expression = "";
     private readonly bool Invert;
     private bool? stateLastTick;
     public SessionExpressionListener(EntityData data, Vector2 _): base() {

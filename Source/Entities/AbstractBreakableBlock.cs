@@ -20,7 +20,6 @@ public abstract class AbstractBreakableBlock : Solid
 
     public AbstractBreakableBlock(Vector2 position, char tiletype, float width, float height, bool blendIn, bool permanent, EntityID id)
         : base(position, width, height, safe: true) {
-        DashBlock _;
         Depth = -12999;
         tileType = tiletype;
         this.id = id;

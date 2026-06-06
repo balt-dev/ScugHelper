@@ -20,7 +20,7 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
     public float RPM { get; protected set; } = rpm;
     public float Phase { get; protected set; } = phase;
     protected int AttachedEntityID = entID;
-    protected Entity AttachedEntity;
+    protected Entity? AttachedEntity;
     protected bool KeepX = keepX;
     protected bool KeepY = keepY;
 
@@ -36,13 +36,14 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
         var factor = 60.0f / RPM;
         if (!frozen) Phase += Engine.DeltaTime / factor;
         Phase %= 1.0f;
+        if (AttachedEntity is null) return;
 
         Vector2 offsetVec = new Vector2((float)Math.Cos(Math.Tau * Phase), (float)Math.Sin(Math.Tau * Phase)) * Radius;
         Vector2 targetPosition = Position + offsetVec;
         if (AttachedEntity is Bumper bumper) SetPosition(ref bumper.anchor, targetPosition);
         if (AttachedEntity is Booster booster) {
             SetPosition(ref booster.outline.Position, targetPosition);
-            Player player = SceneAs<Level>()?.Tracker?.GetEntity<Player>();
+            Player? player = SceneAs<Level>()?.Tracker?.GetEntity<Player>();
             frozen = player != null && player.CurrentBooster != null && player.CurrentBooster == booster;
         }
         if (AttachedEntity is ZipMover mover) {
@@ -107,7 +108,7 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
 
         Vector2 offsetVec = new Vector2((float)Math.Cos(Math.Tau * Phase), (float)Math.Sin(Math.Tau * Phase)) * Radius;
         Vector2 targetPosition = Position + offsetVec;
-        Vector2 realPosition = AttachedEntity.Position;
+        Vector2 realPosition = AttachedEntity?.Position ?? Position;
 
         Draw.Circle(Position, Radius, Color.Purple, 32);
         Draw.Line(Position, targetPosition, Color.Lime);
@@ -132,13 +133,13 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
 
 
 
-    private static readonly MethodInfo ZipMoverSequence = typeof(ZipMover).GetMethod("Sequence", BindingFlags.NonPublic | BindingFlags.Instance);
-    private static readonly MethodInfo ZipMoverSequenceTarget = ZipMoverSequence.GetStateMachineTarget();
-    private static readonly Type ZipMoverSequenceType = ZipMoverSequenceTarget.DeclaringType;
+    private static readonly MethodInfo ZipMoverSequence = typeof(ZipMover).GetMethod("Sequence", BindingFlags.NonPublic | BindingFlags.Instance)!;
+    private static readonly MethodInfo ZipMoverSequenceTarget = ZipMoverSequence.GetStateMachineTarget()!;
+    private static readonly Type ZipMoverSequenceType = ZipMoverSequenceTarget.DeclaringType!;
     private static readonly FieldInfo startField = ZipMoverSequenceType
-        .GetField("<start>5__2", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        .GetField("<start>5__2", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!;
 
-    private static ILHook ZipMoverSequenceHook = null;
+    private static ILHook? ZipMoverSequenceHook = null;
     private bool frozen;
 
     [OnLoad]
@@ -163,7 +164,7 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
 
     private static void ZipMoverFix(ILContext il) {
         ILCursor cur = new(il);
-        ILLabel[] labels = [];
+        ILLabel[]? labels = [];
         if (!cur.TryGotoNext(MoveType.Before,
             instr => instr.MatchSwitch(out labels)
         )) throw new Exception("Cycler failed to match IL for fixing Zip Movers.");

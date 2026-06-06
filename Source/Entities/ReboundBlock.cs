@@ -30,15 +30,15 @@ public class ReboundBlock : Solid
 
     protected bool spikesDown;
 
-    protected List<Image> renderImages;
-    protected List<Image> bloomImages;
-    protected Image renderSlot;
-    protected Sprite renderRefill;
-    protected SoundSource firstHitSfx;
+    protected List<Image> renderImages = [];
+    protected List<Image> bloomImages = [];
+    protected Image? renderSlot;
+    protected Sprite? renderRefill;
+    protected SoundSource? firstHitSfx;
 
     internal Vector2 Offset;
     private static readonly float Displacement = 4.0f;
-    private Refill refill;
+    private Refill? refill;
 
     public ReboundBlock(Vector2 position, float width, float height, ReboundBlockKind kind)
      : base(position, width, height, safe: true) {
@@ -78,7 +78,7 @@ public class ReboundBlock : Solid
         foreach (Image image in renderImages)
             image.DrawSimpleOutline();
         base.Render();
-        renderSlot.Render();
+        renderSlot?.Render();
         renderRefill?.DrawSimpleOutline();
         renderRefill?.Render();
         Position -= Offset;
@@ -141,7 +141,7 @@ public class ReboundBlock : Solid
             if (dir == -Vector2.UnitY && spikesDown)
                 return DashCollisionResults.NormalCollision;
         }
-        (Scene as Level).DirectionalShake(dir);
+        (Scene as Level)!.DirectionalShake(dir);
         Offset = dir * Displacement;
         SmashParticles(-dir);
         Celeste.Freeze(0.1f);

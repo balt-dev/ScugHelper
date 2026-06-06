@@ -14,8 +14,6 @@ public class DeSeekerField : Entity
     protected float[] speeds = [12f, 20f, 40f];
     protected List<Vector2> particles = [];
     private bool BouncedBooster;
-    private readonly bool Invisible;
-    private readonly bool Invert;
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
@@ -35,11 +33,9 @@ public class DeSeekerField : Entity
     private static readonly float SineMovement = 2.0f;
 
     public override void Render() {
-        if (!Invisible) {
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Seeker.TrailColor * 0.3f);
-            foreach (Vector2 particle in particles)
-                Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
-        }
+        WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Seeker.TrailColor * 0.3f);
+        foreach (Vector2 particle in particles)
+            Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
 
         base.Render();
     }
@@ -70,7 +66,7 @@ public class DeSeekerField : Entity
     }
 
     public void OnRenderBloom() {
-        if (Visible && !Invisible) // lol
+        if (Visible)
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }
 }

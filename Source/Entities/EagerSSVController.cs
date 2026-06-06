@@ -13,7 +13,7 @@ public class EagerSSVController(EntityData data, Vector2 _) : Entity() {
     public readonly float UpdatePeriod = data.Float("UpdatePeriod", 0.05f);
     public override void Update() {
         base.Update();
-        Level level = Scene as Level;
+        Level level = (Scene as Level)!;
         
         if (!level.OnInterval(UpdatePeriod)) return;
 

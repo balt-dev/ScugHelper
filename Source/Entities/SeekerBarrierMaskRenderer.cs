@@ -85,8 +85,8 @@ public class SeekerBarrierMaskRenderer : Entity
             entity.Visible = false;
     }
 
-    VirtualRenderTarget buffer;
-    Color[] pixelData;
+    VirtualRenderTarget? buffer;
+    Color[]? pixelData;
 
     public void BeforeRender() {
         if (Entities.Count == 0) return;
@@ -94,7 +94,7 @@ public class SeekerBarrierMaskRenderer : Entity
 
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
 
-        var cam = (Scene as Level).Camera;
+        var cam = (Scene as Level)!.Camera;
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, null, RasterizerState.CullNone, null, cam.Matrix);
 
         Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
@@ -115,15 +115,15 @@ public class SeekerBarrierMaskRenderer : Entity
     public bool CheckParticle(Vector2 pos) {
         int x = (int)pos.X;
         int y = (int)pos.Y;
-        if (x < 0 || y < 0 || x >= buffer.Width || y >= buffer.Height) return false;
-        return pixelData[y * buffer.Width + x].A > 0;
+        if (x < 0 || y < 0 || x >= buffer!.Width || y >= buffer.Height) return false;
+        return pixelData![y * buffer.Width + x].A > 0;
     }
 
     public override void Render() {
         base.Render();
         if (Entities.Count == 0) return;
         if (buffer is not null) {
-            var cam = (Scene as Level).Camera;
+            var cam = (Scene as Level)!.Camera;
 
             Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White * FieldOpacity, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
             int count = particles.Length;
@@ -141,7 +141,7 @@ public class SeekerBarrierMaskRenderer : Entity
     private void OnRenderBloom() {
         if (Entities.Count == 0) return;
         if (buffer is not null) {
-            var cam = (Scene as Level).Camera;
+            var cam = (Scene as Level)!.Camera;
 
             Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
         }

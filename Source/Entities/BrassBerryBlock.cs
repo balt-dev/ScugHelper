@@ -72,7 +72,7 @@ public class BrassBerryBlock : Solid
 	}
 
 	public override void Render() {
-		Level level = Scene as Level;
+		Level level = (Scene as Level)!;
 		Vector2 vector = new(0f, (level.Bounds.Bottom - startY + 32f) * Ease.CubeIn(renderLerp));
 		Vector2 position = Position;
 		Position += vector;

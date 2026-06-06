@@ -20,11 +20,11 @@ class BrassBerry : Entity, IStrawberry
     public EntityID ID;
     public Follower Follower;
 
-    private Sprite sprite;
-    private Wiggler wiggler;
-    private BloomPoint bloom;
-    private VertexLight light;
-    private Tween lightTween;
+    private Sprite? sprite;
+    private Wiggler? wiggler;
+    private BloomPoint? bloom;
+    private VertexLight? light;
+    private Tween? lightTween;
     private float wobble = 0f;
     private float collectTimer = 0f;
     private bool collected = false;
@@ -76,14 +76,14 @@ class BrassBerry : Entity, IStrawberry
     public override void Update() {
         if (!collected) {
             wobble += Engine.DeltaTime * 4f;
-            sprite.Y = bloom.Y = light.Y = (float)Math.Sin(wobble) * 2f;
+            sprite?.Y = bloom!.Y = light!.Y = (float)Math.Sin(wobble) * 2f;
 
             if (Follower.Leader != null) {
                 if (Follower.DelayTimer <= 0f && StrawberryRegistry.IsFirstStrawberry(this)) {
                     if (
                         Follower.Leader.Entity is Player player && player.Scene != null &&
                         !player.StrawberriesBlocked &&
-                        (player.CollideCheck<BrassBerryCollectTrigger>() || (Scene as Level).Completed)
+                        (player.CollideCheck<BrassBerryCollectTrigger>() || (Scene as Level)!.Completed)
                     ) {
     					collectTimer += Engine.DeltaTime;
     					if (collectTimer > 0.15f)
@@ -100,8 +100,8 @@ class BrassBerry : Entity, IStrawberry
 
     private void OnAnimate(string id) {
         int numFrames = 35;
-        if (sprite.CurrentAnimationFrame == numFrames - 4) {
-            lightTween.Start();
+        if (sprite?.CurrentAnimationFrame == numFrames - 4) {
+            lightTween?.Start();
 
             bool visuallyObstructed = CollideCheck<FakeWall>() || CollideCheck<Solid>();
             Audio.Play("event:/game/general/strawberry_pulse", Position);
@@ -117,7 +117,7 @@ class BrassBerry : Entity, IStrawberry
             Audio.Play(isOwned ? "event:/game/general/strawberry_blue_touch" : "event:/game/general/strawberry_touch", Position);
 
         player.Leader.GainFollower(Follower);
-        wiggler.Start();
+        wiggler?.Start();
         Depth = -1000000;
 
         ScugHelperModule.Session.BrassBerryFollowing = ID;
@@ -133,7 +133,7 @@ class BrassBerry : Entity, IStrawberry
         int collectIndex = 0;
 
         if (Follower.Leader != null) {
-            Player player = Follower.Leader.Entity as Player;
+            Player player = (Follower.Leader.Entity as Player)!;
             collectIndex = player.StrawberryCollectIndex;
             player.StrawberryCollectIndex++;
             player.StrawberryCollectResetTimer = 2.5f;
@@ -157,8 +157,8 @@ class BrassBerry : Entity, IStrawberry
         int color = !isOwned ? 0 : 1;
         Audio.Play("event:/game/general/strawberry_get", Position, "colour", color, "count", collectIndex);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
-        sprite.Play(isOwned ? "collectGhost" : "collect");
-        while (sprite.Animating) yield return null;
+        sprite?.Play(isOwned ? "collectGhost" : "collect");
+        while (sprite?.Animating ?? false) yield return null;
         Scene.Add(new StrawberryPoints(Position, isOwned, collectIndex, false));
         RemoveSelf();
         yield break;

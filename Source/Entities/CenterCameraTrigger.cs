@@ -62,8 +62,10 @@ public class CenterCameraTrigger(EntityData data, Vector2 offset) : Trigger(data
         CameraOffsetLerp = Vector2.Lerp(CameraOffsetLerp, self.CameraOffset, 1 - MathF.Pow(LerpTightness, Engine.DeltaTime));
         if (self.Tracker.GetEntity<Player>() is not Player player) return;
         var result = player.ExactPosition - new Vector2(self.Camera.Right - self.Camera.Left, self.Camera.Bottom - self.Camera.Top) / 2 + CameraOffsetLerp;
-        result.X = MathHelper.Clamp(result.X, self.Bounds.Left, self.Bounds.Right - (self.Camera.Right - self.Camera.Left));
-        result.Y = MathHelper.Clamp(result.Y, self.Bounds.Top, self.Bounds.Bottom - (self.Camera.Bottom - self.Camera.Top));
+        if (new Rectangle(self.Bounds.X - 32, self.Bounds.Y - 32, self.Bounds.Width + 64, self.Bounds.Height + 64).Contains((int)player.X, (int)player.Y)) {
+            result.X = MathHelper.Clamp(result.X, self.Bounds.Left, self.Bounds.Right - (self.Camera.Right - self.Camera.Left));
+            result.Y = MathHelper.Clamp(result.Y, self.Bounds.Top, self.Bounds.Bottom - (self.Camera.Bottom - self.Camera.Top));
+        }
         self.Camera.X = float.Lerp(self.Camera.X, result.X, CenterCameraXEffectiveness);
         self.Camera.Y = float.Lerp(self.Camera.Y, result.Y, CenterCameraYEffectiveness);
     }

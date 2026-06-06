@@ -93,7 +93,7 @@ public static class ActionManager
                     Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
                     continue;
                 }
-                if (trigger.Collider.Collide(data.Position + room.Position)) {
+                if (trigger.Collider.Collide(data!.Position + room.Position)) {
                     level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     listener.triggers.Add(trigger);
                     globalEnts.Add(trigger);
@@ -108,7 +108,7 @@ public static class ActionManager
                     Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
                     continue;
                 }
-                if (trigger.Collider.Collide(data.Position + room.Position)) {
+                if (trigger.Collider.Collide(data!.Position + room.Position)) {
                     level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = entData.ID });
                     actListener.triggers.Add(trigger);
                     globalEnts.Add(trigger);

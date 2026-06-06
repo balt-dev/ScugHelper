@@ -175,5 +175,6 @@ internal static class LuaExt {
     [DoesNotReturn]
     public static void Err(this Lua self, string message) {
         self.Error(message);
+        throw new UnreachableException();
     }
 }

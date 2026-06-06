@@ -25,7 +25,7 @@ public class BoosterField : Solid
         private bool CheckEntity(Entity entity) {
             bool res = entity is Player player && ((player.LastBooster?.BoostingPlayer ?? false) ^ field.Invert);
             if (res && field.Destroy)
-                (entity as Player).StateMachine.State = Player.StNormal;
+                (entity as Player)!.StateMachine.State = Player.StNormal;
             field.BouncedBooster |= res;
             return res;
         }
