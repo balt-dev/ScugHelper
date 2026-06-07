@@ -68,6 +68,9 @@ public class RefillCircle : Entity
                 case "rose":
                     scene.Add(closestRefill = new HiccupRefill(Position, FallbackRefillOneUse));
                     break;
+                case "gold":
+                    scene.Add(closestRefill = new BoostRefill(Position, FallbackRefillOneUse, 1.75f));
+                    break;
             }
             if (closestRefill is null) {
                 Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill rectangle...");

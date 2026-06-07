@@ -116,7 +116,7 @@ public class MidairRefill : Refill, ICustomRefill
     }
 
     private static void CreateBlueTrail(Player player) {
-        Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
+        Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y * (GravityHelperImports.PlayerInverted() ? -1 : 1));
         TrailManager.Add(player, scale, Color.Blue);
     }
 

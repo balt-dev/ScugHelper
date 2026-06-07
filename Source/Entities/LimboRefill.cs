@@ -129,7 +129,7 @@ public class LimboRefill : Refill, ICustomRefill
     public static float LimboTimer { get; internal set; }
 
     private static void CreateTrail(Player player) {
-        Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
+        Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y * (GravityHelperImports.PlayerInverted() ? -1 : 1));
         TrailManager.Add(player, scale, player.Hair.GetHairColor(0) * (0.4f + Math.Clamp(1.0f - LimboTimer / RefreshLimboLength, 0.0f, 1.0f) * 0.6f));
     }
 

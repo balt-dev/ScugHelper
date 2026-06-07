@@ -101,7 +101,7 @@ public readonly struct SpeedAccessor
                 return accessor.For(obj);
             }
         }
-        Logger.Warn(nameof(SpeedAccessor), $"Could not find speed for entity type {type}!");
+        Logger.Verbose(nameof(SpeedAccessor), $"Could not find speed for entity type {type}!");
 
         SpeedAccessorCache.TryAdd(type, null);
         return null;

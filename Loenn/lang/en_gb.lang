@@ -354,6 +354,7 @@ entities.ScugHelper/RefillRectangle.placements.name.blue=Refill Rectangle (Blue)
 entities.ScugHelper/RefillRectangle.placements.name.black=Refill Rectangle (Black)
 entities.ScugHelper/RefillRectangle.placements.name.rose=Refill Rectangle (Rose)
 entities.ScugHelper/RefillRectangle.placements.name.cyan=Refill Rectangle (Cyan)
+entities.ScugHelper/RefillRectangle.placements.name.gold=Refill Rectangle (Gold)
 entities.ScugHelper/RefillRectangle.placements.name.dark_green=Refill Rectangle (Dark Green)
 
 entities.ScugHelper/RefillRectangle.placements.description.green=Holds a refill placed on top of it and extends its hitbox to this rectangle.
@@ -362,6 +363,7 @@ entities.ScugHelper/RefillRectangle.placements.description.blue=Holds a refill p
 entities.ScugHelper/RefillRectangle.placements.description.black=Holds a refill placed on top of it and extends its hitbox to this rectangle.
 entities.ScugHelper/RefillRectangle.placements.description.rose=Holds a refill placed on top of it and extends its hitbox to this rectangle.
 entities.ScugHelper/RefillRectangle.placements.description.cyan=Holds a refill placed on top of it and extends its hitbox to this rectangle.
+entities.ScugHelper/RefillRectangle.placements.description.gold=Holds a refill placed on top of it and extends its hitbox to this rectangle.
 entities.ScugHelper/RefillRectangle.placements.description.dark_green=Holds a refill placed on top of it and extends its hitbox to this rectangle.
 entities.ScugHelper/RefillRectangle.attributes.description.FallbackRefillType=The refill type to default to if one is not placed on top of it.
 entities.ScugHelper/RefillRectangle.attributes.description.FallbackRefillOneUse=Whether the fallback refill should be one-use.
@@ -437,6 +439,7 @@ entities.ScugHelper/RefillCircle.placements.name.blue=Refill Circle (Blue)
 entities.ScugHelper/RefillCircle.placements.name.black=Refill Circle (Black)
 entities.ScugHelper/RefillCircle.placements.name.rose=Refill Circle (Rose)
 entities.ScugHelper/RefillCircle.placements.name.cyan=Refill Circle (Cyan)
+entities.ScugHelper/RefillCircle.placements.name.gold=Refill Circle (Gold)
 entities.ScugHelper/RefillCircle.placements.name.dark_green=Refill Circle (Dark Green)
 
 entities.ScugHelper/RefillCircle.placements.description.green=Holds a refill placed on top of it and extends its hitbox to this circle.
@@ -445,6 +448,7 @@ entities.ScugHelper/RefillCircle.placements.description.blue=Holds a refill plac
 entities.ScugHelper/RefillCircle.placements.description.black=Holds a refill placed on top of it and extends its hitbox to this circle.
 entities.ScugHelper/RefillCircle.placements.description.rose=Holds a refill placed on top of it and extends its hitbox to this circle.
 entities.ScugHelper/RefillCircle.placements.description.cyan=Holds a refill placed on top of it and extends its hitbox to this circle.
+entities.ScugHelper/RefillCircle.placements.description.gold=Holds a refill placed on top of it and extends its hitbox to this circle.
 entities.ScugHelper/RefillCircle.placements.description.dark_green=Holds a refill placed on top of it and extends its hitbox to this circle.
 entities.ScugHelper/RefillCircle.attributes.description.FallbackRefillType=The refill type to default to if one is not placed on top of it.
 entities.ScugHelper/RefillCircle.attributes.description.FallbackRefillOneUse=Whether the fallback refill should be one-use.
@@ -542,3 +546,21 @@ entities.ScugHelper/FlagSwitch.placements.description.off=Turns a flag off when 
 
 entities.ScugHelper/HoldableTrajectoryController.placements.name.normal=Holdable Trajectory Controller
 entities.ScugHelper/HoldableTrajectoryController.placements.description.normal=Changes the trajectory of thrown holdables.
+
+entities.ScugHelper/ArbitraryAngleSpring.placements.name.normal=Arbitrary Angle Spring
+
+entities.ScugHelper/RefillHoldCrystal.placements.name.green=Refill Crystal (Green)
+entities.ScugHelper/RefillHoldCrystal.placements.name.pink=Refill Crystal (Pink)
+entities.ScugHelper/RefillHoldCrystal.placements.name.blue=Refill Crystal (Blue)
+entities.ScugHelper/RefillHoldCrystal.placements.name.cyan=Refill Crystal (Cyan)
+entities.ScugHelper/RefillHoldCrystal.placements.name.black=Refill Crystal (Black)
+entities.ScugHelper/RefillHoldCrystal.placements.name.dream=Refill Crystal (Dream) [+Communal Helper]
+entities.ScugHelper/RefillHoldCrystal.placements.description.green=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a one-dash refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.pink=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a two-dash refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.blue=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a midair refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.cyan=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or an overcharge refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.black=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a limbo refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.dream=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a dream tunnel refill if none is, when the player dashes while holding it.
+
+entities.ScugHelper/BoostRefill.placements.name.normal=Boost Refill
+entities.ScugHelper/BoostRefill.placements.description.normal=Multiplies the player's speed.

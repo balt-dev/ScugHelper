@@ -137,7 +137,7 @@ public class OverchargeRefill : Refill, ICustomRefill
     internal static readonly Color TrailColor = Calc.HexToColor("a5adff");
 
     private static void CreateTrail(Player player) {
-        Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y);
+        Vector2 scale = new(Math.Abs(player.Sprite.Scale.X) * (float)player.Facing, player.Sprite.Scale.Y * (GravityHelperImports.PlayerInverted() ? -1 : 1));
         TrailManager.Add(player, scale, TrailColor);
     }
 

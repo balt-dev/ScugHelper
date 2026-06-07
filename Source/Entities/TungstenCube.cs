@@ -46,6 +46,7 @@ public class TungstenCube : Actor, IHasSpeed
             OnRelease = OnRelease
         });
         Add(playerCollider = new PlayerCollider(OnPlayer, CrushCollider));
+        Add(new MirrorReflection());
     }
     public void OnPickup() {
         Speed = Vector2.Zero;

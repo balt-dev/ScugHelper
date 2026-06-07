@@ -29,6 +29,10 @@ return {
             data = { FallbackRefillOneUse = false, FallbackRefillType = "cyan", width = 32, height = 32, OutlineColor = "a5adff", InfillColor = "5369b3", InfillOpacity = 0.3 }
         },
         {
+            name = "gold",
+            data = { FallbackRefillOneUse = false, FallbackRefillType = "gold", width = 32, height = 32, OutlineColor = "d3c487", InfillColor = "a17b4a", InfillOpacity = 0.3 }
+        },
+        {
             name = "dark_green",
             data = { FallbackRefillOneUse = false, FallbackRefillType = "dark_green", width = 32, height = 32, OutlineColor = "7ac533", InfillColor = "435e28", InfillOpacity = 0.3 }
         },
