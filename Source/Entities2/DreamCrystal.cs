@@ -25,25 +25,6 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/RefillHoldCrystal")]
 public class RefillHoldCrystal : Actor, IHasSpeed
 {
-    private static readonly BlendState MultiplyBlendState = new() {
-        Name = "BlendState.ScugHelper.Multiply",
-        ColorSourceBlend = Blend.DestinationColor,
-        ColorDestinationBlend = Blend.Zero,
-        ColorBlendFunction = BlendFunction.Add,
-        AlphaSourceBlend = Blend.Zero,
-        AlphaDestinationBlend = Blend.One,
-        AlphaBlendFunction = BlendFunction.Add,
-    };
-
-    private static readonly BlendState AdditiveKeepAlphaBlendState = new() {
-        Name = "BlendState.ScugHelper.AddNoAlpha",
-        ColorSourceBlend = Blend.One,
-        ColorDestinationBlend = Blend.One,
-        ColorBlendFunction = BlendFunction.Add,
-        AlphaSourceBlend = Blend.Zero,
-        AlphaDestinationBlend = Blend.One,
-        AlphaBlendFunction = BlendFunction.Add,
-    };
 
     private static readonly Vector2 ImageOrigin = new(16, 26);
     private static VirtualRenderTarget? Scratch;
@@ -330,23 +311,24 @@ public class RefillHoldCrystal : Actor, IHasSpeed
         RenderStars();
         Draw.SpriteBatch.End();
 
-        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, MultiplyBlendState, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, Utils.AlphaMaskBlendState, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
         Background.Draw(Vector2.Zero);
         Draw.SpriteBatch.End();
 
         var gravScale = GravityHelperImports.IsActorInverted?.Invoke(this) ?? false ? new(1, -1) : Vector2.One;
+        Vector2 snappedPosition = new(MathF.Round(Position.X), MathF.Round(Position.Y)); // MotionSmoothing
 
         Engine.Graphics.GraphicsDevice.SetRenderTargets(oldTargets);
         GameplayRenderer.Begin();
-        Background.Draw(Position, ImageOrigin, Color.Black, gravScale);
+        Background.Draw(snappedPosition, ImageOrigin, Color.Black, gravScale);
         GameplayRenderer.End();
 
-        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, AdditiveKeepAlphaBlendState, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, GameplayRenderer.instance.Camera.Matrix);
-        Draw.SpriteBatch.Draw(Scratch, Position + (gravScale.Y > 0 ? Vector2.Zero : Vector2.UnitY * 20), null, Color.White, 0f, ImageOrigin, 1f, gravScale.Y < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
+        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, Utils.AdditiveKeepAlphaBlendState, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, GameplayRenderer.instance.Camera.Matrix);
+        Draw.SpriteBatch.Draw(Scratch, snappedPosition + (gravScale.Y > 0 ? Vector2.Zero : Vector2.UnitY * 20), null, Color.White, 0f, ImageOrigin, 1f, gravScale.Y < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();
 
         GameplayRenderer.Begin();
-        Overlay.Draw(Position, ImageOrigin, Color.White, gravScale);
+        Overlay.Draw(snappedPosition, ImageOrigin, Color.White, gravScale);
     }
 
     private void RenderStars() {

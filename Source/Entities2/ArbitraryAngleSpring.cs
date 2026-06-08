@@ -32,7 +32,7 @@ public class ArbitraryAngleSpring : Spring {
         Add(new PlayerCollider(CustomOnCollide));
         Add(new HoldableCollider(CustomOnHoldable));
         Add(new PufferCollider(CustomOnPuffer));
-        
+
         sprite.Path = data.String("SpritePath", "objects/spring") + "/";
         sprite.Rotation = FacingDir.Angle() + MathF.PI / 2;
     }
@@ -48,8 +48,8 @@ public class ArbitraryAngleSpring : Spring {
             holdable.Entity.Y = MathF.Round(Position.Y + FacingDir.Y * holdable.Entity.Height * 2);
         }
     }
-    
-    
+
+
     private void CustomOnPuffer(Puffer puffer) {
         Vector2 oldSpeed = puffer.hitSpeed;
         puffer.bounceWiggler.Start();
@@ -67,10 +67,15 @@ public class ArbitraryAngleSpring : Spring {
         if (NoBackCollide && Vector2.Dot(player.AdjustedSpeed().SafeNormalize(), FacingDir) > 0) return;
 
         BounceAnimate();
-        
-        player.SetAdjustedSpeed(MathF.Max(BounceStrength, player.AdjustedSpeed().Length()) * FacingDir);
         player.level.DirectionalShake(FacingDir, 0.1f);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
+
+        if (
+            player.Get<AngledSpringCallbackComponent>() is AngledSpringCallbackComponent cbComp && 
+            cbComp.Callback(FacingDir, BounceStrength, player.Inventory.NoRefills || NoDashRefill, NoStaminaRefill)
+        ) return;
+
+        player.SetAdjustedSpeed(MathF.Max(BounceStrength, player.AdjustedSpeed().Length()) * FacingDir);
         if ((player.LastBooster?.BoostingPlayer ?? false) && ((player.LastBooster is PinballBooster booster && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce)) {
             player.MoveToX(Position.X + FacingDir.X * MoveRadius);
             player.MoveToY(Position.Y + FacingDir.Y * MoveRadius);
@@ -78,7 +83,7 @@ public class ArbitraryAngleSpring : Spring {
             player.LastBooster.sprite.Scale = Vector2.One * ScugHelperModule.Settings.PinballBoosterSquash;
             return;
         }
-        
+
         if (!player.Inventory.NoRefills && !NoDashRefill) player.RefillDash();
         if (!NoStaminaRefill) player.RefillStamina();
         player.StateMachine.State = 0;
@@ -91,5 +96,9 @@ public class ArbitraryAngleSpring : Spring {
         player.gliderBoostTimer = 0f;
         player.wallSlideTimer = 1.2f;
         player.wallBoostTimer = 0f;
+    }
+
+    internal class AngledSpringCallbackComponent(ScugHelperModInterop.AngledSpringCallback callback) : Component(false, false) {
+        internal readonly ScugHelperModInterop.AngledSpringCallback Callback = callback;
     }
 }

@@ -23,6 +23,8 @@ public class SeekerTrackSpinner : TrackSpinner
         Depth = -8500;
         MoveTime = data.Float("MoveTime", 0.9f);
         PauseTime = data.Float("PauseTime", 0.3f);
+        Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
+        Components.RemoveAll<PlayerCollider>();
         Add(new PlayerCollider(OnPlayer));
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
         Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg"));

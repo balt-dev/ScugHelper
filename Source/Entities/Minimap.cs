@@ -119,7 +119,8 @@ public class MinimapEntity : Entity
 
     public void BeforeRender() {
         if (!ScugHelperModule.Settings.Minimap.Minimap) return;
-        
+        if (Opacity < 0.01f) return;
+
         var level = SceneAs<Level>();
         var settings = ScugHelperModule.Settings.Minimap;
         

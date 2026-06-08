@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 internal static class Utils
 {
@@ -65,4 +67,36 @@ internal static class Utils
             return (double.Lerp(x1, x2, v) + 1) / 2;
         }
     }
+    
+    public static readonly BlendState AlphaMaskBlendState = new() {
+        Name = "BlendState.ScugHelper.AlphaMask",
+        ColorSourceBlend = Blend.DestinationColor,
+        ColorDestinationBlend = Blend.Zero,
+        ColorBlendFunction = BlendFunction.Add,
+        AlphaSourceBlend = Blend.DestinationColor,
+        AlphaDestinationBlend = Blend.Zero,
+        AlphaBlendFunction = BlendFunction.Add,
+    };
+    
+    public static readonly BlendState AdditiveMaskAlphaBlendState = new() {
+        Name = "BlendState.ScugHelper.AdditiveMaskAlpha",
+        ColorSourceBlend = Blend.DestinationAlpha,
+        ColorDestinationBlend = Blend.DestinationAlpha,
+        ColorBlendFunction = BlendFunction.Add,
+        AlphaSourceBlend = Blend.Zero,
+        AlphaDestinationBlend = Blend.One,
+        AlphaBlendFunction = BlendFunction.Add,
+    };    
+    
+    public static readonly BlendState AdditiveKeepAlphaBlendState = new() {
+        Name = "BlendState.ScugHelper.AdditiveKeepAlpha",
+        ColorSourceBlend = Blend.One,
+        ColorDestinationBlend = Blend.One,
+        ColorBlendFunction = BlendFunction.Add,
+        AlphaSourceBlend = Blend.Zero,
+        AlphaDestinationBlend = Blend.One,
+        AlphaBlendFunction = BlendFunction.Add,
+    };
+
+    public static Vector2 Rounded(this Vector2 self) => new(MathF.Round(self.X), MathF.Round(self.Y));
 }

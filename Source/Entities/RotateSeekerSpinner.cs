@@ -17,6 +17,8 @@ public class SeekerRotateSpinner : RotateSpinner
     public SeekerRotateSpinner(EntityData data, Vector2 offset) : base(data, offset) {
         Depth = -8500;
         Period = data.Float("Period", 1.8f);
+        Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
+        Components.RemoveAll<PlayerCollider>();
         Add(new PlayerCollider(OnPlayer));
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
         Texture = Calc.Random.Choose(GFX.Game.GetAtlasSubtextures("objects/ScugHelper/seekerSpinner/fg"));

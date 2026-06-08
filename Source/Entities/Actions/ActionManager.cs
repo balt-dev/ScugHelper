@@ -16,7 +16,7 @@ namespace Celeste.Mod.ScugHelper.Entities.Actions;
 
 using Callback = Action<Level>;
 
-readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null, bool immediate = false)
+internal readonly struct ActionMapEntry(Callback? action = null, float? delay = null, EntityData? data = null, Action? update = null, bool immediate = false)
 {
     public readonly Callback? Action = action;
     public readonly float? Delay = delay;
@@ -27,8 +27,8 @@ readonly struct ActionMapEntry(Callback? action = null, float? delay = null, Ent
 
 public static class ActionManager
 {
-    private static readonly Dictionary<string, List<ActionMapEntry>> actionMap = [];
-    private static readonly HashSet<int> idSet = [];
+    internal static readonly Dictionary<string, List<ActionMapEntry>> actionMap = [];
+    internal static readonly HashSet<int> idSet = [];
     internal static readonly List<Callback> updaters = [];
     internal static readonly List<Entity> globalEnts = [];
 

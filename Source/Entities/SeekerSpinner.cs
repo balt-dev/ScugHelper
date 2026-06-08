@@ -13,12 +13,10 @@ public class SeekerSpinner : Entity
 {
     internal readonly int RandomSeed;
     internal readonly int ID;
-    public bool AttachToSolid;
 
     public SeekerSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         ID = id.ID;
         Depth = -8500;
-        AttachToSolid = data.Bool("AttachToSolid");
         Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
         RandomSeed = Calc.Random.Next();
         Add(new PlayerCollider(OnPlayer));
@@ -57,22 +55,15 @@ public class SeekerSpinner : Entity
         Calc.PushRandom(RandomSeed);
         // This is the vanilla implementation. O(n^2). Jesus.
         foreach (SeekerSpinner entity in scene.Tracker.GetEntities<SeekerSpinner>())
-            if (entity.ID > ID && entity.AttachToSolid == AttachToSolid && (entity.Position - Position).LengthSquared() < 576f)
+            if (entity.ID > ID && (entity.Position - Position).LengthSquared() < 576f)
                 AddFiller((Position + entity.Position) / 2f - Position);
 
         MTexture mTexture = Calc.Random.Choose(fgTex);
 
-        if (!SolidCheck(new Vector2(X - 4f, Y - 4f)))
-            Add(new Image(mTexture.GetSubtexture(0, 0, 14, 14)).SetOrigin(12f, 12f));
-
-        if (!SolidCheck(new Vector2(X + 4f, Y - 4f)))
-            Add(new Image(mTexture.GetSubtexture(10, 0, 14, 14)).SetOrigin(2f, 12f));
-
-        if (!SolidCheck(new Vector2(X + 4f, Y + 4f)))
-            Add(new Image(mTexture.GetSubtexture(10, 10, 14, 14)).SetOrigin(2f, 2f));
-
-        if (!SolidCheck(new Vector2(X - 4f, Y + 4f)))
-            Add(new Image(mTexture.GetSubtexture(0, 10, 14, 14)).SetOrigin(12f, 2f));
+        Add(new Image(mTexture.GetSubtexture(0, 0, 14, 14)).SetOrigin(12f, 12f));
+        Add(new Image(mTexture.GetSubtexture(10, 0, 14, 14)).SetOrigin(2f, 12f));
+        Add(new Image(mTexture.GetSubtexture(10, 10, 14, 14)).SetOrigin(2f, 2f));
+        Add(new Image(mTexture.GetSubtexture(0, 10, 14, 14)).SetOrigin(12f, 2f));
 
         Calc.PopRandom();
     }
@@ -82,14 +73,5 @@ public class SeekerSpinner : Entity
             comp.disableDeath = false;
             player.Die(-player.Speed.SafeNormalize(Vector2.UnitY));
         }
-    }
-
-    public bool SolidCheck(Vector2 position) {
-        if (AttachToSolid) return false;
-
-        foreach (Solid item in Scene.CollideAll<Solid>(position))
-            if (item is SolidTiles) return true;
-
-        return false;
     }
 }

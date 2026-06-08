@@ -109,7 +109,8 @@ public class NewAngleBumper : Bumper
             Celeste.Freeze(0.1f);
             
             Vector2 SpeedAngle = Calc.AngleToVector(Angle, 1f);
-            player.Position = Center + SpeedAngle * 12f - (player.Center - player.Position);
+            Vector2 desiredPosition = Center + SpeedAngle * 12f - (player.Center - player.Position);
+            player.Position = new(MathF.Round(desiredPosition.X), MathF.Round(desiredPosition.Y));
             player.Speed = SpeedAngle * LaunchSpeed;
             if (SpeedAngle.Y <= 50f / 280f) {
                 player.AutoJump = true;
