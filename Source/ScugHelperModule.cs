@@ -38,6 +38,7 @@ public class ScugHelperModule : EverestModule
         typeof(FrostHelperImports).ModInterop();
         typeof(GravityHelperImports).ModInterop();
         typeof(ExtendedVariantModeImports).ModInterop();
+        typeof(MotionSmoothingImportHandler).ModInterop();
         LifecycleMethods.OnLoad();
         On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;

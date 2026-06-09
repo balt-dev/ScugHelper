@@ -10,8 +10,6 @@ using MonoMod.Cil;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
-#nullable enable
-
 [Tracked]
 [CustomEntity("ScugHelper/ProceduralTilemap")]
 public class ProceduralTilemap : SolidTiles
@@ -75,6 +73,8 @@ public class ProceduralTilemap : SolidTiles
         Arguments = data.String("Arguments", "").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         filePath = data.String("FilePath", "").Replace(".lua", "");
         Collidable = true;
+        this.DisableInterpolation();
+        Logger.Log(nameof(ScugHelperModule), $"Attempting to disable interpolation... (Loaded: {MotionSmoothingImports.IsLoaded})");
     }
 
 
@@ -235,6 +235,7 @@ public class ProceduralTilemap : SolidTiles
             UseDeterministicAutotiling = false;
 
             BackgroundRenderer ??= [];
+            BackgroundRenderer.DisableInterpolation();
             BackgroundRenderer.Position = Position;
             BGGrid?.RemoveSelf();
             BGAnim?.RemoveSelf();
@@ -343,7 +344,7 @@ public class ProceduralTilemap : SolidTiles
             cur.EmitDelegate(SeedRandoIfDeterministic);
         }
     }
-    
+
     private static void OnPlayerUpdate(On.Celeste.Player.orig_Update orig, Player self) {
         if (self.climbHopSolid is ProceduralTilemap) self.climbHopSolid = null;
         orig(self);
