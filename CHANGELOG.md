@@ -509,4 +509,12 @@ Ran out of room on the first map.
 - **Bugfix**: Track/Rotate Seeker Spinners no longer kill the player
 - **Optimization**: Seeker Spinners/Spikes are slightly less expensive to render
 
-A proper optimization for Seeker Spinners/Spikes is coming as soon as I can figure out how shaders work.
+## 2.37.0
+- **Optimization**: Sped up Seeker Spinners/Spikes massively by moving their effect to the GPU
+- **Optimization**: Moved the particle effects of Refill Fields, De-Seeker Fields, Flag Barriers, Booster Barriers, and Limbo Barriers to the GPU
+- **Addition**: GPU Spinners
+- **Bugfix**: Pinball Boosters no longer stick to the ground when hitting at shallow angles
+- **Improvement**: Refill Crystals now properly play their refill sound when shattered
+
+Had to set up a Windows VM to compile the shaders. Go check out https://github.com/dockur/windows/, it's great.
+
