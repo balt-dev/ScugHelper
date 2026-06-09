@@ -99,4 +99,7 @@ internal static class Utils
     };
 
     public static Vector2 Rounded(this Vector2 self) => new(MathF.Round(self.X), MathF.Round(self.Y));
+
+    public static int BufferWidth = 320 * 2;
+    public static int BufferHeight = 184 * 2;
 }

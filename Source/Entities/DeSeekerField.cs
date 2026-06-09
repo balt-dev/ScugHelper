@@ -12,7 +12,6 @@ public class DeSeekerField : Entity
 {
 
     protected float[] speeds = [12f, 20f, 40f];
-    protected List<Vector2> particles = [];
     private bool BouncedBooster;
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
@@ -21,8 +20,6 @@ public class DeSeekerField : Entity
         Depth = 100;
         Collidable = true;
         Collider = new Hitbox(width, height);
-        for (int i = 0; i < Width * Height / 24f; i++)
-            particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
         Add(new SeekerCollider(ScugHelperModule.KillSeeker));
         Add(new PlayerCollider((player) => { if (player.Get<PlayerSeekerComponent>() is var comp) player.Remove(comp); }));
     }
@@ -33,10 +30,7 @@ public class DeSeekerField : Entity
     private static readonly float SineMovement = 2.0f;
 
     public override void Render() {
-        WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Seeker.TrailColor * 0.3f);
-        foreach (Vector2 particle in particles)
-            Draw.Pixel.Draw(Position + particle, Vector2.Zero, Color.White * 0.7f);
-
+        WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Seeker.TrailColor * 0.3f, Color.White * 0.7f);
         base.Render();
     }
 
@@ -53,14 +47,6 @@ public class DeSeekerField : Entity
             BouncedBooster = false;
         } else {
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
-        }
-        int num = speeds.Length;
-        float height = Height;
-        int i = 0;
-        for (int count = particles.Count; i < count; i++) {
-            Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
-            value.Y %= height - 1f;
-            particles[i] = value;
         }
         base.Update();
     }

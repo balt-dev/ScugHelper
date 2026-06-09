@@ -10,8 +10,6 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [Tracked]
 public class StarjumpOutlineRenderer : Entity
 {
-    private static readonly int BufferWidth = 512;
-    private static readonly int BufferHeight = 512;
 
     [OnLoad]
     public static void LoadHooks() {
@@ -68,7 +66,7 @@ public class StarjumpOutlineRenderer : Entity
 
     public void BeforeRender() {
         if (Entities.Count == 0) return;
-        buffer ??= VirtualContent.CreateRenderTarget("starjump-outline-renderer", BufferWidth, BufferHeight);
+        buffer ??= VirtualContent.CreateRenderTarget("StarjumpOutlineRenderer", Utils.BufferWidth, Utils.BufferHeight);
 
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
 
@@ -84,7 +82,6 @@ public class StarjumpOutlineRenderer : Entity
             entity.Visible = false;
         }
 
-
         Draw.SpriteBatch.End();
     }
 
@@ -96,7 +93,7 @@ public class StarjumpOutlineRenderer : Entity
         var cam = (Scene as Level)!.Camera;
 
         GameplayRenderer.End();
-        ScugHelperModule.OutlineFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
+        ScugHelperModule.OutlineFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / Utils.BufferWidth, 1f / Utils.BufferHeight));
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
         Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, control.Color, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();
@@ -111,7 +108,7 @@ public class StarjumpOutlineRenderer : Entity
         var cam = (Scene as Level)!.Camera;
 
         GameplayRenderer.End();
-        ScugHelperModule.OutlineFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / BufferWidth, 1f / BufferHeight));
+        ScugHelperModule.OutlineFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / Utils.BufferWidth, 1f / Utils.BufferHeight));
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineFX, cam.Matrix);
         Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();

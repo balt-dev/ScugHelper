@@ -564,3 +564,6 @@ entities.ScugHelper/RefillHoldCrystal.placements.description.dream=Holdable theo
 
 entities.ScugHelper/BoostRefill.placements.name.normal=Boost Refill
 entities.ScugHelper/BoostRefill.placements.description.normal=Multiplies the player's speed.
+
+entities.ScugHelper/GPUSpinner.placements.name.normal=GPU Spinner
+entities.ScugHelper/GPUSpinner.placements.description.normal=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.

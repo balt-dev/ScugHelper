@@ -31,8 +31,6 @@ public class BoosterField : Solid
         }
     }
 
-    protected float[] speeds = [12f, 20f, 40f];
-    protected List<Vector2> particles = [];
     private bool BouncedBooster;
     private readonly bool Invisible;
     private readonly bool Invert;
@@ -48,8 +46,6 @@ public class BoosterField : Solid
         Invisible = invis;
         Destroy = destroy;
         Invert = invert;
-        for (int i = 0; i < Width * Height / 24f; i++)
-            particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
     }
 
     public BoosterField(EntityData data, Vector2 offset)
@@ -59,12 +55,10 @@ public class BoosterField : Solid
 
     public override void Render() {
         if (!Invisible) {
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f);
             var outlineColor = Invert ? Color.Black : Color.White;
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * (BounceTimer / BouncePulseLength * 0.4f));
+            WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f, outlineColor * 0.5f);
+            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * (BounceTimer / BouncePulseLength * 0.3f));
             WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * 0.5f);
-            foreach (Vector2 particle in particles)
-                Draw.Pixel.Draw(Position + particle, Vector2.Zero, outlineColor * 0.7f);
         }
 
         base.Render();
@@ -83,14 +77,6 @@ public class BoosterField : Solid
             BouncedBooster = false;
         } else {
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
-        }
-        int num = speeds.Length;
-        float height = Height;
-        int i = 0;
-        for (int count = particles.Count; i < count; i++) {
-            Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
-            value.Y %= height - 1f;
-            particles[i] = value;
         }
         base.Update();
     }

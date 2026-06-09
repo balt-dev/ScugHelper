@@ -16,12 +16,9 @@ public class StarjumpSpinner : Entity
     internal readonly List<MTexture> bgTex = [];
     internal readonly List<MTexture> fgTex = [];
 
-    public bool AttachToSolid;
-
     public StarjumpSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         ID = id.ID;
         Depth = -8500;
-        AttachToSolid = data.Bool("AttachToSolid");
         Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
         RandomSeed = Calc.Random.Next();
         Add(new PlayerCollider(static player => player.Die(-player.Speed.SafeNormalize(Vector2.UnitY))));
@@ -58,32 +55,13 @@ public class StarjumpSpinner : Entity
     private void CreateSpinnerSprites(Scene scene) {
         Calc.PushRandom(RandomSeed);
         foreach (StarjumpSpinner entity in scene.Tracker.GetEntities<StarjumpSpinner>())
-            if (entity.ID > ID && entity.AttachToSolid == AttachToSolid && (entity.Position - Position).LengthSquared() < 576f)
+            if (entity.ID > ID && (entity.Position - Position).LengthSquared() < 576f)
                 AddFiller((Position + entity.Position) / 2f - Position);
 
         MTexture mTexture = Calc.Random.Choose(fgTex);
 
-        if (!SolidCheck(new Vector2(X - 4f, Y - 4f)))
-            Add(new Image(mTexture.GetSubtexture(0, 0, 14, 14)).SetOrigin(12f, 12f));
-
-        if (!SolidCheck(new Vector2(X + 4f, Y - 4f)))
-            Add(new Image(mTexture.GetSubtexture(10, 0, 14, 14)).SetOrigin(2f, 12f));
-
-        if (!SolidCheck(new Vector2(X + 4f, Y + 4f)))
-            Add(new Image(mTexture.GetSubtexture(10, 10, 14, 14)).SetOrigin(2f, 2f));
-
-        if (!SolidCheck(new Vector2(X - 4f, Y + 4f)))
-            Add(new Image(mTexture.GetSubtexture(0, 10, 14, 14)).SetOrigin(12f, 2f));
+        Add(new Image(mTexture).SetOrigin(12, 12));
 
         Calc.PopRandom();
-    }
-
-    public bool SolidCheck(Vector2 position) {
-        if (AttachToSolid) return false;
-
-        foreach (Solid item in Scene.CollideAll<Solid>(position))
-            if (item is SolidTiles) return true;
-
-        return false;
     }
 }

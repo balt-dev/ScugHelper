@@ -101,10 +101,17 @@ public class ScugHelperModule : EverestModule
     }
 
     internal static Effect? OutlineFX;
+    internal static Effect? SeekerBarrierFX;
+    internal static Effect? OutlineWithBaseFX;
 
     public override void LoadContent(bool firstLoad) {
         base.LoadContent(firstLoad);
-
-        OutlineFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Shaders/outline.cso", true).Data);
+        RunnableLoadContent();
+    }
+    [Command("scug_reloadshaders", "Reloads ScugHelper shaders. Development command, probably does nothing if you're not the developer.")]
+    static void RunnableLoadContent() {
+        SeekerBarrierFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/seekerBarrier.cso", true).Data);
+        OutlineFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/outline.cso", true).Data);
+        OutlineWithBaseFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/outlineWithBase.cso", true).Data);
     }
 }

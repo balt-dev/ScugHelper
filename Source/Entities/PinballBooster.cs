@@ -149,10 +149,7 @@ public class PinballBooster : Booster
     public static void HCollideHook(On.Celeste.Player.orig_OnCollideH orig, Player self, CollisionData data) {
         if ((self.LastBooster?.BoostingPlayer ?? false) && ((self.LastBooster is PinballBooster booster && booster.ConsumeBounce()) || ScugHelperModule.Settings.AllBoostersBounce)) {
             if (self.StateMachine.State == Player.StDash || self.StateMachine.State == Player.StRedDash) {
-                if (self.onGround && self.DuckFreeAt(self.Position + Vector2.UnitX * Math.Sign(self.Speed.X))) {
-                    self.Ducking = true;
-                    return;
-                } else if (self.Speed.Y == 0 && self.Speed.X != 0) {
+                if (self.Speed.Y == 0 && self.Speed.X != 0) {
                     for (int i = 1; i <= Player.DashCornerCorrection; i++) {
                         for (int j = 1; j >= -1; j -= 2) {
                             if (!self.CollideCheck<Solid>(self.Position + new Vector2(Math.Sign(self.Speed.X), i * j))) {
@@ -182,11 +179,11 @@ public class PinballBooster : Booster
                 }
             }
             self.Speed.X = -self.Speed.X;
+            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
             Audio.Play(
                 "event:/game/05_mirror_temple/redbooster_end",
                 self.LastBooster.sprite.RenderPosition
             );
-            self.LastBooster.sprite.Scale = new Vector2(1.0f / ScugHelperModule.Settings.PinballBoosterSquash, ScugHelperModule.Settings.PinballBoosterSquash);
         } else
             orig(self, data);
     }

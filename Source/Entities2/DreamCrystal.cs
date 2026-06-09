@@ -380,10 +380,17 @@ public class RefillHoldCrystal : Actor, IHasSpeed
             self.Holding = null;
             holdCrys.Collidable = false;
             holdCrys.Hold.Holder = null;
-            Audio.Play("event:/game/06_reflection/boss_spikes_burst");
+            
+            // fuck it we ball
+            for (int i = 0; i < 12; i++)
+                Audio.Play("event:/game/06_reflection/fall_spike_smash");
+                
             holdCrys.Add(new Coroutine(holdCrys.FlashRemove()));
+            Vector2? oldPos = holdCrys.ClosestRefill?.Position;
+            holdCrys.ClosestRefill?.Position = holdCrys.Position;
             foreach (var onShatter in holdCrys.OnShatter)
                 onShatter.OnCollide(self);
+            holdCrys.ClosestRefill?.Position = oldPos ?? Vector2.Zero;
         }
         return res;
     }

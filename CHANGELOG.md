@@ -487,3 +487,26 @@ This is a breaking change for anyone who's using Special Session Variables at th
 
 Switched from scanning the scene every frame to checking on entity add and adding a component that does stuff for me. Remember, kids, push, not pull.
 
+## 2.35.2
+- **Bugfix**: Fix strange crash that happens sometimes with Accleration Fields somehow not being tracked
+
+## 2.35.3
+- **Improvement**: Procedural Tilemaps now render in the Minimap if you're in the same room as them
+
+## 2.36.0
+- **Addition**: Showcase Map 2 (Electric Boogaloo)
+- **Addition**: Refill Crystals
+- **Addition**: Arbitrary Angle Spring
+- **Addition**: Holdable Trajectory Controller
+- **Addition**: Boost Refill
+
+Ran out of room on the first map.
+
+## 2.36.1
+- **Addition**: Added a ModInterop API for other mods
+- **Optimization**: The Debug Minimap no longer renders at all if opacity is below 0.01
+- **Bugfix**: Angle Bumpers no longer fuck up the player's position
+- **Bugfix**: Track/Rotate Seeker Spinners no longer kill the player
+- **Optimization**: Seeker Spinners/Spikes are slightly less expensive to render
+
+A proper optimization for Seeker Spinners/Spikes is coming as soon as I can figure out how shaders work.

@@ -16,8 +16,6 @@ public class RefillField : Entity
         Limbo
     }
     
-    protected float[] speeds = [12f, 20f, 40f];
-    protected List<Vector2> particles = [];
     public bool State { get; protected set; }
     public RefillType Refill { get; protected set; }
 
@@ -32,8 +30,6 @@ public class RefillField : Entity
             Collider = new Hitbox(data.Level.Bounds.Width + 256, data.Level.Bounds.Height + 256, -128, -128);
         } else {
             Collider = new Hitbox(data.Width, data.Height);
-            for (int i = 0; i < Width * Height / 24f; i++)
-                particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
         }
         Add(new PlayerCollider(OnPlayer));
     }
@@ -61,9 +57,7 @@ public class RefillField : Entity
             RefillType.Limbo => Color.Black,
         };
         Color partColor = State ? Color.White : Color.Black;
-        WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f, infill * 0.3f);
-        foreach (Vector2 particle in particles)
-            Draw.Pixel.Draw(Position + particle, Vector2.Zero, partColor * 0.7f);
+        WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f, infill * 0.3f, partColor * 0.7f);
 
         base.Render();
     }
@@ -76,14 +70,6 @@ public class RefillField : Entity
     private float Elapsed = 0;
     public override void Update() {
         Elapsed += Engine.DeltaTime;
-        int num = speeds.Length;
-        float height = Height;
-        int i = 0;
-        for (int count = particles.Count; i < count; i++) {
-            Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
-            value.Y %= height - 1f;
-            particles[i] = value;
-        }
         base.Update();
     }
 

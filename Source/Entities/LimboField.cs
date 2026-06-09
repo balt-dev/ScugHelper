@@ -37,8 +37,6 @@ public class LimboField : Solid
         }
     }
 
-    protected float[] speeds = [12f, 20f, 40f];
-    protected List<Vector2> particles = [];
     private bool HitPlayer;
     private readonly bool Invisible;
     private float BounceTimer;
@@ -49,8 +47,6 @@ public class LimboField : Solid
         Collider = new LimboFieldColliderList(this);
         Collidable = true;
         Invisible = invis;
-        for (int i = 0; i < Width * Height / 24f; i++)
-            particles.Add(new Vector2(Calc.Random.NextFloat(Width - 1f), Calc.Random.NextFloat(Height - 1f)));
     }
 
     public LimboField(EntityData data, Vector2 offset)
@@ -60,12 +56,9 @@ public class LimboField : Solid
 
     public override void Render() {
         if (!Invisible) {
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.3f);
+            WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.3f, Color.Black * 0.7f);
             WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * (BounceTimer / BouncePulseLength * 0.4f));
-            var outlineColor = Color.Black;
-            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * 0.5f);
-            foreach (Vector2 particle in particles)
-                Draw.Pixel.Draw(Position + particle, Vector2.Zero, outlineColor * 0.7f);
+            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.5f);
         }
 
         base.Render();
@@ -84,14 +77,6 @@ public class LimboField : Solid
             HitPlayer = false;
         } else {
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
-        }
-        int num = speeds.Length;
-        float height = Height;
-        int i = 0;
-        for (int count = particles.Count; i < count; i++) {
-            Vector2 value = particles[i] + Vector2.UnitY * speeds[i % num] * Engine.DeltaTime;
-            value.Y %= height - 1f;
-            particles[i] = value;
         }
         base.Update();
     }

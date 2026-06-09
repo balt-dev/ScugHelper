@@ -60,10 +60,7 @@ public class SeekerSpinner : Entity
 
         MTexture mTexture = Calc.Random.Choose(fgTex);
 
-        Add(new Image(mTexture.GetSubtexture(0, 0, 14, 14)).SetOrigin(12f, 12f));
-        Add(new Image(mTexture.GetSubtexture(10, 0, 14, 14)).SetOrigin(2f, 12f));
-        Add(new Image(mTexture.GetSubtexture(10, 10, 14, 14)).SetOrigin(2f, 2f));
-        Add(new Image(mTexture.GetSubtexture(0, 10, 14, 14)).SetOrigin(12f, 2f));
+        Add(new Image(mTexture).SetOrigin(12, 12));
 
         Calc.PopRandom();
     }
