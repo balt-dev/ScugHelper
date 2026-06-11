@@ -11,7 +11,7 @@ public static class CommunalHelperInterop {
     public static bool Loaded { get; private set; }
 
     [OnLoad]
-    internal static void OnLoad() {
+    internal static void CheckLoaded() {
         EverestModuleMetadata communalHelper = new() {
           Name = "CommunalHelper",
           Version = new Version(1, 25, 3)

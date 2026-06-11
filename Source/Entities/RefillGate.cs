@@ -33,7 +33,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
                 closestRefill = refill;
         Collider = null;
         if (closestRefill == null) {
-            Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill gate...");
+            Logger.Warn(nameof(ScugHelper), "No refill found! Deleting refill gate...");
             RemoveSelf();
             return;
         }

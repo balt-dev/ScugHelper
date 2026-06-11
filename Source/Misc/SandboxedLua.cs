@@ -18,7 +18,7 @@ public static class SandboxedLua {
     public static bool IsMainThread => System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadID;
 
     internal static void LogLuaError(string message) {
-        Logger.Error(nameof(ScugHelperModule), $"[LUA] {message}");
+        Logger.Error(nameof(ScugHelper), $"[LUA] {message}");
         Engine.Commands.Open = true;
         Engine.Commands.Log($"[LUA] Error: {message}", Color.Red);
     }
@@ -232,7 +232,7 @@ public static class SandboxedLua {
                     string? errorMessage = lua.ToString(-1);
                     lua.Err($"failed to execute file {path}: {errorMessage ?? "<could not convert error message to string>"}");
                 }
-                Logger.Log(nameof(ScugHelperModule), $"Require returned type: {lua.Type(-1)}");
+                Logger.Log(nameof(ScugHelper), $"Require returned type: {lua.Type(-1)}");
             }
             lua.PushCopy(-1);
             RequireResults.Add(path, lua.Ref(LuaRegistry.Index));
@@ -251,7 +251,7 @@ public static class SandboxedLua {
             strings.Add(LuaValueToString(lua));
         }
 
-        Logger.Info(nameof(ScugHelperModule), $"[LUA] {string.Join('\t', strings)}");
+        Logger.Info(nameof(ScugHelper), $"[LUA] {string.Join('\t', strings)}");
         Engine.Commands.Open = true;
         Engine.Commands.Log($"[LUA] {string.Join('\t', strings).Replace("\t", "    ")}", Color.White);
 

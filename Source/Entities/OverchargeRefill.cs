@@ -76,63 +76,106 @@ public class OverchargeRefill : Refill, ICustomRefill
 
 
     private static readonly MethodInfo PlayerDashCoro = typeof(Player).GetMethod("DashCoroutine", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)!.GetStateMachineTarget()!;
-    private static ILHook? PlayerDashCoroHook;
+    private static ILHook? ILPlayerDashCoroHook;
+
+    private static ILHook? ILCommunalHelperPlayerDreamTunnelDashBeginHook;
 
     [OnLoad]
     public static void LoadHooks() {
-        On.Celeste.Player.CreateTrail += Player_CreateTrail;
-        On.Celeste.Player.Update += Player_Update;
-        On.Celeste.Player.SuperJump += Player_SuperJump;
-        On.Celeste.Player.SuperWallJump += Player_SuperWallJump;
-        On.Celeste.Player.BeforeUpTransition += Player_BeforeUpTransition;
-        On.Celeste.Player.BeforeSideTransition += Player_BeforeSideTransition;
-        On.Celeste.Player.BeforeDownTransition += Player_BeforeDownTransition;
-        On.Celeste.Level.Reload += Level_Reload;
-        On.Celeste.LevelLoader.StartLevel += LevelLoader_StartLevel;
+        On.Celeste.Player.CreateTrail += OnPlayerCreateTrail;
+        On.Celeste.Player.Update += OnPlayerUpdate;
+        On.Celeste.Player.SuperJump += OnPlayerSuperJump;
+        On.Celeste.Player.SuperWallJump += OnPlayerSuperWallJump;
+        On.Celeste.Player.BeforeUpTransition += OnPlayerBeforeUpTransition;
+        On.Celeste.Player.BeforeSideTransition += OnPlayerBeforeSideTransition;
+        On.Celeste.Player.BeforeDownTransition += OnPlayerBeforeDownTransition;
+        On.Celeste.Level.Reload += OnLevelReload;
+        On.Celeste.LevelLoader.StartLevel += OnLevelLoaderStartLevel;
+        IL.Celeste.Player.DreamDashBegin += ILPlayerDreamDashBegin;
+
         using (new DetourConfigContext(
             new DetourConfig("ScugHelper").WithPriority(1000000000)
         ).Use()) {
-            PlayerDashCoroHook = new(PlayerDashCoro, OnPlayerDashCoro);
+            ILPlayerDashCoroHook = new(PlayerDashCoro, ILPlayerDashCoro);
+        }
+
+        CommunalHelperInterop.CheckLoaded();
+        if (CommunalHelperInterop.Loaded) {
+            using (new DetourConfigContext(
+                new DetourConfig("ScugHelper").WithPriority(-1000000000)
+            ).Use()) {
+                Type? maybeDreamTunnelDashType = Type.GetType("Celeste.Mod.CommunalHelper.States.DreamTunnelDash, CommunalHelper");
+                if (maybeDreamTunnelDashType is Type dreamTunnelDashType) {
+                    // evil crossmod hook
+                    MethodInfo? maybeInfo = dreamTunnelDashType
+                        .GetMethod("DreamTunnelDashBegin", BindingFlags.Public | BindingFlags.Static);
+                    if (maybeInfo is MethodInfo info)
+                        ILCommunalHelperPlayerDreamTunnelDashBeginHook = new(info, ILCommunalHelperPlayerDreamTunnelDashBegin);
+                    else
+                        throw new Utils.HookException("Failed to load method info for dream tunnel dash begin for overcharge refills!");
+                } else
+                    throw new Utils.HookException("Failed to load dream tunnel dash type for overcharge refills!");
+            }
+        } else {
+            Logger.Log(nameof(ScugHelper), "CommunalHelper isn't loaded! Skipping CommunalHelper overcharge hooks...");
         }
     }
 
-    private static void Player_BeforeDownTransition(On.Celeste.Player.orig_BeforeDownTransition orig, Player self) {
+    private static void ILCommunalHelperPlayerDreamTunnelDashBegin(ILContext il) {
+        ILCursor cur = new(il);
+        if (!cur.TryGotoNext(MoveType.AfterLabel,
+            static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
+        )) throw new Utils.HookException("Failed to hook player dream tunnel dash begin for overcharge refills!");
+
+        static Vector2 GetNewSpeed(Vector2 origSpeed, Player player)
+            => OverchargeDashCount <= 0 ? origSpeed : player.DashDir * MathF.Max(player.Speed.Length(), origSpeed.Length());
+        cur.EmitLdarg0();
+        cur.EmitDelegate(GetNewSpeed);
+    }
+
+    public static bool HasOvercharge =>
+        ScugHelperModule.Settings.AlwaysOvercharges || OverchargeDashCount > 0;
+    public static void ConsumeOvercharge() {
+        if (!ScugHelperModule.Settings.AlwaysOvercharges) OverchargeDashCount--;
+    }
+
+    private static void OnPlayerBeforeDownTransition(On.Celeste.Player.orig_BeforeDownTransition orig, Player self) {
         orig(self);
-        if (OverchargeDashCount > 0) {
+        if (HasOvercharge) {
             self.dashCooldownTimer = 0f;
         }
     }
 
-    private static void Player_BeforeUpTransition(On.Celeste.Player.orig_BeforeUpTransition orig, Player self) {
+    private static void OnPlayerBeforeUpTransition(On.Celeste.Player.orig_BeforeUpTransition orig, Player self) {
         var oldYSpeed = self.Speed.Y;
         orig(self);
-        if (OverchargeDashCount > 0) {
+        if (HasOvercharge) {
             self.Speed.Y = MathF.Min(oldYSpeed, self.Speed.Y);
             self.dashCooldownTimer = 0f;
         }
     }
-    
-    private static void Player_BeforeSideTransition(On.Celeste.Player.orig_BeforeSideTransition orig, Player self) {
+
+    private static void OnPlayerBeforeSideTransition(On.Celeste.Player.orig_BeforeSideTransition orig, Player self) {
         orig(self);
-        if (OverchargeDashCount > 0) {
+        if (HasOvercharge) {
             self.dashCooldownTimer = 0f;
         }
     }
 
     [OnUnload]
     public static void UnloadHooks() {
-        On.Celeste.Player.CreateTrail -= Player_CreateTrail;
-        On.Celeste.Player.Update -= Player_Update;
-        On.Celeste.Player.SuperJump -= Player_SuperJump;
-        On.Celeste.Player.SuperWallJump -= Player_SuperWallJump;
-        On.Celeste.Level.Reload -= Level_Reload;
-        On.Celeste.LevelLoader.StartLevel -= LevelLoader_StartLevel;
-        PlayerDashCoroHook?.Dispose();
+        On.Celeste.Player.CreateTrail -= OnPlayerCreateTrail;
+        On.Celeste.Player.Update -= OnPlayerUpdate;
+        On.Celeste.Player.SuperJump -= OnPlayerSuperJump;
+        On.Celeste.Player.SuperWallJump -= OnPlayerSuperWallJump;
+        On.Celeste.Level.Reload -= OnLevelReload;
+        On.Celeste.LevelLoader.StartLevel -= OnLevelLoaderStartLevel;
+        ILPlayerDashCoroHook?.Dispose();
     }
 
     public static int OverchargeDashCount { get; internal set; }
 
-    private static bool HasOverchargeDash() => OverchargeDashCount > 0;
+    private static bool HasOverchargeDash() => HasOvercharge;
 
     internal static readonly Color TrailColor = Calc.HexToColor("a5adff");
 
@@ -141,53 +184,53 @@ public class OverchargeRefill : Refill, ICustomRefill
         TrailManager.Add(player, scale, TrailColor);
     }
 
-    private static void Player_CreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player) {
-        if (OverchargeDashCount > 0)
+    private static void OnPlayerCreateTrail(On.Celeste.Player.orig_CreateTrail orig, Player player) {
+        if (HasOvercharge)
             CreateTrail(player);
         else
             orig(player);
     }
 
 
-    private static void Player_SuperJump(On.Celeste.Player.orig_SuperJump orig, Player self) {
+    private static void OnPlayerSuperJump(On.Celeste.Player.orig_SuperJump orig, Player self) {
+        var retainedSpeedX = MathF.Abs(self.wallSpeedRetentionTimer > 0 ? self.wallSpeedRetained : 0f);
+        var beforeDashSpeedX = MathF.Abs(self.beforeDashSpeed.X);
         var oldSpeedX = MathF.Abs(self.Speed.X);
         orig(self);
         var newSpeedX = MathF.Abs(self.Speed.X);
-        if (OverchargeDashCount > 0) {
-            self.Speed.X = MathF.Max(oldSpeedX, newSpeedX) * (float)self.Facing * 1.2f;
-            OverchargeDashCount--;
+        if (HasOvercharge) {
+            self.Speed.X = MathF.Max(MathF.Max(oldSpeedX, newSpeedX), MathF.Max(retainedSpeedX, beforeDashSpeedX)) * (float)self.Facing * 1.2f;
+            ConsumeOvercharge();
         }
     }
-    
-    private static void Player_SuperWallJump(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir) {
+
+    private static void OnPlayerSuperWallJump(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir) {
         var oldSpeedY = self.Speed.Y;
         orig(self, dir);
-        if (OverchargeDashCount > 0 && self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior"))
+        if (HasOvercharge && self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior"))
             self.Speed.Y = MathF.Min(oldSpeedY, self.Speed.Y) * 1.2f; // -Y = up
     }
 
     public static readonly float LoseOverchargeTime = 0.3f;
 
-    private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self) {
+    private static void OnPlayerUpdate(On.Celeste.Player.orig_Update orig, Player self) {
         orig(self);
-        if (ScugHelperModule.Settings.AlwaysOvercharges)
-            OverchargeDashCount = 1;
 
-        if (OverchargeDashCount > 0 && self.Scene.OnInterval(0.07f))
+        if (HasOvercharge && self.Scene.OnInterval(0.07f))
             CreateTrail(self);
     }
 
-    private static void Level_Reload(On.Celeste.Level.orig_Reload orig, Level self) {
+    private static void OnLevelReload(On.Celeste.Level.orig_Reload orig, Level self) {
         OverchargeDashCount = 0;
         orig(self);
     }
 
-    private static void LevelLoader_StartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
+    private static void OnLevelLoaderStartLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self) {
         OverchargeDashCount = 0;
         orig(self);
     }
 
-    private static void OnPlayerDashCoro(ILContext il) {
+    private static void ILPlayerDashCoro(ILContext il) {
         ILCursor cur = new(il);
         ILLabel? label = null;
 
@@ -195,12 +238,12 @@ public class OverchargeRefill : Refill, ICustomRefill
             static instr => instr.MatchLdloc1(),
             static instr => instr.MatchLdloc3(),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
-        )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (ldloc1, ldloc3, stfld Player Speed)"); return;}
+        )) {Logger.Warn(nameof(ScugHelper), "Failed to hook player dash coroutine for overcharge refills! (ldloc1, ldloc3, stfld Player Speed)"); return;}
         cur.MoveAfterLabels();
         cur.EmitLdloc1();
         cur.EmitLdloc3();
         static Vector2 MultiplyOvercharge(Player self, Vector2 speed) {
-            if (OverchargeDashCount > 0) {
+            if (HasOvercharge) {
                 if (self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior"))
                     speed = Math.Max(self.beforeDashSpeed.Length(), speed.Length()) * speed.SafeNormalize() * 1.1f;
                 else
@@ -211,17 +254,29 @@ public class OverchargeRefill : Refill, ICustomRefill
         cur.EmitDelegate(MultiplyOvercharge);
         cur.EmitStloc3();
 
-        if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)))) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (ldfld Player DashDir)"); return;}
+        if (!cur.TryGotoNext(MoveType.After, static instr => instr.MatchLdfld<Player>(nameof(Player.DashDir)))) {Logger.Warn(nameof(ScugHelper), "Failed to hook player dash coroutine for overcharge refills! (ldfld Player DashDir)"); return;}
         if (!cur.TryGotoNextBestFit(MoveType.After, 16,
             static instr => instr.MatchCall<Vector2>("op_Multiply"),
             static instr => instr.MatchStfld<Player>(nameof(Player.Speed))
-        )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (call Vector2 op_Multiply, stfld Player Speed)"); return;}
+        )) throw new Utils.HookException("Failed to hook player dash coroutine for overcharge refills! (call Vector2 op_Multiply, stfld Player Speed)");
         if (!cur.TryGotoPrev(MoveType.After,
             instr => instr.MatchBgtUn(out label)
-        )) {Logger.Warn(nameof(ScugHelperModule), "Failed to hook player dash coroutine for overcharge refills! (bgt.un)"); return;}
+        )) throw new Utils.HookException("Failed to hook player dash coroutine for overcharge refills! (bgt.un)");
         cur.MoveAfterLabels();
         cur.EmitDelegate(HasOverchargeDash);
         cur.EmitBrtrue(label!);
+    }
+
+    private static void ILPlayerDreamDashBegin(ILContext il) {
+        ILCursor cur = new(il);
+        if (!cur.TryGotoNextBestFit(MoveType.After, 16,
+            static instr => instr.MatchLdcR4(240f),
+            static instr => instr.MatchCall<Vector2>("op_Multiply")
+        )) throw new Utils.HookException("Failed to hook player dream dash begin for overcharge refills!");
+        static Vector2 GetNewSpeed(Vector2 origSpeed, Player player)
+            => OverchargeDashCount <= 0 ? origSpeed : player.DashDir * MathF.Max(player.Speed.Length(), origSpeed.Length());
+        cur.EmitLdarg0();
+        cur.EmitDelegate(GetNewSpeed);
     }
 
     [Command("giveovercharge", "Gives the player an overcharge dash.")]

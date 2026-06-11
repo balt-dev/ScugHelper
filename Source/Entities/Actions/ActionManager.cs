@@ -90,7 +90,7 @@ public static class ActionManager
         if (action is GlobalTriggerFlagListener listener) {
             foreach (var entData in room.Triggers) {
                 if (TryConstructEntity(entData, room, out _) is not Trigger trigger) {
-                    Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
+                    Logger.Warn(nameof(ScugHelper), $"Failed to construct: {entData}");
                     continue;
                 }
                 if (trigger.Collider.Collide(data!.Position + room.Position)) {
@@ -105,7 +105,7 @@ public static class ActionManager
         if (action is GlobalTriggerActionListener actListener) {
             foreach (var entData in room.Triggers) {
                 if (TryConstructEntity(entData, room, out _) is not Trigger trigger) {
-                    Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
+                    Logger.Warn(nameof(ScugHelper), $"Failed to construct: {entData}");
                     continue;
                 }
                 if (trigger.Collider.Collide(data!.Position + room.Position)) {
@@ -120,7 +120,7 @@ public static class ActionManager
         if (action is GlobalEntityActionListener entActListener) {
             foreach (var entData in room.Entities) {
                 if (TryConstructEntity(entData, room, out _) is not Entity entity) {
-                    Logger.Warn(nameof(ScugHelperModule), $"Failed to construct: {entData}");
+                    Logger.Warn(nameof(ScugHelper), $"Failed to construct: {entData}");
                     continue;
                 }
                 if (entity.Get<PlayerCollider>() is not PlayerCollider collider) continue;
@@ -166,7 +166,7 @@ public static class ActionManager
                 val = ty.GetConstructor([typeof(EntityData), typeof(Vector2), typeof(EntityID)]);
             }
             if (val is not ConstructorInfo constr) {
-                Logger.Warn(nameof(ScugHelperModule), $"Could not find a constructor for entity with type {ty}.");
+                Logger.Warn(nameof(ScugHelper), $"Could not find a constructor for entity with type {ty}.");
                 return null;
             }
             ConstructorCache.TryAdd(ty, (constr, kind));
@@ -236,7 +236,7 @@ public static class ActionManager
 
     internal static void LogError(string message) {
 
-        Logger.Error(nameof(ScugHelperModule), $"Action error: {message}");
+        Logger.Error(nameof(ScugHelper), $"Action error: {message}");
         Engine.Commands.Open = true;
         Engine.Commands.Log($"Action error: {message}", Color.Red);
     }

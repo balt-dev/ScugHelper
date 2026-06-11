@@ -74,7 +74,7 @@ public class ProceduralTilemap : SolidTiles
         filePath = data.String("FilePath", "").Replace(".lua", "");
         Collidable = true;
         this.DisableInterpolation();
-        Logger.Log(nameof(ScugHelperModule), $"Attempting to disable interpolation... (Loaded: {MotionSmoothingImports.IsLoaded})");
+        Logger.Log(nameof(ScugHelper), $"Attempting to disable interpolation... (Loaded: {MotionSmoothingImports.IsLoaded})");
     }
 
 
@@ -332,13 +332,13 @@ public class ProceduralTilemap : SolidTiles
 
     private static void ILAutotilerGenerate(ILContext il) {
         static Random SeedRandoIfDeterministic(Random rand, int k, int l) {
-            if (!UseDeterministicAutotiling) return rand;
+            if (!(UseDeterministicAutotiling || ScugHelperModule.Settings.DeterministicAutotiling)) return rand;
             return new Random((int)Utils.HashPosition(k + TilingOffsetX, l + TilingOffsetY));
         }
 
         ILCursor cur = new(il);
         while (cur.TryGotoNext(MoveType.After, static match => match.MatchLdsfld(typeof(Calc), nameof(Calc.Random)))) {
-            Logger.Log(nameof(ScugHelperModule), "Found ILGenerate hook");
+            Logger.Log(nameof(ScugHelper), "Found ILGenerate hook");
             cur.EmitLdloc(5); // k
             cur.EmitLdloc(7); // l
             cur.EmitDelegate(SeedRandoIfDeterministic);

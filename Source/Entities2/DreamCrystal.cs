@@ -54,7 +54,8 @@ public class RefillHoldCrystal : Actor, IHasSpeed
         Add(Hold = new Holdable() {
             PickupCollider = new Hitbox(16f, 22f, -8f, -16f),
             OnPickup = OnPickup,
-            OnRelease = OnRelease
+            OnRelease = OnRelease,
+            OnHitSpring = OnHitSpring
         });
         Add(new MirrorReflection());
         particleTextures = [
@@ -101,7 +102,7 @@ public class RefillHoldCrystal : Actor, IHasSpeed
             _ => null
         };
         if (ClosestRefill is null) {
-            Logger.Warn(nameof(ScugHelperModule), $"No valid refill for refill crystal! Removing... (Fallback: '{FallbackRefillType}')");
+            Logger.Warn(nameof(ScugHelper), $"No valid refill for refill crystal! Removing... (Fallback: '{FallbackRefillType}')");
             RemoveSelf();
             return;
         }
@@ -142,7 +143,7 @@ public class RefillHoldCrystal : Actor, IHasSpeed
 
         animTimer += 6f * Engine.DeltaTime;
     }
-    
+
     public override void Removed(Scene scene) {
         base.Removed(scene);
         ClosestRefill?.RemoveSelf();
@@ -232,6 +233,35 @@ public class RefillHoldCrystal : Actor, IHasSpeed
         }
 
         Hold.CheckAgainstColliders();
+    }
+
+    public bool OnHitSpring(Spring spring) {
+        if (!Hold.IsHeld) {
+            if (spring.Orientation == Spring.Orientations.Floor && Speed.Y >= 0f) {
+                speed.X *= 0.5f;
+                speed.Y = -160f;
+                noGravityTimer = 0.15f;
+                return true;
+            }
+
+            if (spring.Orientation == Spring.Orientations.WallLeft && Speed.X <= 0f) {
+                MoveTowardsY(spring.CenterY + 5f, 4f);
+                speed.X = 220f;
+                speed.Y = -80f;
+                noGravityTimer = 0.1f;
+                return true;
+            }
+
+            if (spring.Orientation == Spring.Orientations.WallRight && Speed.X >= 0f) {
+                MoveTowardsY(spring.CenterY + 5f, 4f);
+                speed.X = -220f;
+                speed.Y = -80f;
+                noGravityTimer = 0.1f;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void OnCollideH(CollisionData data) {
@@ -373,18 +403,18 @@ public class RefillHoldCrystal : Actor, IHasSpeed
 
     private static int OnPlayerNormalUpdate(On.Celeste.Player.orig_NormalUpdate orig, Player self) {
         var res = orig(self);
-        if (self.Holding?.Entity is RefillHoldCrystal holdCrys && Input.Dash.Pressed && self.Dashes > 0) {
+        if (self.Holding?.Entity is RefillHoldCrystal holdCrys && (Input.Dash.Pressed || Input.CrouchDash.Pressed) && self.Dashes > 0) {
             self.Dashes = Math.Max(0, self.Dashes - 1);
             self.Speed += self.LiftBoost;
             res = self.StartDash();
             self.Holding = null;
             holdCrys.Collidable = false;
             holdCrys.Hold.Holder = null;
-            
+
             // fuck it we ball
             for (int i = 0; i < 12; i++)
                 Audio.Play("event:/game/06_reflection/fall_spike_smash");
-                
+
             holdCrys.Add(new Coroutine(holdCrys.FlashRemove()));
             Vector2? oldPos = holdCrys.ClosestRefill?.Position;
             holdCrys.ClosestRefill?.Position = holdCrys.Position;

@@ -67,9 +67,10 @@ public class FlagField : Solid
 
     public override void Render() {
         if (!Invisible) {
-            WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color * 0.3f * FillMultiplier * FillMultiplier, Color.White * 0.7f * FillMultiplier);
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * (CollideTimer / CollidePulseLength * 0.1f) * FillMultiplier);
-            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * 0.5f * FillMultiplier);
+            Camera camera = (Scene as Level)!.Camera;
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color * 0.3f * FillMultiplier * FillMultiplier, Color.White * 0.7f * FillMultiplier);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * (CollideTimer / CollidePulseLength * 0.1f) * FillMultiplier);
+            WobblyHelper.RenderOutline(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * 0.5f * FillMultiplier);
         }
 
         base.Render();
@@ -89,7 +90,8 @@ public class FlagField : Solid
     }
 
     public void OnRenderBloom() {
+        Camera camera = (Scene as Level)!.Camera;
         if (Visible && !Invisible) // lol
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * 0.1f);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (CollideTimer / CollidePulseLength)), Color.White * 0.1f);
     }
 }

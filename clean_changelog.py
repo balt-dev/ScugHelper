@@ -1,5 +1,5 @@
 initial = r"(.*? )?(\d+\.\d+\.\d+)\nbaltdev avatar\n(.*)\n"
-initial_sub = r"<VERSION>\n## \2\n"
+initial_sub = r"<VERSION>\n## \1(\2)\n"
 
 entry = r"(Bugfix|Optimization|Addition|Tweak|Overhaul|Refactor|Improvement|Removal|Adjustment)\n(.*)\n"
 entry_sub = r"- **\1**: \2\n"

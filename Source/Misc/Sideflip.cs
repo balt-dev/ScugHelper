@@ -12,8 +12,8 @@ public static class Sideflip
     public static bool Enabled {
         get {
             if (ScugHelperModule.Settings.SideflippingEverywhere) return true;
-            if (Monocle.Engine.Scene is not Level level) return false;
-            return level.Session.GetFlag("ScugHelper-AllowSideflipping");
+            if (Engine.Scene is not Level level) return false;
+            return level.Session.GetFlag("ScugHelper.AllowSideflipping") || level.Session.GetFlag("ScugHelper-AllowSideflipping");
         }
     }
     internal static readonly int SwapFrameLeniency = 6;

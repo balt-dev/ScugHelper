@@ -56,16 +56,18 @@ public class AccelerationField : Entity
     public override void Render() {
         base.Render();
         if (Everywhere) return;
+        Camera camera = (Scene as Level)!.Camera;
 
-        WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2, FieldColor);
-        WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, FieldOutlineColor);
+        WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2, FieldColor);
+        WobblyHelper.RenderOutline(camera, Collider.Bounds, Elapsed, SineMovement, 2, FieldOutlineColor);
 
         foreach (FieldParticle particle in FieldParticles)
-            particle.Render();
+            particle.Render(camera);
     }
 
     public void OnRenderBloom() {
-        if (!Everywhere) WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2, Color.White * 0.3f);
+        Camera camera = (Scene as Level)!.Camera;
+        if (!Everywhere) WobblyHelper.RenderOutline(camera, Collider.Bounds, Elapsed, SineMovement, 2, Color.White * 0.3f);
     }
 }
 
@@ -91,8 +93,9 @@ internal class FieldParticle(Vector2 pos)
         Elapsed += Engine.DeltaTime;
         return Elapsed <= Lifetime;
     }
-    internal void Render() {
-        Draw.Point(Position, Color.Lerp(ParticleColor, Color.Transparent, Elapsed / Lifetime));
+    internal void Render(Camera camera) {
+        if (camera.Bounds().Contains(Position))
+            Draw.Point(Position, Color.Lerp(ParticleColor, Color.Transparent, Elapsed / Lifetime));
     }
 }
 

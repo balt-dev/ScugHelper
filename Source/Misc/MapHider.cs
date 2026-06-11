@@ -16,6 +16,9 @@ public static class MapHider {
     private static readonly string HiddenLevelSet = "ScugHelper/ScugHelperTest";
 
     private static ILHook? hookOnLevelSetSwitch;
+    private static ILHook? hookMapSearchReloadItems;
+    private static ILHook? hookMapListReloadItems;
+    private static ILHook? hookMapListCreateMenu;
     private static ILHook? hookLevelSetPicker;
 
     [OnLoad]
@@ -25,7 +28,17 @@ public static class MapHider {
         hookOnLevelSetSwitch = new ILHook(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter")!.GetStateMachineTarget()!, modLevelSetSwitch);
         hookLevelSetPicker = new ILHook(
             typeof(Everest).Assembly.GetType("Celeste.Mod.UI.OuiFileSelectSlotLevelSetPicker")!.GetMethod("changeStartingLevelSet", BindingFlags.NonPublic | BindingFlags.Instance)!,
-            modFileSelectChangeStartingLevelSet);
+            modFileSelectChangeStartingLevelSet
+        );
+        hookMapSearchReloadItems = new ILHook(
+            typeof(OuiMapSearch).GetMethod("ReloadItems", BindingFlags.NonPublic | BindingFlags.Instance)!,
+            modMapSearch);
+        hookMapListReloadItems = new ILHook(
+            typeof(OuiMapList).GetMethod("ReloadItems", BindingFlags.NonPublic | BindingFlags.Instance)!, modMapListReloadItems
+        );
+        hookMapListCreateMenu = new ILHook(
+            typeof(OuiMapList).GetMethod("CreateMenu", BindingFlags.NonPublic | BindingFlags.Instance)!, modMapListCreateMenu
+        );
     }
     [OnUnload]
     internal static void UnloadHooks() {
@@ -44,16 +57,17 @@ public static class MapHider {
             instr => instr.MatchCall<string>("op_Inequality"))
         ) throw new Exception("Failed to match areaData.LevelSet != levelSet for hiding maps");
 
-        Logger.Log(nameof(ScugHelperModule), $"Hiding ScugHelper maps");
-
         // becomes: areaData.LevelSet != levelSet && !IsCollabLevelSet(areaData.LevelSet)
         cursor.Emit(OpCodes.Ldloc_S, (byte) 6);
-        cursor.EmitDelegate(HideScugHelper);
+        cursor.EmitDelegate<Func<bool, AreaData, bool>>(HideScugHelper);
     }
 
     private static bool HideScugHelper(bool orig, AreaData areaData) {
-        Logger.Log(nameof(ScugHelperModule), areaData.LevelSet);
         return orig && areaData.LevelSet != HiddenLevelSet;
+    }
+    
+    private static bool HideScugHelper(bool orig, string levelSet) {
+        return orig && levelSet != HiddenLevelSet;
     }
 
     private static void modFileSelectChangeStartingLevelSet(ILContext il) {
@@ -93,6 +107,58 @@ public static class MapHider {
         }
 
         return id;
+    }
+    
+    private static void modMapSearch(ILContext il) {
+        ILCursor cursor = new(il);
+
+        // target check: area.HasMode(AreaMode.Normal)
+        // area is actually stored in a "DisplayClass" nested type, explaining the extra ldfld "area".
+        if (cursor.TryGotoNextBestFit(MoveType.After,
+            instr => instr.MatchLdloc(13),
+            instr => instr.OpCode == OpCodes.Ldfld && (instr.Operand as FieldReference)!.Name == "area",
+            instr => instr.MatchLdcI4(0),
+            instr => instr.MatchCallvirt<AreaData>("HasMode"))) {
+
+            // becomes: area.HasMode(AreaMode.Normal) && !IsCollabLevelSet(area.LevelSet)
+            cursor.Emit(OpCodes.Ldloc_S, (byte) 13);
+            cursor.Emit(OpCodes.Ldfld, (cursor.Instrs[cursor.Index - 4].Operand as FieldReference)!);
+            cursor.EmitDelegate<Func<bool, AreaData, bool>>(HideScugHelper);
+        }
+    }
+
+    private static void modMapListReloadItems(ILContext il) {
+        ILCursor cursor = new(il);
+
+        // target check: area.HasMode((AreaMode)side)
+        // area is actually stored in a "DisplayClass" nested type, explaining the extra ldfld "area".
+        if (cursor.TryGotoNextBestFit(MoveType.After,
+            instr => instr.MatchLdloc(12),
+            instr => instr.OpCode == OpCodes.Ldfld && (instr.Operand as FieldReference)!.Name == "area",
+            instr => instr.MatchLdarg(0),
+            instr => instr.MatchLdfld<OuiMapList>("side"),
+            instr => instr.MatchCallvirt<AreaData>("HasMode"))) {
+
+            // becomes: area.HasMode((AreaMode)side) && !IsCollabLevelSet(area.LevelSet)
+            cursor.Emit(OpCodes.Ldloc_S, (byte) 12);
+            cursor.Emit(OpCodes.Ldfld, (cursor.Instrs[cursor.Index - 5].Operand as FieldReference)!);
+            cursor.EmitDelegate<Func<bool, AreaData, bool>>(HideScugHelper);
+        }
+    }
+    
+    private static void modMapListCreateMenu(ILContext il) {
+        ILCursor cursor = new(il);
+
+        // target check: levelSet == "Celeste"
+        if (cursor.TryGotoNext(MoveType.After,
+            instr => instr.MatchLdloc(1),
+            instr => instr.MatchLdstr("Celeste"),
+            instr => instr.MatchCall<string>("op_Equality"))) {
+
+            // becomes: levelSet == "Celeste" || IsCollabLevelSet(levelSet)
+            cursor.Emit(OpCodes.Ldloc_1);
+            cursor.EmitDelegate<Func<bool, string, bool>>(HideScugHelper);
+        }
     }
     
     [Command("sid", "Shows the SID of the current map.")]

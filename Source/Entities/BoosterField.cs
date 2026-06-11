@@ -55,10 +55,11 @@ public class BoosterField : Solid
 
     public override void Render() {
         if (!Invisible) {
+            Camera camera = (Scene as Level)!.Camera;
             var outlineColor = Invert ? Color.Black : Color.White;
-            WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f, outlineColor * 0.5f);
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * (BounceTimer / BouncePulseLength * 0.3f));
-            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * 0.5f);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Coral * 0.3f, outlineColor * 0.5f);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * (BounceTimer / BouncePulseLength * 0.3f));
+            WobblyHelper.RenderOutline(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), outlineColor * 0.5f);
         }
 
         base.Render();
@@ -82,7 +83,8 @@ public class BoosterField : Solid
     }
 
     public void OnRenderBloom() {
+        Camera camera = (Scene as Level)!.Camera;
         if (Visible && !Invisible) // lol
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }
 }

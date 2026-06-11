@@ -126,7 +126,7 @@ public class Cycler(Vector2 position, float radius, float rpm, float phase, int 
                 return;
             }
         }
-        Logger.Error(nameof(ScugHelperModule), $"Cycler entity with id {SourceId} failed to find an entity with ID {AttachedEntityID} to attach.");
+        Logger.Error(nameof(ScugHelper), $"Cycler entity with id {SourceId} failed to find an entity with ID {AttachedEntityID} to attach.");
         throw new InvalidOperationException($"Cycler entity with id {SourceId} failed to find an entity with ID {AttachedEntityID} to attach.");
     }
 

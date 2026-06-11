@@ -26,10 +26,10 @@ public class ScugHelperModule : EverestModule
         Instance = this;
 #if DEBUG
         // debug builds use verbose logging
-        Logger.SetLogLevel(nameof(ScugHelperModule), LogLevel.Verbose);
+        Logger.SetLogLevel(nameof(ScugHelper), LogLevel.Verbose);
 #else
         // release builds use info logging to reduce spam in log files
-        Logger.SetLogLevel(nameof(ScugHelperModule), LogLevel.Info);
+        Logger.SetLogLevel(nameof(ScugHelper), LogLevel.Info);
 #endif
     }
 
@@ -54,7 +54,7 @@ public class ScugHelperModule : EverestModule
     private static void OnPlayerSeekerCollideHook(On.Celeste.PlayerSeeker.orig_OnCollide orig, PlayerSeeker self, CollisionData data) {
         orig(self, data);
         if (Settings.PlayerSeekerDashSwitchFix && data.Hit is DashSwitch dashSwitch) {
-            Logger.Log(nameof(ScugHelperModule), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
+            Logger.Log(nameof(ScugHelper), $"PlayerSeeker collided: ${dashSwitch.pressed} ${dashSwitch.pressDirection} ${self.dashDirection}");
             dashSwitch.OnDashed(null, Vector2.UnitX * Math.Sign(self.dashDirection.X));
             dashSwitch.OnDashed(null, Vector2.UnitY * Math.Sign(self.dashDirection.Y));
         }
@@ -87,7 +87,7 @@ public class ScugHelperModule : EverestModule
         if (TypeCache.TryGetValue(data.Name, out var res)) return res;
         var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
         if (type is not Type ty)
-            Logger.Warn(nameof(ScugHelperModule), $"SID {data.Name} of entity with ID {data.ID} does not correspond to any known types.");
+            Logger.Warn(nameof(ScugHelper), $"SID {data.Name} of entity with ID {data.ID} does not correspond to any known types.");
         TypeCache[data.Name] = type;
         return type;
     }

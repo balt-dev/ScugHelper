@@ -47,7 +47,9 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingNumberInput(allowNegatives: false, maxLength: 3)]
     public int LuaMemoryLimit { get; set; } = 16;
 
-    
+    [SettingSubText("Makes all tiling fully deterministic.\nThis might get you rejected from certain lists due to creating pixel lineups that usually don't exist.")]
+    public bool DeterministicAutotiling { get; set; } = false;
+
     [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.\nThis will be turned into a Controller in a later update.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
 

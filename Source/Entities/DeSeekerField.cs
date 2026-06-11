@@ -52,7 +52,8 @@ public class DeSeekerField : Entity
     }
 
     public void OnRenderBloom() {
+        Camera camera = (Scene as Level)!.Camera;
         if (Visible)
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }
 }

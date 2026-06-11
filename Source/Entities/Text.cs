@@ -227,7 +227,7 @@ public partial class Text : Entity
     private static readonly Regex stringPartRegex = StringPartRegex();
 
     public override void Awake(Scene scene) {
-        if (scene is not Level level) { Logger.Warn(nameof(ScugHelperModule), "Tried to add Text to a non-level. Removing."); RemoveSelf(); return; }
+        if (scene is not Level level) { Logger.Warn(nameof(ScugHelper), "Tried to add Text to a non-level. Removing."); RemoveSelf(); return; }
         ConstructString(level);
     }
 
@@ -307,7 +307,7 @@ public partial class Text : Entity
         base.Render();
         if (Flag is string flag && (!SceneAs<Level>().Session.GetFlag(flag) ^ InvertFlag)) return;
         if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position - Vector2.One, Color.White);
-        else Logger.Warn(nameof(ScugHelperModule), "Text bakedTexture is null?");
+        else Logger.Warn(nameof(ScugHelper), "Text bakedTexture is null?");
     }
 
     internal void RenderText(Vector2 offset, Color color, bool forceColor = false) {

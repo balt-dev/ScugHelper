@@ -1,6 +1,13 @@
 using System;
+using System.Collections.Generic;
+using Celeste.Mod.Helpers;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Monocle;
+using MonoMod.Cil;
+
+namespace Celeste.Mod.ScugHelper;
 
 internal static class Utils
 {
@@ -67,7 +74,7 @@ internal static class Utils
             return (double.Lerp(x1, x2, v) + 1) / 2;
         }
     }
-    
+
     public static readonly BlendState AlphaMaskBlendState = new() {
         Name = "BlendState.ScugHelper.AlphaMask",
         ColorSourceBlend = Blend.DestinationColor,
@@ -77,7 +84,7 @@ internal static class Utils
         AlphaDestinationBlend = Blend.Zero,
         AlphaBlendFunction = BlendFunction.Add,
     };
-    
+
     public static readonly BlendState AdditiveMaskAlphaBlendState = new() {
         Name = "BlendState.ScugHelper.AdditiveMaskAlpha",
         ColorSourceBlend = Blend.DestinationAlpha,
@@ -86,8 +93,8 @@ internal static class Utils
         AlphaSourceBlend = Blend.Zero,
         AlphaDestinationBlend = Blend.One,
         AlphaBlendFunction = BlendFunction.Add,
-    };    
-    
+    };
+
     public static readonly BlendState AdditiveKeepAlphaBlendState = new() {
         Name = "BlendState.ScugHelper.AdditiveKeepAlpha",
         ColorSourceBlend = Blend.One,
@@ -100,6 +107,63 @@ internal static class Utils
 
     public static Vector2 Rounded(this Vector2 self) => new(MathF.Round(self.X), MathF.Round(self.Y));
 
+    public static Rectangle Bounds(this Camera self) => new(
+        (int) self.Left, (int) self.Top,
+        (int) (self.Right - self.Left), (int) (self.Bottom - self.Top)
+    );
+
+    public static bool Contains(this Rectangle self, Vector2 position) =>
+        self.Left > position.X &&
+        self.Right < position.X &&
+        self.Top > position.Y &&
+        self.Bottom < position.Y;
+    
+    public static Rectangle? Intersection(this Rectangle self, Rectangle other) {
+        var res = new Rectangle(
+            (int) MathF.Max(self.Left, other.Left),
+            (int) MathF.Max(self.Top, other.Top),
+            (int) MathF.Min(self.Width, other.Right - self.Left),
+            (int) MathF.Min(self.Height, other.Bottom - self.Top)
+        );
+        return res.Width <= 0 || res.Height <= 0 ? null : res;
+    }
+
+    public static Rectangle Grow(this Rectangle self, int margin)
+        => new(self.Left - margin, self.Top - margin, self.Width + margin * 2, self.Height + margin * 2);
+
     public static int BufferWidth = 320 * 2;
     public static int BufferHeight = 184 * 2;
+
+    internal class HookException(string? message) : Exception(message) {}
+
+    [Tracked]
+    internal class CustomLight(Action onRenderLight) : Component(false, false) { internal Action OnRenderLight = onRenderLight; }
+
+    [OnLoad]
+    internal static void LoadHooks() => IL.Celeste.LightingRenderer.BeforeRender += ILLightingRendererBeforeRender;
+    [OnUnload]
+    internal static void UnloadHooks() => IL.Celeste.LightingRenderer.BeforeRender -= ILLightingRendererBeforeRender;
+
+    private static void RenderCustomLights(LightingRenderer self, Scene scene) {
+        List<Component> comps = scene.Tracker.GetComponents<CustomLight>();
+        if (comps.Count == 0) return;
+        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, (scene as Level)!.Camera.Matrix);
+        foreach (CustomLight light in comps)
+            light.OnRenderLight();
+        Draw.SpriteBatch.End();
+    }
+
+    private static void ILLightingRendererBeforeRender(ILContext il) {
+        ILCursor cur = new(il);
+        // Go to end of function
+        while (cur.TryGotoNext(MoveType.After, static match => match.MatchRet())) { }
+
+        if (!cur.TryGotoPrev(
+            MoveType.AfterLabel, static match => match.MatchCallOrCallvirt(typeof(GaussianBlur), nameof(GaussianBlur.Blur))
+        )) throw new HookException("Failed to hook LightingRenderer for CustomLight component!");
+
+        cur.EmitLdarg0();
+        cur.EmitLdarg1();
+        cur.EmitDelegate(RenderCustomLights);
+    }
 }

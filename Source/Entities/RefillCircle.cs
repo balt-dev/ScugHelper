@@ -73,7 +73,7 @@ public class RefillCircle : Entity
                     break;
             }
             if (closestRefill is null) {
-                Logger.Warn(nameof(ScugHelperModule), "No refill found! Deleting refill rectangle...");
+                Logger.Warn(nameof(ScugHelper), "No refill found! Deleting refill rectangle...");
                 RemoveSelf();
                 return;
             }

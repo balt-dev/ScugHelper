@@ -28,7 +28,7 @@ public class DashAngleRestrictionTrigger : Trigger
             .Select(str => float.Parse(str, System.Globalization.NumberStyles.Float))
             .Select(angle => Calc.AngleToVector(angle.ToRad(), 1))
             .ToArray();
-        Logger.Log(nameof(ScugHelperModule), $"New dash angle restriction trigger: {string.Join(',', Angles)}");
+        Logger.Log(nameof(ScugHelper), $"New dash angle restriction trigger: {string.Join(',', Angles)}");
         if (Angles.Length == 0) throw new FormatException($"Must have at least one angle for dash angle restriction trigger. (Room: {data.Level.Name}, ID: {data.ID})");
         FlagState = data.Bool("FlagState", true);
         Flag = data.String("Flag");
@@ -96,7 +96,7 @@ public class DashAngleRestrictionTrigger : Trigger
                 dir.X += (int)self.Facing * 0.001f;
                 dir.Normalize();
             }
-            Logger.Log(nameof(ScugHelperModule), $"Angles to choose from: {string.Join(',', component.Angles)}");
+            Logger.Log(nameof(ScugHelper), $"Angles to choose from: {string.Join(',', component.Angles)}");
             Vector2 closestVector = Vector2.Zero;
             float closestDot = float.NegativeInfinity;
             foreach (Vector2 angle in component.Angles) {
@@ -107,7 +107,7 @@ public class DashAngleRestrictionTrigger : Trigger
                 }
             }
             dir = closestVector;
-            Logger.Log(nameof(ScugHelperModule), $"Closest vector: {dir}");
+            Logger.Log(nameof(ScugHelper), $"Closest vector: {dir}");
         }
         return orig(self, dir);
     }
@@ -123,7 +123,7 @@ public class DashAngleRestrictionTrigger : Trigger
 
         public DashRestrictorComponent(Vector2[] angles) : base(false, false) {
             Angles = angles;
-            Logger.Log(nameof(ScugHelperModule), $"New dash restrictor component: {string.Join(',', Angles)}");
+            Logger.Log(nameof(ScugHelper), $"New dash restrictor component: {string.Join(',', Angles)}");
         }
     }
 }

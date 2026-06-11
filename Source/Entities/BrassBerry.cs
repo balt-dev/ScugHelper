@@ -169,7 +169,7 @@ class BrassBerry : Entity, IStrawberry
         if (ScugHelperModule.Session.BrassBerryFollowing != null) {
             Player player = scene.Tracker.GetEntity<Player>();
             if (player == null) {
-                Logger.Warn(nameof(ScugHelperModule), "Could not find Player to attach to!");
+                Logger.Warn(nameof(ScugHelper), "Could not find Player to attach to!");
                 return;
             }
             OnPlayer(player);
@@ -189,6 +189,8 @@ class BrassBerry : Entity, IStrawberry
     }
 
     private static void PlayerUpdateHook(On.Celeste.Player.orig_Update orig, Player self) {
+        // Ideally this should be an SSV but it was added way way way before that so
+        self.level.Session.SetFlag("ScugHelper.HasBrassBerry", ScugHelperModule.Session.BrassBerryFollowing != null);
         self.level.Session.SetFlag("HasBrassBerry", ScugHelperModule.Session.BrassBerryFollowing != null);
         orig(self);
     }
@@ -199,7 +201,7 @@ class BrassBerry : Entity, IStrawberry
         if (following != null) {
             BrassBerry berry = scene.Tracker.GetEntity<BrassBerry>();
             if (berry == null) {
-                Logger.Log(nameof(ScugHelperModule), "Readding brass berry!");
+                Logger.Log(nameof(ScugHelper), "Readding brass berry!");
                 var followID = (EntityID)following;
                 var data = new EntityData
                 {

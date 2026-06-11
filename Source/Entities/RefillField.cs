@@ -57,14 +57,14 @@ public class RefillField : Entity
             RefillType.Limbo => Color.Black,
         };
         Color partColor = State ? Color.White : Color.Black;
-        WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f, infill * 0.3f, partColor * 0.7f);
+        WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f, infill * 0.12f, partColor * 0.4f);
 
         base.Render();
     }
 
     public override void Added(Scene scene) {
         base.Added(scene);
-        Add(new CustomBloom(OnRenderBloom));
+        Add(new Utils.CustomLight(OnRenderLight));
     }
 
     private float Elapsed = 0;
@@ -73,8 +73,14 @@ public class RefillField : Entity
         base.Update();
     }
 
-    public void OnRenderBloom() {
+    const int LightPadding = 3;
+
+    public void OnRenderLight() {
         if (Visible)
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f, Color.White * 0.3f);
+            Draw.Rect(
+                Collider.AbsoluteLeft - LightPadding, Collider.AbsoluteTop - LightPadding,
+                Collider.Width + LightPadding * 2, Collider.Height + LightPadding * 2,
+                Color.White 
+            );
     }
 }

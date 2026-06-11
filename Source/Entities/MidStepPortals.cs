@@ -34,7 +34,7 @@ public class MidStepPortals : Entity
         EndPos = Position
             + (Orient == Orientation.Horizontal ? new Vector2(data.Width, endOffset) : new Vector2(endOffset, data.Height));
         PortalSize = Orient == Orientation.Horizontal ? data.Height : data.Width;
-        Logger.Log(nameof(ScugHelperModule), $"Portal size: {PortalSize}");
+        Logger.Log(nameof(ScugHelper), $"Portal size: {PortalSize}");
         Silent = data.Bool("Silent", false);
         Visible = !data.Bool("Invisible", false);
     }

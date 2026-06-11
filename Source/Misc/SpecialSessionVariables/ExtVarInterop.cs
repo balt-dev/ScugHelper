@@ -8,7 +8,7 @@ internal static class ExtVarInterop
 {
     internal static void LoadVariables()
     {
-        Logger.Log(nameof(ScugHelperModule), "Loading Extended Variants variables!");
+        Logger.Log(nameof(ScugHelper), "Loading Extended Variants variables!");
         SSV.flags[$"ScugHelper.ExtendedVariantMode.Enabled"] = new ExtVarEnabledFlag();
         foreach (string name in (string[]) [
             "DashAssist",

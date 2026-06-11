@@ -154,7 +154,7 @@ public class MinimapEntity : Entity
                 if (level.Session.LevelData.Name == temp.Name)
                     temp.RenderHighlight(Camera, true, false);
             } catch (NullReferenceException) {
-                Logger.Warn(nameof(ScugHelperModule), "GameHelper is fucking with the minimap. Caught NullReferenceException.");
+                Logger.Warn(nameof(ScugHelper), "GameHelper is fucking with the minimap. Caught NullReferenceException.");
                 // GameHelper does this sometimes for some reason.
             }
         }

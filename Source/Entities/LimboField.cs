@@ -56,17 +56,13 @@ public class LimboField : Solid
 
     public override void Render() {
         if (!Invisible) {
-            WobblyHelper.RenderFill((Scene as Level)!.Camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.3f, Color.Black * 0.7f);
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * (BounceTimer / BouncePulseLength * 0.4f));
-            WobblyHelper.RenderOutline(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.5f);
+            Camera camera = (Scene as Level)!.Camera;
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.3f, Color.Black * 0.7f);
+            WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * (BounceTimer / BouncePulseLength * 0.4f));
+            WobblyHelper.RenderOutline(camera, Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.Black * 0.5f);
         }
 
         base.Render();
-    }
-
-    public override void Added(Scene scene) {
-        base.Added(scene);
-        Add(new CustomBloom(OnRenderBloom));
     }
 
     private float Elapsed = 0;
@@ -79,11 +75,6 @@ public class LimboField : Solid
             BounceTimer = Math.Max(0.0f, BounceTimer - Engine.DeltaTime);
         }
         base.Update();
-    }
-
-    public void OnRenderBloom() {
-        if (Visible && !Invisible) // lol
-            WobblyHelper.RenderFill(Collider.Bounds, Elapsed, SineMovement, 2f * (1 - (BounceTimer / BouncePulseLength)), Color.White * 0.3f);
     }
 }
 #nullable restore

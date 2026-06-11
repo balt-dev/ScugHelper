@@ -100,7 +100,7 @@ public class ActionCassetteBlock : Solid
             IsGroupLeader = true;
         }
 
-        Logger.Log(nameof(ScugHelperModule), $"Group leader: {IsGroupLeader}");
+        Logger.Log(nameof(ScugHelper), $"Group leader: {IsGroupLeader}");
 
         if (BlockGroup == null) {
             IsLeader = true;

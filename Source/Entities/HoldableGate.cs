@@ -19,7 +19,7 @@ public class HoldableGate(EntityData data, Vector2 offset) : AbstractGate(data, 
         holdable = CollideFirstByComponent<Holdable>();
         Collider = null;
         if (holdable == null) {
-            Logger.Warn(nameof(ScugHelperModule), "No holdable found! Deleting holdable gate...");
+            Logger.Warn(nameof(ScugHelper), "No holdable found! Deleting holdable gate...");
             RemoveSelf();
             return;
         }
