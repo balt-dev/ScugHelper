@@ -59,8 +59,8 @@ public class SpeedcheckGate(EntityData data, Vector2 offset) : AbstractGate(data
                 SceneAs<Level>().Session.SetFlag(FlagName);
                 break;
             case TriggerAction.SetSpeed:
-                if (ChangeX) player.Speed.X = SetSpeed.X;
-                if (ChangeY) player.Speed.Y = SetSpeed.Y;
+                if (ChangeX) { player.X = MathF.Round(X + SetSpeed.X * Engine.DeltaTime / 2); player.Speed.X = SetSpeed.X; }
+                if (ChangeY) { player.Y = MathF.Round(Y + SetSpeed.Y * Engine.DeltaTime / 2); player.Speed.Y = SetSpeed.Y; }
                 break;
         }
     }
