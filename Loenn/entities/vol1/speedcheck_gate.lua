@@ -8,7 +8,19 @@ return {
     placements = {
         {
             name = "normal",
-            data = {Angle = 0, Size = 32, Threshold = 240, Axis = 0, Comparison = 0, Action = 0, FlagName = "", SetX = 0, SetY = 0}
+            data = {
+                Angle = 0,
+                Size = 32,
+                Threshold = 240,
+                Axis = 0,
+                Comparison = 0,
+                Action = 0,
+                FlagName = "",
+                SetX = 0,
+                SetY = 0,
+                ChangeX = true,
+                ChangeY = true,
+            }
         },
     },
     sprite = function(room, entity)

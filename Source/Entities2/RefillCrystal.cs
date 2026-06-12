@@ -23,7 +23,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/RefillHoldCrystal")]
-public class RefillHoldCrystal : Actor, IHasSpeed
+public class RefillCrystal : Actor, IHasSpeed
 {
 
     private static readonly Vector2 ImageOrigin = new(16, 26);
@@ -45,7 +45,7 @@ public class RefillHoldCrystal : Actor, IHasSpeed
     private bool Flash = false;
     private Refill? ClosestRefill;
 
-    public RefillHoldCrystal(EntityData data, Vector2 offset) : base(data.Position + offset) {
+    public RefillCrystal(EntityData data, Vector2 offset) : base(data.Position + offset) {
         FallbackRefillType = data.String("FallbackRefill", "");
         Depth = 100;
         Collider = new Hitbox(8f, 10f, -4f, -10f);
@@ -140,6 +140,7 @@ public class RefillHoldCrystal : Actor, IHasSpeed
     public override void Update() {
         base.Update();
         TheoUpdate();
+        ClosestRefill?.sine.counter = 0;
 
         animTimer += 6f * Engine.DeltaTime;
     }
@@ -327,6 +328,7 @@ public class RefillHoldCrystal : Actor, IHasSpeed
 
     public override void Render() {
         base.Render();
+        if (ClosestRefill is null) return;
         if (Flash) {
             Background.Draw(Position, ImageOrigin, Color.White);
             return;
@@ -403,7 +405,7 @@ public class RefillHoldCrystal : Actor, IHasSpeed
 
     private static int OnPlayerNormalUpdate(On.Celeste.Player.orig_NormalUpdate orig, Player self) {
         var res = orig(self);
-        if (self.Holding?.Entity is RefillHoldCrystal holdCrys && (Input.Dash.Pressed || Input.CrouchDash.Pressed) && self.Dashes > 0) {
+        if (self.Holding?.Entity is RefillCrystal holdCrys && (Input.Dash.Pressed || Input.CrouchDash.Pressed) && self.Dashes > 0) {
             self.Dashes = Math.Max(0, self.Dashes - 1);
             self.Speed += self.LiftBoost;
             res = self.StartDash();

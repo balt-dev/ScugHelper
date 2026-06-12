@@ -469,8 +469,8 @@ triggers.ScugHelper/InputSpamTrigger.placements.name.trigger=Input Spam Trigger
 triggers.ScugHelper/InputSpamTrigger.placements.description.trigger=Forces a certain input to be pressed every frame.
 
 
-entities.ScugHelper/ElsewhereWatchtower.placements.name.watchtower=Elsewhere Watchtower
-entities.ScugHelper/ElsewhereWatchtower.placements.description.watchtower=Watchtower that starts at a defined position.
+entities.ScugHelper/ElsewhereWatchtower.placements.name.normal=Elsewhere Watchtower
+entities.ScugHelper/ElsewhereWatchtower.placements.description.normal=Watchtower that starts at a defined position.
 
 triggers.ScugHelper/UnstuckTrigger.placements.name.trigger=Unstuck
 triggers.ScugHelper/UnstuckTrigger.placements.description.normal=Every frame the player is inside this trigger, tries to move the player out of any solids if they're in any, and kills them if it can't.
@@ -554,7 +554,7 @@ entities.ScugHelper/RefillHoldCrystal.placements.name.pink=Refill Crystal (Pink)
 entities.ScugHelper/RefillHoldCrystal.placements.name.blue=Refill Crystal (Blue)
 entities.ScugHelper/RefillHoldCrystal.placements.name.cyan=Refill Crystal (Cyan)
 entities.ScugHelper/RefillHoldCrystal.placements.name.black=Refill Crystal (Black)
-entities.ScugHelper/RefillHoldCrystal.placements.name.dream=Refill Crystal (Dream) [+Communal Helper]
+entities.ScugHelper/RefillHoldCrystal.placements.name.dream=Refill Crystal (Dream) [+CommunalHelper]
 entities.ScugHelper/RefillHoldCrystal.placements.description.green=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a one-dash refill if none is, when the player dashes while holding it.
 entities.ScugHelper/RefillHoldCrystal.placements.description.pink=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a two-dash refill if none is, when the player dashes while holding it.
 entities.ScugHelper/RefillHoldCrystal.placements.description.blue=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a midair refill if none is, when the player dashes while holding it.
@@ -567,3 +567,6 @@ entities.ScugHelper/BoostRefill.placements.description.normal=Multiplies the pla
 
 entities.ScugHelper/GPUSpinner.placements.name.normal=GPU Spinner
 entities.ScugHelper/GPUSpinner.placements.description.normal=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
+
+entities.ScugHelper/SeekablePlaybackWatchtower.placements.name.normal=Seekable Playback Watchtower
+entities.ScugHelper/SeekablePlaybackWatchtower.placements.description.normal=Watchtower that plays a given playback and lets the player scroll through its movement.

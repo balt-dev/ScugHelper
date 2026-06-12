@@ -35,6 +35,8 @@ public class SpeedcheckGate(EntityData data, Vector2 offset) : AbstractGate(data
 
     public string FlagName = data.String("FlagName");
     public Vector2 SetSpeed = new(data.Float("SetX"), data.Float("SetY"));
+    public bool ChangeX = data.Bool("ChangeX", true);
+    public bool ChangeY = data.Bool("ChangeY", true);
 
     public override void OnTrigger(Player player) {
         float checkSpeed = Axis switch {
@@ -57,7 +59,8 @@ public class SpeedcheckGate(EntityData data, Vector2 offset) : AbstractGate(data
                 SceneAs<Level>().Session.SetFlag(FlagName);
                 break;
             case TriggerAction.SetSpeed:
-                player.Speed = SetSpeed;
+                if (ChangeX) player.Speed.X = SetSpeed.X;
+                if (ChangeY) player.Speed.Y = SetSpeed.Y;
                 break;
         }
     }
