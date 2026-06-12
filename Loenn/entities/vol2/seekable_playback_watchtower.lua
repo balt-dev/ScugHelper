@@ -11,7 +11,7 @@ watchtower.nodeLimits = {1, 1}
 watchtower.placements = {
     name = "normal",
     data = {
-        ScrollSpeed = 1,
+        ScrollSpeed = 0.7,
         tutorial = "wavedash",
         KeepCameraInBounds = true
     }

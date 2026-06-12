@@ -29,8 +29,11 @@ public class SeekablePlaybackWatchtower : Lookout {
         summit = false;
         nodes = [];
         Vector2 origPosition = data.Position;
-        data.Position = data.FirstNodeNullable(Vector2.Zero) ?? throw new FormatException("Must have node for seekable playback watchtower.");
-        playback = new PlayerPlayback(data, offset) { Visible = false, Active = false };
+        EntityData newData = new() {
+            Position = data.FirstNodeNullable(Vector2.Zero) ?? throw new FormatException("Must have node for seekable playback watchtower."),
+            Values = data.Values
+        };
+        playback = new(newData, offset) { Visible = false, Active = false, Depth = 1 };
         data.Position = origPosition;
         playback.Add(new VertexLight(new Vector2(0f, -8f), Color.White, 1f, 32, 64));
         Add(timeMod = new TimeRateModifier(1f));
@@ -41,7 +44,7 @@ public class SeekablePlaybackWatchtower : Lookout {
     private List<Vector2[]> BakePlayerHair() {
         List<Vector2[]> bakedNodes = [];
         float realDeltaTime = Engine.DeltaTime;
-        Engine.DeltaTime = 0.017f;
+        Engine.DeltaTime = 1f / 60f;
         try {
             for (int i = 0; i < playback.Timeline.Count; i++) {
                 playback.SetFrame(i);
@@ -135,6 +138,7 @@ public class SeekablePlaybackWatchtower : Lookout {
         Vector2 lastDir = Vector2.Zero;
         Vector2 camStart = level.Camera.Position;
         while (!Input.MenuCancel.Pressed && !Input.MenuConfirm.Pressed && !Input.Dash.Pressed && !Input.Jump.Pressed && interacting) {
+            playback.Depth = 1;
             Vector2 input = Input.Aim.Value;
 
             if (Math.Sign(input.X) != Math.Sign(lastDir.X) || Math.Sign(input.Y) != Math.Sign(lastDir.Y))
