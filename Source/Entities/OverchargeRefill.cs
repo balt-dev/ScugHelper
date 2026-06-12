@@ -245,8 +245,11 @@ public class OverchargeRefill : Refill, ICustomRefill
         static Vector2 MultiplyOvercharge(Player self, Vector2 speed) {
             Vector2 playerSpeed = speed;
             if (HasOvercharge) {
-                if (self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior"))
+                if (self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior")) {
+                    if (self.level.Session.GetFlag("ScugHelper.LegacyOvercharge"))
+                        return Math.Max(self.beforeDashSpeed.Length(), speed.Length()) * speed.SafeNormalize() * 1.1f;
                     speed.Y = (Math.Max(self.beforeDashSpeed.Length(), playerSpeed.Length()) * playerSpeed.SafeNormalize() * 1.1f).Y;
+                }
                 speed.X = Math.Max(Math.Abs(self.beforeDashSpeed.X), Math.Abs(playerSpeed.X)) * Math.Sign(playerSpeed.X) * 1.1f;
             }
             return speed;
