@@ -533,3 +533,14 @@ The build of MotionSmoothing that adds the mod interop that fixes the jittering 
 - **Improvement**: Brass Berry and Sideflipping now use proper namespaced flags
 - **Improvement**: Major internal code cleanup
 
+## Let's Have A Watch (2.38.0)
+- **Addition**: Seekable Playback Watchtower
+
+Ivory, eat your heart out. /ref
+
+## Hotfix - Let's Fix A Bug (2.38.1)
+- **Bugfix**: Seekable Playback Watchtowers no longer teleport to their start position on repeated level loads
+- **Bugfix**: Seekable Playback Watchtowers now clear the player hair cache on level exit/reload
+
+I can never just have a .0 without having to immediately fix something, huh.
+

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Celeste.Mod.Entities;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -27,8 +28,10 @@ public class SeekablePlaybackWatchtower : Lookout {
         onlyY = false;
         summit = false;
         nodes = [];
+        Vector2 origPosition = data.Position;
         data.Position = data.FirstNodeNullable(Vector2.Zero) ?? throw new FormatException("Must have node for seekable playback watchtower.");
         playback = new PlayerPlayback(data, offset) { Visible = false, Active = false };
+        data.Position = origPosition;
         playback.Add(new VertexLight(new Vector2(0f, -8f), Color.White, 1f, 32, 64));
         Add(timeMod = new TimeRateModifier(1f));
         if (!bakedNodeCache.TryGetValue(data.Attr("tutorial"), out bakedHairNodes))
@@ -187,4 +190,19 @@ public class SeekablePlaybackWatchtower : Lookout {
         player.StateMachine.State = 0;
         yield return null;
     }
+
+    [OnLoad]
+    internal static void LoadHooks() {
+        Everest.Events.AssetReload.OnReloadLevel += OnReloadLevel;
+        Everest.Events.Level.OnExit += OnExit;
+    }
+    
+    [OnUnload]
+    internal static void UnloadHooks() {
+        Everest.Events.AssetReload.OnReloadLevel -= OnReloadLevel;
+        Everest.Events.Level.OnExit -= OnExit;
+    }
+
+    private static void OnReloadLevel(Level level) => bakedNodeCache.Clear();
+    private static void OnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow) => bakedNodeCache.Clear();
 }
