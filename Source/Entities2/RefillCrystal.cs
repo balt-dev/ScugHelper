@@ -75,7 +75,7 @@ public class RefillCrystal : Actor, IHasSpeed
             particles[i].Color = Color.LightGray * (0.5f + particles[i].Layer / 2f * 0.5f);
             particles[i].Color = Calc.Random.Choose(particleColors);
         }
-        Add(light = new VertexLight(Color.White, 1f, 16, 32));
+        Add(light = new VertexLight(new(0, -8), Color.White, 1f, 16, 32));
         Add(bloom = new BloomPoint(0.6f, 48f));
     }
 

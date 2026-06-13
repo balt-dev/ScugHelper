@@ -544,3 +544,17 @@ Ivory, eat your heart out. /ref
 
 I can never just have a .0 without having to immediately fix something, huh.
 
+## Patch - Get Jiggy With It (2.38.2)
+- **Tweak**: Tweaked how the EnableSillyOverchargeBehavior flag functions to allow for broader compatibility
+
+## Patch - Oops, I Broke Something (2.38.3)
+- **Addition**: Added ScugHelper.LegacyOvercharge flag to use legacy silly overcharge behavior
+
+## Hotfix - r/im14andthisisdeep (2.38.4)
+- **Tweak**: Set depth of playback in seekable playback watchtowers to 1
+- **Tweak**: Made seekable playback watchtowers default to a seek speed of 0.7
+
+## Patch - Odds & Ends (2.38.5)
+- **Bugfix**: Moved refill crystal light to prevent it accidentally getting occluded
+- **Tweak**: Made Seekable Playback Watchtowers default to not having set position - nodeless ones will use the nearest spawnpoint's position
+

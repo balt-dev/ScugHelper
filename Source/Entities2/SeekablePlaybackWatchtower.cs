@@ -14,34 +14,28 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class SeekablePlaybackWatchtower : Lookout {
     public readonly float ScrollSpeed;
     public readonly bool KeepCameraInBounds;
-    
-    readonly PlayerPlayback playback;
-    readonly TimeRateModifier timeMod;
+
+    readonly Vector2 playbackOffset;
+    readonly EntityData entityData;
+    PlayerPlayback? playback;
+    TimeRateModifier? timeMod;
     double playbackProgress;
 
-    readonly List<Vector2[]>? bakedHairNodes;
+    List<Vector2[]>? bakedHairNodes;
     static readonly Dictionary<string, List<Vector2[]>> bakedNodeCache = [];
 
     public SeekablePlaybackWatchtower(EntityData data, Vector2 offset) : base(data, offset) {
         ScrollSpeed = data.Float("ScrollSpeed", 1);
         KeepCameraInBounds = data.Bool("KeepCameraInBounds", true);
+        playbackOffset = offset;
         onlyY = false;
         summit = false;
         nodes = [];
-        Vector2 origPosition = data.Position;
-        EntityData newData = new() {
-            Position = data.FirstNodeNullable(Vector2.Zero) ?? throw new FormatException("Must have node for seekable playback watchtower."),
-            Values = data.Values
-        };
-        playback = new(newData, offset) { Visible = false, Active = false, Depth = 1 };
-        data.Position = origPosition;
-        playback.Add(new VertexLight(new Vector2(0f, -8f), Color.White, 1f, 32, 64));
-        Add(timeMod = new TimeRateModifier(1f));
-        if (!bakedNodeCache.TryGetValue(data.Attr("tutorial"), out bakedHairNodes))
-            bakedNodeCache.Add(data.Attr("tutorial"), bakedHairNodes = BakePlayerHair());
+        entityData = data;
     }
-    
+
     private List<Vector2[]> BakePlayerHair() {
+        if (playback is null) return [];
         List<Vector2[]> bakedNodes = [];
         float realDeltaTime = Engine.DeltaTime;
         Engine.DeltaTime = 1f / 60f;
@@ -58,15 +52,24 @@ public class SeekablePlaybackWatchtower : Lookout {
         playback.SetFrame(0);
         return bakedNodes;
     }
-    
-    public override void Added(Scene scene) {
-        base.Added(scene);
-        if (scene is not Level) { RemoveSelf(); return; }
+
+    public override void Awake(Scene scene) {
+        base.Awake(scene);
+        if (scene is not Level level) { RemoveSelf(); return; }
+        EntityData playbackData = new() {
+            Position = entityData.FirstNodeNullable(Vector2.Zero) ?? (level.GetSpawnPoint(Position) - playbackOffset),
+            Values = entityData.Values
+        };
+        playback = new(playbackData, playbackOffset) { Visible = false, Active = false, Depth = 1 };
+        playback.Add(new VertexLight(new Vector2(0f, -8f), Color.White, 1f, 32, 64));
+        Add(timeMod = new TimeRateModifier(1f));
+        if (!bakedNodeCache.TryGetValue(playbackData.Attr("tutorial"), out bakedHairNodes))
+            bakedNodeCache.Add(playbackData.Attr("tutorial"), bakedHairNodes = BakePlayerHair());
         Components.RemoveAll<TalkComponent>();
         Add(talk = new TalkComponent(new Rectangle(-24, -8, 48, 8), new Vector2(-0.5f, -20f), CustomInteract));
         scene.Add(playback);
     }
-    
+
     public override void Removed(Scene scene) {
         base.Removed(scene);
         scene.Remove(playback);
@@ -82,8 +85,10 @@ public class SeekablePlaybackWatchtower : Lookout {
         Add(coroutine);
         interacting = true;
     }
-    
+
     public IEnumerator CustomLookRoutine(Player player) {
+        if (playback is null) yield break;
+        if (timeMod is null) yield break;
         Level level = SceneAs<Level>();
         SandwichLava sandwichLava = Scene.Entities.FindFirst<SandwichLava>();
         sandwichLava?.Waiting = true;
@@ -113,7 +118,7 @@ public class SeekablePlaybackWatchtower : Lookout {
         nodePercent = 0f;
         node = 0;
         Audio.Play("event:/ui/game/lookout_on");
-        
+
         playbackProgress = 0f;
         Vector2 cameraStart = level.Camera.Position;
         new FadeWipe(level, wipeIn: false, () => {
@@ -125,13 +130,13 @@ public class SeekablePlaybackWatchtower : Lookout {
             level.Camera.Position = cameraPos;
             new FadeWipe(level, wipeIn: true).Duration = 0.2f;
         }).Duration = 0.2f;
-        
+
         while ((hud.Easer = Calc.Approach(hud.Easer, 1f, Engine.DeltaTime * 3f)) < 1f) {
             level.ScreenPadding = (int)(Ease.CubeInOut(hud.Easer) * 16f);
             yield return null;
         }
         var camera = level.Camera;
-        
+
         // We don't set active here
         playback.Visible = true;
 
@@ -158,7 +163,7 @@ public class SeekablePlaybackWatchtower : Lookout {
             playback.Hair.Nodes = [..bakedHairNodes![frameIndex]]; // Copy
 
             hud.TrackPercent = (float) playbackProgress;
-            
+
             Vector2 cameraPos = playback.Position - new Vector2(level.Camera.Right - level.Camera.Left, level.Camera.Bottom - level.Camera.Top) / 2 + level.CameraOffset;
             if (KeepCameraInBounds) {
                 cameraPos.X = MathHelper.Clamp(cameraPos.X, level.Bounds.Left, level.Bounds.Right - (level.Camera.Right - level.Camera.Left));
@@ -200,7 +205,7 @@ public class SeekablePlaybackWatchtower : Lookout {
         Everest.Events.AssetReload.OnReloadLevel += OnReloadLevel;
         Everest.Events.Level.OnExit += OnExit;
     }
-    
+
     [OnUnload]
     internal static void UnloadHooks() {
         Everest.Events.AssetReload.OnReloadLevel -= OnReloadLevel;
