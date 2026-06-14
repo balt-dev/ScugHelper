@@ -174,14 +174,14 @@ public static class MapHider {
         orig(self);
 
         if (self.CurrentSession_Safe == null || !self.CurrentSession_Safe.InArea) {
-            if (HideScugHelper(true, self.LastArea_Safe.LevelSet)) {
+            if (!HideScugHelper(true, self.LastArea_Safe.LevelSet)) {
                 self.LastArea_Safe = AreaData.Get("Celeste/0-Intro").ToKey();
             }
         }
     }
     
     private static void OnLevelOnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow) {
-        if (HideScugHelper(true, level.Session.Area.SID))
+        if (!HideScugHelper(true, level.Session.Area.GetSID()))
             SaveData.Instance.LastArea_Safe = AreaData.Get("Celeste/0-Intro").ToKey();
     }
     

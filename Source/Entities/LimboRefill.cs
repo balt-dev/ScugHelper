@@ -168,17 +168,16 @@ public class LimboRefill : Refill, ICustomRefill
         LimboTimer = 0f;
         orig(self);
     }
-}
-
-internal class LimboColliderList : ColliderList
-{
-    public Collider OriginalCollider { get => colliders[0]; }
-
-    public LimboColliderList(Collider collider) => colliders = [collider];
-
-    public override bool Collide(Circle o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
-    public override bool Collide(Hitbox o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
-    public override bool Collide(ColliderList o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
-    public override bool Collide(Grid o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+    
+    internal class LimboColliderList : ColliderList {
+        public Collider OriginalCollider { get => colliders[0]; }
+    
+        public LimboColliderList(Collider collider) => colliders = [collider];
+    
+        public override bool Collide(Circle o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+        public override bool Collide(Hitbox o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+        public override bool Collide(ColliderList o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+        public override bool Collide(Grid o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+    }
 }
 #nullable restore

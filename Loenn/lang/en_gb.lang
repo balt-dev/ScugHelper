@@ -581,3 +581,6 @@ entities.ScugHelper/SeekablePlaybackWatchtower.placements.description.normal=Wat
 
 triggers.ScugHelper/LevelTeleportTrigger.placements.name.trigger=Level Teleport
 triggers.ScugHelper/LevelTeleportTrigger.placements.description.trigger=Teleports the player using Level.TeleportTo() to a given room in the same map, or optionally, a different one.
+
+triggers.ScugHelper/StaticHitboxTrigger.placements.name.trigger=Static Hitbox
+triggers.ScugHelper/StaticHitboxTrigger.placements.description.trigger=Prevents all changes to the player's hitbox while inside.
