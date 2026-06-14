@@ -566,3 +566,6 @@ I can never just have a .0 without having to immediately fix something, huh.
 - **Addition**: Static Hitbox Trigger because the above behavior was too cool to not immortalize somehow
 - **Bugfix**: Fix every level sending you to Prologue when you exit it
 
+## Patch - GWA (2.39.3)
+- **Tweak**: Made the #PlayerGrab builtin action group trigger on grab press even when not next to a wall for parity with other mods that do similar
+
