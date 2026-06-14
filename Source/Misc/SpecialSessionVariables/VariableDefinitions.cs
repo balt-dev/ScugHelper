@@ -260,3 +260,7 @@ internal class AimXSlider : SpecialSlider {
 internal class AimYSlider : SpecialSlider {
     public override float GetValue(Level level) => Input.Aim.Value.Y;
 }
+internal class LimboTimerSlider : SpecialSlider {
+    public override float GetValue(Level level) => LimboRefill.LimboTimer;
+    public override void SetValue(Level level, float value) => LimboRefill.LimboTimer = value;
+}

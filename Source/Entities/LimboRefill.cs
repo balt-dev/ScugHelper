@@ -100,7 +100,8 @@ public class LimboRefill : Refill, ICustomRefill
             LimboColliderList collList;
             player.Collider = collList = new LimboColliderList(player.Collider);
             var res = orig(self, move, onCollide, pusher);
-            player.Collider = collList.OriginalCollider;
+            if (player.Collider is LimboColliderList)
+                player.Collider = collList.OriginalCollider;
             return res;
         } else { return orig(self, move, onCollide, pusher); }
     }
@@ -110,7 +111,8 @@ public class LimboRefill : Refill, ICustomRefill
             LimboColliderList collList;
             player.Collider = collList = new LimboColliderList(player.Collider);
             var res = orig(self, move, onCollide, pusher);
-            player.Collider = collList.OriginalCollider;
+            if (player.Collider is LimboColliderList)
+                player.Collider = collList.OriginalCollider;
             return res;
         } else { return orig(self, move, onCollide, pusher); }
     }

@@ -19,24 +19,19 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     public void CreateShowcaseMapsEntry(TextMenu menu, bool inGame) {
         if (inGame) return;
-        ShowcaseMaps = new(Dialog.Clean("ScugHelper_ShowcaseMaps"), false);
-        foreach (string mapSID in (string[]) ["1-ScugHelperTest", "2-Showcase2", "100-Actions", "101-BrassBerryTest"]) {
-            string fullSID = $"ScugHelper/ScugHelperTest/{mapSID}";
-            AreaData data = AreaData.Get(fullSID);
-            AreaKey area = data.ToKey(AreaMode.Normal);
-            var button = new TextMenu.Button(Dialog.Clean(fullSID)) {
-                OnPressed = () => {
-                    SaveData.InitializeDebugMode();
-                    SaveData.Instance.LastArea_Safe = area;
-                    Audio.SetMusic(null);
-                    Audio.SetAmbience(null);
-                    var session = new Session(area);
-                    LevelEnter.Go(session, false);
-                }
-            };
-            ShowcaseMaps.Add(button);
-        }
-        menu.Add(ShowcaseMaps);
+        var button = new TextMenu.Button(Dialog.Clean("ScugHelper_ShowcaseMaps")) {
+            OnPressed = () => {
+                AreaData data = AreaData.Get("ScugHelper/ScugHelperTest/1-ScugHelperTest");
+                AreaKey area = data.ToKey(AreaMode.Normal);
+                SaveData.InitializeDebugMode();
+                SaveData.Instance.LastArea_Safe = area;
+                Audio.SetMusic(null);
+                Audio.SetAmbience(null);
+                var session = new Session(area);
+                LevelEnter.Go(session, false);
+            }
+        };
+        menu.Add(button);
     }
 
     [SettingSubText("The maximum amount of time any given Lua script execution can take, in seconds.")]

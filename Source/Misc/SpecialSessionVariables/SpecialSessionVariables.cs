@@ -72,6 +72,7 @@ public static class SSV
             new("ScugHelper.PlayerSubpixelX", new PlayerSubpixelXSlider()),
             new("ScugHelper.PlayerSubpixelY", new PlayerSubpixelYSlider()),
             new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
+            new("ScugHelper.LimboTimer", new LimboTimerSlider()),
         ]);
         ExtVarInterop.LoadVariables();
         CommunalHelperSSVInterop.LoadVariables();

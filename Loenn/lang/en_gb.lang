@@ -565,8 +565,19 @@ entities.ScugHelper/RefillHoldCrystal.placements.description.dream=Holdable theo
 entities.ScugHelper/BoostRefill.placements.name.normal=Boost Refill
 entities.ScugHelper/BoostRefill.placements.description.normal=Multiplies the player's speed.
 
-entities.ScugHelper/GPUSpinner.placements.name.normal=GPU Spinner
-entities.ScugHelper/GPUSpinner.placements.description.normal=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
+entities.ScugHelper/GPUSpinner.placements.name.custom=GPU Spinner
+entities.ScugHelper/GPUSpinner.placements.name.red=GPU Spinner (Red)
+entities.ScugHelper/GPUSpinner.placements.name.blue=GPU Spinner (Blue)
+entities.ScugHelper/GPUSpinner.placements.name.purple=GPU Spinner (Purple)
+entities.ScugHelper/GPUSpinner.placements.name.rainbow=GPU Spinner (Rainbow)
+entities.ScugHelper/GPUSpinner.placements.description.custom=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
+entities.ScugHelper/GPUSpinner.placements.description.red=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
+entities.ScugHelper/GPUSpinner.placements.description.blue=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
+entities.ScugHelper/GPUSpinner.placements.description.purple=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
+entities.ScugHelper/GPUSpinner.placements.description.rainbow=Spinner that renders its outline on the GPU. Useful for spinner-heavy maps. Retexturable.
 
 entities.ScugHelper/SeekablePlaybackWatchtower.placements.name.normal=Seekable Playback Watchtower
 entities.ScugHelper/SeekablePlaybackWatchtower.placements.description.normal=Watchtower that plays a given playback and lets the player scroll through its movement.
+
+triggers.ScugHelper/LevelTeleportTrigger.placements.name.trigger=Level Teleport
+triggers.ScugHelper/LevelTeleportTrigger.placements.description.trigger=Teleports the player using Level.TeleportTo() to a given room in the same map, or optionally, a different one.

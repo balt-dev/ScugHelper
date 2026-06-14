@@ -7,6 +7,7 @@ using Celeste.Mod;
 using Celeste;
 using Celeste.Mod.ScugHelper;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using MonoMod.Utils;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -198,6 +199,9 @@ class BrassBerry : Entity, IStrawberry
     private static void PlayerAddHook(On.Celeste.Player.orig_Added orig, Player self, Scene scene) {
         orig(self, scene);
         var following = ScugHelperModule.Session.BrassBerryFollowing;
+        if (following is null) {
+            ScugHelperModule.Session.BrassBerryFollowing = following = (EntityID?) DynamicData.For(self.level.Session).Get("BrassBerryCrossLevel");
+        }
         if (following != null) {
             BrassBerry berry = scene.Tracker.GetEntity<BrassBerry>();
             if (berry == null) {

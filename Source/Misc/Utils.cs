@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
 using Celeste.Mod.Helpers;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
@@ -165,5 +167,13 @@ internal static class Utils
         cur.EmitLdarg0();
         cur.EmitLdarg1();
         cur.EmitDelegate(RenderCustomLights);
+    }
+    
+    public static T Clone<T>(this T self) {
+        using var stream = new MemoryStream();
+        var serializer = new DataContractSerializer(typeof(T));
+        serializer.WriteObject(stream, self);
+        stream.Position = 0;
+        return (T) serializer.ReadObject(stream)!;
     }
 }

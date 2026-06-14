@@ -6,12 +6,48 @@ return {
     depth = -8500,
     placements = {
         {
-            name = "normal",
+            name = "custom",
             data = {
                 SpritePath = "danger/crystal",
                 SpriteSuffix = "_white",
                 Color = "FFFFFF",
                 Rainbow = false
+            }
+        },
+        {
+            name = "red",
+            data = {
+                SpritePath = "danger/crystal",
+                SpriteSuffix = "_red",
+                Color = "FFFFFF",
+                Rainbow = false
+            }
+        },
+        {
+            name = "purple",
+            data = {
+                SpritePath = "danger/crystal",
+                SpriteSuffix = "_purple",
+                Color = "FFFFFF",
+                Rainbow = false
+            }
+        },
+        {
+            name = "blue",
+            data = {
+                SpritePath = "danger/crystal",
+                SpriteSuffix = "_blue",
+                Color = "FFFFFF",
+                Rainbow = false
+            }
+        },
+        {
+            name = "rainbow",
+            data = {
+                SpritePath = "danger/crystal",
+                SpriteSuffix = "_white",
+                Color = "FFFFFF",
+                Rainbow = true
             }
         }
     },

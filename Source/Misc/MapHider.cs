@@ -39,11 +39,19 @@ public static class MapHider {
         hookMapListCreateMenu = new ILHook(
             typeof(OuiMapList).GetMethod("CreateMenu", BindingFlags.NonPublic | BindingFlags.Instance)!, modMapListCreateMenu
         );
+        On.Celeste.SaveData.AfterInitialize += onSaveDataAfterInitialize;
+        Everest.Events.Level.OnExit += OnLevelOnExit;
     }
+
     [OnUnload]
     internal static void UnloadHooks() {
         hookOnLevelSetSwitch?.Dispose();
         hookLevelSetPicker?.Dispose();
+        hookMapSearchReloadItems?.Dispose();
+        hookMapListReloadItems?.Dispose();
+        hookMapListCreateMenu?.Dispose();
+        On.Celeste.SaveData.AfterInitialize -= onSaveDataAfterInitialize;
+        Everest.Events.Level.OnExit -= OnLevelOnExit;
     }
     
     private static void modLevelSetSwitch(ILContext il) {
@@ -159,6 +167,22 @@ public static class MapHider {
             cursor.Emit(OpCodes.Ldloc_1);
             cursor.EmitDelegate<Func<bool, string, bool>>(HideScugHelper);
         }
+    }
+    
+    
+    private static void onSaveDataAfterInitialize(On.Celeste.SaveData.orig_AfterInitialize orig, SaveData self) {
+        orig(self);
+
+        if (self.CurrentSession_Safe == null || !self.CurrentSession_Safe.InArea) {
+            if (HideScugHelper(true, self.LastArea_Safe.LevelSet)) {
+                self.LastArea_Safe = AreaData.Get("Celeste/0-Intro").ToKey();
+            }
+        }
+    }
+    
+    private static void OnLevelOnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow) {
+        if (HideScugHelper(true, level.Session.Area.SID))
+            SaveData.Instance.LastArea_Safe = AreaData.Get("Celeste/0-Intro").ToKey();
     }
     
     [Command("sid", "Shows the SID of the current map.")]
