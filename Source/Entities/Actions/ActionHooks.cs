@@ -15,7 +15,6 @@ public static class ActionHooks
         On.Celeste.Player.SuperJump += OnSuperJump;
         On.Celeste.Player.SuperWallJump += OnSuperWallJump;
         On.Celeste.Player.ClimbJump += OnClimbJump;
-        On.Celeste.Player.ClimbBegin += OnGrab;
         On.Celeste.Player.CallDashEvents += OnDashEvents;
         On.Celeste.Player.Die += OnDie;
         On.Celeste.Seeker.ctor_Vector2_Vector2Array += OnSeekerCtor;
@@ -138,6 +137,8 @@ public static class ActionHooks
     }
 
     private static void OnUpdate(On.Celeste.Player.orig_Update orig, Player self) {
+        if (Input.Grab.Pressed)
+            ActionManager.AlertActions(["#PlayerGrab"], self.level);
         orig(self);
         bool onGround = self.OnGround();
         if (!self.wasOnGround && onGround)

@@ -558,3 +558,11 @@ I can never just have a .0 without having to immediately fix something, huh.
 - **Bugfix**: Moved refill crystal light to prevent it accidentally getting occluded
 - **Tweak**: Made Seekable Playback Watchtowers default to not having set position - nodeless ones will use the nearest spawnpoint's position
 
+## Across The Levelverse (2.39.0)
+- **Addition**: Level Teleport Trigger
+
+## Hotfix - Stop! Hammer Time (2.39.2)
+- **Bugfix**: Fix Limbo refills preventing hitbox changes on collision
+- **Addition**: Static Hitbox Trigger because the above behavior was too cool to not immortalize somehow
+- **Bugfix**: Fix every level sending you to Prologue when you exit it
+
