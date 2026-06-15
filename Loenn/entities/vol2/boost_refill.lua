@@ -8,6 +8,7 @@ return {
         {
             name = "normal",
             data = {
+                CancelDash = true,
                 oneUse = false,
                 BoostAmount = 1.75
             }

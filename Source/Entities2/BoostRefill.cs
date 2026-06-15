@@ -16,8 +16,15 @@ public class BoostRefill : Refill, ICustomRefill
 {
     public readonly float BoostAmount;
     public readonly bool CancelDash;
-    public BoostRefill(Vector2 position, bool oneUse, float boostAmount) : base(position, false, oneUse) {
+    public BoostRefill(EntityData data, Vector2 offset) : this(
+        data.Position + offset,
+        data.Bool("oneUse"),
+        data.Bool("CancelDash"),
+        data.Float("BoostAmount", 1.75f)
+    ) { }
+    public BoostRefill(Vector2 position, bool oneUse, bool cancelDash, float boostAmount) : base(position, false, oneUse) {
         BoostAmount = boostAmount;
+        CancelDash = cancelDash;
         Depth = -100;
         Remove(outline);
         Remove(sprite);
@@ -38,7 +45,6 @@ public class BoostRefill : Refill, ICustomRefill
         if (Scene is not Level level) { RemoveSelf(); return; }
         this.level = level;
     }
-    public BoostRefill(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("oneUse"), data.Float("BoostAmount", 1.75f)) { }
 
     public override void Render() {
         if (sprite.Visible) sprite.DrawOutline();
@@ -58,6 +64,8 @@ public class BoostRefill : Refill, ICustomRefill
         if (!oneUse) outline.Visible = true;
         Depth = 8999;
         yield return 0.05f;
+        if (CancelDash && player.StateMachine.State is Player.StDash or Player.StRedDash)
+            player.StateMachine.State = Player.StNormal;
         player.Speed *= BoostAmount;
         player.LaunchedBoostCheck();
         float num = player.Speed.Angle();

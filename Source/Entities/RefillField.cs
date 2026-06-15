@@ -16,7 +16,6 @@ public class RefillField : Entity
         Limbo
     }
 
-    bool oldState;
     public bool RevertOnLeave { get; protected set; }
     public bool State { get; protected set; }
     public RefillType Refill { get; protected set; }
@@ -26,7 +25,6 @@ public class RefillField : Entity
         Collidable = true;
         Refill = data.Enum<RefillType>("RefillType");
         State = data.Bool("State", true);
-        RevertOnLeave = data.Bool("RevertOnLeave");
         if (data.Bool("CoverRoom", false)) {
             Visible = false;
             Position = data.Level.Position;
@@ -40,15 +38,12 @@ public class RefillField : Entity
     private void OnPlayer(Player player) {
         switch (Refill) {
             case RefillType.Midair:
-                if (RevertOnLeave) oldState = MidairRefill.MidairDashCount > 0;
                 MidairRefill.MidairDashCount = State ? 1 : 0;
                 break;
             case RefillType.Overcharge:
-                if (RevertOnLeave) oldState = OverchargeRefill.OverchargeDashCount > 0;
                 OverchargeRefill.OverchargeDashCount = State ? 1 : 0;
                 break;
             case RefillType.Limbo:
-                if (RevertOnLeave) oldState = LimboRefill.LimboTimer > 0;
                 LimboRefill.LimboTimer = State ? 0.5f : 0f;
                 break;
         }
