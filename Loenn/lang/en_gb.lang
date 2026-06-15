@@ -584,3 +584,12 @@ triggers.ScugHelper/LevelTeleportTrigger.placements.description.trigger=Teleport
 
 triggers.ScugHelper/StaticHitboxTrigger.placements.name.trigger=Static Hitbox
 triggers.ScugHelper/StaticHitboxTrigger.placements.description.trigger=Prevents all changes to the player's hitbox while inside.
+
+entities.ScugHelper/PhysicalSand.placements.name.normal=Physical Sand
+entities.ScugHelper/PhysicalSand.placements.description.normal=Sand that falls according to a simple cellular automata, similar to powder toy games.
+
+entities.ScugHelper/RaycastedAudioController.placements.name.normal=Raycasted Audio Controller
+entities.ScugHelper/RaycastedAudioController.placements.description.normal=Makes audio duck its volume based on occlusion from the top of the player's hitbox.
+
+entities.ScugHelper/DreamField.placements.name.normal=Dream Field
+entities.ScugHelper/DreamField.placements.description.normal=Non-solid dream block.

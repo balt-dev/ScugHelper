@@ -41,7 +41,7 @@ public class HangRail : Actor
     private readonly MTexture[] ropeSlices;
     private readonly MTexture tieTexture;
     private readonly Vector2 Direction;
-    private bool noLiftBoost = true;
+    private readonly float InitialSpeed;
 
     public HangRail(EntityData data, Vector2 offset) : base(data.Position + offset) {
         DoGravity = data.Bool("StartWithGravity");
@@ -52,6 +52,7 @@ public class HangRail : Actor
         MaxFall = data.Float("MaxFall", 160f);
         Gravity = data.Float("Gravity", 400f);
         HoldSpeedLimit = data.Float("HoldSpeedLimit", 60f);
+        InitialSpeed = data.Float("InitialSpeed");
         TiltSpriteThreshold = data.Float("TiltSpriteThreshold", 20f);
         StaminaCost = data.Float("StaminaCost", 12f);
         JumpStaminaCost = data.Float("JumpStaminaCost", 27.5f);
@@ -62,7 +63,9 @@ public class HangRail : Actor
         End = offsetNodes[1];
         InitialStart = Start;
         InitialEnd = End;
-        Position = Start + (End - Start) * data.Float("Position", 0.0f);
+        float initialPos = data.Float("Position", 0.0f);
+        initialPos = float.Clamp(initialPos, 1e-5f, 0.9999f);
+        Position = Start + (End - Start) * initialPos;
         Direction = (End - Start).SafeNormalize();
         Collider = Start == End ? new Hitbox(16, 16, -8, 8) : new Hitbox(12, 12, -6, 8);
         Add(Sprite = GFX.SpriteBank.Create(data.String("Sprite", "hangrail")));
@@ -87,6 +90,8 @@ public class HangRail : Actor
         ropeSlices = Enumerable.Range(0, ropeTexture.Width)
             .Select(i => new MTexture(ropeTexture, i, 0, 1, ropeTexture.Height))
             .ToArray();
+            
+        this.DisableInterpolation();
     }
 
     private void OnSwat(HoldableCollider collider, int arg2) => OnRelease(Vector2.Zero);
@@ -94,8 +99,7 @@ public class HangRail : Actor
     private void OnRelease(Vector2 vector) {
         if (Hold.Holder is not Player player) return;
         player.SetAdjustedSpeed(RetentionSpeed);
-        if (!noLiftBoost) player.LiftSpeed = RetentionSpeed;
-        noLiftBoost = false;
+        player.LiftSpeed = RetentionSpeed;
         player.LaunchedBoostCheck();
         NoGrabTimer = GrabCooldown;
     }
@@ -131,7 +135,7 @@ public class HangRail : Actor
                 ) && holderSpeed.Y < 0
             )
         ) holderSpeed.Y = 0;
-        Speed = holderSpeed;
+        Speed = holderSpeed + InitialSpeed * Direction;
         Hold.Holder?.Speed = Vector2.Zero;
         DoGravity = true;
     }
@@ -150,7 +154,8 @@ public class HangRail : Actor
         // Make absolutely sure we're still on the track
         if (End == Start) {
             Position = Start = End;
-        } else {
+        } else
+        {
             if (DoGravity)
                 Speed.Y = Calc.Approach(Speed.Y, GravityHelperImports.IsInverted(this) ? -MaxFall : MaxFall, Gravity * Engine.DeltaTime);
 
@@ -173,16 +178,21 @@ public class HangRail : Actor
                 if (oldSpeed.Length() > HoldSpeedLimit) {
                     NoGrabTimer = GrabCooldown;
                     if (Hold.Holder is Player p) {
+                        OnRelease(p.Speed);
                         p.Drop();
                         p.jumpGraceTimer = Player.JumpGraceTime;
                     }
                     if (Math.Abs(oldSpeed.X) > TiltSpriteThreshold)
                         Sprite.Play(oldSpeed.X < 0 ? "swingLeft" : "swingRight");
                 }
-            } else
+            }
+            else
                 Speed = (Position - oldPos) / Engine.DeltaTime;
             if (angleDifference > 0.1 && End != Start)
-                if (Hold.Holder is Player p) p.Drop();
+                if (Hold.Holder is Player p) {
+                    OnRelease(p.Speed);
+                    p.Drop();
+                }
         }
         if (RetentionSpeed.LengthSquared() > Speed.LengthSquared()) {
             if (RetentionTimer <= 0f) RetentionTimer = RetentionTime;
@@ -215,7 +225,6 @@ public class HangRail : Actor
                 movementTarget = Input.MoveX * PlayerMaxSpeed;
                 if (Input.Jump.Pressed) {
                     Input.Jump.ConsumePress();
-                    noLiftBoost = true;
                     player.Drop();
                     player.Stamina -= JumpStaminaCost;
                     player.Jump(false, true);
@@ -235,6 +244,7 @@ public class HangRail : Actor
     private void OnBonkH(CollisionData data) {
         if (Hold.Holder is not Player player) return;
         NoGrabTimer = GrabCooldown;
+        
         player.Drop();
     }
 

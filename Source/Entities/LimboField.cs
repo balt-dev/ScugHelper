@@ -42,15 +42,12 @@ public class LimboField : Solid
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
-    public LimboField(Vector2 position, float width, float height, bool invis) : base(position, width, height, false) {
-        Depth = -20000;
+    public LimboField(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, false) {
+        Depth = data.Int("Depth", -20000);
         Collider = new LimboFieldColliderList(this);
         Collidable = true;
-        Invisible = invis;
+        Invisible = data.Bool("invisible");
     }
-
-    public LimboField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible")) { }
 
     private static readonly float SineMovement = 2.0f;
 

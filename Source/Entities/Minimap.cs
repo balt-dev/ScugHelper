@@ -44,12 +44,12 @@ public class MinimapEntity : Entity
 
     internal Camera Camera;
     internal Vector2 Speed;
-    internal float Opacity = ScugHelperModule.Settings.Minimap.UnfocusedOpacity;
+    internal float Opacity = 0f;
     internal List<LevelTemplate> templates = [];
 
     private Vector2 oldPosition;
     private static bool focusToggle = false;
-    private static bool visibleToggle = true;
+    private static bool visibleToggle = false;
     private static float unfocusedTimer = 100f;
     internal static bool Focused
     {
@@ -68,6 +68,7 @@ public class MinimapEntity : Entity
     public override void Awake(Scene scene) {
         base.Awake(scene);
         focusToggle = false;
+        visibleToggle = false;
         templates = (scene as Level)!.Session.MapData.Levels.Select((data) => new LevelTemplate(data)).ToList();
         Camera.Zoom = ZoomTarget = (scene as Level)!.Camera.Zoom * 4f;
     }

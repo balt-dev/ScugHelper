@@ -50,7 +50,8 @@ public class NewCustomField : Solid
 
     public NewCustomField(EntityData data, Vector2 offset)
         : base(data.Position + offset, data.Width, data.Height, false) {
-        Depth = -20000;
+        Depth = data.Int("Depth", -20000);
+
         SurfaceSoundIndex = 32;
         Names = [.. data.String("Names").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
         Invert = data.Bool("Invert");

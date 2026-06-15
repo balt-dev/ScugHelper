@@ -1,13 +1,14 @@
 local drawableRect = require("structs.drawable_rectangle")
 return {
     name = "ScugHelper/LimboField",
-    depth = -20000,
+    depth = function(room, entity) return entity.Depth or -20000 end,
     placements = {
         {
             name = "normal",
-            data = {width = 32, height = 32, invisible = false}
+            data = {width = 32, height = 32, invisible = false, Depth = -20000}
         },
     },
+    fieldInformation = { Depth = {fieldType = "integer"} },
     sprite = function(room, entity)
         return {
             drawableRect.fromRectangle("fill", entity.x, entity.y, entity.width, entity.height, {0, 0, 0, 0.3}),

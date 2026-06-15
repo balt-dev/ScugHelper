@@ -38,18 +38,15 @@ public class BoosterField : Solid
     private float BounceTimer;
     private static readonly float BouncePulseLength = 0.8f;
 
-    public BoosterField(Vector2 position, float width, float height, bool invis, bool invert, bool destroy) : base(position, width, height, false) {
-        Depth = -20000;
+    public BoosterField(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, false) {
+        Depth = data.Int("Depth", -20000);
         SurfaceSoundIndex = 32;
         Collider = new BoosterFieldColliderList(this);
         Collidable = true;
-        Invisible = invis;
-        Destroy = destroy;
-        Invert = invert;
+        Invisible = data.Bool("invisible");
+        Destroy = data.Bool("destroy");
+        Invert = data.Bool("invert");
     }
-
-    public BoosterField(EntityData data, Vector2 offset)
-        : this(data.Position + offset, data.Width, data.Height, data.Bool("invisible"), data.Bool("invert"), data.Bool("destroy")) { }
 
     private static readonly float SineMovement = 2.0f;
 

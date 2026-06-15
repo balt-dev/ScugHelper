@@ -176,4 +176,6 @@ internal static class Utils
         stream.Position = 0;
         return (T) serializer.ReadObject(stream)!;
     }
+    
+    public static Color Mul (this Color self, Color other) => new(self.ToVector4() * other.ToVector4());
 }

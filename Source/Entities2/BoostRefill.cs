@@ -15,6 +15,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class BoostRefill : Refill, ICustomRefill
 {
     public readonly float BoostAmount;
+    public readonly bool CancelDash;
     public BoostRefill(Vector2 position, bool oneUse, float boostAmount) : base(position, false, oneUse) {
         BoostAmount = boostAmount;
         Depth = -100;

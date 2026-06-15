@@ -187,6 +187,9 @@ public class ActionSwapBlock : SwapBlock
                 } else if (lerp >= 1 && target == 1)
                     Audio.Play(MoveEndSound, Center);
             }
+        } else {
+            speed = 0;
+            MoveTo(Vector2.Lerp(start, end, lerp), Vector2.Zero);
         }
 
         if (Swapping && (lerp >= 1 || lerp <= 0))

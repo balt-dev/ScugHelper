@@ -115,13 +115,15 @@ public class NewAngleBumper : Bumper
             if (SpeedAngle.Y <= 50f / 280f) {
                 player.AutoJump = true;
             }
-            if (player.Speed.X != 0f) {
+            bool noSuperBoosts = ExtendedVariantModeImports.GetBoolVariant("DisableSuperBoosts");
+            if (player.Speed.X != 0f && !noSuperBoosts) {
+                float launchSpeed = (ExtendedVariantModeImports.IsLoaded ? ExtendedVariantModeImports.GetFloatVariant("ExplodeLaunchSpeed") : 1) * 1.2f;
                 if (Input.MoveX.Value == Math.Sign(player.Speed.X)) {
                     player.explodeLaunchBoostTimer = 0f;
-                    player.Speed.X *= 1.2f;
+                    player.Speed.X *= launchSpeed;
                 } else {
                     player.explodeLaunchBoostTimer = 0.01f;
-                    player.explodeLaunchBoostSpeed = player.Speed.X * 1.2f;
+                    player.explodeLaunchBoostSpeed = player.Speed.X * launchSpeed;
                 }
             }
 

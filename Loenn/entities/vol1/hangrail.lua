@@ -25,7 +25,8 @@ return {
                 HoldSpeedLimit = 60,
                 TiltSpriteThreshold = 20,
                 StaminaCost = 12,
-                JumpStaminaCost = 27.5
+                JumpStaminaCost = 27.5,
+                InitialSpeed = 0
             },
         },
     },

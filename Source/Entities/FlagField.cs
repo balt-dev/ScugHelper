@@ -43,7 +43,7 @@ public class FlagField : Solid
 
     public FlagField(EntityData data, Vector2 offset)
         : base(data.Position + offset, data.Width, data.Height, false) {
-        Depth = -20000;
+        Depth = data.Int("Depth", -20000);
         SurfaceSoundIndex = 32;
         Flag = data.String("Flag");
         FlagState = data.Bool("FlagState", true);

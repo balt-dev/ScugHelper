@@ -3,14 +3,14 @@ local drawableText = require("structs.drawable_text")
 local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 return {
     name = "ScugHelper/NewCustomField",
-    depth = -20000,
+    depth = function(room, entity) return entity.Depth or -20000 end,
     placements = {
         {
             name = "normal",
-            data = {width = 32, height = 32, Invisible = false, Names = "player", Invert = false, Color = "B3D9FF"}
+            data = {width = 32, height = 32, Invisible = false, Names = "player", Invert = false, Color = "B3D9FF", Depth = -20000}
         },
     },
-    fieldInformation = { Names = { fieldType = "list", searchable = true }, Color = { fieldType = "color" } },
+    fieldInformation = { Names = { fieldType = "list", searchable = true }, Color = { fieldType = "color" }, Depth = {fieldType = "integer"} },
     sprite = function(room, entity)
         local r, g, b = table.unpack(scughelper.parseColor(entity.Color))
         return {
