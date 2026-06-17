@@ -14,6 +14,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 public class HangRail : Actor
 {
     internal bool DoGravity = false;
+    internal bool NoBonk = false;
     internal Holdable Hold;
     internal Sprite Sprite;
     internal Vector2 InitialStart;
@@ -44,6 +45,7 @@ public class HangRail : Actor
     private readonly float InitialSpeed;
 
     public HangRail(EntityData data, Vector2 offset) : base(data.Position + offset) {
+        NoBonk = data.Bool("NoBonk");
         DoGravity = data.Bool("StartWithGravity");
         TakeStamina = data.Bool("TakesStamina", true);
 
@@ -242,14 +244,14 @@ public class HangRail : Actor
     }
 
     private void OnBonkH(CollisionData data) {
-        if (Hold.Holder is not Player player) return;
+        if (Hold.Holder is not Player player || NoBonk) return;
         NoGrabTimer = GrabCooldown;
         
         player.Drop();
     }
 
     private void OnBonkV(CollisionData data) {
-        if (Hold.Holder is not Player player) return;
+        if (Hold.Holder is not Player player || NoBonk) return;
         NoGrabTimer = GrabCooldown;
         player.Drop();
     }

@@ -18,7 +18,6 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     public MinimapMenu Minimap { get; set; } = new();
 
     public void CreateShowcaseMapsEntry(TextMenu menu, bool inGame) {
-        if (inGame) return;
         ShowcaseMaps = new(Dialog.Clean("ScugHelper_ShowcaseMaps"), false);
         foreach (string mapSID in (string[]) ["1-ScugHelperTest", "2-Showcase2", "100-Actions", "101-BrassBerryTest"]) {
             string fullSID = $"ScugHelper/ScugHelperTest/{mapSID}";
@@ -32,10 +31,12 @@ public class ScugHelperModuleSettings : EverestModuleSettings
                     Audio.SetAmbience(null);
                     var session = new Session(area);
                     LevelEnter.Go(session, false);
-                }
+                },
+                Disabled = inGame
             };
             ShowcaseMaps.Add(button);
         }
+        ShowcaseMaps.Disabled = inGame;
         menu.Add(ShowcaseMaps);
     }
 

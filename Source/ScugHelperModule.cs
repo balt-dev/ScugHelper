@@ -104,6 +104,7 @@ public class ScugHelperModule : EverestModule
     internal static Effect? OutlineFX;
     internal static Effect? SeekerBarrierFX;
     internal static Effect? OutlineWithBaseFX;
+    internal static Effect? HallOfMirrorsFX;
 
     public override void LoadContent(bool firstLoad) {
         base.LoadContent(firstLoad);
@@ -114,5 +115,6 @@ public class ScugHelperModule : EverestModule
         SeekerBarrierFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/seekerBarrier.cso", true).Data);
         OutlineFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/outline.cso", true).Data);
         OutlineWithBaseFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/outlineWithBase.cso", true).Data);
+        HallOfMirrorsFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/hallOfMirrors.cso", true).Data);
     }
 }

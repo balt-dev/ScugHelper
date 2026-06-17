@@ -1,5 +1,16 @@
 
 
+## Patch - Upgrades, People! (2.40.2)
+- **Improvement**: Refill Crystals have been upgraded to Player Collider Crystals and now work with non-refills
+- **Improvement**: Text entities can now have a custom opacity and parallax
+- **Improvement**: The Level Teleport Trigger now works even if the current level isn't fully initialized yet
+- **Bugfix**: GPU Spinners now properly hide when Visible is set to false
+- **Bugfix**: The Dream Field activate/deactivate animation now works properly when played more than once
+
+## Patch - Dreamsmuggle Shenanigans (2.40.1)
+- **Improvement**: Holdables can now be grabbed while dreamdashing inside of a Dream Field
+- **Improvement**: Refill Crystals now work when dashing from inside a Dream Field
+
 ## Adding More to the Grab Bag (2.40.0)
 - **Addition**: Physical Sand
 - **Addition**: Dream Field

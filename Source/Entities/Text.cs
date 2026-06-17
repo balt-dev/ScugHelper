@@ -145,6 +145,9 @@ public partial class Text : Entity
 
     internal MTexture[]? glyphTextures;
 
+    private readonly float Opacity;
+    private readonly Vector2 Parallax;
+    private readonly Vector2 ParallaxOffset;
     private readonly Color InfillColor;
     private readonly string? Flag;
     private readonly bool InvertFlag;
@@ -156,14 +159,20 @@ public partial class Text : Entity
     private int GlyphWidth;
     private int GlyphHeight;
     private VirtualRenderTarget? bakedTexture;
-    private readonly int ID;
+    private readonly EntityID ID;
     private int BufferWidth;
     private int BufferHeight;
     private bool WantsBakeTexture = true;
+    private readonly bool Persistent;
 
     public Text(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
-        ID = id.ID;
+        ID = id;
         Tag |= Tags.TransitionUpdate | Tags.FrozenUpdate;
+        if (Persistent = data.Bool("Persistent", false))
+            Tag |= Tags.Persistent;
+        Opacity = data.Float("Opacity", 1);
+        Parallax = new(data.Float("ParallaxX", 0), data.Float("ParallaxY", 0));
+        ParallaxOffset = new(data.Float("ParallaxOffsetX", 0), data.Float("ParallaxOffsetY", 0));
         Depth = data.Int("Depth", 10);
         InfillColor = data.HexColor("Infill", Color.White);
         OutlineColor = data.HexColor("Outline", Color.Black);
@@ -229,6 +238,13 @@ public partial class Text : Entity
     public override void Awake(Scene scene) {
         if (scene is not Level level) { Logger.Warn(nameof(ScugHelper), "Tried to add Text to a non-level. Removing."); RemoveSelf(); return; }
         ConstructString(level);
+        if (Persistent)
+            level.Session.DoNotLoad.Add(ID);
+    }
+    
+    public override void SceneEnd(Scene scene) {
+        if (Persistent)
+            (scene as Level)?.Session.DoNotLoad.Remove(ID);
     }
 
     private void CompileStringParts()
@@ -305,8 +321,12 @@ public partial class Text : Entity
 
     public override void Render() {
         base.Render();
-        if (Flag is string flag && (!SceneAs<Level>().Session.GetFlag(flag) ^ InvertFlag)) return;
-        if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position - Vector2.One, Color.White);
+        Level level = SceneAs<Level>();
+        if (Flag is string flag && (!level.Session.GetFlag(flag) ^ InvertFlag)) return;
+        Vector2 renderPosition = Position - Vector2.One;
+        renderPosition.X = float.Lerp(renderPosition.X, level.Camera.Position.X, Parallax.X) + ParallaxOffset.X;
+        renderPosition.Y = float.Lerp(renderPosition.Y, level.Camera.Position.Y, Parallax.Y) + ParallaxOffset.Y;
+        if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, renderPosition, Color.White * Opacity);
         else Logger.Warn(nameof(ScugHelper), "Text bakedTexture is null?");
     }
 

@@ -6,14 +6,8 @@ using Celeste.Mod.Entities;
 using Monocle;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
-using MonoMod.Cil;
-using System.Reflection;
-using MonoMod.Utils;
-using MonoMod.RuntimeDetour;
-using Mono.Cecil.Cil;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
-using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 
@@ -23,9 +17,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/RefillHoldCrystal")]
-public class RefillCrystal : Actor, IHasSpeed
-{
-
+public class RefillCrystal : Actor, IHasSpeed {
     private static readonly Vector2 ImageOrigin = new(16, 26);
     private static VirtualRenderTarget? Scratch;
 
@@ -39,19 +31,21 @@ public class RefillCrystal : Actor, IHasSpeed
     private Level? Level;
     private Color BackgroundColor;
     private readonly string FallbackRefillType;
+    private readonly VertexLight light;
+    private readonly BloomPoint bloom;
     private PlayerCollider[] OnShatter = [];
-    private VertexLight? light;
-    private BloomPoint? bloom;
     private bool Flash = false;
-    private Refill? ClosestRefill;
+    private readonly bool AttachNonRefills = false;
+    private Entity? AttachedEntity;
 
     public RefillCrystal(EntityData data, Vector2 offset) : base(data.Position + offset) {
+        AttachNonRefills = data.Bool("AttachNonRefills");
         FallbackRefillType = data.String("FallbackRefill", "");
         Depth = 100;
         Collider = new Hitbox(8f, 10f, -4f, -10f);
         Background = GFX.Game["objects/ScugHelper/dreamCrystal/background"];
         Overlay = GFX.Game["objects/ScugHelper/dreamCrystal/overlay"];
-        Add(Hold = new Holdable() {
+        Add(Hold = new Holdable(0.1f) {
             PickupCollider = new Hitbox(16f, 22f, -8f, -16f),
             OnPickup = OnPickup,
             OnRelease = OnRelease,
@@ -88,11 +82,19 @@ public class RefillCrystal : Actor, IHasSpeed
     public override void Awake(Scene scene) {
         base.Awake(scene);
 
-        foreach (Entity entity in scene.Entities)
-            if (entity is Refill refill && CollideCheck(refill) && (ClosestRefill is null || (ClosestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
-                ClosestRefill = refill;
-        bool needsAdd = ClosestRefill == null;
-        ClosestRefill ??= FallbackRefillType switch {
+        foreach (PlayerCollider coll in scene.Tracker.GetComponents<PlayerCollider>()) {
+            if (!AttachNonRefills && coll.Entity is not Refill) continue;
+            if (
+                coll.Entity is Entity ent && 
+                CollideCheck(ent) && (
+                    AttachedEntity is null || AttachedEntity is Spikes ||
+                    (AttachedEntity is not Refill && coll.Entity is Refill) ||
+                    (AttachedEntity.Center - Center).LengthSquared() < (ent.Center - Center).LengthSquared()
+                )
+            ) AttachedEntity = ent;
+        }
+        bool needsAdd = AttachedEntity == null;
+        AttachedEntity ??= FallbackRefillType switch {
             "OneDash" => new Refill(Position, false, true),
             "TwoDash" => new Refill(Position, true, true),
             "Midair" => new MidairRefill(Position, true),
@@ -101,17 +103,15 @@ public class RefillCrystal : Actor, IHasSpeed
             "DreamTunnel" when CommunalHelperInterop.Loaded => _CreateDreamTunnelRefill(),
             _ => null
         };
-        if (ClosestRefill is null) {
-            Logger.Warn(nameof(ScugHelper), $"No valid refill for refill crystal! Removing... (Fallback: '{FallbackRefillType}')");
-            RemoveSelf();
-            return;
+        OnShatter = [];
+        if (AttachedEntity is not null) {
+            if (needsAdd)
+                scene.Add(AttachedEntity);
+            AttachedEntity.Tag |= Tags.Persistent;
+            AttachedEntity.Visible = false;
+            AttachedEntity.Collidable = false;
+            OnShatter = AttachedEntity.Components.GetAll<PlayerCollider>().ToArray();
         }
-        if (needsAdd)
-            scene.Add(ClosestRefill);
-        ClosestRefill.Tag |= Tags.Persistent;
-        ClosestRefill.Visible = false;
-        ClosestRefill.Position = Vector2.One * -1e20f;
-        OnShatter = ClosestRefill.Components.GetAll<PlayerCollider>().ToArray();
     }
 
     // WILL HARD CRASH WITHOUT COMMUNALHELPER
@@ -138,16 +138,19 @@ public class RefillCrystal : Actor, IHasSpeed
     }
 
     public override void Update() {
+        if (!Flash) {
+            AttachedEntity?.Position = AttachedEntity is Booster ? Position : Position - Vector2.UnitY * 8f;
+            AttachedEntity?.Collidable = false;
+        }
         base.Update();
         TheoUpdate();
-        ClosestRefill?.sine.counter = 0;
 
         animTimer += 6f * Engine.DeltaTime;
     }
 
     public override void Removed(Scene scene) {
         base.Removed(scene);
-        ClosestRefill?.RemoveSelf();
+        AttachedEntity?.RemoveSelf();
     }
 
     float hardVerticalHitSoundCooldown;
@@ -328,7 +331,6 @@ public class RefillCrystal : Actor, IHasSpeed
 
     public override void Render() {
         base.Render();
-        if (ClosestRefill is null) return;
         if (Flash) {
             Background.Draw(Position, ImageOrigin, Color.White);
             return;
@@ -348,19 +350,18 @@ public class RefillCrystal : Actor, IHasSpeed
         Draw.SpriteBatch.End();
 
         var gravScale = GravityHelperImports.IsActorInverted?.Invoke(this) ?? false ? new(1, -1) : Vector2.One;
-        Vector2 snappedPosition = new(MathF.Round(Position.X), MathF.Round(Position.Y)); // MotionSmoothing
 
         Engine.Graphics.GraphicsDevice.SetRenderTargets(oldTargets);
         GameplayRenderer.Begin();
-        Background.Draw(snappedPosition, ImageOrigin, Color.Black, gravScale);
+        Background.Draw(Position, ImageOrigin, Color.Black, gravScale);
         GameplayRenderer.End();
 
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, Utils.AdditiveKeepAlphaBlendState, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, GameplayRenderer.instance.Camera.Matrix);
-        Draw.SpriteBatch.Draw(Scratch, snappedPosition + (gravScale.Y > 0 ? Vector2.Zero : Vector2.UnitY * 20), null, Color.White, 0f, ImageOrigin, 1f, gravScale.Y < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
+        Draw.SpriteBatch.Draw(Scratch, Position + (gravScale.Y > 0 ? Vector2.Zero : Vector2.UnitY * 20), null, Color.White, 0f, ImageOrigin, 1f, gravScale.Y < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();
 
         GameplayRenderer.Begin();
-        Overlay.Draw(snappedPosition, ImageOrigin, Color.White, gravScale);
+        Overlay.Draw(Position, ImageOrigin, Color.White, gravScale);
     }
 
     private void RenderStars() {
@@ -372,7 +373,7 @@ public class RefillCrystal : Actor, IHasSpeed
             gladPos += (cameraPos - Position) * (0.3f + 0.25f);
             PutInside(ref gladPos);
             gladPos -= Vector2.One * 16f;
-            GFX.Portraits["madeline/normal00"].Draw(gladPos, Vector2.Zero, Color.White, Vector2.One * 1f / 5f);
+            GFX.Portraits["madeline/normal00"].Draw(gladPos, Vector2.Zero, BackgroundColor, Vector2.One * 1f / 5f);
         } else {
             for (int i = 0; i < particles.Length; i++) {
 
@@ -406,25 +407,71 @@ public class RefillCrystal : Actor, IHasSpeed
     private static int OnPlayerNormalUpdate(On.Celeste.Player.orig_NormalUpdate orig, Player self) {
         var res = orig(self);
         if (self.Holding?.Entity is RefillCrystal holdCrys && (Input.Dash.Pressed || Input.CrouchDash.Pressed) && self.Dashes > 0) {
-            self.Dashes = Math.Max(0, self.Dashes - 1);
-            self.Speed += self.LiftBoost;
-            res = self.StartDash();
-            self.Holding = null;
-            holdCrys.Collidable = false;
-            holdCrys.Hold.Holder = null;
-
-            // fuck it we ball
-            for (int i = 0; i < 12; i++)
-                Audio.Play("event:/game/06_reflection/fall_spike_smash");
-
-            holdCrys.Add(new Coroutine(holdCrys.FlashRemove()));
-            Vector2? oldPos = holdCrys.ClosestRefill?.Position;
-            holdCrys.ClosestRefill?.Position = holdCrys.Position;
-            foreach (var onShatter in holdCrys.OnShatter)
-                onShatter.OnCollide(self);
-            holdCrys.ClosestRefill?.Position = oldPos ?? Vector2.Zero;
+            return holdCrys.UseCrystal(self);
         }
         return res;
+    }
+
+    internal int UseCrystal(Player self) {
+        for (int i = 0; i < 12; i++)
+            Audio.Play("event:/game/06_reflection/fall_spike_smash");
+
+        Collidable = false;
+        Add(new Coroutine(FlashRemove()));
+
+        switch (AttachedEntity) {
+            case Booster boost: {
+                boost.Active = true;
+                boost.Visible = true;
+                boost.Collidable = true;
+                boost.outline.RemoveSelf();
+                boost.respawnTimer = 0f;
+                boost.cannotUseTimer = 0f;
+
+                self.CurrentBooster = boost;
+                return Player.StBoost;
+            }
+            case FlyFeather feather: {
+                self.Speed = Input.Aim.Value * 240f;
+                self.Speed += self.LiftBoost;
+                
+                feather.singleUse = true;
+                feather.OnPlayer(self);
+                return Player.StStarFly;
+            }
+            case BoostRefill boost: {
+                AttachedEntity?.Active = true;
+                AttachedEntity?.Collidable = true;
+                self.Dashes = Math.Max(0, self.Dashes - 1);
+                self.Speed = Input.Aim.Value * 320f;
+                self.Speed += self.LiftBoost;
+                self.Holding = null;
+                Hold.Holder = null;
+                
+                foreach (var onShatter in OnShatter)
+                    onShatter.OnCollide(self);
+                    
+                self.launched = true;
+
+                return Player.StNormal;
+            }
+            default: {
+                AttachedEntity?.Active = true;
+                AttachedEntity?.Collidable = true;
+                self.Dashes = Math.Max(0, self.Dashes - 1);
+                self.Speed += self.LiftBoost;
+                int res = self.StartDash();
+                self.Holding = null;
+                Hold.Holder = null;
+
+                Vector2? oldPos = AttachedEntity?.Position;
+                AttachedEntity?.Position = Position;
+                foreach (var onShatter in OnShatter)
+                    onShatter.OnCollide(self);
+                AttachedEntity?.Position = oldPos ?? Vector2.Zero;
+                return res;
+            }
+        }
     }
 
     private IEnumerator FlashRemove() {

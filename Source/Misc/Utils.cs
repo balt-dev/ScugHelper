@@ -109,6 +109,8 @@ internal static class Utils
 
     public static Vector2 Rounded(this Vector2 self) => new(MathF.Round(self.X), MathF.Round(self.Y));
 
+    public static float Mod(this float self, float dividend) => ((self % dividend) + dividend) % dividend;
+    
     public static Rectangle Bounds(this Camera self) => new(
         (int) self.Left, (int) self.Top,
         (int) (self.Right - self.Left), (int) (self.Bottom - self.Top)

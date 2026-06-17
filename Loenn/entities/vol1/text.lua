@@ -6,37 +6,51 @@ local drawableFunc = require("structs.drawable_function")
 local drawing = require("utils.drawing")
 local drawableText = require("structs.drawable_text")
 
+local populate = scughelper.populateDefaults {
+    Infill = "FFFFFF",
+    Outline = "000000",
+    OutlineType = 0,
+    UpdateFrequency = 0,
+    Value = "Hello, {playerName:}!",
+    Depth = 10,
+    Flag = "",
+    InvertFlag = false,
+    FontTexture = "objects/ScugHelper/text/normalFont",
+    Opacity = 1,
+    ParallaxX = 0,
+    ParallaxY = 0,
+    ParallaxOffsetX = 0,
+    ParallaxOffsetY = 0,
+    Persistent = false
+}
+
 return {
     name = "ScugHelper/Text",
     depth = function(room, entity) return entity.Depth end,
     placements = {
         {
             name = "default",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = "objects/ScugHelper/text/normalFont"}
+            data = populate { FontTexture = "objects/ScugHelper/text/normalFont" }
         },
         {
             name = "normal",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = "objects/ScugHelper/text/smallFont"}
+            data = populate { FontTexture = "objects/ScugHelper/text/smallFont" }
         },
         {
             name = "tile",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = "objects/ScugHelper/text/tileFont"}
+            data = populate { FontTexture = "objects/ScugHelper/text/tileFont" }
         },
         {
             name = "tiny",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = "objects/ScugHelper/text/tinyFont"}
+            data = populate { FontTexture = "objects/ScugHelper/text/tinyFont" }
         },
         {
             name = "techno",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = "objects/ScugHelper/text/technoFont"}
+            data = populate { FontTexture = "objects/ScugHelper/text/technoFont" }
         },
         {
             name = "blocky",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = "objects/ScugHelper/text/blockyFont"}
-        },
-        {
-            name = "custom",
-            data = {Infill = "FFFFFF", Outline = "000000", OutlineType = 0, UpdateFrequency = 0, Value = "Hello, {playerName:}!", Depth = 10, Flag = "", InvertFlag = false, FontTexture = ""}
+            data = populate { FontTexture = "objects/ScugHelper/text/blockyFont" }
         },
     },
     sprite = function(room, entity)
@@ -93,11 +107,11 @@ return {
     ignoredFields = function(entity)
         if entity.OutlineType == nil then entity.OutlineType = entity.DrawOutline and 1 or 0 end
         entity.DrawOutline = nil
-        if entity.FontTexture == nil then entity.FontTexture = "objects/ScugHelper/text/smallFont" end
         if entity.RequiresUpdate ~= nil then
             entity.UpdateFrequency = (entity.RequiresUpdate and 0.01) or 0
             entity.RequiresUpdate = nil
         end
+        populate(entity)
         return {"_name", "_id", "originX", "originY", "maxTextW", "maxTextH"}
     end,
     rectangle = function(room, entity)
@@ -109,5 +123,24 @@ return {
         Outline = { fieldType = "color" },
         Flag = scughelper.builtinFlags,
         OutlineType = {fieldType = "integer", options = {{"None", 0}, {"Full", 1}, {"Edge", 2}, {"Drop Shadow", 3}}}
-    }
+    },
+    fieldOrder = {
+        "x",
+        "y",
+        "Depth",
+        "Opacity",
+        "Infill",
+        "Outline",
+        "Value",
+        "OutlineType",
+        "UpdateFrequency",
+        "FontTexture",
+        "ParallaxX",
+        "ParallaxY",
+        "ParallaxOffsetX",
+        "ParallaxOffsetY",
+        "Flag",
+        "InvertFlag",
+        "Persistent",
+    },
 }

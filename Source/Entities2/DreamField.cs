@@ -10,7 +10,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [TrackedAs(typeof(DreamBlock))]
 [CustomEntity("ScugHelper/DreamField")]
 public class DreamField : DreamBlock {
-    const float FieldOpacity = 0.2f;
+    const float FieldOpacity = 0.3f;
     float Elapsed;
 
     internal class DreamFieldColliderList : ColliderList {
@@ -48,15 +48,17 @@ public class DreamField : DreamBlock {
         WobblyHelper.RenderFill(camera, Collider.Bounds, Elapsed, 2f, 2f, (playerHasDreamDash ? activeBackColor : disabledBackColor) * FieldOpacity);
         WobblyHelper.RenderFill(camera, Collider.Bounds.Grow(-2), Elapsed, 2f, 2f, (playerHasDreamDash ? activeBackColor : disabledBackColor) * FieldOpacity);
         DrawParticles();
-        if (whiteFill > 0)
+        if (whiteFill > 0.01)
             WobblyHelper.RenderFill(
-                camera, 
+                camera,
                 new Rectangle(
                     (int)Collider.AbsoluteLeft, (int)Collider.AbsoluteTop,
                     (int)Collider.Width, (int)(Collider.Height * whiteHeight)
                 ),
                 Elapsed, 2f, 2f, Color.White * whiteFill
             );
+        else
+            whiteHeight = 1;
     }
 
     private void DrawParticles() {
@@ -101,7 +103,25 @@ public class DreamField : DreamBlock {
                     self.Die(Vector2.Zero, true);
                 return 0;
             }
-            if (Input.Dash.Pressed || Input.CrouchDashPressed) {
+            if (Input.Grab.Check && self.Holding == null) {
+                foreach (Holdable component in self.Scene.Tracker.GetComponents<Holdable>())
+                    if (component.Check(self) && self.Pickup(component)) {
+                        Audio.Play("event:/char/madeline/crystaltheo_lift");
+                        break;
+                    }
+            } else if (!Input.Grab.Check && self.Holding is {}) {
+                if (Input.MoveY.Value == 1)
+                    self.Drop();
+                else {
+                    Input.Rumble(RumbleStrength.Strong, RumbleLength.Short);
+                    self.Holding.Release(Vector2.UnitX * (self.Speed.X == 0 ? (int) self.Facing : Math.Sign(self.Speed.X)));
+                    self.Play("event:/char/madeline/crystaltheo_throw");
+                }
+
+                self.Holding = null;
+            }
+            if (Input.CrouchDashPressed || Input.Dash.Pressed) {
+                bool demo = Input.CrouchDashPressed;
                 Celeste.Freeze(0.05f);
                 if (Math.Abs(Input.Aim.Value.X) > 0.01f) {
                     self.Speed.X = Math.Abs(self.Speed.X) * Math.Sign(Input.Aim.Value.X);
@@ -112,7 +132,12 @@ public class DreamField : DreamBlock {
                 if (!self.TrySquishWiggle(new CollisionData() { Hit = sol, Pusher = sol, TargetPosition = self.Position }, 6, 6))
                     self.Die(Vector2.Zero, true);
                 self.Dashes--;
-                return self.StartDash();
+                int res = self.Holding?.Entity is RefillCrystal holdCrys ? holdCrys.UseCrystal(self) : self.StartDash();
+                if (demo) {
+                    self.Ducking = true;
+                    self.demoDashed = true;
+                }
+                return res;
             }
         }
         return orig(self);

@@ -1,7 +1,27 @@
+local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local utils = require("utils")
 local drawing = require("utils.drawing")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableFunc = require("structs.drawable_function")
+
+local populate = scughelper.populateDefaults {
+    Sprite = "hangrail",
+    TieSprite = "objects/ScugHelper/hangrail/tie",
+    RopeSprite = "objects/ScugHelper/hangrail/rope",
+    StartWithGravity = false,
+    Position = 0,
+    TakesStamina = true,
+    PlayerMaxSpeed = 30,
+    Friction = 80,
+    MaxFall = 160,
+    Gravity = 400,
+    HoldSpeedLimit = 60,
+    TiltSpriteThreshold = 20,
+    StaminaCost = 12,
+    JumpStaminaCost = 27.5,
+    InitialSpeed = 0,
+    NoBonk = false
+}
 
 return {
     name = "ScugHelper/Hangrail",
@@ -11,23 +31,7 @@ return {
     placements = {
         {
             name = "normal",
-            data = {
-                Sprite = "hangrail",
-                TieSprite = "objects/ScugHelper/hangrail/tie",
-                RopeSprite = "objects/ScugHelper/hangrail/rope",
-                StartWithGravity = false,
-                Position = 0,
-                TakesStamina = true,
-                PlayerMaxSpeed = 30,
-                Friction = 80,
-                MaxFall = 160,
-                Gravity = 400,
-                HoldSpeedLimit = 60,
-                TiltSpriteThreshold = 20,
-                StaminaCost = 12,
-                JumpStaminaCost = 27.5,
-                InitialSpeed = 0
-            },
+            data = populate {},
         },
     },
     sprite = function(room, entity)
@@ -64,19 +68,8 @@ return {
         }
     end,
     nodeTexture = function(room, entity) return entity.TieSprite end,
-    onMove = function(room, entity, nodeIndex, offsetX, offsetY)
-        if (nodeIndex ~= 0) then return true end
-        local newX = entity.x + offsetX
-        local newY = entity.y + offsetY
-
-        entity.nodes = entity.nodes or {}
-        entity.nodes[1] = entity.nodes[1] or { x = entity.x, y = entity.y }
-        entity.nodes[2] = entity.nodes[2] or { x = entity.x, y = entity.y }
-        local s = entity.nodes[1]; local e = entity.nodes[2]
-        s.x = s.x + offsetX
-        s.y = s.y + offsetY
-        e.x = e.x + offsetX
-        e.y = e.y + offsetY
-        return true
-    end
+    ignoredFields = function(entity)
+        populate(entity)
+        return {"_name", "_id", "originX", "originY"}
+    end,
 }

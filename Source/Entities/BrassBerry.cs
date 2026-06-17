@@ -13,40 +13,26 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [Tracked]
 [RegisterStrawberry(false, true)]
 [CustomEntity("ScugHelper/BrassBerry")]
-class BrassBerry : Entity, IStrawberry
-{
-    public static ParticleType P_Glow = Strawberry.P_Glow;
-    public static ParticleType P_GhostGlow = Strawberry.P_GhostGlow;
-
-    public EntityID ID;
-    public Follower Follower;
-
-    private Sprite? sprite;
-    private Wiggler? wiggler;
-    private BloomPoint? bloom;
-    private VertexLight? light;
-    private Tween? lightTween;
-    private float wobble = 0f;
-    private float collectTimer = 0f;
-    private bool collected = false;
+class BrassBerry : Strawberry, IStrawberry {
     private readonly bool isOwned;
 
-    public BrassBerry(EntityData data, Vector2 offset, EntityID gid) {
+    public BrassBerry(EntityData data, Vector2 offset, EntityID gid): base(data, offset, gid) {
         ID = gid;
         Position = data.Position + offset;
 
+        Golden = false;
         isOwned = SaveData.Instance.CheckStrawberry(ID);
         Depth = -100;
         Collider = new Hitbox(14f, 14f, -7f, -7f);
-        Add(new PlayerCollider(OnPlayer));
-        Add(new MirrorReflection());
-        Add(Follower = new Follower(ID, null, null));
         Follower.FollowDelay = 0.3f;
 
     }
 
     public override void Added(Scene scene) {
         base.Added(scene);
+        Visible = true;
+        Collidable = true;
+        Remove(sprite);
         if (!(ScugHelperModule.Session.BrassBerryFollowing?.Equals(ID) ?? true)) {
             scene.Remove(this);
             return;
@@ -56,25 +42,11 @@ class BrassBerry : Entity, IStrawberry
         Add(sprite);
 
         sprite.Play(isOwned ? "idleGhost" : "idle");
-
-        sprite.OnFrameChange = OnAnimate;
-
-        wiggler = Wiggler.Create(0.4f, 4f, (v) => { sprite.Scale = Vector2.One * (1f + v * 0.35f); }, false, false);
-        Add(wiggler);
-
-        bloom = new BloomPoint(isOwned ? 0.5f : 1f, 12f);
-        Add(bloom);
-
-        light = new VertexLight(Color.White, 1f, 16, 24);
-        lightTween = light.CreatePulseTween();
-        Add(light);
-        Add(lightTween);
-
-        if (SceneAs<Level>().Session.BloomBaseAdd > 0.1f)
-            bloom.Alpha *= 0.5f;
     }
 
     public override void Update() {
+        Visible = true;
+        Collidable = true;
         if (!collected) {
             wobble += Engine.DeltaTime * 4f;
             sprite?.Y = bloom!.Y = light!.Y = (float)Math.Sin(wobble) * 2f;
@@ -96,21 +68,11 @@ class BrassBerry : Entity, IStrawberry
             }
         }
 
-        base.Update();
+        foreach (var comp in Components)
+            comp.Update();
     }
 
-    private void OnAnimate(string id) {
-        int numFrames = 35;
-        if (sprite?.CurrentAnimationFrame == numFrames - 4) {
-            lightTween?.Start();
-
-            bool visuallyObstructed = CollideCheck<FakeWall>() || CollideCheck<Solid>();
-            Audio.Play("event:/game/general/strawberry_pulse", Position);
-            SceneAs<Level>().Displacement.AddBurst(Position, 0.6f, 4f, 28f, (!collected && visuallyObstructed) ? 0.1f : 0.2f);
-        }
-    }
-
-    public void OnPlayer(Player player) {
+    public void NewOnPlayer(Player player) {
         if (Follower.Leader != null || collected)
             return;
 
@@ -122,47 +84,6 @@ class BrassBerry : Entity, IStrawberry
         Depth = -1000000;
 
         ScugHelperModule.Session.BrassBerryFollowing = ID;
-    }
-
-    public void OnCollect() {
-        if (collected)
-            return;
-        ScugHelperModule.Session.BrassBerryFollowing = null;
-
-        collected = true;
-
-        int collectIndex = 0;
-
-        if (Follower.Leader != null) {
-            Player player = (Follower.Leader.Entity as Player)!;
-            collectIndex = player.StrawberryCollectIndex;
-            player.StrawberryCollectIndex++;
-            player.StrawberryCollectResetTimer = 2.5f;
-            Follower.Leader.LoseFollower(Follower);
-        }
-
-        SaveData.Instance.AddStrawberry(ID, true);
-
-        Session session = SceneAs<Level>().Session;
-        session.DoNotLoad.Add(ID);
-        session.Strawberries.Add(ID);
-        session.UpdateLevelStartDashes();
-
-        Add(new Coroutine(CollectRoutine(collectIndex), true));
-    }
-
-    private IEnumerator CollectRoutine(int collectIndex) {
-        Tag = Tags.TransitionUpdate;
-        Depth = -2000010;
-
-        int color = !isOwned ? 0 : 1;
-        Audio.Play("event:/game/general/strawberry_get", Position, "colour", color, "count", collectIndex);
-        Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
-        sprite?.Play(isOwned ? "collectGhost" : "collect");
-        while (sprite?.Animating ?? false) yield return null;
-        Scene.Add(new StrawberryPoints(Position, isOwned, collectIndex, false));
-        RemoveSelf();
-        yield break;
     }
 
     public override void Awake(Scene scene) {
@@ -181,14 +102,51 @@ class BrassBerry : Entity, IStrawberry
     internal static void LoadHooks() {
         On.Celeste.Player.Added += PlayerAddHook;
         On.Celeste.Player.Update += PlayerUpdateHook;
+        On.Celeste.Strawberry.OnPlayer += OnStrawberryOnPlayer;
+        On.Celeste.Strawberry.OnCollect += OnStrawberryOnCollect;
     }
 
     [OnUnload]
     internal static void UnloadHooks() {
         On.Celeste.Player.Added -= PlayerAddHook;
         On.Celeste.Player.Update -= PlayerUpdateHook;
+        On.Celeste.Strawberry.OnPlayer -= OnStrawberryOnPlayer;
+        On.Celeste.Strawberry.OnCollect -= OnStrawberryOnCollect;
     }
 
+    private static void OnStrawberryOnCollect(On.Celeste.Strawberry.orig_OnCollect orig, Strawberry self) {
+        if (self is not BrassBerry) { orig(self); return; }
+        if (self.collected)
+            return;
+        ScugHelperModule.Session.BrassBerryFollowing = null;
+
+        self.collected = true;
+
+        int collectIndex = 0;
+
+        if (self.Follower.Leader != null) {
+            Player player = (self.Follower.Leader.Entity as Player)!;
+            collectIndex = player.StrawberryCollectIndex;
+            player.StrawberryCollectIndex++;
+            player.StrawberryCollectResetTimer = 2.5f;
+            self.Follower.Leader.LoseFollower(self.Follower);
+        }
+
+        SaveData.Instance.AddStrawberry(self.ID, true);
+
+        Session session = self.SceneAs<Level>().Session;
+        session.DoNotLoad.Add(self.ID);
+        session.Strawberries.Add(self.ID);
+        session.UpdateLevelStartDashes();
+
+        self.Add(new Coroutine(self.CollectRoutine(collectIndex), true));
+    }
+
+    private static void OnStrawberryOnPlayer(On.Celeste.Strawberry.orig_OnPlayer orig, Strawberry self, Player player) {
+        if (self is not BrassBerry brass) { orig(self, player); return; }
+        brass.NewOnPlayer(player);
+    }
+    
     private static void PlayerUpdateHook(On.Celeste.Player.orig_Update orig, Player self) {
         // Ideally this should be an SSV but it was added way way way before that so
         self.level.Session.SetFlag("ScugHelper.HasBrassBerry", ScugHelperModule.Session.BrassBerryFollowing != null);

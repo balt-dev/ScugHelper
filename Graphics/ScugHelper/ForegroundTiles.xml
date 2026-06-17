@@ -102,7 +102,7 @@
   <!-- DEFAULT TILES -->
   <!-- ~~~~~~~~~~~~~ -->
 
-  <Tileset id="z" path="template">
+  <Tileset id="z" path="template" ignores="*">
     <set mask="x0x-111-x1x" tiles="0,0;1,0;2,0;3,0"/>
     <set mask="x1x-111-x0x" tiles="0,1;1,1;2,1;3,1"/>
     <set mask="x1x-011-x1x" tiles="0,2;1,2;2,2;3,2"/>
@@ -305,5 +305,5 @@
   <Tileset id="n" copy="z" path="scifi"/>
 
 
-  <Tileset id="*" copy="y" path="ScugHelper/starjump" sound="32" debris="ScugHelper/starjump"/>
+  <Tileset id="*" copy="y" path="ScugHelper/starjump" ignores="6" sound="32" debris="ScugHelper/starjump"/>
 </Data>

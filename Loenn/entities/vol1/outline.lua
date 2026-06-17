@@ -7,8 +7,14 @@ return {
     name = "ScugHelper/Outline",
     depth = function(room, entity) return entity.Depth end,
         fieldInformation = {
-            Color = { fieldType = "color" },
-        },
+        Color = { fieldType = "color" },
+        LineSize = {fieldType = "integer"},
+        SpaceSize = {fieldType = "integer"},
+        CornerSize = {fieldType = "integer"},
+        InnerMargin = {fieldType = "integer"},
+        CornerSpace = { fieldType = "integer" },
+        Depth = {fieldType = "integer"}
+    },
     placements = {
         {
             name = "normal",
@@ -17,6 +23,7 @@ return {
                 height = 8,
                 Depth = 10,
                 Color = "FFFFFF",
+                Opacity = 0.25,
                 InnerOpacity = 0.25,
                 LineSize = 2,
                 SpaceSize = 1,

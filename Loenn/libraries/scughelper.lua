@@ -212,6 +212,17 @@ for state, id in pairs(T.playerStates) do
     T.playerStateNames[id] = state
 end
 
+T.populateDefaults = function(source)
+    return function(destination)
+        for key, value in pairs(source) do
+            if destination[key] == nil then
+                destination[key] = value
+            end
+        end
+        return destination
+    end
+end
+
 T.unfuckedRect = function(entity, color)
     return drawableFunc.fromFunction(function()
         drawing.callKeepOriginalColor(function()

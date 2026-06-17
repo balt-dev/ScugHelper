@@ -549,18 +549,20 @@ entities.ScugHelper/HoldableTrajectoryController.placements.description.normal=C
 
 entities.ScugHelper/ArbitraryAngleSpring.placements.name.normal=Arbitrary Angle Spring
 
-entities.ScugHelper/RefillHoldCrystal.placements.name.green=Refill Crystal (Green)
-entities.ScugHelper/RefillHoldCrystal.placements.name.pink=Refill Crystal (Pink)
-entities.ScugHelper/RefillHoldCrystal.placements.name.blue=Refill Crystal (Blue)
-entities.ScugHelper/RefillHoldCrystal.placements.name.cyan=Refill Crystal (Cyan)
-entities.ScugHelper/RefillHoldCrystal.placements.name.black=Refill Crystal (Black)
-entities.ScugHelper/RefillHoldCrystal.placements.name.dream=Refill Crystal (Dream) [+CommunalHelper]
-entities.ScugHelper/RefillHoldCrystal.placements.description.green=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a one-dash refill if none is, when the player dashes while holding it.
-entities.ScugHelper/RefillHoldCrystal.placements.description.pink=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a two-dash refill if none is, when the player dashes while holding it.
-entities.ScugHelper/RefillHoldCrystal.placements.description.blue=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a midair refill if none is, when the player dashes while holding it.
-entities.ScugHelper/RefillHoldCrystal.placements.description.cyan=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or an overcharge refill if none is, when the player dashes while holding it.
-entities.ScugHelper/RefillHoldCrystal.placements.description.black=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a limbo refill if none is, when the player dashes while holding it.
-entities.ScugHelper/RefillHoldCrystal.placements.description.dream=Holdable theo-like crystal that shatters and gives a refill placed on top of it, or a dream tunnel refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.name.green=Player Collider Crystal (One-dash refill)
+entities.ScugHelper/RefillHoldCrystal.placements.name.pink=Player Collider Crystal (Two-dash Refill)
+entities.ScugHelper/RefillHoldCrystal.placements.name.blue=Player Collider Crystal (Midair Refill)
+entities.ScugHelper/RefillHoldCrystal.placements.name.cyan=Player Collider Crystal (Overcharge Refill)
+entities.ScugHelper/RefillHoldCrystal.placements.name.black=Player Collider Crystal (Limbo Refill)
+entities.ScugHelper/RefillHoldCrystal.placements.name.dream=Player Collider Crystal (Dream Tunnel Refill) [+CommunalHelper]
+entities.ScugHelper/RefillHoldCrystal.placements.name.grey=Player Collider Crystal (None)
+entities.ScugHelper/RefillHoldCrystal.placements.description.green=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it, or a one-dash refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.pink=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it, or a two-dash refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.blue=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it, or a midair refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.cyan=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it, or an overcharge refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.black=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it, or a limbo refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.dream=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it, or a dream tunnel refill if none is, when the player dashes while holding it.
+entities.ScugHelper/RefillHoldCrystal.placements.description.grey=Holdable theo-like crystal that shatters and triggers a player collider placed on top of it when the player dashes while holding it.
 
 entities.ScugHelper/BoostRefill.placements.name.normal=Boost Refill
 entities.ScugHelper/BoostRefill.placements.description.normal=Multiplies the player's speed.
@@ -593,3 +595,5 @@ entities.ScugHelper/RaycastedAudioController.placements.description.normal=Makes
 
 entities.ScugHelper/DreamField.placements.name.normal=Dream Field
 entities.ScugHelper/DreamField.placements.description.normal=Non-solid dream block.
+
+style.effects.ScugHelper/HallOfMirrors.name=Hall of Mirrors

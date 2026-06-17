@@ -15,9 +15,9 @@ namespace Celeste.Mod.ScugHelper.Entities;
 #nullable enable
 
 [CustomEntity("ScugHelper/LevelTeleportTrigger")]
-public class LevelTeleportTrigger(EntityData data, Vector2 offset, EntityID id) : Trigger(data, offset) {
+public class LevelTeleportTrigger : Trigger {
     internal struct TriggerData {
-        internal string? TargetAreaSID;
+        internal AreaData? TargetAreaData;
         internal AreaMode TargetAreaMode;
         internal string LevelName;
         internal Player.IntroTypes IntroType;
@@ -25,42 +25,61 @@ public class LevelTeleportTrigger(EntityData data, Vector2 offset, EntityID id) 
         internal bool FlagState;
         internal Vector2? SpawnLocation;
     }
-    internal readonly TriggerData Data = new() {
-        TargetAreaSID = data.String("TargetAreaSID"),
-        TargetAreaMode = data.Enum("TargetAreaMode", AreaMode.Normal),
-        LevelName = data.String("LevelName", ""),
-        IntroType = data.Enum("IntroType", Player.IntroTypes.Respawn),
-        Flag = data.String("IfFlag"),
-        FlagState = data.Bool("FlagState", true),
-        SpawnLocation = data.FirstNodeNullable(offset),
-    };
+    internal readonly TriggerData Data;
+    public LevelTeleportTrigger(EntityData data, Vector2 offset, EntityID id) : base(data, offset) {
+        AreaData? areaData = null;
+        if (data.String("TargetAreaSID") is {} sid)
+            areaData = AreaData.Get(sid)
+                ?? throw new InvalidOperationException($"Invalid target SID: {data.String("TargetAreaSID")}");
+        Data = new() {
+            TargetAreaData = areaData,
+            TargetAreaMode = data.Enum("TargetAreaMode", AreaMode.Normal),
+            LevelName = data.String("LevelName", ""),
+            IntroType = data.Enum("IntroType", Player.IntroTypes.Respawn),
+            Flag = data.String("IfFlag"),
+            FlagState = data.Bool("FlagState", true),
+            SpawnLocation = data.FirstNodeNullable(offset),
+        };
+    }
     public override void OnEnter(Player player) {
         if (Data.Flag is not null && player.level.Session.GetFlag(Data.Flag) != Data.FlagState) return;
         Scene.OnEndOfFrame += () => {
-            if (Data.TargetAreaSID is null) {
-                player.level.TeleportTo(player, Data.LevelName, Data.IntroType, Data.SpawnLocation);
-            } else {
-                AreaData data = AreaData.Get(Data.TargetAreaSID);
+            Level level = player.level ?? Scene as Level ?? Engine.Scene as Level ?? throw new InvalidOperationException("Tried to level teleport while not currently in a level.");
+            if (Data.TargetAreaData is {} data) {
+                var Area = data.ToKey(Data.TargetAreaMode);
+                var Level = Data.LevelName;
+                var Dashes = level.Session?.Dashes ?? 0;
+                var Deaths = level.Session?.Deaths ?? 0;
+                var Time = level.Session?.Time ?? 0;
+                var FirstLevel = false;
+                var JustStarted = false;
+                AreaStats OldStats = new();
+                var Inventory = level.Session?.Inventory ?? PlayerInventory.Default;
+                var Audio = level.Session?.Audio;
                 Session session = new() {
-                    Area = data.ToKey(Data.TargetAreaMode),
-                    Level = Data.LevelName,
-                    Dashes = player.level.Session.Dashes,
-                    Deaths = player.level.Session.Deaths,
-                    Time = player.level.Session.Time,
-                    FirstLevel = false,
-                    JustStarted = false,
-                    OldStats = new(),
-                    Inventory = player.level.Session.Inventory,
-                    Audio = player.level.Session.Audio
+                    Area = Area,
+                    Level = Level,
+                    Dashes = Dashes,
+                    Deaths = Deaths,
+                    Time = Time,
+                    FirstLevel = FirstLevel,
+                    JustStarted = JustStarted,
+                    OldStats = OldStats,
+                    Inventory = Inventory,
+                    Audio = Audio
                 };
                 DynamicData.For(session).Set("BrassBerryCrossLevel", ScugHelperModule.Session.BrassBerryFollowing);
-                foreach (var flag in player.level.Session.Flags) session.Flags.Add(flag);
-                foreach (var ctr in player.level.Session.Counters) session.Counters.Add(ctr);
-                var sourceSliders = (Dictionary<string, Session.Slider>) DynamicData.For(player.level.Session).Get("_Sliders")!;
-                var destSliders = (Dictionary<string, Session.Slider>) DynamicData.For(session).Get("_Sliders")!;
-                foreach (var kvp in sourceSliders) destSliders.Add(kvp.Key, kvp.Value);
+                if (level.Session is not null) {
+                    foreach (var flag in level.Session.Flags) session.Flags.Add(flag);
+                    foreach (var ctr in level.Session.Counters) session.Counters.Add(ctr);
+                    var sourceSliders = (Dictionary<string, Session.Slider>)DynamicData.For(level.Session).Get("_Sliders")!;
+                    var destSliders = (Dictionary<string, Session.Slider>)DynamicData.For(session).Get("_Sliders")!;
+                    foreach (var kvp in sourceSliders) destSliders.Add(kvp.Key, kvp.Value);
+                }
                 var levelLoader = Engine.Scene = new LevelLoader(session);
                 DynamicData.For(levelLoader).Set("ScugHelper.NaiveTeleport", Data);
+            } else {
+                level.TeleportTo(player, Data.LevelName, Data.IntroType, Data.SpawnLocation);
             }
         };
     }

@@ -34,7 +34,6 @@ public class GPUSpinner : Entity
         var spriteSuffix = data.String("SpriteSuffix", "_white");
         bgTex = GFX.Game.GetAtlasSubtextures(spriteDir + $"/bg{spriteSuffix}");
         fgTex = GFX.Game.GetAtlasSubtextures(spriteDir + $"/fg{spriteSuffix}");
-        Visible = false;
     }
 
     public override void Added(Scene scene) {
@@ -45,6 +44,7 @@ public class GPUSpinner : Entity
         base.Awake(scene);
         CreateSpinnerSprites(scene);
     }
+    public override void Render() {}
 
     public override void Removed(Scene scene) {
         base.Removed(scene);
@@ -144,9 +144,11 @@ class GPUSpinnerRenderer : Entity {
         Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
         foreach (GPUSpinner spinner in Spinners)
-            spinner.filler?.Render();
+            if (spinner.Visible)
+                spinner.filler?.Render();
         foreach (GPUSpinner spinner in Spinners)
-            spinner.crystal?.Render();
+            if (spinner.Visible)
+                spinner.crystal?.Render();
 
         Draw.SpriteBatch.End();
     }
