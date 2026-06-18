@@ -41,11 +41,11 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     }
 
     [SettingSubText("The maximum amount of time any given Lua script execution can take, in seconds.")]
-    [SettingNumberInput(allowNegatives: false, maxLength: 3)]
+    [SettingRange(1, 20)]
     public int LuaTimeLimit { get; set; } = 3;
 
     [SettingSubText("The maximum amount of memory any given Lua script execution can use, in megabytes.")]
-    [SettingNumberInput(allowNegatives: false, maxLength: 3)]
+    [SettingRange(1, 256, largeRange: true)]
     public int LuaMemoryLimit { get; set; } = 16;
 
     [SettingSubText("Makes all tiling fully deterministic.\nThis might get you rejected from certain lists due to creating pixel lineups that usually don't exist.")]
@@ -53,6 +53,9 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.\nThis will be turned into a Controller in a later update.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
+
+    [SettingSubText("Replaces all vanilla spinners with ScugHelper GPU spinners.\nGood for performance, but might break some maps.\nTurn this off if making / playing back a TAS.")]
+    public bool ReplaceVanillaSpinners { get; set; } = false;
 
     [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]
     public bool SideflippingEverywhere { get; set; } = false;
@@ -104,12 +107,12 @@ public class MinimapMenu {
     public float UnfocusedOpacity { get; set; } = 0.3f;
     [SettingNumberInput(allowNegatives: false, maxLength: 4)]
     public float FocusedOpacity { get; set; } = 1f;
-    [SettingNumberInput(allowNegatives: false, maxLength: 4)]
+    [SettingRange(0, 1920, largeRange: true)]
     public int MinimapWidth { get; set; } = 640;
-    [SettingNumberInput(allowNegatives: false, maxLength: 4)]
+    [SettingRange(0, 1080, largeRange: true)]
     public int MinimapHeight { get; set; } = 360;
-    [SettingNumberInput(allowNegatives: false, maxLength: 4)]
+    [SettingRange(0, 1920, largeRange: true)]
     public int MinimapX { get; set; } = 1920 - 640 - 10;
-    [SettingNumberInput(allowNegatives: false, maxLength: 4)]
+    [SettingRange(0, 1080, largeRange: true)]
     public int MinimapY { get; set; } = 10;
 }

@@ -13,32 +13,50 @@ using MonoMod.RuntimeDetour;
 using System.Reflection;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Celeste.Mod.Helpers;
+using System.Linq;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/Anvil")]
-public class TungstenCube : Actor, IHasSpeed
-{
+public class TungstenCube : Actor, IHasSpeed {
     private Vector2 Speed;
     private readonly Holdable Hold;
     private readonly Image Image;
-    private Collider CrushCollider;
+    private readonly bool KillOnDestroy;
+    private readonly bool NoLeaveBehind;
+    private readonly bool CrystalSounds;
+    private readonly Collider CrushCollider;
 
     private Level Level { get => SceneAs<Level>(); }
+    
+    private readonly Hitbox PlayerHitbox = new(8f, 6f, -4f, -2f);
+    private readonly Hitbox InvertedCrushHitbox = new(8f, 16f, -4f, -14f);
+    private readonly Hitbox CrushHitbox = new(8f, 16f, -4f, -2f);
+    private readonly Hitbox PickupHitbox = new(12f, 12f, -6f, -8f);
+    
     Vector2 IHasSpeed.Speed { get => Speed; set => Speed = value; }
-    public TungstenCube(EntityData data, Vector2 offset) : this(data.Position + offset) { }
+    public TungstenCube(EntityData data, Vector2 offset) : this(
+        data.Position + offset, data.String("Texture", "objects/ScugHelper/anvil"),
+        data.Bool("KillOnDestroy"), data.Bool("NoLeaveBehind"), data.Bool("CrystalSounds")
+    ) { }
 
-    public TungstenCube(Vector2 position) : base(position) {
-        Depth = -20;
-        Collider = new Hitbox(8f, 6f, -4f, -2f);
-        CrushCollider = new Hitbox(8f, 16f, -4f, -2f);
+    public TungstenCube(
+        Vector2 position, string texturePath = "objects/ScugHelper/anvil",
+        bool killOnDestroy = false, bool noLeaveBehind = false, bool crystalSounds = false
+    ) : base(position) {
+        Tag |= Tags.TransitionUpdate;
+        Depth = 99;
+        Collider = PlayerHitbox;
+        CrushCollider = CrushHitbox;
         LiftSpeedGraceTime = 1f / 30f;
-        Image = new Image(GFX.Game["objects/ScugHelper/anvil"]);
-        Image.Position = TopLeft;
-        Image.Position.Y -= 2f;
+        CrystalSounds = crystalSounds;
+        Image = new Image(GFX.Game[texturePath]) { Position = Center - new Vector2(0, 1) };
+        Image.CenterOrigin();
+        KillOnDestroy = killOnDestroy;
+        NoLeaveBehind = noLeaveBehind;
         Add(Hold = new Holdable() {
             OnHitSpring = HitSpring,
-            PickupCollider = new Hitbox(12f, 12f, -6f, -8f),
+            PickupCollider = PickupHitbox,
             SlowRun = true,
             SpeedGetter = () => Speed,
             SpeedSetter = (value) => Speed = value,
@@ -48,6 +66,16 @@ public class TungstenCube : Actor, IHasSpeed
         Add(playerCollider = new PlayerCollider(OnPlayer, CrushCollider));
         Add(new MirrorReflection());
     }
+    
+    public override void Added(Scene scene) {
+        base.Added(scene);
+        
+        if (NoLeaveBehind)
+            foreach (TungstenCube entity in Level.Tracker.GetEntities<TungstenCube>())
+                if (entity != this && entity.Hold.IsHeld && entity.NoLeaveBehind)
+                    RemoveSelf();
+    }
+    
     public void OnPickup() {
         Speed = Vector2.Zero;
         AddTag(Tags.Persistent);
@@ -116,11 +144,8 @@ public class TungstenCube : Actor, IHasSpeed
 
     public override void Update() {
         base.Update();
-        if (GravityHelperImports.IsInverted(this))
-            playerCollider.Collider = new Hitbox(8f, 16f, -4f, -14f);
-        else
-            playerCollider.Collider = new Hitbox(8f, 16f, -4f, -2f);
-        Image.Position = new(MathF.Floor(Left), MathF.Floor(Top) - 2);
+        playerCollider.Collider = GravityHelperImports.IsInverted(this) ? InvertedCrushHitbox : CrushHitbox;
+        Image.Position = new(MathF.Floor(Center.X), MathF.Floor(Center.Y) - 1);
         if (Hold.IsHeld)
             Image.Position.Y -= Hold.Holder.IsInverted() ? -4f : 4f;
         Image.Update();
@@ -151,26 +176,56 @@ public class TungstenCube : Actor, IHasSpeed
         var level = SceneAs<Level>();
         var movedPos = Position + (Speed * Engine.DeltaTime);
         if (level.Bounds.Left > movedPos.X || movedPos.X > level.Bounds.Right) Speed.X *= -1;
-        if (Position.Y > level.Bounds.Bottom) { RemoveSelf(); return; }
+        EnforceLevelBounds();
+        if (Top > level.Bounds.Bottom) {
+            if (KillOnDestroy) Kill();
+            RemoveSelf();
+            return;
+        }
         MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
         MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
     }
 
-    private void OnCollideV(CollisionData data) {
+    private void EnforceLevelBounds() {
+        if (Right >= Level.Bounds.Right)
+            Right = Level.Bounds.Right;
+        else if (Left < Level.Bounds.Left)
+            Left = Level.Bounds.Left;
+        else if (Top < (Level.Bounds.Top - 4)) {
+            Top = Level.Bounds.Top + 4;
+            Speed.Y = 0f;
+        }
+        else if (Bottom > Level.Bounds.Bottom && KillOnDestroy && SaveData.Instance.Assists.Invincible) {
+            Bottom = Level.Bounds.Bottom;
+            Speed.Y = -300f;
+            Audio.Play("event:/game/general/assist_screenbottom", Position);
+        }
+        if (X < (Level.Bounds.Left + 10))
+            MoveH(32f * Engine.DeltaTime);
+    }
+
+    private void OnCollideV(CollisionData data)
+    {
         if (data.Hit is DashSwitch button)
             button.OnDashCollide(null, Vector2.UnitY * Math.Sign(Speed.Y));
         if (data.Hit is DashBlock block)
             block.Break(Position, Vector2.UnitY * Math.Sign(Speed.Y), true, true);
         if (data.Hit is FastfallBlock fblock)
             fblock.Break(Vector2.UnitX * Math.Sign(Speed.X), true, true);
-        if (Speed.Y > 60f) {
+        if (Speed.Y > 60f)
+        {
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
             Level.DirectionalShake(Vector2.UnitY, 0.1f);
         }
-        if (Speed.Y > 60f)
-            Audio.Play("event:/game/06_reflection/fallblock_boss_impact", Position);
-        if (MathF.Abs(Speed.Y) > 20f)
+        if (CrystalSounds) {
+            Audio.Play("event:/game/05_mirror_temple/crystaltheo_hit_ground", Position, "crystal_velocity", Speed.Y);
             Audio.Play("event:/game/03_resort/platform_vert_end", Position);
+        } else {
+            if (Speed.Y > 60f)
+                Audio.Play("event:/game/06_reflection/fallblock_boss_impact", Position);
+            if (MathF.Abs(Speed.Y) > 20f)
+                Audio.Play("event:/game/03_resort/platform_vert_end", Position);
+        }
         Speed.Y *= -0.3f;
     }
 
@@ -184,7 +239,10 @@ public class TungstenCube : Actor, IHasSpeed
         if (data.Hit is FastfallBlock fblock)
             fblock.Break(Vector2.UnitX * Math.Sign(Speed.X), true, true);
         Speed.X *= -0.8f;
-        Audio.Play("event:/game/04_cliffside/arrowblock_side_depress", Position);
+        if (CrystalSounds)
+            Audio.Play("event:/game/05_mirror_temple/crystaltheo_hit_side", Position);
+        else
+            Audio.Play("event:/game/04_cliffside/arrowblock_side_depress", Position);
     }
 
     public override void OnSquish(CollisionData data) {
@@ -192,9 +250,13 @@ public class TungstenCube : Actor, IHasSpeed
             Audio.Play("event:/game/general/wall_break_stone", Position);
             Level.DirectionalShake(data.Direction, 0.1f);
             SceneAs<Level>().ParticlesFG.Emit(Refill.P_Shatter, 8, Position, Vector2.One * 4f, data.Direction.Angle());
+            if (KillOnDestroy) Kill();
             RemoveSelf();
         }
     }
+
+    private void Kill() => Scene.Tracker.GetEntity<Player>()?.Die(Vector2.Zero);
+
     private static ILHook? getCameraTargetHook;
     [OnLoad]
     public static void LoadHooks() {
@@ -209,6 +271,7 @@ public class TungstenCube : Actor, IHasSpeed
         On.Celeste.Player.SuperWallJump += CanSuperWallJumpHook;
         On.Celeste.Player.SuperBounce += BounceHook;
         On.Celeste.Player.SideBounce += SideBounceHook;
+        On.Celeste.Level.EnforceBounds += OnLevelEnforceBounds;
         getCameraTargetHook = new(typeof(Player).GetProperty("CameraTarget", BindingFlags.Public | BindingFlags.Instance)!.GetGetMethod()!, GetCameraTargetHook);
     }
     [OnUnload]
@@ -224,6 +287,7 @@ public class TungstenCube : Actor, IHasSpeed
         On.Celeste.Player.SuperWallJump -= CanSuperWallJumpHook;
         On.Celeste.Player.SuperBounce -= BounceHook;
         On.Celeste.Player.SideBounce -= SideBounceHook;
+        On.Celeste.Level.EnforceBounds -= OnLevelEnforceBounds;
         getCameraTargetHook?.Dispose();
     }
 
@@ -325,6 +389,19 @@ public class TungstenCube : Actor, IHasSpeed
         }
     }
 
+    private static void OnLevelEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player) {
+        bool anyNoLeave = false;
+        foreach (TungstenCube cube in self.Tracker.GetEntities<TungstenCube>())
+            if (anyNoLeave = cube.NoLeaveBehind)
+                break;
+        if (anyNoLeave && (player.Holding == null || !player.Holding.IsHeld)) {
+            if (player.Right > self.Bounds.Right - 1)
+                player.Right = self.Bounds.Right - 1;
+            if (player.Top < self.Bounds.Top + 1)
+                player.Top = self.Bounds.Top + 1;
+        }
+        orig(self, player);
+    }
 
     [Command("givetheo", "Spawns a theo crystal on the player.")]
     private static void SpawnTheo() {
@@ -344,12 +421,16 @@ public class TungstenCube : Actor, IHasSpeed
     }
 
     [Command("givecube", "Spawns a cube on the player.")]
-    private static void SpawnCube() {
+    private static void SpawnCube(bool theo = false) {
         Scene scene = Engine.Instance.scene;
         if (scene is not Level level) return;
         Player? player = level.Tracker.GetEntity<Player>();
         if (player is not Player p) return;
-        scene.Add(new TungstenCube(p.Position - Vector2.UnitY * 10f));
+        scene.Add(new TungstenCube(
+            p.Position - Vector2.UnitY * 10f,
+            theo ? "objects/ScugHelper/theoAnvil" : "objects/ScugHelper/anvil",
+            theo, theo
+        ));
     }
 }
 

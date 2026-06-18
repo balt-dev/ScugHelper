@@ -83,7 +83,9 @@ entities.ScugHelper/SpeedRefill.placements.name.normal=Speed Refill
 entities.ScugHelper/SpeedRefill.placements.description.normal=Sets the player's speed to a value.
 
 entities.ScugHelper/Anvil.placements.name.normal=Tungsten Cube
+entities.ScugHelper/Anvil.placements.name.theo=Tungsten Cube (Theo)
 entities.ScugHelper/Anvil.placements.description.normal=Extremely heavy holdable. Can crush Madeline, and activates Touch Switches, Dash Switches, and breaks Dash Blocks. Restricts movement while held.
+entities.ScugHelper/Anvil.placements.description.theo=Extremely heavy holdable. Can crush Madeline, and activates Touch Switches, Dash Switches, and breaks Dash Blocks. Restricts movement while held. Will kill Madeline if destroyed.
 
 entities.ScugHelper/FastfallBlock.placements.name.normal=Fastfall Block
 entities.ScugHelper/FastfallBlock.placements.description.normal=Broken when fastfalled through.

@@ -51,6 +51,9 @@ return {
             }
         }
     },
+    fieldInformation = {
+        Color = { fieldType = "color" },
+    },
     sprite = function(room, entity)
         local base = drawableSprite.fromTexture(entity.SpritePath .. "/fg" .. entity.SpriteSuffix .. "00", entity)
         base:setColor(scughelper.parseColor(entity.Color))

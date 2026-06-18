@@ -31,8 +31,6 @@ public class RefillCrystal : Actor, IHasSpeed {
     private Level? Level;
     private Color BackgroundColor;
     private readonly string FallbackRefillType;
-    private readonly VertexLight light;
-    private readonly BloomPoint bloom;
     private PlayerCollider[] OnShatter = [];
     private bool Flash = false;
     private readonly bool AttachNonRefills = false;
@@ -69,8 +67,8 @@ public class RefillCrystal : Actor, IHasSpeed {
             particles[i].Color = Color.LightGray * (0.5f + particles[i].Layer / 2f * 0.5f);
             particles[i].Color = Calc.Random.Choose(particleColors);
         }
-        Add(light = new VertexLight(new(0, -8), Color.White, 1f, 16, 32));
-        Add(bloom = new BloomPoint(0.6f, 48f));
+        Add(new VertexLight(new(0, -8), Color.White, 1f, 16, 32));
+        Add(new BloomPoint(0.6f, 48f));
     }
 
     public override void Added(Scene scene) {
@@ -85,7 +83,7 @@ public class RefillCrystal : Actor, IHasSpeed {
         foreach (PlayerCollider coll in scene.Tracker.GetComponents<PlayerCollider>()) {
             if (!AttachNonRefills && coll.Entity is not Refill) continue;
             if (
-                coll.Entity is Entity ent && 
+                coll.Entity is Entity ent &&
                 CollideCheck(ent) && (
                     AttachedEntity is null || AttachedEntity is Spikes ||
                     (AttachedEntity is not Refill && coll.Entity is Refill) ||
@@ -434,7 +432,7 @@ public class RefillCrystal : Actor, IHasSpeed {
             case FlyFeather feather: {
                 self.Speed = Input.Aim.Value * 240f;
                 self.Speed += self.LiftBoost;
-                
+
                 feather.singleUse = true;
                 feather.OnPlayer(self);
                 return Player.StStarFly;
@@ -447,10 +445,10 @@ public class RefillCrystal : Actor, IHasSpeed {
                 self.Speed += self.LiftBoost;
                 self.Holding = null;
                 Hold.Holder = null;
-                
+
                 foreach (var onShatter in OnShatter)
                     onShatter.OnCollide(self);
-                    
+
                 self.launched = true;
 
                 return Player.StNormal;

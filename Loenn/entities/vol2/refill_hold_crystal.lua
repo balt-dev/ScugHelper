@@ -74,6 +74,9 @@ return {
             }
         },
     },
+    fieldInformation = {
+        BackgroundColor = { fieldType = "color" },
+    },
     ignoredFieldsMultiple = {"BackgroundColor", "ParticleColors", "FallbackRefill"},
     sprite = function(room, entity)
         populate(entity)
