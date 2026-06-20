@@ -87,7 +87,7 @@ public class RefillCrystal : Actor, IHasSpeed {
                 CollideCheck(ent) && (
                     AttachedEntity is null || AttachedEntity is Spikes ||
                     (AttachedEntity is not Refill && coll.Entity is Refill) ||
-                    (AttachedEntity.Center - Center).LengthSquared() < (ent.Center - Center).LengthSquared()
+                    (AttachedEntity.Center - Center).LengthSquared() > (ent.Center - Center).LengthSquared()
                 )
             ) AttachedEntity = ent;
         }
@@ -109,6 +109,7 @@ public class RefillCrystal : Actor, IHasSpeed {
             AttachedEntity.Visible = false;
             AttachedEntity.Collidable = false;
             OnShatter = AttachedEntity.Components.GetAll<PlayerCollider>().ToArray();
+            AttachedEntity.Add(new Marker());
         }
     }
 
@@ -481,4 +482,6 @@ public class RefillCrystal : Actor, IHasSpeed {
         Level?.ParticlesFG.Emit(Refill.P_Shatter, 5, Position, Vector2.One * 4f);
         RemoveSelf();
     }
+
+    internal class Marker(): Component(false, false) {}
 }

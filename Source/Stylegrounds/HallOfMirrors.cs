@@ -15,6 +15,7 @@ namespace Celeste.Mod.ScugHelper.Stylegrounds;
 public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
     public Vector2 Offset = new(data.AttrFloat("OffsetX"), data.AttrFloat("OffsetY"));
     public float Rotation = data.AttrFloat("Rotation") * Calc.DegToRad;
+    public readonly Vector2 Parallax = new(data.AttrFloat("ParallaxX"), data.AttrFloat("ParallaxY"));
     public readonly Vector2 MySpeed = new(data.AttrFloat("SpeedX"), data.AttrFloat("SpeedY"));
     public readonly Vector2 Wrap = new(data.AttrFloat("WrapX"), data.AttrFloat("WrapY"));
     public readonly float Zoom = data.AttrFloat("Zoom");
@@ -115,7 +116,7 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
         ScugHelperModule.HallOfMirrorsFX?.Parameters["BufferSize"]
             .SetValue(new Vector2(buffer.Width, buffer.Height));
         ScugHelperModule.HallOfMirrorsFX?.Parameters["Offset"]
-            .SetValue(Offset);
+            .SetValue(Offset + level.Camera.Position * Parallax);
         ScugHelperModule.HallOfMirrorsFX?.Parameters["Rotation"]
             .SetValue(Rotation);
         ScugHelperModule.HallOfMirrorsFX?.Parameters["Zoom"]

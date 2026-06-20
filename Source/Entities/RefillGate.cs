@@ -29,7 +29,7 @@ public class RefillGate(EntityData data, Vector2 offset) : AbstractGate(data, of
         // Refills aren't Tracked.
         Refill? closestRefill = null;
         foreach (Entity entity in scene.Entities)
-            if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
+            if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() > (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;
         Collider = null;
         if (closestRefill == null) {

@@ -9,3 +9,5 @@ ScugHelper_ScugHelperTest_101_BrassBerryTest=Brass Berry Test
 ScugHelper_ScugHelperTest_101_BrassBerryTest_2=Checkpoint
 poem_ScugHelper_ScugHelperTest_101_BrassBerryTest_A=shoutouts to simpleflips
 ScugHelper_TUTORIAL_SIDEFLIP=SIDEFLIP
+
+ScugHelper_postcard_toobigroom={big}Oops!{/big}{n}This room is too big for{n}the {#80a0c0}Baked Spinner Controller{#}!{n}Please shrink the room to{n}below {#F94A4A}512x512{#} tiles,{n}or remove the controller.

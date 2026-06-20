@@ -95,7 +95,7 @@ public class SeekerBarrierMaskRenderer : Entity
         ScugHelperModule.SeekerBarrierFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / Utils.BufferWidth, 1f / Utils.BufferHeight));
         ScugHelperModule.SeekerBarrierFX?.Parameters["ActiveTime"].SetValue(Elapsed);
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.SeekerBarrierFX, cam.Matrix);
-        Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White * 0.15f, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
+        Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White * 0.15f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();
         GameplayRenderer.Begin();
     }
@@ -104,6 +104,6 @@ public class SeekerBarrierMaskRenderer : Entity
         if (buffer is null) return;
         if (Entities.Count == 0) return;
         var cam = (Scene as Level)!.Camera;
-        Draw.SpriteBatch.Draw(buffer.Target, cam.Position.Rounded(), null, Color.White, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
+        Draw.SpriteBatch.Draw(buffer.Target, cam.Position.Rounded(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
     }
 }

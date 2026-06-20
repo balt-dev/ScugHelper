@@ -264,3 +264,12 @@ internal class LimboTimerSlider : SpecialSlider {
     public override float GetValue(Level level) => LimboRefill.LimboTimer;
     public override void SetValue(Level level, float value) => LimboRefill.LimboTimer = value;
 }
+
+internal class CameraZoomSlider : SpecialSlider {
+    public override float GetValue(Level level) => level.Camera.Zoom;
+    public override void SetValue(Level level, float value) => level.Camera.Zoom = value;
+}
+internal class CameraAngleSlider : SpecialSlider {
+    public override float GetValue(Level level) => level.Camera.Angle;
+    public override void SetValue(Level level, float value) => level.Camera.Angle = value;
+}

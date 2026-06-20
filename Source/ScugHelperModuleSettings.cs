@@ -54,7 +54,7 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.\nThis will be turned into a Controller in a later update.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
 
-    [SettingSubText("Replaces all vanilla spinners with ScugHelper GPU spinners.\nGood for performance, but might break some maps.\nTurn this off if making / playing back a TAS.")]
+    [SettingSubText("Replaces all vanilla spinners with ScugHelper GPU spinners,\nand statically bakes spinners in rooms below 512x512.\nGood for performance, but might break some maps.\nTurn this off if making / playing back a TAS.")]
     public bool ReplaceVanillaSpinners { get; set; } = false;
 
     [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]
@@ -91,10 +91,6 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Makes all room transitions instant. Increases IGT by 0.68 seconds on transition to compensate.")]
     public bool InstantRoomTransitions { get; set; } = false;
-
-    [YamlIgnore]
-    [SettingSubText("Please don't. Requires a restart to fix.")]
-    public bool GladelineApocalypse { get; set; } = false;
 }
 
 [SettingSubMenu]

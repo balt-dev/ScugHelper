@@ -35,6 +35,10 @@
         <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\YamlDotNet.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\KeraLua.dll" Private="false" />
+        <Reference Include="FrostHelper">
+            <HintPath>$(CelestePrefix)\Mods\Cache\FrostHelper.FrostTempleHelper.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
         <Reference Include="CommunalHelper">
             <HintPath>$(CelestePrefix)\Mods\Cache\CommunalHelper.CommunalHelper.dll</HintPath>
             <Private>False</Private>

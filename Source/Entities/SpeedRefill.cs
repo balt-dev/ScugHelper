@@ -69,6 +69,10 @@ public class SpeedRefill : Refill, ICustomRefill
         Remove(wiggler);
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
+        p_glow = new(P_Glow) {
+            Color = Calc.HexToColor("849be4"),
+            Color2 = Calc.HexToColor("6061a6"),
+        };
     }
     public override void Added(Scene scene) {
         base.Added(scene);

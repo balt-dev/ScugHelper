@@ -73,6 +73,8 @@ public static class SSV
             new("ScugHelper.PlayerSubpixelY", new PlayerSubpixelYSlider()),
             new("ScugHelper.PlayerStamina", new PlayerStaminaSlider()),
             new("ScugHelper.LimboTimer", new LimboTimerSlider()),
+            new("ScugHelper.CameraZoom", new CameraZoomSlider()),
+            new("ScugHelper.CameraAngle", new CameraAngleSlider()),
         ]);
         ExtVarInterop.LoadVariables();
         CommunalHelperSSVInterop.LoadVariables();
@@ -197,7 +199,7 @@ public static class SSV
         FlushSSVStates(level);
         level.Session.SetSlider(name, value);
     }
-    
+
     [Command("sessionvars", "Shows currently set flags, counters, and sliders. An optional first argument searches for values with a given string in their name.")]
     internal static void ShowValues(string? search = null) {
         if (Engine.Scene is not Level lv) return;

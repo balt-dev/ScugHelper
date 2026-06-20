@@ -39,6 +39,10 @@ public class BoostRefill : Refill, ICustomRefill
         Remove(wiggler);
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
+        p_glow = new(P_Glow) {
+            Color = Calc.HexToColor("dcbf4f"),
+            Color2 = Calc.HexToColor("ae9a4c"),
+        };
     }
     public override void Added(Scene scene) {
         base.Added(scene);

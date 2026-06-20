@@ -29,7 +29,7 @@ public class GPUSpinner : Entity {
         Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
         RandomSeed = Calc.Random.Next();
         Add(new PlayerCollider(static player => player.Die(-player.Speed.SafeNormalize(Vector2.UnitY))));
-        Rainbow = data.Bool("Rainbow");
+        Rainbow = data.Bool("Rainbow", false);
         Tag |= Tags.TransitionUpdate;
         Color = data.HexColor("Color", Color.White);
         var spriteDir = data.String("SpritePath", "danger/crystal");
@@ -41,7 +41,12 @@ public class GPUSpinner : Entity {
 
     public override void Added(Scene scene) {
         base.Added(scene);
-        scene.Tracker.GetEntity<GPUSpinnerRenderer>()?.Add(this);
+        if (scene.Tracker.GetEntity<BakedSpinnerController>() is null)
+            scene.Tracker.GetEntity<GPUSpinnerRenderer>()?.Add(this);
+    }
+    public override void Awake(Scene scene) {
+        base.Awake(scene);
+        CreateSpinnerSprites();
     }
     public override void Render() {}
 
@@ -64,7 +69,7 @@ public class GPUSpinner : Entity {
 
     private bool CreatedSprites;
 
-    private void CreateSpinnerSprites() {
+    internal void CreateSpinnerSprites() {
         if (CreatedSprites) return;
         CreatedSprites = true;
         Calc.PushRandom(RandomSeed);
@@ -77,26 +82,30 @@ public class GPUSpinner : Entity {
 
         crystal = new Image(crys).SetOrigin(12, 12).SetColor(Color);
         crystal.Entity = this;
+        if (Rainbow) SetHue();
 
         Calc.PopRandom();
     }
 
     public override void Update() {
         base.Update();
-        CreateSpinnerSprites();
+        if (Get<RefillCrystal.Marker>() is {}) return;
         if (Rainbow && Scene.OnInterval(0.08f, offset)) {
-            crystal?.Color = GetHue(Position + crystal.Position);
-            for (int i = 0; i < fillers.Count; i++)
-                fillers[i]?.Color = GetHue(Position + fillers[i].Position);
+            SetHue();
         }
 
-        if (Scene.OnInterval(0.25f, offset) && !InView())
-            Visible = false;
+        Visible = InView();
 
         if (
             Scene.OnInterval(0.05f, offset) &&
             Scene.Tracker.GetEntity<Player>() is Player player
         ) Collidable = Math.Abs(player.X - X) < 128f && Math.Abs(player.Y - Y) < 128f;
+    }
+
+    internal void SetHue() {
+        crystal?.Color = GetHue(Position + crystal.Position);
+        for (int i = 0; i < fillers.Count; i++)
+            fillers[i]?.Color = GetHue(Position + fillers[i].Position);
     }
 
     private bool InView() => (Scene as Level)?.Camera.Bounds()
@@ -121,6 +130,9 @@ public class GPUSpinner : Entity {
             if (level.Session.Area.ID == 3 || (level.Session.Area.ID == 7 && level.Session.Level.StartsWith("d-")))
                 return false;
             string? customColor = entityData.Attr("color", null);
+            if (customColor is not null && (customColor.IsWhiteSpace() || customColor.Length == 0))
+                customColor = null;
+            customColor = customColor?.ToLowerInvariant();
             entityData.Name = "ScugHelper/GPUSpinner";
             entityData.Values["SpritePath"] = "danger/crystal";
             entityData.Values["Color"] = "FFFFFF";
@@ -195,7 +207,7 @@ class GPUSpinnerRenderer : Entity {
         Engine.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, null, cam.Matrix);
-        
+
         var spinners = CollectionsMarshal.AsSpan(Spinners);
 
         for (int i = 0; i < spinners.Length; i++)
@@ -208,7 +220,7 @@ class GPUSpinnerRenderer : Entity {
 
                 Draw.SpriteBatch.Draw(
                     filler.Texture.Texture.Texture_Safe,
-                    filler.RenderPosition, filler.Texture.ClipRect,
+                    filler.RenderPosition + filler.Texture.DrawOffset, filler.Texture.ClipRect,
                     filler.Color, 0f,
                     filler.Origin, 1f, SpriteEffects.None, 0f
                 );
@@ -222,7 +234,7 @@ class GPUSpinnerRenderer : Entity {
 
             Draw.SpriteBatch.Draw(
                 crystal.Texture.Texture.Texture_Safe,
-                crystal.RenderPosition, crystal.Texture.ClipRect,
+                crystal.RenderPosition + crystal.Texture.DrawOffset, crystal.Texture.ClipRect,
                 crystal.Color, 0f,
                 crystal.Origin, 1f, SpriteEffects.None, 0f
             );
@@ -240,10 +252,8 @@ class GPUSpinnerRenderer : Entity {
         GameplayRenderer.End();
         ScugHelperModule.OutlineWithBaseFX?.Parameters["TexelSize"].SetValue(new Vector2(1f / Utils.BufferWidth, 1f / Utils.BufferHeight));
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, ScugHelperModule.OutlineWithBaseFX, cam.Matrix);
-        Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f / cam.Zoom, SpriteEffects.None, 0f);
+        Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();
         GameplayRenderer.Begin();
     }
-
-
 }

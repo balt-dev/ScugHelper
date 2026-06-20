@@ -599,3 +599,10 @@ entities.ScugHelper/DreamField.placements.name.normal=Dream Field
 entities.ScugHelper/DreamField.placements.description.normal=Non-solid dream block.
 
 style.effects.ScugHelper/HallOfMirrors.name=Hall of Mirrors
+
+entities.ScugHelper/FlagRefill.placements.name.normal=Flag Refill
+entities.ScugHelper/FlagRefill.attributes.name.ParticleColor1=Primary Particle Color
+entities.ScugHelper/FlagRefill.attributes.name.ParticleColor2=Secondary Particle Color
+
+entities.ScugHelper/BakedSpinnerController.placements.name.normal=Baked Spinner Controller
+entities.ScugHelper/BakedSpinnerController.placements.description.normal=Bakes all spinners in the room to a texture.

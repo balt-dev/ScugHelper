@@ -36,6 +36,10 @@ public class OverchargeRefill : Refill, ICustomRefill
         Remove(wiggler);
         Add(wiggler = Wiggler.Create(1f, 4f, v => { sprite.Scale = Vector2.One * (1f + v * 0.2f); }));
         UpdateY();
+        p_glow = new(P_Glow) {
+            Color = Calc.HexToColor("a5adff"),
+            Color2 = Calc.HexToColor("a5adff"),
+        };
     }
     public override void Added(Scene scene) {
         base.Added(scene);

@@ -42,7 +42,7 @@ public class RefillCircle : Entity
         base.Awake(scene);
         Refill? closestRefill = null;
         foreach (Entity entity in scene.Entities)
-            if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() < (refill.Center - Center).LengthSquared()))
+            if (entity is Refill refill && CollideCheck(refill) && (closestRefill is null || (closestRefill.Center - Center).LengthSquared() > (refill.Center - Center).LengthSquared()))
                 closestRefill = refill;
 
         if (closestRefill is null) {
