@@ -7,23 +7,36 @@ using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.InteropServices;
+using MonoMod;
+using MonoMod.Cil;
+using MonoMod.Utils;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [CustomEntity("ScugHelper/GPUSpinner")]
-[Tracked]
-public class GPUSpinner : Entity {
+[TrackedAs(typeof(CrystalStaticSpinner))]
+public class GPUSpinner : CrystalStaticSpinner {
     internal readonly int RandomSeed;
-    internal readonly bool Rainbow;
     internal readonly int ID;
     internal readonly List<MTexture> bgTex = [];
     internal readonly List<MTexture> fgTex = [];
-    internal readonly Color Color = Color.White;
-    internal readonly Rectangle CullingRect;
     internal readonly List<Image> fillers = [];
     internal Image? crystal;
-    internal float offset;
+    
+    // for mod interop
+    public readonly Rectangle CullingRect;
+    public readonly bool Rainbow;
+    public readonly Color Color = Color.White;
+    
+    private readonly string SpriteDirectory;
+    private readonly string SpriteSuffix;
+    private readonly Color ShatterColor;
 
-    public GPUSpinner(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
+    public IReadOnlyList<Image> Fillers => fillers;
+    public Image? Crystal => crystal;
+
+    internal Vector2 Shake;
+
+    public GPUSpinner(EntityData data, Vector2 offset, EntityID id) : base(data, offset, CrystalColor.Purple) {
         this.offset = Calc.Random.NextFloat();
         ID = id.ID;
         Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
@@ -32,26 +45,45 @@ public class GPUSpinner : Entity {
         Rainbow = data.Bool("Rainbow", false);
         Tag |= Tags.TransitionUpdate;
         Color = data.HexColor("Color", Color.White);
-        var spriteDir = data.String("SpritePath", "danger/crystal");
-        var spriteSuffix = data.String("SpriteSuffix", "_white");
-        bgTex = GFX.Game.GetAtlasSubtextures(spriteDir + $"/bg{spriteSuffix}");
-        fgTex = GFX.Game.GetAtlasSubtextures(spriteDir + $"/fg{spriteSuffix}");
+        ShatterColor = data.HexColor("ShatterColor", Color);
+        SpriteDirectory = data.String("SpritePath", "danger/crystal");
+        SpriteSuffix = data.String("SpriteSuffix", "");
+        bgTex = GFX.Game.GetAtlasSubtextures(SpriteDirectory + $"/bg{SpriteSuffix}");
+        fgTex = GFX.Game.GetAtlasSubtextures(SpriteDirectory + $"/fg{SpriteSuffix}");
         CullingRect = new(64, 64, (int) Position.X - 32, (int) Position.Y - 32);
+        expanded = true;
+        Components.RemoveAll<StaticMover>();
+        if (AttachToSolid) {
+            Add(new StaticMover {
+                OnShake = (offset) => Shake += offset,
+                SolidChecker = IsRiding,
+                OnDestroy = RemoveSelf
+            });
+        }
     }
 
+    [MonoModLinkTo("Monocle.Entity", "System.Void Update()")]
+    private void EntityUpdate() { }
+    [MonoModLinkTo("Monocle.Entity", "System.Void Added(Monocle.Scene)")]
+    private void EntityAdded(Scene scene) { }
+    [MonoModLinkTo("Monocle.Entity", "System.Void Awake(Monocle.Scene)")]
+    private void EntityAwake(Scene scene) { }
+    [MonoModLinkTo("Monocle.Entity", "System.Void Removed(Monocle.Scene)")]
+    private void EntityRemoved(Scene scene) { }
+    
     public override void Added(Scene scene) {
-        base.Added(scene);
+        EntityAdded(scene);
         if (scene.Tracker.GetEntity<BakedSpinnerController>() is null)
             scene.Tracker.GetEntity<GPUSpinnerRenderer>()?.Add(this);
     }
     public override void Awake(Scene scene) {
-        base.Awake(scene);
+        EntityAwake(scene);
         CreateSpinnerSprites();
     }
     public override void Render() {}
 
     public override void Removed(Scene scene) {
-        base.Removed(scene);
+        EntityRemoved(scene);
         scene.Tracker.GetEntity<GPUSpinnerRenderer>()?.Remove(this);
     }
 
@@ -76,8 +108,8 @@ public class GPUSpinner : Entity {
 
         MTexture crys = Calc.Random.Choose(fgTex);
 
-        foreach (GPUSpinner entity in Scene.Tracker.GetEntities<GPUSpinner>())
-            if (entity.ID > ID && (entity.Position - Position).LengthSquared() < 576f)
+        foreach (CrystalStaticSpinner entity in Scene.Tracker.GetEntities<CrystalStaticSpinner>())
+            if (entity is GPUSpinner spin && spin.ID > ID && (entity.Position - Position).LengthSquared() < 576f)
                 AddFiller((Position + entity.Position) / 2f - Position);
 
         crystal = new Image(crys).SetOrigin(12, 12).SetColor(Color);
@@ -88,13 +120,11 @@ public class GPUSpinner : Entity {
     }
 
     public override void Update() {
-        base.Update();
+        EntityUpdate();
         if (Get<RefillCrystal.Marker>() is {}) return;
-        if (Rainbow && Scene.OnInterval(0.08f, offset)) {
-            SetHue();
-        }
-
+        
         Visible = InView();
+        if (Rainbow && Visible) SetHue();
 
         if (
             Scene.OnInterval(0.05f, offset) &&
@@ -107,71 +137,30 @@ public class GPUSpinner : Entity {
         for (int i = 0; i < fillers.Count; i++)
             fillers[i]?.Color = GetHue(Position + fillers[i].Position);
     }
+    
+    [OnLoad] internal static void LoadHooks() => IL.Celeste.CrystalStaticSpinner.Destroy += OnCrystalStaticSpinnerDestroy;
+    [OnUnload] internal static void UnloadHooks() => IL.Celeste.CrystalStaticSpinner.Destroy -= OnCrystalStaticSpinnerDestroy;
 
-    private bool InView() => (Scene as Level)?.Camera.Bounds()
-        .Intersection(CullingRect) is not null;
+    private static void OnCrystalStaticSpinnerDestroy(ILContext il) {
+        ILCursor cur = new(il);
+        if (
+            !cur.TryGotoNext(MoveType.AfterLabel, static match => match.MatchCallOrCallvirt<CrystalDebris>(nameof(CrystalDebris.Burst))) || 
+            !cur.TryGotoPrev(MoveType.After, static match => match.MatchLdloc0())
+        ) throw new Utils.HookException("Failed to hook CrystalStaticSpinner.Destroy for GPU spinners!");
+        cur.EmitLdarg0();
+        cur.EmitDelegate(ReplaceColor);
 
-    internal Color GetHue(Vector2 position) {
-        float num = 280f;
-        float value = (position.Length() + Scene.TimeActive * 50f) % num / num;
-        return Calc.HsvToColor(0.4f + Calc.YoYo(value) * 0.4f, 0.4f, 0.9f);
-    }
-
-    [OnLoad]
-    public static void LoadHooks() =>
-        Everest.Events.Level.OnLoadEntity += OnEverestLevelOnLoadEntity;
-
-    [OnUnload]
-    public static void UnloadHooks() =>
-        Everest.Events.Level.OnLoadEntity -= OnEverestLevelOnLoadEntity;
-
-    private static bool OnEverestLevelOnLoadEntity(Level level, LevelData levelData, Vector2 offset, EntityData entityData) {
-        if (ScugHelperModule.Settings.ReplaceVanillaSpinners && entityData.Name == "spinner") {
-            if (level.Session.Area.ID == 3 || (level.Session.Area.ID == 7 && level.Session.Level.StartsWith("d-")))
-                return false;
-            string? customColor = entityData.Attr("color", null);
-            if (customColor is not null && (customColor.IsWhiteSpace() || customColor.Length == 0))
-                customColor = null;
-            customColor = customColor?.ToLowerInvariant();
-            entityData.Name = "ScugHelper/GPUSpinner";
-            entityData.Values["SpritePath"] = "danger/crystal";
-            entityData.Values["Color"] = "FFFFFF";
-            if (customColor is "rainbow" || (customColor is null && level.Session.Area.ID is 10)) {
-                entityData.Values["SpriteSuffix"] = "_white";
-                entityData.Values["Rainbow"] = true;
-                Logger.Log(nameof(ScugHelper), $"Replacing vanilla spinner! Color: {customColor}, rainbow: true");
-                level.Add(new GPUSpinner(entityData, offset, new(levelData.Name, entityData.ID)));
-                return true;
-            }
-            if (customColor is "core") customColor = "red";
-            customColor ??= level.Session.Area.ID switch {
-                5 => "red",
-                6 => "purple",
-                _ => "blue",
-            };
-            Logger.Log(nameof(ScugHelper), $"Replacing vanilla spinner! Color: {customColor}, rainbow: false");
-            entityData.Values["SpriteSuffix"] = "_" + customColor;
-            level.Add(new GPUSpinner(entityData, offset, new(levelData.Name, entityData.ID)));
-            return true;
-        }
-        return false;
+        static Color ReplaceColor(Color origColor, CrystalStaticSpinner spin) =>
+            spin is GPUSpinner gpuSpin 
+                ? ( gpuSpin.Rainbow 
+                    ? (gpuSpin.Crystal?.Color ?? Color.White)
+                    : gpuSpin.ShatterColor
+                ) : origColor;
     }
 }
 
 [Tracked]
 class GPUSpinnerRenderer : Entity {
-    [OnLoad]
-    public static void LoadHooks() {
-        Everest.Events.LevelLoader.OnLoadingThread += OnLevelLoad;
-    }
-    [OnUnload]
-    public static void UnloadHooks() {
-        Everest.Events.LevelLoader.OnLoadingThread -= OnLevelLoad;
-    }
-
-    private static void OnLevelLoad(Level level) {
-        level.Add(new GPUSpinnerRenderer());
-    }
 
     readonly List<GPUSpinner> Spinners = [];
 
@@ -220,7 +209,7 @@ class GPUSpinnerRenderer : Entity {
 
                 Draw.SpriteBatch.Draw(
                     filler.Texture.Texture.Texture_Safe,
-                    filler.RenderPosition + filler.Texture.DrawOffset, filler.Texture.ClipRect,
+                    filler.RenderPosition + filler.Texture.DrawOffset + spinner.Shake, filler.Texture.ClipRect,
                     filler.Color, 0f,
                     filler.Origin, 1f, SpriteEffects.None, 0f
                 );
@@ -234,7 +223,7 @@ class GPUSpinnerRenderer : Entity {
 
             Draw.SpriteBatch.Draw(
                 crystal.Texture.Texture.Texture_Safe,
-                crystal.RenderPosition + crystal.Texture.DrawOffset, crystal.Texture.ClipRect,
+                crystal.RenderPosition + crystal.Texture.DrawOffset + spinner.Shake, crystal.Texture.ClipRect,
                 crystal.Color, 0f,
                 crystal.Origin, 1f, SpriteEffects.None, 0f
             );
@@ -255,5 +244,52 @@ class GPUSpinnerRenderer : Entity {
         Draw.SpriteBatch.Draw(buffer.Target, cam.Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         Draw.SpriteBatch.End();
         GameplayRenderer.Begin();
+    }
+    
+    [OnLoad]
+    public static void LoadHooks() {
+        Everest.Events.LevelLoader.OnLoadingThread += OnLevelLoad;
+        Everest.Events.Level.OnLoadEntity += OnEverestLevelOnLoadEntity;
+    }
+    [OnUnload]
+    public static void UnloadHooks() {
+        Everest.Events.LevelLoader.OnLoadingThread -= OnLevelLoad;
+        Everest.Events.Level.OnLoadEntity -= OnEverestLevelOnLoadEntity;
+    }
+
+    private static void OnLevelLoad(Level level) {
+        level.Add(new GPUSpinnerRenderer());
+    }
+
+    private static bool OnEverestLevelOnLoadEntity(Level level, LevelData levelData, Vector2 offset, EntityData entityData) {
+        if (ScugHelperModule.Settings.ReplaceVanillaSpinners && entityData.Name == "spinner") {
+            if (level.Session.Area.ID == 3 || (level.Session.Area.ID == 7 && level.Session.Level.StartsWith("d-")))
+                return false;
+            string? customColor = entityData.Attr("color", null);
+            if (customColor is not null && (customColor.IsWhiteSpace() || customColor.Length == 0))
+                customColor = null;
+            customColor = customColor?.ToLowerInvariant();
+            entityData.Name = "ScugHelper/GPUSpinner";
+            entityData.Values["SpritePath"] = "danger/crystal";
+            entityData.Values["Color"] = "FFFFFF";
+            if (customColor is "rainbow" || (customColor is null && level.Session.Area.ID is 10)) {
+                entityData.Values["SpriteSuffix"] = "_white";
+                entityData.Values["Rainbow"] = true;
+                Logger.Log(nameof(ScugHelper), $"Replacing vanilla spinner! Color: {customColor}, rainbow: true");
+                level.Add(new GPUSpinner(entityData, offset, new(levelData.Name, entityData.ID)));
+                return true;
+            }
+            if (customColor is "core") customColor = "red";
+            customColor ??= level.Session.Area.ID switch {
+                5 => "red",
+                6 => "purple",
+                _ => "blue",
+            };
+            Logger.Log(nameof(ScugHelper), $"Replacing vanilla spinner! Color: {customColor}, rainbow: false");
+            entityData.Values["SpriteSuffix"] = "_" + customColor;
+            level.Add(new GPUSpinner(entityData, offset, new(levelData.Name, entityData.ID)));
+            return true;
+        }
+        return false;
     }
 }

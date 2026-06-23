@@ -22,8 +22,10 @@ public class HoldableTrajectoryController(EntityData data, Vector2 _) : Entity()
 {
     public readonly float MultiplierX = data.Float("MultiplierX", 1);
     public readonly float MultiplierY = data.Float("MultiplierY", 1);
-    public readonly bool InheritSpeedX = data.Bool("InheritSpeedX", true);
-    public readonly bool InheritSpeedY = data.Bool("InheritSpeedY", false);
+    public readonly float InheritMultiplierX = 
+        data.Float("InheritMultiplierX", (data.Has("InheritXSpeed") && !data.Bool("InheritXSpeed")) ? 0 : 1);
+    public readonly float InheritMultiplierY = 
+        data.Float("InheritMultiplierY", (data.Has("InheritYSpeed") && !data.Bool("InheritYSpeed")) ? 0 : 1);
     
     [OnLoad]
     internal static void LoadHooks() => On.Celeste.Player.Throw += OnThrow;
@@ -48,8 +50,8 @@ public class HoldableTrajectoryController(EntityData data, Vector2 _) : Entity()
         Vector2 mutSpeed = spd.Speed; // actual, new holdable speed
         mutSpeed.X *= ttc.MultiplierX;
         mutSpeed.Y *= ttc.MultiplierY;
-        if (ttc.InheritSpeedX) mutSpeed.X += oldSpeed.X;
-        if (ttc.InheritSpeedX) mutSpeed.Y += oldSpeed.Y;
+        mutSpeed.X += oldSpeed.X * ttc.InheritMultiplierX;
+        mutSpeed.Y += oldSpeed.Y * ttc.InheritMultiplierY;
         spd.Speed = mutSpeed;
     }
 }

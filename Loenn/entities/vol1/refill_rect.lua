@@ -1,46 +1,53 @@
 local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 local drawableRect = require("structs.drawable_rectangle")
+local populate = scughelper.populateDefaults {
+    FallbackRefillOneUse = false,
+    width = 32, height = 32,
+    InfillOpacity = 0.3,
+    RespawnTime = 2.5
+}
 return {
     name = "ScugHelper/RefillRectangle",
     depth = 5000,
     placements = {
         {
             name = "green",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "green", width = 32, height = 32, OutlineColor = "93bd40", InfillColor = "208020", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "green", OutlineColor = "93bd40", InfillColor = "208020" }
         },
         {
             name = "pink",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "pink", width = 32, height = 32, OutlineColor = "fb94ff", InfillColor = "e268d1", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "pink", OutlineColor = "fb94ff", InfillColor = "e268d1" }
         },
         {
             name = "blue",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "blue", width = 32, height = 32, OutlineColor = "5ed0f6", InfillColor = "30639d", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "blue", OutlineColor = "5ed0f6", InfillColor = "30639d" }
         },
         {
             name = "black",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "black", width = 32, height = 32, OutlineColor = "433655", InfillColor = "000000", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "black", OutlineColor = "433655", InfillColor = "000000" }
         },
         {
             name = "rose",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "rose", width = 32, height = 32, OutlineColor = "f65e89", InfillColor = "9d304f", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "rose", OutlineColor = "f65e89", InfillColor = "9d304f" }
         },
         {
             name = "cyan",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "cyan", width = 32, height = 32, OutlineColor = "a5adff", InfillColor = "5369b3", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "cyan", OutlineColor = "a5adff", InfillColor = "5369b3" }
         },
         {
             name = "gold",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "gold", width = 32, height = 32, OutlineColor = "d3c487", InfillColor = "a17b4a", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "gold", OutlineColor = "d3c487", InfillColor = "a17b4a" }
         },
         {
             name = "dark_green",
-            data = { FallbackRefillOneUse = false, FallbackRefillType = "dark_green", width = 32, height = 32, OutlineColor = "7ac533", InfillColor = "435e28", InfillOpacity = 0.3 }
+            data = populate { FallbackRefillType = "dark_green", OutlineColor = "7ac533", InfillColor = "435e28" }
         },
     },
     fieldInformation = {
         OutlineColor = { fieldType = "color" }, InfillColor = { fieldType = "color" },
     },
     sprite = function(room, entity)
+        populate(entity)
         local infillColor = scughelper.parseColor(entity.InfillColor)
         infillColor[4] = entity.InfillOpacity
         return {

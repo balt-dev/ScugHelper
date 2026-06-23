@@ -19,4 +19,4 @@ raw = re.sub(files, files_sub, raw)
 entries = [entry.strip() for entry in raw.split("<VERSION>")]
 
 with open("CHANGELOG.md", "w") as f:
-    f.write("\n\n".join(entries))
+    f.write("\n\n".join(entries[::-1]))

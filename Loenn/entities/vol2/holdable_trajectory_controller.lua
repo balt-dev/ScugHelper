@@ -8,10 +8,18 @@ return {
     placements = {
         {
             name = "normal",
-            data = { MultiplierX = 1, MultiplierY = 1, InheritSpeedX = false, InheritSpeedY = false }
+            data = { MultiplierX = 1, MultiplierY = 1, InheritMultiplierX = 0, InheritMultiplierY = 0 }
         },
     },
     sprite = function(room, entity)
+        if entity.InheritXSpeed ~= nil then
+            entity.InheritMultiplierX = (entity.InheritXSpeed and 1) or 0
+            entity.InheritXSpeed = nil
+        end
+        if entity.InheritYSpeed ~= nil then
+            entity.InheritMultiplierY = (entity.InheritYSpeed and 1) or 0
+            entity.InheritYSpeed = nil
+        end
         return {
             drawableText.fromText(
                 "Holdable Trajectory\nController",

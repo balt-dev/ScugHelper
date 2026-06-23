@@ -1,60 +1,56 @@
 local drawableSprite = require("structs.drawable_sprite")
 local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 
+local populate = scughelper.populateDefaults {
+    SpritePath = "danger/crystal",
+    SpriteSuffix = "_white",
+    Color = "FFFFFF",
+    ShatterColor = "FFFFFF",
+    Rainbow = false,
+    attachToSolid = false
+}
+
 return {
     name = "ScugHelper/GPUSpinner",
     depth = -8500,
     placements = {
         {
             name = "custom",
-            data = {
-                SpritePath = "danger/crystal",
-                SpriteSuffix = "_white",
-                Color = "FFFFFF",
-                Rainbow = false
-            }
+            data = {}
         },
         {
             name = "red",
             data = {
-                SpritePath = "danger/crystal",
                 SpriteSuffix = "_red",
-                Color = "FFFFFF",
-                Rainbow = false
+                ShatterColor = "ff4f4f"
             }
         },
         {
             name = "purple",
             data = {
-                SpritePath = "danger/crystal",
                 SpriteSuffix = "_purple",
-                Color = "FFFFFF",
-                Rainbow = false
+                ShatterColor = "ff4fef"
             }
         },
         {
             name = "blue",
             data = {
-                SpritePath = "danger/crystal",
                 SpriteSuffix = "_blue",
-                Color = "FFFFFF",
-                Rainbow = false
+                ShatterColor = "639bff"
             }
         },
         {
             name = "rainbow",
-            data = {
-                SpritePath = "danger/crystal",
-                SpriteSuffix = "_white",
-                Color = "FFFFFF",
-                Rainbow = true
-            }
+            data = { Rainbow = true }
         }
     },
     fieldInformation = {
+        ShatterColor = { fieldType = "color" },
         Color = { fieldType = "color" },
     },
     sprite = function(room, entity)
+        entity.ShatterColor = entity.ShatterColor or entity.Color
+        populate(entity)
         local base = drawableSprite.fromTexture(entity.SpritePath .. "/fg" .. entity.SpriteSuffix .. "00", entity)
         base:setColor(scughelper.parseColor(entity.Color))
         return { base }

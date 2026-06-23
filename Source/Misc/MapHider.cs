@@ -71,11 +71,11 @@ public static class MapHider {
     }
 
     private static bool HideScugHelper(bool orig, AreaData areaData) {
-        return orig && areaData.LevelSet != HiddenLevelSet;
+        return orig && !(ScugHelperModule.Settings.HideShowcaseMapsInMapSelect && areaData.LevelSet == HiddenLevelSet);
     }
     
     private static bool HideScugHelper(bool orig, string levelSet) {
-        return orig && levelSet != HiddenLevelSet;
+        return orig && !(ScugHelperModule.Settings.HideShowcaseMapsInMapSelect && levelSet == HiddenLevelSet);
     }
 
     private static void modFileSelectChangeStartingLevelSet(ILContext il) {
@@ -96,6 +96,7 @@ public static class MapHider {
     }
 
     private static int SkipScugHelperPicker(int id, int direction) {
+        if (!ScugHelperModule.Settings.HideShowcaseMapsInMapSelect) return id;
         string currentLevelSet = AreaData.Areas[id].LevelSet;
 
         // repeat the move until the current level set isn't a collab level set anymore.

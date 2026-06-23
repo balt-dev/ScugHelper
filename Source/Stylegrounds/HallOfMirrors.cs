@@ -22,14 +22,19 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
     public readonly Color Tint = Calc.HexToColor(data.Attr("Color")) * data.AttrFloat("Opacity");
     public readonly float RotationSpeed = data.AttrFloat("RotationSpeed") * Calc.DegToRad;
     public readonly bool CaptureForegroundAndBloom = data.AttrBool("CaptureForegroundAndBloom");
+    public readonly bool MyFlipX = data.AttrBool("FlipX");
+    public readonly bool MyFlipY = data.AttrBool("FlipY");
     internal static VirtualRenderTarget? NoFGBackbuffer;
     internal static VirtualRenderTarget? FullBackbuffer;
     internal bool InitialCleared;
+    internal Vector2 LastPlayerPosition = Vector2.Zero;
 
     public override void Update(Scene scene) {
         base.Update(scene);
         Offset += MySpeed * Engine.DeltaTime;
         Rotation += RotationSpeed * Engine.DeltaTime;
+        if (scene.Tracker.GetEntity<Player>() is {} player)
+            LastPlayerPosition = player.ExactPosition;
     }
 
     [OnLoad] internal static void LoadHooks() {
@@ -128,7 +133,12 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
             RasterizerState.CullNone, ScugHelperModule.HallOfMirrorsFX,
             Matrix.Identity
         );
-        Draw.SpriteBatch.Draw(buffer.Target, Vector2.Zero, null, Tint, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        Draw.SpriteBatch.Draw(
+            buffer.Target, Vector2.Zero, null, Tint, 0f, Vector2.Zero, 1f,
+            (MyFlipX ? SpriteEffects.FlipHorizontally : SpriteEffects.None) |
+            (MyFlipY ? SpriteEffects.FlipVertically : SpriteEffects.None),
+            0f
+        );
         Draw.SpriteBatch.End();
         GameplayRenderer.Begin();
     }

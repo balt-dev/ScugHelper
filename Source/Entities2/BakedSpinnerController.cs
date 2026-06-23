@@ -15,7 +15,6 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/BakedSpinnerController")]
 public class BakedSpinnerController : Entity, IDisposable {
     public BakedSpinnerController() : base() {
-        Logger.Log(nameof(ScugHelper), ".ctor for BakedSpinnerController called...");
         Depth = -8500;
         Visible = true;
         Active = false;
@@ -28,11 +27,13 @@ public class BakedSpinnerController : Entity, IDisposable {
 
     public override void Added(Scene scene) {
         base.Added(scene);
-        Logger.Log(nameof(ScugHelper), "Added for BakedSpinnerController called...");
         if (scene is not Level lv) return;
         Level = lv;
-        if (Level.Bounds.Width > 4096 || Level.Bounds.Height > 4096) {
-            LevelEnter.ErrorMessage = Dialog.Get("ScugHelper_postcard_toobigroom");
+        if (
+            Level.Bounds.Width > ScugHelperModule.Settings.BakedTextureSizeLimit * 1024 || 
+            Level.Bounds.Height > ScugHelperModule.Settings.BakedTextureSizeLimit * 1024
+        ) {
+            LevelEnter.ErrorMessage = Dialog.Get("ScugHelper_postcard_toobigroom").Replace("((maxSize))", (ScugHelperModule.Settings.BakedTextureSizeLimit * 1024 / 8).ToString());
             Engine.Scene = new LevelEnter(Level.Session, false);
             return;
         }
@@ -42,7 +43,6 @@ public class BakedSpinnerController : Entity, IDisposable {
 
     public override void Awake(Scene scene) {
         base.Awake(scene);
-        Logger.Log(nameof(ScugHelper), "Awake for BakedSpinnerController called...");
         if (scene is not Level lv) return;
         LevelOffset = lv.LevelOffset;
         Level = lv;
@@ -53,25 +53,21 @@ public class BakedSpinnerController : Entity, IDisposable {
         Engine.Graphics.GraphicsDevice.SetRenderTarget(BakedTarget);
         if ((bool)DynamicData.For(Draw.SpriteBatch).Get("beginCalled")!)
             Draw.SpriteBatch.End();
-        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+        Draw.SpriteBatch.Begin(
+            SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None,
+            RasterizerState.CullNone, null, Matrix.CreateTranslation(-Level.LevelOffset.X, -Level.LevelOffset.Y, 0f)
+        );
         try {
             foreach (CrystalStaticSpinner spin in Level.Tracker.GetEntities<CrystalStaticSpinner>().ToArray()) {
                 BakedSpinners++;
-                spin.Position -= Level.LevelOffset;
+                Level.Add(new InvisibleSpinner(spin.Position, spin.Collider));
                 spinnerLocations.Add(spin.Center);
                 spin.Visible = true;
-                BakeSpinner(spin);
+                if (spin is GPUSpinner gpuSpin)
+                    BakeSpinner(gpuSpin);
+                else
+                    BakeSpinner(spin);
                 spin.RemoveSelf();
-                Level.Add(new InvisibleSpinner(spin.Position, spin.Collider));
-            }
-            foreach (GPUSpinner spin in Level.Tracker.GetEntities<GPUSpinner>().ToArray()) {
-                BakedSpinners++;
-                spin.Position -= Level.LevelOffset;
-                spinnerLocations.Add(spin.Center);
-                spin.Visible = true;
-                BakeSpinner(spin);
-                spin.RemoveSelf();
-                Level.Add(new InvisibleSpinner(spin.Position, spin.Collider));
             }
             if (FrostHelperImports.IsLoaded)
                 _BakeFrostHelperSpinners();
@@ -86,12 +82,11 @@ public class BakedSpinnerController : Entity, IDisposable {
         if (Level is null) return;
         foreach (FrostHelper.CustomSpinner spin in Level.Tracker.GetEntities<FrostHelper.CustomSpinner>().ToArray()) {
             BakedSpinners++;
-            spin.Position -= Level.LevelOffset;
+            Level.Add(new InvisibleSpinner(spin.Position, spin.Collider));
             spinnerLocations.Add(spin.Center);
             spin.Visible = true;
             BakeSpinner(spin);
             spin.RemoveSelf();
-            Level.Add(new InvisibleSpinner(spin.Position, spin.Collider));
         }
     }
 
@@ -119,6 +114,27 @@ public class BakedSpinnerController : Entity, IDisposable {
         data.Invoke("CreateSprites");
         if (spin.Rainbow)
             spin.UpdateHue();
+            
+        // This is awful.
+        var filler = data.Get("filler");
+        if (filler is not null) {
+            var fData = DynamicData.For(filler);
+            var listData = DynamicData.For(fData.Invoke("get_Fills")!);
+            var count = (int)listData.Invoke("get_Count")!;
+            List<int> l = [];
+            for (int i = 0; i < count; i++) {
+                var fill = listData.Invoke("get_Item", i)!;
+                var fillData = DynamicData.For(fill);
+                MTexture tex = (MTexture)fillData.Get("Texture")!;
+                Color color = (Color)fillData.Get("Color")!;
+                Vector2 position = (Vector2)fillData.Get("Position")!;
+                float scaleFix = tex.ScaleFix;
+                scaleFix *= (float)data.Get("ImageScale")!;
+                Vector2 origin = (tex.Center - tex.DrawOffset) / scaleFix;
+                Draw.SpriteBatch.Draw(tex.Texture.Texture_Safe, position + spin.Position, tex.ClipRect, color, 0f, origin, scaleFix, SpriteEffects.None, 0f);
+            }
+        }
+
         foreach (Image image in (List<Image>)data.Get("_images")!)
             image.Render();
     }
@@ -147,7 +163,6 @@ public class BakedSpinnerController : Entity, IDisposable {
     ~BakedSpinnerController() => Dispose();
 
     public void Dispose() {
-        Logger.Log(nameof(ScugHelper), "Dispose for BakedSpinnerController called...");
         BakedTarget?.Dispose();
     }
 
@@ -164,10 +179,8 @@ public class BakedSpinnerController : Entity, IDisposable {
     }
     
     private static void OnLevelLoad(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader) {
-        if (
-            ScugHelperModule.Settings.ReplaceVanillaSpinners &&
-            self.Bounds.Width <= 4096 && self.Bounds.Height <= 4096
-        ) self.Add(new BakedSpinnerController());
+        if (ScugHelperModule.Settings.AlwaysBakeSpinners)
+            self.Add(new BakedSpinnerController());
         orig(self, playerIntro, isFromLoader);
     }
 

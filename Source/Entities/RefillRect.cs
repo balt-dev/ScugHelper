@@ -4,6 +4,7 @@ using Monocle;
 using System;
 using System.Linq;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using System.Collections;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -37,6 +38,7 @@ public class RefillRectangle : Entity
     public readonly Color OutlineColor;
     public readonly Color InfillColor;
     public readonly float InfillOpacity;
+    public readonly float RespawnTime;
     public readonly int ID;
     private VirtualRenderTarget? bakedTexture;
     readonly string? FallbackRefillType;
@@ -51,6 +53,7 @@ public class RefillRectangle : Entity
         InfillColor = data.HexColor("InfillColor", Calc.HexToColor("208020"));
         FallbackRefillType = data.String("FallbackRefillType");
         FallbackRefillOneUse = data.Bool("FallbackRefillOneUse");
+        RespawnTime = data.Float("RespawnTime", 2.5f);
         InfillOpacity = data.Float("InfillOpacity", 0.8f);
         Add(new BeforeRenderHook(BakeTexture));
         Add(new CustomBloom(OnRenderBloom));
@@ -136,6 +139,12 @@ public class RefillRectangle : Entity
         if (refill.respawnTimer > 0f) return;
         foreach (PlayerCollider collider in refill.Components.GetAll<PlayerCollider>().ToArray())
             collider.OnCollide(player);
+        IEnumerator FrameDelayForCompatReasons() {
+            yield return null;
+            refill.respawnTimer = Math.Max(RespawnTime - Engine.RawDeltaTime, Engine.RawDeltaTime);
+        } 
+        if (refill.respawnTimer > 0f)
+            refill.Add(new Coroutine(FrameDelayForCompatReasons()));
         if (refill.Scene == null) RemoveSelf();
     }
 

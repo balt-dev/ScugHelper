@@ -83,14 +83,17 @@ public class FlagRefill : Refill, ICustomRefill {
     [Tracked]
     private class FlagRefillComponent(Player player, string flag, bool flagState, ParticleType pType) : Component(true, false) {
         public override void Added(Entity entity) {
+            if (player.level is null || player.level.Session is null) return;
             player.level.Session.SetFlag(flag, flagState);
         }
         public override void Update() {
+            if (player.level is null || player.level.Session is null) return;
             player.level.Session.SetFlag(flag, flagState);
             if (player.level.OnInterval(0.1f))
                 player.level.ParticlesBG.Emit(pType, 5, player.Center, Vector2.One * 12f);
         }
         public override void Removed(Entity entity) {
+            if (player.level is null || player.level.Session is null) return;
             player.level.Session.SetFlag(flag, !flagState);
         }
         public override void SceneEnd(Scene scene) {

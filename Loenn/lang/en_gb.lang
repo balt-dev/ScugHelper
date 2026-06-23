@@ -606,3 +606,17 @@ entities.ScugHelper/FlagRefill.attributes.name.ParticleColor2=Secondary Particle
 
 entities.ScugHelper/BakedSpinnerController.placements.name.normal=Baked Spinner Controller
 entities.ScugHelper/BakedSpinnerController.placements.description.normal=Bakes all spinners in the room to a texture.
+
+entities.ScugHelper/FuckBlock.placements.name.normal=Fuck Block
+entities.ScugHelper/FuckBlock.placements.name.nostatelock=Fuck Block (Ignore Statelock)
+entities.ScugHelper/FuckBlock.placements.description.normal=A tile entity that sets the player's state to a specified state every time it's collided with by the player. Intentionally jank, have fun.
+entities.ScugHelper/FuckBlock.placements.description.nostatelock=A tile entity that forces the player's state to a specified state every time it's collided with by the player. Intentionally jank, have fun.
+
+entities.ScugHelper/JumpThroughBlock.placements.name.up=Jump Through Block (Up)
+entities.ScugHelper/JumpThroughBlock.placements.name.down=Jump Through Block (Down)
+entities.ScugHelper/JumpThroughBlock.placements.name.left=Jump Through Block (Left)
+entities.ScugHelper/JumpThroughBlock.placements.name.right=Jump Through Block (Right)
+entities.ScugHelper/JumpThroughBlock.placements.description.up=A tile entity that only collides with entities not moving upwards.
+entities.ScugHelper/JumpThroughBlock.placements.description.down=A tile entity that only collides with entities not moving downwards.
+entities.ScugHelper/JumpThroughBlock.placements.description.left=A tile entity that only collides with entities not moving leftwards.
+entities.ScugHelper/JumpThroughBlock.placements.description.right=A tile entity that only collides with entities not moving rightwards.

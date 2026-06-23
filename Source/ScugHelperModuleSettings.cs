@@ -11,14 +11,19 @@ namespace Celeste.Mod.ScugHelper;
 
 public class ScugHelperModuleSettings : EverestModuleSettings
 {
-    [SettingInGame(false)]
     [YamlIgnore]
     public TextMenuExt.SubMenu ShowcaseMaps { get; set; } = null!;
+
+    [SettingIgnore]
+    public bool HideShowcaseMapsInMapSelect { get; set; } = true;
 
     public MinimapMenu Minimap { get; set; } = new();
 
     public void CreateShowcaseMapsEntry(TextMenu menu, bool inGame) {
         ShowcaseMaps = new(Dialog.Clean("ScugHelper_ShowcaseMaps"), false);
+        ShowcaseMaps.Add(new TextMenu.OnOff(Dialog.Clean("ScugHelper_HideShowcaseMaps"), HideShowcaseMapsInMapSelect) {
+            OnValueChange = value => HideShowcaseMapsInMapSelect = value
+        });
         foreach (string mapSID in (string[]) ["1-ScugHelperTest", "2-Showcase2", "100-Actions", "101-BrassBerryTest"]) {
             string fullSID = $"ScugHelper/ScugHelperTest/{mapSID}";
             AreaData data = AreaData.Get(fullSID);
@@ -36,7 +41,6 @@ public class ScugHelperModuleSettings : EverestModuleSettings
             };
             ShowcaseMaps.Add(button);
         }
-        ShowcaseMaps.Disabled = inGame;
         menu.Add(ShowcaseMaps);
     }
 
@@ -53,9 +57,16 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Allows player seekers to hit dash switches.\nThis is not vanilla behavior, but is enabled by default,\nas it is likely an oversight in vanilla Celeste.\nTurn this off if need be.\nThis will be turned into a Controller in a later update.")]
     public bool PlayerSeekerDashSwitchFix { get; set; } = true;
-
-    [SettingSubText("Replaces all vanilla spinners with ScugHelper GPU spinners,\nand statically bakes spinners in rooms below 512x512.\nGood for performance, but might break some maps.\nTurn this off if making / playing back a TAS.")]
+    
+    [SettingSubText("Replaces all vanilla spinners with ScugHelper GPU spinners.\nModerately improves performance, but might break some maps.\nTurn this off if making / playing back a TAS.")]
     public bool ReplaceVanillaSpinners { get; set; } = false;
+    
+    [SettingSubText("Statically bakes all supported spinners to a texture.\nMassively improves performance, but will break SEVERAL maps, including vanilla.\nBe careful about when to turn this on.\nDefinitely turn this off if making / playing back a TAS.")]
+    public bool AlwaysBakeSpinners { get; set; } = false;
+    
+    [SettingSubText("The maximum texture size the Baked Spinner Controller can bake to, in chunks of 1024 pixels.\nSetting this above 4 might not be supported on your GPU.")]
+    [SettingRange(1, 16)]
+    public int BakedTextureSizeLimit { get; set; } = 4;
 
     [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]
     public bool SideflippingEverywhere { get; set; } = false;
