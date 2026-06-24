@@ -8,26 +8,14 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [Tracked]
 [CustomEntity("ScugHelper/JumpThroughBlock")]
 public class JumpThroughBlock : Solid {
-    internal class JumpThroughBlockColliderList : ColliderList {
-        private readonly JumpThroughBlock Block;
-        public JumpThroughBlockColliderList(JumpThroughBlock block) {
-            colliders = [block.Collider];
-            Block = block;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
-            if (SpeedAccessor.For(entity) is not {} accessor) return false;
-            return Block.Direction switch {
+    internal class JumpThroughBlockColliderList(JumpThroughBlock self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) =>
+            SpeedAccessor.For(entity) is { } accessor && self.Direction switch {
                 JTDirection.Up => accessor.Speed.Y >= 0,
                 JTDirection.Down => accessor.Speed.Y <= 0,
-                JTDirection.Left => accessor.Speed.X >= 0,
-                JTDirection.Right => accessor.Speed.X <= 0,
+                JTDirection.Left => accessor.Speed.X > 0,
+                JTDirection.Right => accessor.Speed.X < 0,
             };
-        }
     }
 
     internal enum JTDirection { Up, Down, Left, Right }

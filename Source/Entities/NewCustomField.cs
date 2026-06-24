@@ -11,28 +11,16 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/NewCustomField")]
 public class NewCustomField : Solid
 {
-    internal class CustomFieldColliderList : ColliderList
-    {
-        private readonly NewCustomField field;
-        public CustomFieldColliderList(NewCustomField field) {
-            colliders = [field.Collider];
-            this.field = field;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
-            var res = entity switch
-            {
-                Player => field.Names.Contains("player"),
-                SolidTiles => field.Names.Contains("fg"),
-                BackgroundTiles => field.Names.Contains("bg"),
-                _ => field.Names.Intersect(ScugHelperModule.GetNamesOfEntity(entity)).Count() > 0,
+    internal class CustomFieldColliderList(NewCustomField self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
+            var res = entity switch {
+                Player => self.Names.Contains("player"),
+                SolidTiles => self.Names.Contains("fg"),
+                BackgroundTiles => self.Names.Contains("bg"),
+                _ => self.Names.Intersect(ScugHelperModule.GetNamesOfEntity(entity)).Count() > 0,
             };
-            res ^= field.Invert;
-            field.HitEntity |= res;
+            res ^= self.Invert;
+            self.HitEntity |= res;
             return res;
         }
     }

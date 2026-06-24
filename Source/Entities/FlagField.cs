@@ -11,18 +11,12 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/FlagField")]
-public class FlagField : Solid
-{
-    internal class FlagFieldColliderList : ColliderList {
-        private readonly FlagField field;
-        public FlagFieldColliderList(FlagField field) {
-            colliders = [field.Collider];
-            this.field = field;
+public class FlagField : Solid {
+    internal class FlagFieldColliderList(FlagField self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
+            self.BeginPulse();
+            return true;
         }
-        public override bool Collide(Circle o) => base.Collide(o) && field.BeginPulse();
-        public override bool Collide(Hitbox o) => base.Collide(o) && field.BeginPulse();
-        public override bool Collide(ColliderList o) => base.Collide(o) && field.BeginPulse();
-        public override bool Collide(Grid o) => base.Collide(o) && field.BeginPulse();
     }
 
     private static readonly float CollidePulseLength = 0.8f;

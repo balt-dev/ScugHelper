@@ -178,10 +178,10 @@ public class LimboRefill : Refill, ICustomRefill
     
         public LimboColliderList(Collider collider) => colliders = [collider];
     
-        public override bool Collide(Circle o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && !LimboRefill.DenyEntityCollisions(o.Entity);
+        public override bool Collide(Circle o) => base.Collide(o) && !DenyEntityCollisions(o.Entity);
+        public override bool Collide(Hitbox o) => base.Collide(o) && !DenyEntityCollisions(o.Entity);
+        public override bool Collide(ColliderList o) => base.Collide(o) && !DenyEntityCollisions(o.Entity);
+        public override bool Collide(Grid o) => base.Collide(o) && !DenyEntityCollisions(o.Entity);
     }
 }
 #nullable restore

@@ -620,3 +620,9 @@ entities.ScugHelper/JumpThroughBlock.placements.description.up=A tile entity tha
 entities.ScugHelper/JumpThroughBlock.placements.description.down=A tile entity that only collides with entities not moving downwards.
 entities.ScugHelper/JumpThroughBlock.placements.description.left=A tile entity that only collides with entities not moving leftwards.
 entities.ScugHelper/JumpThroughBlock.placements.description.right=A tile entity that only collides with entities not moving rightwards.
+
+
+entities.ScugHelper/UnforgivingFireBarrier.placements.name.fire_barrier=Unforgiving Fire Barrier
+entities.ScugHelper/UnforgivingIceBlock.placements.name.ice_block=Unforgiving Ice Block
+
+style.effects.ScugHelper/Balatro.name=Balatro

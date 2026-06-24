@@ -11,21 +11,10 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [Obsolete("Use NewCustomField instead")]
 public class CustomField : Solid
 {
-    internal class CustomFieldColliderList : ColliderList
-    {
-        private readonly CustomField field;
-        public CustomFieldColliderList(CustomField field) {
-            colliders = [field.Collider];
-            this.field = field;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
-            bool res = field.Types.Contains(entity.GetType().FullName ?? "") ^ field.Invert;
-            field.HitEntity |= res;
+    internal class CustomFieldColliderList(CustomField self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
+            bool res = self.Types.Contains(entity.GetType().FullName ?? "") ^ self.Invert;
+            self.HitEntity |= res;
             return res;
         }
     }

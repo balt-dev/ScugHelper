@@ -260,7 +260,6 @@ public class TungstenCube : Actor, IHasSpeed {
     private static ILHook? getCameraTargetHook;
     [OnLoad]
     public static void LoadHooks() {
-        IL.Celeste.Player.NormalBegin += ModNormalBegin;
         IL.Celeste.Player.NormalUpdate += ModNormalUpdate;
         On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
         On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
@@ -276,7 +275,6 @@ public class TungstenCube : Actor, IHasSpeed {
     }
     [OnUnload]
     public static void UnloadHooks() {
-        IL.Celeste.Player.NormalBegin -= ModNormalBegin;
         IL.Celeste.Player.NormalUpdate -= ModNormalUpdate;
         On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;
         On.Celeste.Spring.ctor_Vector2_Orientations_bool -= SpringCtorHook;
@@ -298,7 +296,7 @@ public class TungstenCube : Actor, IHasSpeed {
         cur.EmitLdarg0();
         cur.EmitLdloc1();
         static Vector2 Del(Player self, Vector2 vector) {
-            if (self.Holding?.Entity is not TungstenCube) return vector;
+            if (self.Holding is not { Entity: TungstenCube, IsHeld: true }) return vector;
             if (self.IsInverted()) return vector + Vector2.UnitY * (-30f + Math.Clamp((240f - self.Speed.Y) * 0.24f, -240f, 0f));
             return vector + Vector2.UnitY * Math.Clamp((self.Speed.Y - 240f) * 0.24f, 0f, 240f);
         }
@@ -308,13 +306,13 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private static bool SideBounceHook(On.Celeste.Player.orig_SideBounce orig, Player self, int dir, float fromX, float fromY) {
         bool res = orig(self, dir, fromX, fromY);
-        if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+        if (self.Holding is { Entity: TungstenCube, IsHeld: true }) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
         return res;
     }
 
     private static void BounceHook(On.Celeste.Player.orig_SuperBounce orig, Player self, float fromY) {
         orig(self, fromY);
-        if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+        if (self.Holding is { Entity: TungstenCube, IsHeld: true }) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
     }
 
     private static void SpringCtorHook(On.Celeste.Spring.orig_ctor_Vector2_Orientations_bool orig, Spring self, Vector2 position, Spring.Orientations orientation, bool playerCanUse) {
@@ -343,12 +341,12 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private static void CanSuperWallJumpHook(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir) {
         orig(self, dir);
-        if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+        if (self.Holding is { Entity: TungstenCube, IsHeld: true }) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
     }
 
     private static void CanWallJumpHook(On.Celeste.Player.orig_WallJump orig, Player self, int dir) {
         orig(self, dir);
-        if (self.Holding?.Entity is TungstenCube) {
+        if (self.Holding is { Entity: TungstenCube, IsHeld: true }) {
             var mult = self.OnGround() ? JumpMultiplier : 0.4f;
             self.Speed.Y *= mult;
             self.varJumpSpeed *= mult;
@@ -357,29 +355,21 @@ public class TungstenCube : Actor, IHasSpeed {
 
     private static void CanSuperJumpHook(On.Celeste.Player.orig_SuperJump orig, Player self) {
         orig(self);
-        if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+        if (self.Holding is { Entity: TungstenCube, IsHeld: true }) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
     }
 
     private static void CanJumpHook(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx) {
         orig(self, particles, playSfx);
-        if (self.Holding?.Entity is TungstenCube) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
+        if (self.Holding is { Entity: TungstenCube, IsHeld: true }) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
     }
 
     static float FloatMultiply(Player player) {
-        if (player.Holding?.Entity is TungstenCube)
+        if (player.Holding is { Entity: TungstenCube, IsHeld: true })
             return 500f / 160f;
         else
             return 1.0f;
     }
 
-    private static void ModNormalBegin(ILContext il) {
-        ILCursor cursor = new(il);
-        while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && (float)instr.Operand == 160f)) {
-            cursor.EmitLdarg0();
-            cursor.EmitDelegate(FloatMultiply);
-            cursor.Emit(OpCodes.Mul);
-        }
-    }
     private static void ModNormalUpdate(ILContext il) {
         ILCursor cursor = new(il);
         while (cursor.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Ldc_R4 && ((float)instr.Operand == 160f || (float)instr.Operand == 240f))) {

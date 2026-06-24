@@ -19,20 +19,10 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/LimboField")]
 public class LimboField : Solid
 {
-    internal class LimboFieldColliderList : ColliderList {
-        private readonly LimboField field;
-        public LimboFieldColliderList(LimboField field) {
-            colliders = [field.Collider];
-            this.field = field;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
+    internal class LimboFieldColliderList(LimboField self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
             bool res = entity is Player && LimboRefill.LimboTimer > 0;
-            field.HitPlayer |= res;
+            self.HitPlayer |= res;
             return res;
         }
     }

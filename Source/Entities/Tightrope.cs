@@ -13,20 +13,10 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/Tightrope")]
 public class Tightrope : Solid
 {
-    internal class TightropeColliderList : ColliderList {
-        private readonly Tightrope tightrope;
-        public TightropeColliderList(Tightrope tightrope) {
-            colliders = [tightrope.Collider];
-            this.tightrope = tightrope;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
+    internal class TightropeColliderList(Tightrope self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
             if (entity is not Actor actor) return false;
-            if (!tightrope.IsRiding(actor)) return false;
+            if (!self.IsRiding(actor)) return false;
             if (entity is not Player player) return true;
             if (!player.wasOnGround) return false;
             if (player.Ducking) return false;

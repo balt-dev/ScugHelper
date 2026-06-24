@@ -13,14 +13,8 @@ public class DreamField : DreamBlock {
     const float FieldOpacity = 0.3f;
     float Elapsed;
 
-    internal class DreamFieldColliderList : ColliderList {
-        public DreamFieldColliderList(Collider collider) => colliders = [collider];
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity)
+    internal class DreamFieldColliderList(DreamField self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity)
             => entity is Player player && (player.StateMachine.State == Player.StDreamDash || (
                 CommunalHelperInterop.DreamTunnelDashState is int StDreamTunnelDash &&
                 player.StateMachine.State == StDreamTunnelDash
@@ -29,7 +23,7 @@ public class DreamField : DreamBlock {
 
     public DreamField(EntityData data, Vector2 offset) : base(data, offset) {
         Depth = 8400;
-        Collider = new DreamFieldColliderList(Collider);
+        Collider = new DreamFieldColliderList(this);
         Elapsed = 0f;
         DisableLightsInside = false;
     }

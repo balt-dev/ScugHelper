@@ -10,23 +10,12 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [CustomEntity("ScugHelper/BoosterField")]
 public class BoosterField : Solid
 {
-    internal class BoosterFieldColliderList : ColliderList
-    {
-        private readonly BoosterField field;
-        public BoosterFieldColliderList(BoosterField field) {
-            colliders = [field.Collider];
-            this.field = field;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
-            bool res = entity is Player player && ((player.LastBooster?.BoostingPlayer ?? false) ^ field.Invert);
-            if (res && field.Destroy)
+    internal class BoosterFieldColliderList(BoosterField self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
+            bool res = entity is Player player && ((player.LastBooster?.BoostingPlayer ?? false) ^ self.Invert);
+            if (res && self.Destroy)
                 (entity as Player)!.StateMachine.State = Player.StNormal;
-            field.BouncedBooster |= res;
+            self.BouncedBooster |= res;
             return res;
         }
     }

@@ -25,12 +25,12 @@ float4 SpritePixelShader(float2 uv : TEXCOORD0, float4 vertColor : COLOR0) : COL
     float4 actualColor = tex2D(textSampler, uv) * vertColor;
     float2 pxCoord = (uv / TexelSize) + CameraPosition;
     float2 worldPos = float2(floor(mod(pxCoord.x, 512)), floor(mod(pxCoord.y, 128)));
-
+    
     int particleCount = int(rand1(worldPos.x * -7.3 + 17.3) * MaxParticleCount) + 1;
-
+        
     float4 particleTotal = float4(0.0, 0.0, 0.0, 0.0);
     if (actualColor.a <= 0.01) return actualColor;
-
+    
     for (int i = 1; i <= particleCount; i++) {
         float randomValue = rand1(worldPos.x * float(i) * 7.193 + 14.124);
         float particleSpeed = randomValue < 0.4 ? 12.0 : randomValue < 0.7 ? 20.0 : 40.0;

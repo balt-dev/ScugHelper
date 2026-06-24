@@ -8,29 +8,19 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [Tracked]
 [CustomEntity("ScugHelper/FuckBlock")]
 public class FuckBlock : Solid {
-    internal class FuckBlockColliderList : ColliderList {
-        private readonly FuckBlock Block;
-        public FuckBlockColliderList(FuckBlock block) {
-            colliders = [block.Collider];
-            Block = block;
-        }
-        public override bool Collide(Circle o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Hitbox o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(ColliderList o) => base.Collide(o) && CheckEntity(o.Entity);
-        public override bool Collide(Grid o) => base.Collide(o) && CheckEntity(o.Entity);
-
-        private bool CheckEntity(Entity entity) {
+    internal class FuckBlockColliderList(FuckBlock self) : AbstractEntityColliderList(self) {
+        protected override bool CheckEntity(Entity entity) {
             if (entity is Player player) {
                 bool oldStateLock = player.StateMachine.Locked;
-                if (Block.IgnoreStateLock)
+                if (self.IgnoreStateLock)
                     player.StateMachine.Locked = false;
-                player.StateMachine.State = Block.State;
+                player.StateMachine.State = self.State;
                 player.StateMachine.Locked = oldStateLock;
             }
             return true;
         }
     }
-    
+
     protected readonly char tileType;
     protected readonly float width;
     protected readonly float height;

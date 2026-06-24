@@ -9,6 +9,8 @@ effect.defaultData = {
     OffsetY = 0,
     SpeedX = 0,
     SpeedY = 0,
+    FlipX = false,
+    FlipY = false,
     ParallaxX = 0,
     ParallaxY = 0,
     Zoom = 1,
@@ -30,7 +32,7 @@ effect.fieldOrder = {
     "notflag", "Color", "Zoom", "Rotation",
     "OffsetX", "OffsetY", "SpeedX", "SpeedY",
     "ParallaxX", "ParallaxY", "RotationSpeed", "Opacity",
-    "CaptureForegroundAndBloom",
+    "CaptureForegroundAndBloom", "FlipX", "FlipY"
 }
 
 return effect

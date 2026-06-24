@@ -1,6 +1,3 @@
 <decals>
     <decal path="ScugHelper/easteregg" />
-    <decal path="ScugHelper/gugcat/gugcat">
-        <animationSpeed value="25" />
-    </decal>
 </decals>
