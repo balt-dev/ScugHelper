@@ -1,5 +1,6 @@
 using System;
 using Celeste.Mod.Entities;
+using Celeste.Mod.Helpers;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 
@@ -10,6 +11,9 @@ public static class ActionHooks
 {
     [OnLoad]
     public static void LoadHooks() {
+        if (!HookUtils.TryDisableInlining(typeof(CassetteBlockManager).GetMethod("SetActiveIndex", [typeof(int)])))
+            throw new Utils.HookException("Failed to disable inlining.");
+        
         On.Celeste.Player.Jump += OnJump_Action;
         On.Celeste.Player.WallJump += OnWallJump;
         On.Celeste.Player.SuperJump += OnSuperJump;

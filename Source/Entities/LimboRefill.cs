@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Reflection;
 using Celeste.Mod.Entities;
+using Celeste.Mod.Helpers;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -88,6 +90,7 @@ public class LimboRefill : Refill, ICustomRefill
     }
     [OnUnload]
     public static void UnloadHooks() {
+        Utils.UninlineMethod((Player p) => p.CreateTrail());
         On.Celeste.Player.CreateTrail -= Player_CreateTrail;
         On.Celeste.Player.Update -= Player_Update;
         On.Celeste.Player.Render -= Player_Render;

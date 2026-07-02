@@ -14,7 +14,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 [Tracked(false)]
 public class DebugViewTrigger(EntityData e, Vector2 offset) : Trigger(e, offset)
 {
-    static bool ForceRenderDebug;
+    internal static bool ForceRenderDebug;
 
     public override void OnEnter(Player player) {
         base.OnEnter(player);
@@ -29,6 +29,8 @@ public class DebugViewTrigger(EntityData e, Vector2 offset) : Trigger(e, offset)
     internal static void LoadHooks() {
         On.Celeste.Level.Reload += OnLevelReload;
         On.Celeste.LevelLoader.StartLevel += OnLevelLoaderStartLevel;
+        if (!HookUtils.TryDisableInlining(typeof(GameplayRenderer).GetMethod("Render", [typeof(Scene)])))
+            throw new Utils.HookException("Failed to disable inlining.");
         IL.Celeste.GameplayRenderer.Render += RenderHook;
     }
     [OnUnload]

@@ -81,6 +81,7 @@ public class MidairRefill : Refill, ICustomRefill
     }
     [OnLoad]
     public static void LoadHooks() {
+        Utils.UninlineMethod((Player p) => p.CreateTrail());
         On.Celeste.Player.ctor += Player_ctor;
         On.Celeste.Player.CreateTrail += Player_CreateTrail;
         On.Celeste.Player.Update += Player_Update;

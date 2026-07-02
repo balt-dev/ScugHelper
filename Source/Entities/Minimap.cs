@@ -10,6 +10,7 @@ using Celeste.Editor;
 using MonoMod.RuntimeDetour;
 using System.Reflection;
 using MonoMod.Utils;
+using Celeste.Mod.Helpers;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -136,7 +137,7 @@ public class MinimapEntity : Entity
             DynamicData.For(ed).Set("CurrentSession", level.Session);
             ed.Render();
             ScugHelperModule.Session.RenderedEditorOnce = true;
-            scratchBuffer.Dispose();
+            scratchBuffer?.Dispose();
         }
         buffer ??= VirtualContent.CreateRenderTarget("minimap-renderer", settings.MinimapWidth, settings.MinimapHeight);
 
@@ -198,6 +199,13 @@ public class MinimapEntity : Entity
     public static void Load() {
         // break directions
         On.Celeste.Player.Update += BreakTheControls;
+            
+        if (!HookUtils.TryDisableInlining(typeof(VirtualButton).GetMethod("get_Check")))
+            throw new Utils.HookException("Failed to disable inlining.");
+        if (!HookUtils.TryDisableInlining(typeof(VirtualButton).GetMethod("get_Pressed")))
+            throw new Utils.HookException("Failed to disable inlining.");
+        if (!HookUtils.TryDisableInlining(typeof(VirtualButton).GetMethod("get_Released")))
+            throw new Utils.HookException("Failed to disable inlining.");
 
         // break Input.X.Check, Input.X.Pressed, Input.X.Released with X being Jump, Dash, Grab or CrouchDash
         hookButtonCheck = new Hook(typeof(VirtualButton).GetMethod("get_Check")!, HookOnButton);

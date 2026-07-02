@@ -26,19 +26,24 @@ public static class MapHider {
         if (!HookUtils.TryDisableInlining(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter")!.GetStateMachineTarget()))
             throw new Exception("Failed to disable inlining for hiding maps");
         hookOnLevelSetSwitch = new ILHook(typeof(OuiHelper_ChapterSelect_LevelSet).GetMethod("Enter")!.GetStateMachineTarget()!, modLevelSetSwitch);
+        Utils.UninlineMethod(typeof(Everest).Assembly.GetType("Celeste.Mod.UI.OuiFileSelectSlotLevelSetPicker")!.GetMethod("changeStartingLevelSet", BindingFlags.NonPublic | BindingFlags.Instance)!);
         hookLevelSetPicker = new ILHook(
             typeof(Everest).Assembly.GetType("Celeste.Mod.UI.OuiFileSelectSlotLevelSetPicker")!.GetMethod("changeStartingLevelSet", BindingFlags.NonPublic | BindingFlags.Instance)!,
             modFileSelectChangeStartingLevelSet
         );
+        Utils.UninlineMethod(typeof(OuiMapSearch).GetMethod("ReloadItems", BindingFlags.NonPublic | BindingFlags.Instance)!);
         hookMapSearchReloadItems = new ILHook(
             typeof(OuiMapSearch).GetMethod("ReloadItems", BindingFlags.NonPublic | BindingFlags.Instance)!,
             modMapSearch);
+        Utils.UninlineMethod(typeof(OuiMapList).GetMethod("ReloadItems", BindingFlags.NonPublic | BindingFlags.Instance)!);
         hookMapListReloadItems = new ILHook(
             typeof(OuiMapList).GetMethod("ReloadItems", BindingFlags.NonPublic | BindingFlags.Instance)!, modMapListReloadItems
         );
+        Utils.UninlineMethod(typeof(OuiMapList).GetMethod("CreateMenu", BindingFlags.NonPublic | BindingFlags.Instance)!);
         hookMapListCreateMenu = new ILHook(
             typeof(OuiMapList).GetMethod("CreateMenu", BindingFlags.NonPublic | BindingFlags.Instance)!, modMapListCreateMenu
         );
+        Utils.UninlineMethod((SaveData s) => s.AfterInitialize());
         On.Celeste.SaveData.AfterInitialize += onSaveDataAfterInitialize;
         Everest.Events.Level.OnExit += OnLevelOnExit;
     }

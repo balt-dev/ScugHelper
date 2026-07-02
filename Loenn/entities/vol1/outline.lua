@@ -3,6 +3,20 @@ local utils = require("utils")
 local drawing = require("utils.drawing")
 local scughelper = require("mods").requireFromPlugin("libraries.scughelper")
 
+local populate = scughelper.populateDefaults {
+    width = 8,
+    height = 8,
+    Depth = 10,
+    Color = "FFFFFF",
+    Opacity = 0.25,
+    InnerOpacity = 0.25,
+    LineSize = 2,
+    SpaceSize = 1,
+    CornerSize = 2,
+    InnerMargin = 4,
+    CornerSpace = 1,
+}
+
 return {
     name = "ScugHelper/Outline",
     depth = function(room, entity) return entity.Depth end,
@@ -18,20 +32,14 @@ return {
     placements = {
         {
             name = "normal",
-            data = {
-                width = 8,
-                height = 8,
-                Depth = 10,
-                Color = "FFFFFF",
-                Opacity = 0.25,
-                InnerOpacity = 0.25,
-                LineSize = 2,
-                SpaceSize = 1,
-                CornerSize = 2,
-                InnerMargin = 4,
-                CornerSpace = 1,
-            }
+            data = populate {}
         },
+        {
+            name = "tilealigned",
+            data = populate {
+                SpaceSize = 2
+            }
+        }
     },
 
     sprite = function(room, entity)

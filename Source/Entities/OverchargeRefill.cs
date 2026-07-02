@@ -91,6 +91,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         On.Celeste.Player.SuperJump += OnPlayerSuperJump;
         On.Celeste.Player.SuperWallJump += OnPlayerSuperWallJump;
         On.Celeste.Player.BeforeUpTransition += OnPlayerBeforeUpTransition;
+        Utils.UninlineMethod((Player p) => p.BeforeSideTransition());
         On.Celeste.Player.BeforeSideTransition += OnPlayerBeforeSideTransition;
         On.Celeste.Player.BeforeDownTransition += OnPlayerBeforeDownTransition;
         On.Celeste.Level.Reload += OnLevelReload;

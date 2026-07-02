@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using Celeste.Mod.Registry;
+using Celeste.Mod.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
@@ -33,19 +36,51 @@ public class ScugHelperModule : EverestModule
 #endif
     }
 
+    static Exception? QueuedException;
+
     public override void Load() {
-        // TODO: apply any hooks that should always be active
-        typeof(FrostHelperImports).ModInterop();
-        typeof(GravityHelperImports).ModInterop();
-        typeof(ExtendedVariantModeImports).ModInterop();
-        typeof(MotionSmoothingImportHandler).ModInterop();
-        LifecycleMethods.OnLoad();
-        On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
-        On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
+        On.Celeste.Overworld.Begin += OnOverworldBegin;
+        On.Celeste.Level.Begin += OnLevelBegin;
+        On.Celeste.Overworld.Update += OnOverworldUpdate;
+        On.Celeste.Level.Update += OnLevelUpdate;
+        try {
+            typeof(FrostHelperImports).ModInterop();
+            typeof(GravityHelperImports).ModInterop();
+            typeof(ExtendedVariantModeImports).ModInterop();
+            typeof(MotionSmoothingImportHandler).ModInterop();
+            LifecycleMethods.OnLoad();
+            On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
+            On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
+        } catch (Exception e) {
+            QueuedException = e;
+        }
+    }
+
+    private static void OnOverworldBegin(On.Celeste.Overworld.orig_Begin orig, Overworld self) {
+        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
+        else orig(self);
+    }
+
+    private static void OnLevelBegin(On.Celeste.Level.orig_Begin orig, Level self) {
+        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
+        else orig(self);
+    }    
+    
+    private static void OnOverworldUpdate(On.Celeste.Overworld.orig_Update orig, Overworld self) {
+        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
+        else orig(self);
+    }
+
+    private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
+        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
+        else orig(self);
     }
 
     public override void Unload() {
-        // TODO: unapply any hooks applied in Load()
+        On.Celeste.Overworld.Begin -= OnOverworldBegin;
+        On.Celeste.Level.Begin -= OnLevelBegin;
+        On.Celeste.Overworld.Update -= OnOverworldUpdate;
+        On.Celeste.Level.Update -= OnLevelUpdate;
         LifecycleMethods.OnUnload();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int -= OnSquishWiggle;
@@ -106,6 +141,7 @@ public class ScugHelperModule : EverestModule
     internal static Effect? OutlineWithBaseFX;
     internal static Effect? HallOfMirrorsFX;
     internal static Effect? BalatroFX;
+    internal static Effect? PixelDistortionFX;
 
     public override void LoadContent(bool firstLoad) {
         base.LoadContent(firstLoad);
@@ -118,5 +154,6 @@ public class ScugHelperModule : EverestModule
         OutlineWithBaseFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/outlineWithBase.cso", true).Data);
         HallOfMirrorsFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/hallOfMirrors.cso", true).Data);
         BalatroFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/balatro.cso", true).Data);
+        PixelDistortionFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/pixelDistort.cso", true).Data);
     }
 }

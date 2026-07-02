@@ -100,7 +100,6 @@ public class MidStepPortals : Entity
             : ClobberedMoveHExact(self, moveH, onCollide, pusher);
 
     public static bool ClobberedMoveHExact(Actor self, int moveH, Collision? onCollide = null, Solid? pusher = null) {
-
         Vector2 targetPosition = self.Position + Vector2.UnitX * moveH;
         int moveDir = Math.Sign(moveH);
         int moveAmount = 0;

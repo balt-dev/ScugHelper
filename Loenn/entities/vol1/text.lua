@@ -63,9 +63,22 @@ return {
         entity.maxTextH = 0
         local glyphs = {}
         local function drawText(color, xo, yo)
+            local origColor = {color[1], color[2], color[3]}
             local x = 0
             local y = 0
-            for _, codepoint in utf8.codes(text) do
+            local skips = 0
+            for i, codepoint in utf8.codes(text) do
+                if skips > 0 then
+                    skips = skips - 1
+                    goto continue
+                end
+                local _, _, hash, hex = string.find(text, "^{color:(#?)(%x%x%x%x%x%x)}", i)
+                if hex ~= nil then
+                    local newColor = scughelper.parseColor(hex)
+                    color = { origColor[1] * newColor[1], origColor[2] * newColor[2], origColor[3] * newColor[3] }
+                    skips = 13 + #hash
+                    goto continue
+                end
                 if codepoint == 0x0A then
                     y = y + 1
                     x = 0
@@ -75,9 +88,11 @@ return {
                         local atlasIndex = codepoint - 32
                         local atlasX = atlasIndex % 16
                         local atlasY = math.floor(atlasIndex / 16)
-                        local localSprite = drawableSprite.fromTexture(entity.FontTexture or "objects/ScugHelper/text/smallFont", entity)
-                        localSprite:setColor(color or {1, 1, 1})
-                        localSprite:useRelativeQuad(atlasX * glyphWidth, atlasY * glyphHeight, glyphWidth - 1, glyphHeight - 1, true, true)
+                        local localSprite = drawableSprite.fromTexture(
+                        entity.FontTexture or "objects/ScugHelper/text/smallFont", entity)
+                        localSprite:setColor(color or { 1, 1, 1 })
+                        localSprite:useRelativeQuad(atlasX * glyphWidth, atlasY * glyphHeight, glyphWidth - 1,
+                            glyphHeight - 1, true, true)
                         localSprite.x = entity.x + x * glyphWidth + xo
                         localSprite.y = entity.y + y * glyphHeight + yo
                         entity.maxTextW = math.max(entity.maxTextW or 0, (x + 1) * glyphWidth)
@@ -86,6 +101,7 @@ return {
                         x = x + 1
                     end
                 end
+                ::continue::
             end
         end
         if entity.OutlineType == nil then entity.OutlineType = entity.DrawOutline and 1 or 0 end

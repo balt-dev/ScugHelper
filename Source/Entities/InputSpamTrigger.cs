@@ -5,6 +5,7 @@ using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using System;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
+using Celeste.Mod.Helpers;
 namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
@@ -36,7 +37,10 @@ public class InputSpamTrigger(EntityData data, Vector2 offset) : Trigger(data, o
 
     [OnLoad]
     internal static void LoadHooks() {
-        HookOnVirtualButtonGetPressed = new(typeof(VirtualButton).GetProperty(nameof(VirtualButton.Pressed))!.GetGetMethod()!, OnVirtualButtonGetPressed);
+        var getter = typeof(VirtualButton).GetProperty(nameof(VirtualButton.Pressed))!.GetGetMethod()!;
+        if (!HookUtils.TryDisableInlining(getter))
+            throw new Utils.HookException("Failed to disable inlining.");
+        HookOnVirtualButtonGetPressed = new(getter, OnVirtualButtonGetPressed);
         On.Celeste.LevelLoader.StartLevel += OnLevelLoaderStartLevel;
         On.Celeste.Level.LoadLevel += OnLevelLoadLevel;
     }

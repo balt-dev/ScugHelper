@@ -85,6 +85,11 @@ public static class SSV
 
     [OnLoad]
     internal static void LoadHooks() {
+        Utils.UninlineMethod((Session s) => s.GetFlag(null));
+        Utils.UninlineMethod((Session s) => s.GetCounter(null));
+        Utils.UninlineMethod((Session s) => s.GetSlider(null));
+        Utils.UninlineMethod(typeof(Session.Slider).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance)!);
+        Utils.UninlineMethod(typeof(Session.Slider).GetMethod("set_Value", BindingFlags.Public | BindingFlags.Instance)!);
         On.Celeste.Session.GetFlag += OnGetFlag;
         On.Celeste.Session.GetCounter += OnGetCounter;
         On.Celeste.Session.GetSlider += OnGetSlider;
@@ -115,8 +120,8 @@ public static class SSV
         On.Celeste.Session.GetSlider -= OnGetSlider;
         On.Celeste.Session.SetFlag -= OnSetFlag;
         On.Celeste.Session.IncrementCounter -= OnIncrementCounter;
-        OnSliderObjectGetValue.Dispose();
-        OnSliderObjectSetValue.Dispose();
+        OnSliderObjectGetValue?.Dispose();
+        OnSliderObjectSetValue?.Dispose();
         Everest.Events.LevelLoader.OnLoadingThread -= OnLevelInit;
     }
 

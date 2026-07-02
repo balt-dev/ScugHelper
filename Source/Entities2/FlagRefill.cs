@@ -70,8 +70,11 @@ public class FlagRefill : Refill, ICustomRefill {
     }
 
     [OnLoad]
-    internal static void LoadHooks() => On.Celeste.Player.DashEnd += OnDashEnd;
-    
+    internal static void LoadHooks() {
+        Utils.UninlineMethod((Player p) => p.DashEnd());
+        On.Celeste.Player.DashEnd += OnDashEnd;
+    }
+
     [OnUnload]
     internal static void UnloadHooks() => On.Celeste.Player.DashEnd -= OnDashEnd;
 

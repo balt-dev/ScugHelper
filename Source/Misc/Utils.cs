@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Celeste.Mod.Helpers;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
+using Celeste.Mod.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
@@ -139,37 +142,6 @@ internal static class Utils
     public static int BufferHeight = 184 * 2;
 
     internal class HookException(string? message) : Exception(message) {}
-
-    [Tracked]
-    internal class CustomLight(Action onRenderLight) : Component(false, false) { internal Action OnRenderLight = onRenderLight; }
-
-    [OnLoad]
-    internal static void LoadHooks() => IL.Celeste.LightingRenderer.BeforeRender += ILLightingRendererBeforeRender;
-    [OnUnload]
-    internal static void UnloadHooks() => IL.Celeste.LightingRenderer.BeforeRender -= ILLightingRendererBeforeRender;
-
-    private static void RenderCustomLights(LightingRenderer self, Scene scene) {
-        List<Component> comps = scene.Tracker.GetComponents<CustomLight>();
-        if (comps.Count == 0) return;
-        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, (scene as Level)!.Camera.Matrix);
-        foreach (CustomLight light in comps)
-            light.OnRenderLight();
-        Draw.SpriteBatch.End();
-    }
-
-    private static void ILLightingRendererBeforeRender(ILContext il) {
-        ILCursor cur = new(il);
-        // Go to end of function
-        while (cur.TryGotoNext(MoveType.After, static match => match.MatchRet())) { }
-
-        if (!cur.TryGotoPrev(
-            MoveType.AfterLabel, static match => match.MatchCallOrCallvirt(typeof(GaussianBlur), nameof(GaussianBlur.Blur))
-        )) throw new HookException("Failed to hook LightingRenderer for CustomLight component!");
-
-        cur.EmitLdarg0();
-        cur.EmitLdarg1();
-        cur.EmitDelegate(RenderCustomLights);
-    }
     
     public static T Clone<T>(this T self) {
         using var stream = new MemoryStream();
@@ -180,4 +152,14 @@ internal static class Utils
     }
     
     public static Color Mul (this Color self, Color other) => new(self.ToVector4() * other.ToVector4());
+
+    internal static MethodInfo GetMethodInfo(LambdaExpression expr)
+        => expr.Body is MethodCallExpression outerExpr
+                    ? outerExpr.Method
+                    : throw new ArgumentException("UninlineMethod be given a lambda in the form of '(...) => f(...)'.");
+    internal static void UninlineMethod(LambdaExpression expr) => UninlineMethod(GetMethodInfo(expr));
+    internal static void UninlineMethod(MethodInfo info) {
+        if (!HookUtils.TryDisableInlining(info))
+            throw new HookException($"Failed to uniniline method {info}.");
+    }
 }

@@ -146,17 +146,18 @@ public class NewAngleBumper : Bumper
 
     [OnLoad]
     public static void LoadHooks() {
+        Utils.UninlineMethod((Bumper p) => p.UpdatePosition());
         On.Celeste.Bumper.UpdatePosition += OnUpdatePosition;
-        IL.Celeste.Bumper.Update += ILUpdate;
+        IL.Celeste.Bumper.Update += ILBumperUpdate;
     }
 
     [OnUnload]
     public static void UnloadHooks() {
         On.Celeste.Bumper.UpdatePosition -= OnUpdatePosition;
-        IL.Celeste.Bumper.Update -= ILUpdate;
+        IL.Celeste.Bumper.Update -= ILBumperUpdate;
     }
 
-    private static void ILUpdate(ILContext il) {
+    private static void ILBumperUpdate(ILContext il) {
         ILCursor cur = new(il);
         ILLabel? label = null;
         if (!cur.TryGotoNextBestFit(MoveType.After,

@@ -4,19 +4,21 @@ effect.name = "ScugHelper/Balatro"
 effect.canBackground = true
 effect.canForeground = true
 
+-- new_colour = G.C.BLUE, special_colour = G.C.RED, tertiary_colour = darken(G.C.BLACK, 0.4), contrast = 3
+
 effect.defaultData = {
     SpinEase = 0.5,
-    Contrast = 1,
+    Contrast = 3,
     SpinAmount = 1,
     TimeScale = 1,
     SpinTimeScale = 0.73,
     OffsetX = 0,
     OffsetY = 0,
-    Color1 = "#FF0000",
-    Opacity1 = 1,
-    Color2 = "#000000",
-    Opacity2 = 0,
-    Color3 = "#0000FF",
+    Color1 = "#FE5F55",
+    Opacity1 = 0.4,
+    Color2 = "#009dff",
+    Opacity2 = 1,
+    Color3 = "#030303",
     Opacity3 = 1,
     Tint = "#FFFFFF",
     TintOpacity = 1,

@@ -53,8 +53,6 @@ public class JumpThroughBlock : Solid {
 
         Add(tileGrid);
         Add(new TileInterceptor(tileGrid, highPriority: true));
-        if (CollideCheck<Player>())
-            RemoveSelf();
         Collider = new JumpThroughBlockColliderList(this);
     }
 }

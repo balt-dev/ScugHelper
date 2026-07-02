@@ -17,6 +17,7 @@ public class StaticFloatySpaceBlock(EntityData data, Vector2 offset) : FloatySpa
 {
     [OnLoad]
     internal static void LoadHooks() {
+        Utils.UninlineMethod((FloatySpaceBlock p) => p.MoveToTarget());
         On.Celeste.FloatySpaceBlock.MoveToTarget += OnMoveToTarget;
     }
     [OnUnload]

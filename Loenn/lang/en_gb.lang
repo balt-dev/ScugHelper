@@ -150,8 +150,10 @@ triggers.ScugHelper/TeleportTrigger.placements.description.trigger=Teleports the
 entities.ScugHelper/ActionListenerCollider.placements.name.normal=Action Listener Controller
 entities.ScugHelper/ActionListenerCollider.placements.description.normal=Runs a player collision when any specified action group is alerted. This is NOT an action.
 
-entities.ScugHelper/Outline.placements.name.normal=Outline
+entities.ScugHelper/Outline.placements.name.normal=Custom Outline
+entities.ScugHelper/Outline.placements.name.tilealigned=Custom Outline (Tile-Aligned)
 entities.ScugHelper/Outline.placements.description.normal=Customizable block outline.
+entities.ScugHelper/Outline.placements.description.tilealigned=Customizable block outline, tile-aligned by default.
 
 entities.ScugHelper/NewCustomField.placements.name.normal=Entity Barrier
 entities.ScugHelper/NewCustomField.placements.description.normal=Barrier that is solid only for the a customizable list of entities, and intangible otherwise. Entities are specified via their namespaced type.
@@ -626,3 +628,10 @@ entities.ScugHelper/UnforgivingFireBarrier.placements.name.fire_barrier=Unforgiv
 entities.ScugHelper/UnforgivingIceBlock.placements.name.ice_block=Unforgiving Ice Block
 
 style.effects.ScugHelper/Balatro.name=Balatro
+
+entities.ScugHelper/CustomDistortion.placements.name.normal=Custom Distortion
+entities.ScugHelper/CustomDistortion.placements.description.normal=Entity that distorts the screen using a given, optionally animated, texture.
+entities.ScugHelper/CustomDistortion.attributes.description.ImagePath=The image path of the distortion texture to use, relative to 'Atlases/Game/distortions/'.
+
+entities.ScugHelper/InstantTransitionController.placements.name.normal=Instant Transition Controller
+entities.ScugHelper/InstantTransitionController.placements.description.normal=Makes all room transitions instant. Effect on gender is currently unknown.

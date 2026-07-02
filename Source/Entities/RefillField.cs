@@ -65,7 +65,7 @@ public class RefillField : Entity
 
     public override void Added(Scene scene) {
         base.Added(scene);
-        Add(new Utils.CustomLight(OnRenderLight));
+        Add(new CustomLight(OnRenderLight));
     }
 
     private float Elapsed = 0;
