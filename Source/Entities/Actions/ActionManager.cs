@@ -68,7 +68,7 @@ public static class ActionManager
     private static ActionDummy dummy = [];
 
     internal static void RegisterAction(Level level, EntityData data, LevelData room) {
-        var ty = ScugHelperModule.GetTypeOfEntity(data);
+        var ty = Utils.GetTypeOfEntity(data);
         if (!ty?.GetInterfaces().Contains(typeof(IAction)) ?? true) return;
         int id = data.ID;
         level.Session.DoNotLoad.Add(new EntityID() { Level = room.Name, ID = id });
@@ -148,7 +148,7 @@ public static class ActionManager
 
     public static object? TryConstructEntity(EntityData data, LevelData room, out Type? type) {
         type = null;
-        if (ScugHelperModule.GetTypeOfEntity(data) is not Type ty) return null;
+        if (Utils.GetTypeOfEntity(data) is not Type ty) return null;
         if (!ty.IsSubclassOf(typeof(Entity))) return null;
         type = ty;
         ConstructorKind kind = ConstructorKind.Bare;

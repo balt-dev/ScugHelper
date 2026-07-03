@@ -17,7 +17,7 @@ public class NewCustomField : Solid
                 Player => self.Names.Contains("player"),
                 SolidTiles => self.Names.Contains("fg"),
                 BackgroundTiles => self.Names.Contains("bg"),
-                _ => self.Names.Intersect(ScugHelperModule.GetNamesOfEntity(entity)).Count() > 0,
+                _ => self.Names.Intersect(Utils.GetNamesOfEntity(entity)).Count() > 0,
             };
             res ^= self.Invert;
             self.HitEntity |= res;

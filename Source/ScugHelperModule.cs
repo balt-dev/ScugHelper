@@ -106,34 +106,18 @@ public class ScugHelperModule : EverestModule
 
     public static void KillSeeker(Seeker self) {
         KillingSeeker = true;
-        var solid = new Solid(Vector2.Zero, 0, 0, false);
-        self.SquishCallback(new CollisionData() {
-            Direction = Vector2.Zero,
-            Moved = Vector2.Zero,
-            TargetPosition = self.Position,
-            Hit = solid,
-            Pusher = solid
-        });
-        KillingSeeker = false;
-    }
-
-    static readonly Dictionary<string, Type?> TypeCache = [];
-    internal static Type? GetTypeOfEntity(EntityData data) {
-        if (TypeCache.TryGetValue(data.Name, out var res)) return res;
-        var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
-        if (type is not Type ty)
-            Logger.Warn(nameof(ScugHelper), $"SID {data.Name} of entity with ID {data.ID} does not correspond to any known types.");
-        TypeCache[data.Name] = type;
-        return type;
-    }
-
-    static readonly Dictionary<Type, IReadOnlySet<string>> NameCache = [];
-    internal static IReadOnlySet<string> GetNamesOfEntity(Entity entity) {
-        var type = entity.GetType();
-        if (NameCache.TryGetValue(type, out var res)) return res;
-        var sids = EntityRegistry.GetKnownSidsFromType(entity.GetType());
-        NameCache[type] = sids;
-        return sids;
+        try {
+            var solid = new Solid(Vector2.Zero, 0, 0, false);
+            self.SquishCallback(new CollisionData() {
+                Direction = Vector2.Zero,
+                Moved = Vector2.Zero,
+                TargetPosition = self.Position,
+                Hit = solid,
+                Pusher = solid
+            });
+        } finally {
+            KillingSeeker = false;
+        }
     }
 
     internal static Effect? OutlineFX;

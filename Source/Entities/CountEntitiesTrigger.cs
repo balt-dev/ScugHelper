@@ -15,7 +15,7 @@ public class CountEntitiesTrigger(EntityData e, Vector2 offset) : Trigger(e, off
     public void CountEntities(Level level) {
         int count = 0;
         foreach (Entity entity in level.Entities)
-            if (Names.Overlaps(ScugHelperModule.GetNamesOfEntity(entity))) count++;
+            if (Names.Overlaps(Utils.GetNamesOfEntity(entity))) count++;
         level.Session.SetCounter(CounterName, count);
     }
 

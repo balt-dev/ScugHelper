@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Celeste.Mod.Helpers;
+using Celeste.Mod.Registry;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Celeste.Mod.UI;
 using Microsoft.Xna.Framework;
@@ -161,5 +163,35 @@ internal static class Utils
     internal static void UninlineMethod(MethodInfo info) {
         if (!HookUtils.TryDisableInlining(info))
             throw new HookException($"Failed to uniniline method {info}.");
+    }
+
+    internal static void Add<K, V>(this Dictionary<K, V> dict, KeyValuePair<K, V> kvp) where K: notnull => dict.Add(kvp.Key, kvp.Value);
+    internal static V? GetValueOrNull<K, V>(this Dictionary<K, V> dict, K key) where K: notnull where V: struct
+        => dict.TryGetValue(key, out var val) ? val : null;
+    internal static V? GetNullableValue<K, V>(this Dictionary<K, V> dict, K key) where K: notnull where V: class
+        => dict.TryGetValue(key, out var val) ? val : null;
+    
+    static readonly Dictionary<string, Type?> TypeCache = [];
+    
+    internal static Type? GetTypeOfEntity(EntityData data) {
+        if (TypeCache.TryGetValue(data.Name, out var res)) return res;
+        var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
+        if (type is not Type ty)
+            Logger.Warn(nameof(ScugHelper), $"SID {data.Name} of entity with ID {data.ID} does not correspond to any known types.");
+        TypeCache[data.Name] = type;
+        return type;
+    }
+
+    static readonly Dictionary<Type, IReadOnlySet<string>> NameCache = [
+        new(typeof(Player), new HashSet<string>(["player"])),
+        new(typeof(SolidTiles), new HashSet<string>(["fg"])),
+        new(typeof(BackgroundTiles), new HashSet<string>(["bg"]))
+    ];
+    internal static IReadOnlySet<string> GetNamesOfEntity(Entity entity) => GetNamesOfEntity(entity.GetType());
+    internal static IReadOnlySet<string> GetNamesOfEntity(Type type) {
+        if (NameCache.TryGetValue(type, out var res)) return res;
+        var sids = EntityRegistry.GetKnownSidsFromType(type);
+        NameCache[type] = sids;
+        return sids;
     }
 }
