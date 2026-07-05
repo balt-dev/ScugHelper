@@ -39,8 +39,6 @@ public class ScugHelperModule : EverestModule
     static Exception? QueuedException;
 
     public override void Load() {
-        On.Celeste.Overworld.Begin += OnOverworldBegin;
-        On.Celeste.Level.Begin += OnLevelBegin;
         On.Celeste.Overworld.Update += OnOverworldUpdate;
         On.Celeste.Level.Update += OnLevelUpdate;
         try {
@@ -55,30 +53,18 @@ public class ScugHelperModule : EverestModule
             QueuedException = e;
         }
     }
-
-    private static void OnOverworldBegin(On.Celeste.Overworld.orig_Begin orig, Overworld self) {
-        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
-        else orig(self);
-    }
-
-    private static void OnLevelBegin(On.Celeste.Level.orig_Begin orig, Level self) {
-        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
-        else orig(self);
-    }    
     
     private static void OnOverworldUpdate(On.Celeste.Overworld.orig_Update orig, Overworld self) {
-        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
+        if (QueuedException is {} exc) { QueuedException = null; throw exc; }
         else orig(self);
     }
 
     private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
-        if (QueuedException is {} exc) { QueuedException = null; CriticalErrorHandler.HandleCriticalError(ExceptionDispatchInfo.Capture(exc), CriticalErrorHandler.DisplayState.CleanScene); }
+        if (QueuedException is {} exc) { QueuedException = null; throw exc; }
         else orig(self);
     }
 
     public override void Unload() {
-        On.Celeste.Overworld.Begin -= OnOverworldBegin;
-        On.Celeste.Level.Begin -= OnLevelBegin;
         On.Celeste.Overworld.Update -= OnOverworldUpdate;
         On.Celeste.Level.Update -= OnLevelUpdate;
         LifecycleMethods.OnUnload();
@@ -126,6 +112,7 @@ public class ScugHelperModule : EverestModule
     internal static Effect? HallOfMirrorsFX;
     internal static Effect? BalatroFX;
     internal static Effect? PixelDistortionFX;
+    internal static bool PreventDeath;
 
     public override void LoadContent(bool firstLoad) {
         base.LoadContent(firstLoad);

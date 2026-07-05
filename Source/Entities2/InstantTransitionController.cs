@@ -61,8 +61,10 @@ public class InstantTransitionController() : Entity() {
                 
                 int iters = 0;
                 while (!player.TransitionTo(playerTo, direction))
-                    if (iters++ > 10000)
-                        throw new Exception("What the fuck!?");
+                    if (iters++ > 1000) {
+                        player.Position = playerTo.Round();
+                        break;
+                    }
                         
                 return 1.0f;
             }

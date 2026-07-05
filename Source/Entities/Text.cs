@@ -335,7 +335,7 @@ public partial class Text : Entity
         Vector2 printHead = Vector2.Zero;
         Color currentColor = color;
         foreach (var part in parts) {
-            string cachedChars = part.CachedValue!;
+            if (part.CachedValue is not string cachedChars) continue;
             currentColor = forceColor ? color : (part.Color is not Color partColor ? currentColor : new(color.ToVector4() * partColor.ToVector4()));
             foreach (char chr in cachedChars) {
                 if (chr == '\n') { printHead.X = 0; printHead.Y += GlyphHeight + 1; continue; }

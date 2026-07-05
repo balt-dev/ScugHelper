@@ -68,7 +68,7 @@ public class ScugHelperModuleSettings : EverestModuleSettings
     [SettingRange(1, 16)]
     public int BakedTextureSizeLimit { get; set; } = 4;
 
-    [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper-AllowSideflipping flag.")]
+    [SettingSubText("Enables sideflipping everywhere. Can also be enabled with the ScugHelper.AllowSideflipping flag.")]
     public bool SideflippingEverywhere { get; set; } = false;
 
     [SettingSubText("Enables booster bouncing for every booster.")]
@@ -76,6 +76,9 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Forces the Overcharge Refill's effect permanently.")]
     public bool AlwaysOvercharges { get; set; } = false;
+    
+    [SettingSubText("Every frame, gives the player a Spear if they don't have one.\nCan also be enabled with the ScugHelper.InfiniteSpears flag.")]
+    public bool InfiniteSpears { get; set; } = false;
 
     [SettingNumberInput(allowNegatives: false, maxLength: 5)]
     [SettingSubText("Adjusts how much squash and stretch pinball boosters have.")]

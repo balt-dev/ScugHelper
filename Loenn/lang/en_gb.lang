@@ -628,3 +628,9 @@ entities.ScugHelper/InstantTransitionController.placements.name.normal=Instant T
 entities.ScugHelper/InstantTransitionController.placements.description.normal=Makes all room transitions instant. Effect on gender is currently unknown.
 
 entities.ScugHelper/Polyline.placements.name.normal=Polyline
+
+entities.ScugHelper/Spear.placements.name.normal=Spear
+
+triggers.ScugHelper/SessionVariableTrigger.placements.name.flag=Set Flag
+triggers.ScugHelper/SessionVariableTrigger.placements.name.counter=Set Counter
+triggers.ScugHelper/SessionVariableTrigger.placements.name.slider=Set Slider

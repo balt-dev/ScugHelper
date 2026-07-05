@@ -21,7 +21,10 @@ return {
             }
         }
     },
-    texture = function(room, entity) populate(entity) return entity.Texture end,
+    texture = function(room, entity)
+        populate(entity)
+        return entity.Texture
+    end,
     selection = function(room, entity)
         return utils.rectangle(entity.x - 4, entity.y - 2, 8, 6)
     end,

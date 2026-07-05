@@ -44,7 +44,6 @@ public class TungstenCube : Actor, IHasSpeed {
         Vector2 position, string texturePath = "objects/ScugHelper/anvil",
         bool killOnDestroy = false, bool noLeaveBehind = false, bool crystalSounds = false
     ) : base(position) {
-        Tag |= Tags.TransitionUpdate;
         Depth = 99;
         Collider = PlayerHitbox;
         CrushCollider = CrushHitbox;
@@ -64,9 +63,20 @@ public class TungstenCube : Actor, IHasSpeed {
             OnRelease = OnRelease
         });
         Add(playerCollider = new PlayerCollider(OnPlayer, CrushCollider));
+        Add(new PufferCollider(OnPuffer));
+        Add(new TouchSwitchCollider(ts => ts.TurnOn()));
+        Add(new SpringCollider(spring => { if (HitSpring(spring)) spring.BounceAnimate(); }));
         Add(new MirrorReflection());
     }
-    
+
+    private void OnPuffer(Puffer puffer) {
+        if (!(puffer.state == Puffer.States.Gone || !(puffer.cantExplodeTimer <= 0f))) {
+            Speed = (Center - puffer.Center).SafeNormalize(-Vector2.UnitY) * 400f;
+            puffer.Explode();
+            puffer.GotoGone();
+        }
+    }
+
     public override void Added(Scene scene) {
         base.Added(scene);
         
@@ -146,8 +156,12 @@ public class TungstenCube : Actor, IHasSpeed {
         base.Update();
         playerCollider.Collider = GravityHelperImports.IsInverted(this) ? InvertedCrushHitbox : CrushHitbox;
         Image.Position = new(MathF.Floor(Center.X), MathF.Floor(Center.Y) - 1);
-        if (Hold.IsHeld)
+        if (Hold.IsHeld) {
+            Tag |= Tags.TransitionUpdate;
             Image.Position.Y -= Hold.Holder.IsInverted() ? -4f : 4f;
+        } else {
+            Tag &= ~Tags.TransitionUpdate;
+        }
         Image.Update();
         if (!Hold.IsHeld) {
             if (CollideFirst<HeartGem>() is HeartGem gem && gem != null) {
@@ -164,8 +178,6 @@ public class TungstenCube : Actor, IHasSpeed {
             Speed.Y = 0;
         WasOnGround = OnGround();
         prevLiftSpeed = LiftSpeed;
-        foreach (AnvilCollider component in Scene.Tracker.GetComponents<AnvilCollider>())
-            component.Check(this);
         Speed.X = Calc.Approach(Speed.X, 0, 700f * Engine.DeltaTime);
         Speed.Y = Calc.Approach(Speed.Y, 0, 400f * Engine.DeltaTime);
         if (!OnGround())
@@ -261,9 +273,6 @@ public class TungstenCube : Actor, IHasSpeed {
     [OnLoad]
     public static void LoadHooks() {
         IL.Celeste.Player.NormalUpdate += ModNormalUpdate;
-        On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
-        On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
-        On.Celeste.Puffer.ctor_Vector2_bool += PufferCtorHook;
         On.Celeste.Player.Jump += CanJumpHook;
         On.Celeste.Player.SuperJump += CanSuperJumpHook;
         On.Celeste.Player.WallJump += CanWallJumpHook;
@@ -276,9 +285,6 @@ public class TungstenCube : Actor, IHasSpeed {
     [OnUnload]
     public static void UnloadHooks() {
         IL.Celeste.Player.NormalUpdate -= ModNormalUpdate;
-        On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;
-        On.Celeste.Spring.ctor_Vector2_Orientations_bool -= SpringCtorHook;
-        On.Celeste.Puffer.ctor_Vector2_bool -= PufferCtorHook;
         On.Celeste.Player.Jump -= CanJumpHook;
         On.Celeste.Player.SuperJump -= CanSuperJumpHook;
         On.Celeste.Player.WallJump -= CanWallJumpHook;
@@ -313,27 +319,6 @@ public class TungstenCube : Actor, IHasSpeed {
     private static void BounceHook(On.Celeste.Player.orig_SuperBounce orig, Player self, float fromY) {
         orig(self, fromY);
         if (self.Holding is { Entity: TungstenCube, IsHeld: true }) { self.Speed.Y *= JumpMultiplier; self.varJumpSpeed *= JumpMultiplier; }
-    }
-
-    private static void SpringCtorHook(On.Celeste.Spring.orig_ctor_Vector2_Orientations_bool orig, Spring self, Vector2 position, Spring.Orientations orientation, bool playerCanUse) {
-        orig(self, position, orientation, playerCanUse);
-        self.Add(new AnvilCollider(bumper => { if (bumper.HitSpring(self)) self.BounceAnimate(); }));
-    }
-
-    private static void TouchSwitchCtorHook(On.Celeste.TouchSwitch.orig_ctor_Vector2 orig, TouchSwitch self, Vector2 position) {
-        orig(self, position);
-        self.Add(new AnvilCollider(crys => self.TurnOn()));
-    }
-
-    private static void PufferCtorHook(On.Celeste.Puffer.orig_ctor_Vector2_bool orig, Puffer self, Vector2 position, bool faceRight) {
-        orig(self, position, faceRight);
-        self.Add(new AnvilCollider(crys => {
-            if (!(self.state == Puffer.States.Gone || !(self.cantExplodeTimer <= 0f))) {
-                crys.Speed = (crys.Center - self.Center).SafeNormalize(-Vector2.UnitY) * 400f;
-                self.Explode();
-                self.GotoGone();
-            }
-        }));
     }
 
     private static readonly float JumpMultiplier = 0.5f;
@@ -421,16 +406,5 @@ public class TungstenCube : Actor, IHasSpeed {
             theo ? "objects/ScugHelper/theoAnvil" : "objects/ScugHelper/anvil",
             theo, theo
         ));
-    }
-}
-
-[Tracked(false)]
-internal class AnvilCollider(Action<TungstenCube> onCollide) : Component(active: false, visible: false)
-{
-    public Action<TungstenCube> OnCollide = onCollide;
-
-    public void Check(TungstenCube obj) {
-        if (obj.CollideCheck(Entity))
-            OnCollide?.Invoke(obj);
     }
 }

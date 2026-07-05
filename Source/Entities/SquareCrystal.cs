@@ -62,6 +62,8 @@ public class SquareCrystal : Actor, IHasSpeed
         glareSprite.CenterOrigin();
         Add(new BloomPoint(0.35f, 24f));
         Add(new VertexLight(InfillColor, 0.3f, 32, 64));
+        Add(new TouchSwitchCollider(ts => ts.TurnOn()));
+        Add(new SpringCollider(spring => { if (HitSpring(spring)) spring.BounceAnimate(); }));
     }
 
     public void OnPlayer(Player player) {
@@ -104,8 +106,6 @@ public class SquareCrystal : Actor, IHasSpeed
             Speed.Y = 0;
         WasOnGround = OnGround();
         prevLiftSpeed = LiftSpeed;
-        foreach (SquareCrystalCollider component in Scene.Tracker.GetComponents<SquareCrystalCollider>())
-            component.Check(this);
         Speed = Calc.Approach(Speed, Vector2.Zero, 400f * Engine.DeltaTime);
         if (!OnGround() && DoGravity)
             Speed.Y += Gravity * Engine.DeltaTime;
@@ -143,26 +143,6 @@ public class SquareCrystal : Actor, IHasSpeed
             RemoveSelf();
         }
     }
-    [OnLoad]
-    public static void LoadHooks() {
-        On.Celeste.Spring.ctor_Vector2_Orientations_bool += SpringCtorHook;
-        On.Celeste.TouchSwitch.ctor_Vector2 += TouchSwitchCtorHook;
-    }
-    [OnUnload]
-    public static void UnloadHooks() {
-        On.Celeste.Spring.ctor_Vector2_Orientations_bool -= SpringCtorHook;
-        On.Celeste.TouchSwitch.ctor_Vector2 -= TouchSwitchCtorHook;
-    }
-
-    private static void TouchSwitchCtorHook(On.Celeste.TouchSwitch.orig_ctor_Vector2 orig, TouchSwitch self, Vector2 position) {
-        orig(self, position);
-        self.Add(new SquareCrystalCollider(crys => self.TurnOn()));
-    }
-
-    private static void SpringCtorHook(On.Celeste.Spring.orig_ctor_Vector2_Orientations_bool orig, Spring self, Vector2 position, Spring.Orientations orientation, bool playerCanUse) {
-        orig(self, position, orientation, playerCanUse);
-        self.Add(new SquareCrystalCollider(crys => { if (crys.HitSpring(self)) self.BounceAnimate(); }));
-    }
 
     public bool HitSpring(Spring spring) {
         switch (spring.Orientation) {
@@ -190,15 +170,5 @@ public class SquareCrystal : Actor, IHasSpeed
 
                 return false;
         }
-    }
-}
-
-[Tracked(false)]
-internal class SquareCrystalCollider(Action<SquareCrystal> onCollide): Component(active: false, visible: false) {
-    public Action<SquareCrystal> OnCollide = onCollide;
-
-    public void Check(SquareCrystal obj) {
-        if (obj.CollideCheck(Entity))
-            OnCollide?.Invoke(obj);
     }
 }

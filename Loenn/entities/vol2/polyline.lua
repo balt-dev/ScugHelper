@@ -6,10 +6,14 @@ local drawableFunc = require("structs.drawable_function")
 
 local populate = scughelper.populateDefaults {
     Color = "FFFFFF",
+    Color2 = "FFFFFF",
+    ColorFadeSlider = "",
+    Flag = "",
+    FlagState = true,
     Width = 2,
     NodeTexture = "objects/ScugHelper/polyline/defaultNode",
     TintNodeTexture = true,
-    Depth = -5000
+    Depth = 5000
 }
 
 return {
@@ -54,7 +58,6 @@ return {
     end,
     nodeSprite = function() return {} end,
     selection = function(room, entity)
-        entity.Position = entity.Position or 0
         entity.nodes = entity.nodes or {}
         local nodeSelection = {}
         for i, node in pairs(entity.nodes) do
@@ -65,6 +68,7 @@ return {
     fieldInformation = {
         Depth = { fieldType = "integer" },
         Color = { fieldType = "color" },
+        Color2 = { fieldType = "color" },
     },
     ignoredFields = function(entity)
         populate(entity)

@@ -194,4 +194,23 @@ internal static class Utils
         NameCache[type] = sids;
         return sids;
     }
+    
+    public static Vector3 ToHsv (this Color self) {
+        Vector3 rgb = self.ToVector3();
+        double h = 0;
+        double v = Math.Max(Math.Max(rgb.X, rgb.Y), rgb.Z);
+        
+    	double min = Math.Min(Math.Min(rgb.X, rgb.Y), rgb.Z);
+    	double delta = v - min;
+        
+    	double s = v == 0.0 ? 0 : delta / v;
+
+    	if (s == 0) h = 0.0;        
+    	else if (rgb.X == v) h = (rgb.Y - rgb.Z) / delta;
+  		else if (rgb.Y == v) h = 2 + (rgb.Z - rgb.X) / delta;
+  		else if (rgb.Z == v) h = 4 + (rgb.X - rgb.Y) / delta;
+        h /= 6;
+        
+        return new((float)h, (float)s, (float)v);
+    }
 }

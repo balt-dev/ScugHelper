@@ -31,7 +31,7 @@ public class PlayerSeekerComponent(bool playSound = true) : Component(false, fal
     }
 
     private static PlayerDeadBody? OnDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats) {
-        if (self?.Components?.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp && comp.disableDeath) return null;
+        if (ScugHelperModule.PreventDeath || self?.Components?.Get<PlayerSeekerComponent>() is PlayerSeekerComponent comp && comp.disableDeath) return null;
         return orig(self, direction, evenIfInvincible, registerDeathInStats);
     }
 
