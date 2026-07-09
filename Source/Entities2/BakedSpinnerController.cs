@@ -157,13 +157,19 @@ public class BakedSpinnerController : Entity, IDisposable {
             Draw.Circle(pos, 2f, Color.Lime, 6);
     }
 
-    // Make absolutely sure it's disposed
-    public override void Removed(Scene scene) => Dispose();
-    public override void SceneEnd(Scene scene) => Dispose();
-    ~BakedSpinnerController() => Dispose();
+    public override void Removed(Scene scene) {
+        base.Removed(scene);
+        Dispose();
+    }
+
+    public override void SceneEnd(Scene scene) {
+        base.SceneEnd(scene);
+        Dispose();
+    }
 
     public void Dispose() {
         BakedTarget?.Dispose();
+        BakedTarget = null;
     }
 
     [OnLoad]

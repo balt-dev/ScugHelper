@@ -63,13 +63,15 @@ public class SessionVariableTrigger : Trigger {
     public override void OnStay(Player player) {
         base.OnStay(player);
         if (CoverRoom) return;
-        UpdateValue(player.level.Session);
+        if (player.level?.Session is Session session)
+            UpdateValue(session);
     }
 
     public override void OnLeave(Player player) {
         base.OnLeave(player);
         if (CoverRoom) return;
-        ResetValue(player.level.Session);
+        if (player.level?.Session is Session session)
+            ResetValue(session);
     }
 
     public override void Removed(Scene scene)

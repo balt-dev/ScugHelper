@@ -77,6 +77,7 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
             NoFGBackbuffer?.Dispose();
             NoFGBackbuffer = VirtualContent.CreateRenderTarget($"HallOfMirrorsNoFGBuffer", GameplayBuffers.Level.Width, GameplayBuffers.Level.Height);
         }
+        var oldRTS = Engine.Instance.GraphicsDevice.GetRenderTargets();
         Engine.Instance.GraphicsDevice.SetRenderTarget(NoFGBackbuffer);
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
         Draw.SpriteBatch.Draw(
@@ -85,7 +86,7 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
             Color.White
         );
         Draw.SpriteBatch.End();
-        Engine.Instance.GraphicsDevice.SetRenderTarget(null);
+        Engine.Instance.GraphicsDevice.SetRenderTargets(oldRTS);
     }
     
     internal static void SaveFullBuffer(Level level) {
@@ -97,6 +98,7 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
             FullBackbuffer?.Dispose();
             FullBackbuffer = VirtualContent.CreateRenderTarget($"HallOfMirrorsFullBuffer", GameplayBuffers.Level.Width, GameplayBuffers.Level.Height);
         }
+        var oldRTS = Engine.Instance.GraphicsDevice.GetRenderTargets();
         Engine.Instance.GraphicsDevice.SetRenderTarget(FullBackbuffer);
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
         Draw.SpriteBatch.Draw(
@@ -105,7 +107,7 @@ public class HallOfMirrors(BinaryPacker.Element data) : Backdrop {
             Color.White
         );
         Draw.SpriteBatch.End();
-        Engine.Instance.GraphicsDevice.SetRenderTarget(null);
+        Engine.Instance.GraphicsDevice.SetRenderTargets(oldRTS);
     }
 
     public override void Render(Scene scene) {

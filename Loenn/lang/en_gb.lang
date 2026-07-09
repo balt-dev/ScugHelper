@@ -634,3 +634,14 @@ entities.ScugHelper/Spear.placements.name.normal=Spear
 triggers.ScugHelper/SessionVariableTrigger.placements.name.flag=Set Flag
 triggers.ScugHelper/SessionVariableTrigger.placements.name.counter=Set Counter
 triggers.ScugHelper/SessionVariableTrigger.placements.name.slider=Set Slider
+
+triggers.ScugHelper/RemovePlayerTrigger.placements.name.normal=Remove Player
+triggers.ScugHelper/RemovePlayerTrigger.placements.description.normal=Removes the player from the scene entirely. :)
+
+entities.ScugHelper/ActionWingedBerry.placements.name.jump=Custom Winged Berry (On Jump)
+entities.ScugHelper/ActionWingedBerry.placements.name.dash=Custom Winged Berry (On Dash)
+entities.ScugHelper/ActionWingedBerry.placements.name.grab=Custom Winged Berry (On Grab)
+entities.ScugHelper/ActionWingedBerry.placements.name.land=Custom Winged Berry (On Land)
+entities.ScugHelper/ActionWingedBerry.placements.name.custom=Custom Winged Berry (Blank)
+
+entities.ScugHelper/JumplessGoldenBerry.placements.name.golden=Jumpless Golden Berry

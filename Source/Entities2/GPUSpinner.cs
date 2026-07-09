@@ -181,7 +181,17 @@ class GPUSpinnerRenderer : Entity {
 
     public override void Removed(Scene scene) {
         base.Removed(scene);
+        Dispose();
+    }
+
+    public override void SceneEnd(Scene scene) {
+        base.SceneEnd(scene);
+        Dispose();
+    }
+
+    public void Dispose() {
         buffer?.Dispose();
+        buffer = null;
     }
 
     VirtualRenderTarget? buffer;

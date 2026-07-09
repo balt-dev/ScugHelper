@@ -186,5 +186,18 @@ public class RefillRectangle : Entity
         if (self.Get<StaticRefillComponent>() is not null) self.sprite.Y = self.flash.Y = self.outline.Y = self.light.Y = self.bloom.Y = 0;
         else orig(self);
     }
+    
+    public override void Removed(Scene scene) {
+        base.Removed(scene);
+        Dispose();
+    }
+    public override void SceneEnd(Scene scene) {
+        base.SceneEnd(scene);
+        Dispose();
+    }
+    void Dispose() {
+        bakedTexture?.Dispose();
+        bakedTexture = null;
+    }
 }
 

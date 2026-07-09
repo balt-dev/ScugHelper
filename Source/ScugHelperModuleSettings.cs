@@ -105,6 +105,12 @@ public class ScugHelperModuleSettings : EverestModuleSettings
 
     [SettingSubText("Makes all room transitions instant. Increases IGT by 0.68 seconds on transition to compensate.")]
     public bool InstantRoomTransitions { get; set; } = false;
+
+    [SettingSubText("Bakes outlines to a texture for performance. Only turn this off if Outline entities break on your system.")]
+    public bool BakeOutlines { get; internal set; } = true;
+
+    [SettingSubText("These options are for debugging only, and aren't useful if you're not the developer.\nThese may be added and removed with zero notice.")]
+    public DebugMenu Debug { get; set; } = new();
 }
 
 [SettingSubMenu]
@@ -125,4 +131,8 @@ public class MinimapMenu {
     public int MinimapX { get; set; } = 1920 - 640 - 10;
     [SettingRange(0, 1080, largeRange: true)]
     public int MinimapY { get; set; } = 10;
+}
+
+[SettingSubMenu]
+public class DebugMenu {
 }

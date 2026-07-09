@@ -242,9 +242,20 @@ public partial class Text : Entity
             level.Session.DoNotLoad.Add(ID);
     }
     
+    
+    public override void Removed(Scene scene) {
+        base.Removed(scene);
+        Dispose();
+    }
     public override void SceneEnd(Scene scene) {
         if (Persistent)
             (scene as Level)?.Session.DoNotLoad.Remove(ID);
+        Dispose();
+        base.SceneEnd(scene);
+    }
+    void Dispose() {
+        bakedTexture?.Dispose();
+        bakedTexture = null;
     }
 
     private void CompileStringParts()
@@ -328,6 +339,15 @@ public partial class Text : Entity
         renderPosition.Y = float.Lerp(renderPosition.Y, level.Camera.Position.Y, Parallax.Y) + ParallaxOffset.Y;
         if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, renderPosition, Color.White * Opacity);
         else Logger.Warn(nameof(ScugHelper), "Text bakedTexture is null?");
+    }
+    public override void DebugRender(Camera camera) {
+        base.DebugRender(camera);
+        Level level = SceneAs<Level>();
+        if (Flag is string flag && (!level.Session.GetFlag(flag) ^ InvertFlag)) return;
+        Vector2 renderPosition = Position - Vector2.One;
+        renderPosition.X = float.Lerp(renderPosition.X, level.Camera.Position.X, Parallax.X) + ParallaxOffset.X;
+        renderPosition.Y = float.Lerp(renderPosition.Y, level.Camera.Position.Y, Parallax.Y) + ParallaxOffset.Y;
+        RenderText(Position, Color.Lime, true);
     }
 
     internal void RenderText(Vector2 offset, Color color, bool forceColor = false) {

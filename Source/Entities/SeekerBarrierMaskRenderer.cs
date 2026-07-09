@@ -48,7 +48,15 @@ public class SeekerBarrierMaskRenderer : Entity
 
     public override void Removed(Scene scene) {
         base.Removed(scene);
+        Dispose();
+    }
+    public override void SceneEnd(Scene scene) {
+        base.SceneEnd(scene);
+        Dispose();
+    }
+    void Dispose() {
         buffer?.Dispose();
+        buffer = null;
     }
 
     float Elapsed = 0f;

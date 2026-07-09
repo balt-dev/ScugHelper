@@ -132,8 +132,7 @@ public class Spear : Actor, IHasSpeed {
     }
 
     private void OnCollideV(CollisionData data) {
-        if (speed.Y == 0) return;
-        if (data.Direction.Y < 0) { speed.Y = 0; return; }
+        //if (data.Direction.Y < 0) { speed.Y = 0; return; }
         if (State == StDownthrow) {
             if (TryBreak(data)) return;
             data.Pusher ??= new Solid(Vector2.Zero, 0, 0, false);
@@ -144,23 +143,27 @@ public class Spear : Actor, IHasSpeed {
     }
 
     private bool TryBreak(CollisionData data) {
+        var moveDir = State == StSidethrow ? Vector2.UnitX * Math.Sign(Speed.X) : Vector2.UnitY * Math.Sign(Speed.Y);
         switch (data.Hit) {
             case DashSwitch button: {
-                button.OnDashCollide(null, Vector2.UnitX * Math.Sign(Speed.X));
+                button.OnDashCollide(null, moveDir);
                 return true;
             }
             case DashBlock block: {
-                block.Break(Position, Vector2.UnitX * Math.Sign(Speed.X), true, true);
-                return true;
+                block.Break(Position, moveDir, true, true);
+                return false;
             }
             case FastfallBlock block: {
-                block.Break(Vector2.UnitX * Math.Sign(Speed.X), true, true);
-                return true;
+                block.Break(moveDir, true, true);
+                return false;
+            }
+            case TempleCrackedBlock block: {
+                block.Break(moveDir);
+                return false;
             }
             case Platform platform when platform.OnDashCollide is not null && Scene.Tracker.GetEntity<Player>() is Player player: {
-                Vector2 dir = State == StSidethrow ? Vector2.UnitX * Math.Sign(Speed.X) : Vector2.UnitY * Math.Sign(Speed.Y);
                 ScugHelperModule.PreventDeath = true;
-                platform.OnDashCollide(player, dir);
+                platform.OnDashCollide(player, moveDir);
                 ScugHelperModule.PreventDeath = false;
                 return false;
             }
@@ -335,7 +338,7 @@ internal class SpearComponent(string sprite, EntityID originID, bool killIdle = 
             if (Input.Grab.Check) return;
             FirstGrab = false;
         }
-        if (Player.StateMachine.State != Player.StNormal) HoldTimer = 100f;
+        if (!(Player.StateMachine.State is Player.StNormal or Player.StLaunch)) HoldTimer = 100f;
         if (Input.Grab.Check) HoldTimer += Engine.DeltaTime;
         else {
             if (HoldTimer > 0f && HoldTimer < HoldMaxTime) {

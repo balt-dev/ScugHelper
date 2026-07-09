@@ -20,7 +20,6 @@ public class RefillCircle : Entity
     readonly bool FallbackRefillOneUse;
     public readonly float Radius;
     private readonly VertexLight? Light;
-    private VirtualRenderTarget? bakedTexture;
 
     public RefillCircle(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset) {
         Tag |= Tags.TransitionUpdate;
@@ -100,18 +99,6 @@ public class RefillCircle : Entity
         Light?.Alpha = (refill?.sprite.Visible ?? false) ? 1.0f : 0.0f;
     }
 
-    internal void BakeTexture() {
-        if (bakedTexture is null) {
-            var oldTargets = Engine.Graphics.GraphicsDevice.GetRenderTargets();
-
-            Engine.Graphics.GraphicsDevice.SetRenderTarget(bakedTexture = VirtualContent.CreateRenderTarget($"refillCirclePrerender_{ID}", (int)Radius * 2, (int)Radius * 2));
-
-            DrawFilledCircle(Position + Vector2.One * (Radius - 2), Radius - 2, Color.White, 32);
-
-            Engine.Graphics.GraphicsDevice.SetRenderTargets(oldTargets);
-        }
-    }
-
     public override void Render() {
         base.Render();
         if (refill is null) return;
@@ -160,7 +147,7 @@ public class RefillCircle : Entity
     internal void OnRenderBloom() {
         if (refill is null) return;
         if (refill.sprite.Visible) {
-            if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White * InfillOpacity);
+            DrawFilledCircle(Position + Vector2.One * 2, Radius - 2, Color.White * InfillOpacity, 32);
             Draw.Circle(Position + Vector2.One * Radius, Radius, Color.White, 32);
         }
     }
