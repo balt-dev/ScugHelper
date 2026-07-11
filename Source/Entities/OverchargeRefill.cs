@@ -133,7 +133,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         )) throw new Utils.HookException("Failed to hook player dream tunnel dash begin for overcharge refills!");
 
         static Vector2 GetNewSpeed(Vector2 origSpeed, Player player)
-            => OverchargeDashCount <= 0 ? origSpeed : player.DashDir * MathF.Max(player.Speed.Length(), origSpeed.Length());
+            => OverchargeDashCount <= 0 || !(float.IsFinite(origSpeed.X) && float.IsFinite(origSpeed.Y)) ? origSpeed : player.DashDir * MathF.Max(player.Speed.Length(), origSpeed.Length());
         cur.EmitLdarg0();
         cur.EmitDelegate(GetNewSpeed);
     }
@@ -176,6 +176,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         On.Celeste.Level.Reload -= OnLevelReload;
         On.Celeste.LevelLoader.StartLevel -= OnLevelLoaderStartLevel;
         ILPlayerDashCoroHook?.Dispose();
+        ILCommunalHelperPlayerDreamTunnelDashBeginHook?.Dispose();
     }
 
     public static int OverchargeDashCount { get; internal set; }
@@ -198,6 +199,7 @@ public class OverchargeRefill : Refill, ICustomRefill
 
 
     private static void OnPlayerSuperJump(On.Celeste.Player.orig_SuperJump orig, Player self) {
+        if (!float.IsFinite(self.Speed.X)) { orig(self); return; }
         var retainedSpeedX = MathF.Abs(self.wallSpeedRetentionTimer > 0 ? self.wallSpeedRetained : 0f);
         var beforeDashSpeedX = MathF.Abs(self.beforeDashSpeed.X);
         var oldSpeedX = MathF.Abs(self.Speed.X);
@@ -210,6 +212,7 @@ public class OverchargeRefill : Refill, ICustomRefill
     }
 
     private static void OnPlayerSuperWallJump(On.Celeste.Player.orig_SuperWallJump orig, Player self, int dir) {
+        if (!float.IsFinite(self.Speed.Y)) { orig(self, dir); return; }
         var oldSpeedY = self.Speed.Y;
         orig(self, dir);
         if (HasOvercharge && self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior"))
@@ -248,6 +251,7 @@ public class OverchargeRefill : Refill, ICustomRefill
         cur.EmitLdloc1();
         cur.EmitLdloc3();
         static Vector2 MultiplyOvercharge(Player self, Vector2 speed) {
+            if (!float.IsFinite(self.Speed.X) || !float.IsFinite(self.Speed.Y)) return speed;
             Vector2 playerSpeed = speed;
             if (HasOvercharge) {
                 if (self.level.Session.GetFlag("ScugHelper.EnableSillyOverchargeBehavior")) {
@@ -282,13 +286,13 @@ public class OverchargeRefill : Refill, ICustomRefill
             static instr => instr.MatchCall<Vector2>("op_Multiply")
         )) throw new Utils.HookException("Failed to hook player dream dash begin for overcharge refills!");
         static Vector2 GetNewSpeed(Vector2 origSpeed, Player player)
-            => OverchargeDashCount <= 0 ? origSpeed : player.DashDir * MathF.Max(player.Speed.Length(), origSpeed.Length());
+            => OverchargeDashCount <= 0 || !(float.IsFinite(origSpeed.X) && float.IsFinite(origSpeed.Y)) ? origSpeed : player.DashDir * MathF.Max(player.Speed.Length(), origSpeed.Length());
         cur.EmitLdarg0();
         cur.EmitDelegate(GetNewSpeed);
     }
 
     [Command("giveovercharge", "Gives the player an overcharge dash.")]
-    private static void GiveOvercharge() {
+    internal static void CmdGiveOvercharge() {
         OverchargeDashCount = 1;
     }
 }

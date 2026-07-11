@@ -1,9 +1,0 @@
-Wheat - Decorative tallgrass-like entity
-
-Flag Respawn Modifier - Makes compatible entities within always show outline if flag is not set to state (refills, boosters, feather)
-Flag Switch - Like core switch, but toggles a flag, retexturable
-Consistency Snap Trigger - Snaps the player to a given Y position if they dash left/right, or a given X position if they dash up/down
-
-Pendulum - Moving platform, affected by gravity
-
-[SHELVED] Wormgrass - The stuff from Rain World, decreases player.GetOrInitHealthComponent().Health from 100, lowers jump height, slows walk/run/dash speed when inside by health, kill at 0 health (RENDERING HELL)

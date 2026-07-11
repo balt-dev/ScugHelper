@@ -67,19 +67,19 @@ internal class PlayerYSubpixelStringPart : StringPart
 }
 internal class PlayerSpeedStringPart : StringPart
 {
-    internal override string Format(Level level, Player? player) => ((long?)player?.Speed.Length()).ToString() ?? "?";
+    internal override string Format(Level level, Player? player) => player?.Speed.Length() is { } s ? Utils.FormatNumber(s) : "?";
 }
 internal class PlayerXSpeedStringPart : StringPart
 {
-    internal override string Format(Level level, Player? player) => ((long?)player?.Speed.X).ToString() ?? "?";
+    internal override string Format(Level level, Player? player) => player?.Speed.X is { } s ? Utils.FormatNumber(s) : "?";
 }
 internal class PlayerYSpeedStringPart : StringPart
 {
-    internal override string Format(Level level, Player? player) => ((long?)player?.Speed.Y).ToString() ?? "?";
+    internal override string Format(Level level, Player? player) => player?.Speed.Y is { } s ? Utils.FormatNumber(s) : "?";
 }
 internal class PlayerStaminaStringPart : StringPart
 {
-    internal override string Format(Level level, Player? player) => ((long?)player?.Stamina).ToString() ?? "?";
+    internal override string Format(Level level, Player? player) => player?.Stamina is { } s ? Utils.FormatNumber(s) : "?";
 }
 internal class PlayerDashesStringPart : StringPart
 {
@@ -241,8 +241,8 @@ public partial class Text : Entity
         if (Persistent)
             level.Session.DoNotLoad.Add(ID);
     }
-    
-    
+
+
     public override void Removed(Scene scene) {
         base.Removed(scene);
         Dispose();

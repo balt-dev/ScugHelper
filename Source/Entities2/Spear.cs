@@ -5,6 +5,7 @@ using Celeste.Mod.Entities;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
 using Monocle;
+using MonoMod.Utils;
 
 namespace Celeste.Mod.ScugHelper.Entities;
 
@@ -48,11 +49,12 @@ public class Spear : Actor, IHasSpeed {
         StateMachine = new StateMachine(4);
         StateMachine.SetCallbacks(StIdle, IdleUpdate, null, IdleBegin, IdleEnd);
         StateMachine.SetCallbacks(StSidethrow, SidethrowUpdate, null, SidethrowBegin);
-        StateMachine.SetCallbacks(StDownthrow, () => StDownthrow, null, DownthrowBegin, null);
+        StateMachine.SetCallbacks(StDownthrow, DownthrowUpdate, null, DownthrowBegin, null);
         StateMachine.SetCallbacks(StBonk, BonkUpdate, null, BonkBegin, BonkEnd);
         Add(StateMachine);
         State = state;
         Collider ??= SidethrowHitbox;
+        Add(new WaterInteraction(() => false));
     }
 
     internal const float Gravity = 700f;
@@ -61,6 +63,9 @@ public class Spear : Actor, IHasSpeed {
     internal const float DownSpeedLimit = 500f;
     internal const float Friction = 900f;
     internal const float BonkVerical = -100;
+    internal const float WaterFrictionX = 650f;
+    internal const float WaterFrictionY = 1350f;
+    internal const float WaterRotationFriction = 0.01f;
 
     internal float RotationSpeed;
     internal bool onGround;
@@ -83,7 +88,7 @@ public class Spear : Actor, IHasSpeed {
                 var sol = new Solid(Vector2.Zero, 0, 0, false);
                 OnCollideH(new CollisionData() { Hit = sol, Pusher = sol, TargetPosition = Position, Direction = new(Math.Sign(Speed.X), Math.Sign(Speed.Y)) });
             } else {
-                Audio.Play("event:/scughelper/objects/spear/bounce", Position);
+                if (!killIdle) Audio.Play("event:/scughelper/objects/spear/bounce", Position);
                 speed.X *= -1;
             }
         }
@@ -91,15 +96,28 @@ public class Spear : Actor, IHasSpeed {
 
         MoveH(speed.X * Engine.DeltaTime, OnCollideH);
         MoveV(speed.Y * Engine.DeltaTime, OnCollideV);
+        if (Scene is null) return; // you do NOT want to know why this is here.
 
         onGround = OnGround();
         if (onGround && !wasOnGround && State == StBonk) {
-            Audio.Play("event:/scughelper/objects/spear/bounce", Position);
+            if (!killIdle) Audio.Play("event:/scughelper/objects/spear/bounce", Position);
             State = StIdle;
         } else if (!onGround && wasOnGround) {
             State = StBonk;
         }
         wasOnGround = onGround;
+        
+        if (Underwater = CollideCheck<Water>()) {
+            RotationSpeed *= MathF.Pow(WaterRotationFriction, Engine.DeltaTime);
+            speed.X = Calc.Approach(speed.X, 0, WaterFrictionX * Engine.DeltaTime);
+            speed.Y = Calc.Approach(speed.Y, 0, WaterFrictionY * Engine.DeltaTime);
+        }
+        if (killIdle && Underwater && State == StBonk) {
+            Logger.Log(nameof(ScugHelper), "Killing bonk underwater...");
+            RemoveSelf();
+            return;
+        }
+        
         if (onGround) {
             if (State != StDownthrow) {
                 speed.Y = 0;
@@ -124,7 +142,7 @@ public class Spear : Actor, IHasSpeed {
         data.Pusher ??= new Solid(Vector2.Zero, 0, 0, false);
         TrySquishWiggle(data, 24, 0);
         Logger.Log(nameof(ScugHelper), "OnCollideH");
-        Audio.Play("event:/scughelper/objects/spear/bounce", Position);
+        if (!killIdle) Audio.Play("event:/scughelper/objects/spear/bounce", Position);
         speed.Y = BonkVerical;
         speed.X *= BonkCoefficient;
         RotationSpeed = speed.Length() * RotationCoefficient;
@@ -221,7 +239,7 @@ public class Spear : Actor, IHasSpeed {
         RemoveSelf();
         Input.Grab.ConsumeBuffer();
         Audio.Play("event:/scughelper/objects/spear/pickup");
-        player.Add(new SpearComponent(SpritePath, OriginID));
+        player.Add(new SpearComponent(SpritePath, OriginID, killIdle));
     }
 
 #region States
@@ -247,28 +265,44 @@ public class Spear : Actor, IHasSpeed {
     internal int SidethrowUpdate() {
         if (Scene is not Level level) return StSidethrow;
         Sprite.FlipX = Speed.X < 0;
+        if (Math.Abs(Speed.X) < 40) {
+            RotationSpeed = speed.Length() * RotationCoefficient;
+            return StBonk;
+        }
         return StSidethrow;
     }
     internal void DownthrowBegin() {
         Collider = DownthrowHitbox;
         Sprite.Rotation = MathF.PI / 2;
     }
+    internal int DownthrowUpdate() {
+        if (Speed.Y < 80) {
+            RotationSpeed = speed.Length() * RotationCoefficient;
+            return StBonk;
+        }
+        return StDownthrow;
+    }
     internal void BonkBegin() {
         Collider = PointingDown && RotationSpeed == 0 ? DownthrowHitbox : SidethrowHitbox;
     }
     internal int BonkUpdate() {
+        if (Underwater && Get<SpearPickupComponent>() is null)
+            Add(new SpearPickupComponent(PickupHitbox.Bounds, Vector2.UnitY * -10f, OnPickup));
+        else if (!Underwater && Get<SpearPickupComponent>() is not null)
+            Components.RemoveAll<SpearPickupComponent>();
         Sprite.Rotation += RotationSpeed * Engine.DeltaTime;
         return OnGround() ? StIdle : StBonk;
     }
     internal void BonkEnd() {
         Logger.Log(nameof(ScugHelper), "BonkEnd");
-        Audio.Play("event:/scughelper/objects/spear/bounce");
+        if (!killIdle) Audio.Play("event:/scughelper/objects/spear/bounce");
         if (!PointingDown || RotationSpeed != 0)
             Sprite.Rotation = 0;
     }
     #endregion
 
     static float RefillCooldown;
+    private bool Underwater;
 
     [OnLoad]
     internal static void LoadHooks() {
@@ -334,14 +368,17 @@ internal class SpearComponent(string sprite, EntityID originID, bool killIdle = 
         }
         if (Done) return;
         base.Update();
+        bool validState = Player.StateMachine.State is Player.StNormal or Player.StLaunch or Player.StSwim;
+        if (!validState) HoldTimer = 100f;
+        bool forceThrow = validState && Input.Grab.Check && (DynamicData.For(Input.Grab).Get("ScugHelper_ForceSpam") is true);
+        FirstGrab &= !forceThrow;
         if (FirstGrab) {
             if (Input.Grab.Check) return;
             FirstGrab = false;
         }
-        if (!(Player.StateMachine.State is Player.StNormal or Player.StLaunch)) HoldTimer = 100f;
-        if (Input.Grab.Check) HoldTimer += Engine.DeltaTime;
+        if (Input.Grab.Check && !forceThrow) HoldTimer += Engine.DeltaTime;
         else {
-            if (HoldTimer > 0f && HoldTimer < HoldMaxTime) {
+            if (forceThrow || (HoldTimer > 0f && HoldTimer < HoldMaxTime)) {
                 var aim = Input.Aim.Value;
                 float aimX = (int)Player.Facing;
                 float aimY = aim.Y;
@@ -353,6 +390,7 @@ internal class SpearComponent(string sprite, EntityID originID, bool killIdle = 
                     if (!Player.onGround)
                         Player.SetAdjustedSpeed(pSpeed.X, pSpeed.Y - 200f);
                     Scene.Add(spear);
+                    if (Scene.CollideCheck<Solid>(spear.TopCenter)) spear.Position.Y += 12f;
                 } else {
                     var spear = new Spear(sprite, Player.TopCenter.Round(), Spear.StSidethrow, originID, killIdle);
                     var speedX = Math.Max(Math.Abs(Player.Speed.X), MinimumSpeed) * (Player.Speed.X == 0 ? aimX : Math.Sign(Player.Speed.X));
@@ -360,6 +398,8 @@ internal class SpearComponent(string sprite, EntityID originID, bool killIdle = 
                     spear.speed.X = speedX + aimX * (Math.Abs(speedX) * (1 + BackboostStrength) + AddedSpeed);
                     Player.Speed.X -= aimX * (Math.Abs(speedX) * (1 - BackboostStrength) + AddedSpeed);
                     Scene.Add(spear);
+                    if (Scene.CollideCheck<Solid>(spear.CenterLeft)) spear.Position.X += 8f;
+                    else if (Scene.CollideCheck<Solid>(spear.CenterRight)) spear.Position.X -= 8f;
                 }
                 RemoveSelf();
                 Audio.Play("event:/char/madeline/crystaltheo_throw");
@@ -494,7 +534,7 @@ internal class SpearPickupComponent(Rectangle bounds, Vector2 drawAt, Action<Pla
         bool hovered = disableDelay < 0.05f
             && player.CollideRect(new Rectangle((int)(Entity.X + Bounds.X), (int)(Entity.Y + Bounds.Y), Bounds.Width, Bounds.Height))
             && player.Get<SpearComponent>() is null
-            && player.StateMachine.State == 0
+            && CheckPlayerState(player)
             && (PlayerOver == null || PlayerOver == this);
         if (hovered) hoverTimer += Engine.DeltaTime;
         else if (UI.Display) hoverTimer = 0f;
@@ -502,7 +542,7 @@ internal class SpearPickupComponent(Rectangle bounds, Vector2 drawAt, Action<Pla
         if (PlayerOver == this && !hovered) PlayerOver = null;
         else if (hovered) PlayerOver = this;
 
-        if (hovered && cooldown <= 0f && (int)player.StateMachine == 0 && Input.Grab.Pressed && Enabled && !Scene.Paused) {
+        if (hovered && cooldown <= 0f && CheckPlayerState(player) && Input.Grab.Pressed && Enabled && !Scene.Paused) {
             cooldown = 0.1f;
             OnGrab?.Invoke(player);
             RemoveSelf();
@@ -517,6 +557,8 @@ internal class SpearPickupComponent(Rectangle bounds, Vector2 drawAt, Action<Pla
         UI.Highlighted = hovered && hoverTimer > 0.1f;
         base.Update();
     }
+
+    private static bool CheckPlayerState(Player player) => player.StateMachine.State is Player.StNormal or Player.StSwim or Player.StHitSquash;
 
     public override void Removed(Entity entity) {
         Dispose();

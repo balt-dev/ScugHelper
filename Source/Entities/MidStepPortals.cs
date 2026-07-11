@@ -73,7 +73,7 @@ public class MidStepPortals : Entity
         }
     }
 
-    private void OnTeleport() {
+    internal void OnTeleport() {
         if (!Silent) ShouldPlaySound = true;
     }
 
@@ -114,7 +114,7 @@ public class MidStepPortals : Entity
                     && !(self.Top >= portals.StartPos.Y + portals.PortalSize || self.Bottom <= portals.StartPos.Y)
                 ) {
                     self.Position.X = portals.EndPos.X - self.Width / 2;
-                    self.MoveV(portals.EndPos.Y - portals.StartPos.Y);
+                    self.NaiveMove(Vector2.UnitY * (portals.EndPos.Y - portals.StartPos.Y));
                     portals.OnTeleport();
                 } else if (
                     moveH > 0
@@ -122,7 +122,7 @@ public class MidStepPortals : Entity
                     && !(self.Top >= portals.EndPos.Y + portals.PortalSize || self.Bottom <= portals.EndPos.Y)
                 ) {
                     self.Position.X = portals.StartPos.X + self.Width / 2;
-                    self.MoveV(portals.StartPos.Y - portals.EndPos.Y);
+                    self.NaiveMove(Vector2.UnitY * (portals.StartPos.Y - portals.EndPos.Y));
                     portals.OnTeleport();
                 }
             }
@@ -164,7 +164,7 @@ public class MidStepPortals : Entity
                     && !(self.Left >= portals.StartPos.X + portals.PortalSize || self.Right <= portals.StartPos.X)
                 ) {
                     self.Position.Y = portals.EndPos.Y;
-                    self.MoveH(portals.EndPos.X - portals.StartPos.X);
+                    self.NaiveMove(Vector2.UnitX * (portals.EndPos.X - portals.StartPos.X));
                     portals.OnTeleport();
                 } else if (
                     moveV > 0
@@ -172,7 +172,7 @@ public class MidStepPortals : Entity
                     && !(self.Left >= portals.EndPos.X + portals.PortalSize || self.Right <= portals.EndPos.X)
                 ) {
                     self.Position.Y = portals.StartPos.Y + self.Height + 1;
-                    self.MoveH(portals.StartPos.X - portals.EndPos.X);
+                    self.NaiveMove(Vector2.UnitX * (portals.StartPos.X - portals.EndPos.X));
                     portals.OnTeleport();
                 }
             }

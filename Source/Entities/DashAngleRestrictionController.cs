@@ -16,8 +16,7 @@ namespace Celeste.Mod.ScugHelper.Entities;
 
 [Tracked]
 [CustomEntity("ScugHelper/DashAngleRestrictionTrigger")]
-public class DashAngleRestrictionTrigger : Trigger
-{
+public class DashAngleRestrictionTrigger : Trigger {
     public readonly Vector2[] Angles;
     public readonly bool FlagState;
     public readonly string Flag;

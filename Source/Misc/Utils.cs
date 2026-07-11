@@ -115,7 +115,7 @@ internal static class Utils
     public static Vector2 Rounded(this Vector2 self) => new(MathF.Round(self.X), MathF.Round(self.Y));
 
     public static float Mod(this float self, float dividend) => ((self % dividend) + dividend) % dividend;
-    
+
     public static Rectangle Bounds(this Camera self) => new(
         (int) self.Left, (int) self.Top,
         (int) (self.Right - self.Left), (int) (self.Bottom - self.Top)
@@ -126,7 +126,7 @@ internal static class Utils
         self.Right < position.X &&
         self.Top > position.Y &&
         self.Bottom < position.Y;
-    
+
     public static Rectangle? Intersection(this Rectangle self, Rectangle other) {
         var res = new Rectangle(
             (int) MathF.Max(self.Left, other.Left),
@@ -144,7 +144,7 @@ internal static class Utils
     public static int BufferHeight = 184 * 2;
 
     internal class HookException(string? message) : Exception(message) {}
-    
+
     public static T Clone<T>(this T self) {
         using var stream = new MemoryStream();
         var serializer = new DataContractSerializer(typeof(T));
@@ -152,7 +152,7 @@ internal static class Utils
         stream.Position = 0;
         return (T) serializer.ReadObject(stream)!;
     }
-    
+
     public static Color Mul (this Color self, Color other) => new(self.ToVector4() * other.ToVector4());
 
     internal static MethodInfo GetMethodInfo(LambdaExpression expr)
@@ -166,13 +166,14 @@ internal static class Utils
     }
 
     internal static void Add<K, V>(this Dictionary<K, V> dict, KeyValuePair<K, V> kvp) where K: notnull => dict.Add(kvp.Key, kvp.Value);
+    internal static void Add<V>(this Stack<V> stack, V value) => stack.Push(value);
     internal static V? GetValueOrNull<K, V>(this Dictionary<K, V> dict, K key) where K: notnull where V: struct
         => dict.TryGetValue(key, out var val) ? val : null;
     internal static V? GetNullableValue<K, V>(this Dictionary<K, V> dict, K key) where K: notnull where V: class
         => dict.TryGetValue(key, out var val) ? val : null;
-    
+
     static readonly Dictionary<string, Type?> TypeCache = [];
-    
+
     internal static Type? GetTypeOfEntity(EntityData data) {
         if (TypeCache.TryGetValue(data.Name, out var res)) return res;
         var type = EntityRegistry.GetKnownTypesFromSid(data.Name).AsEnumerable().FirstOrDefault((Type?)null);
@@ -194,23 +195,35 @@ internal static class Utils
         NameCache[type] = sids;
         return sids;
     }
-    
+
     public static Vector3 ToHsv (this Color self) {
         Vector3 rgb = self.ToVector3();
         double h = 0;
         double v = Math.Max(Math.Max(rgb.X, rgb.Y), rgb.Z);
-        
+
     	double min = Math.Min(Math.Min(rgb.X, rgb.Y), rgb.Z);
     	double delta = v - min;
-        
+
     	double s = v == 0.0 ? 0 : delta / v;
 
-    	if (s == 0) h = 0.0;        
+    	if (s == 0) h = 0.0;
     	else if (rgb.X == v) h = (rgb.Y - rgb.Z) / delta;
   		else if (rgb.Y == v) h = 2 + (rgb.Z - rgb.X) / delta;
   		else if (rgb.Z == v) h = 4 + (rgb.X - rgb.Y) / delta;
         h /= 6;
-        
+
         return new((float)h, (float)s, (float)v);
     }
+
+    public static bool RecoverFromInvalidPosition(this Actor self) {
+        if (!(float.IsFinite(self.movementCounter.X) && float.IsFinite(self.movementCounter.Y) && float.IsFinite(self.X) && float.IsFinite(self.Y))) {
+            self.movementCounter = self.Position = Vector2.Zero;
+            throw new InvalidOperationException("Actor position is non-finite. Bailing out.");
+        }
+        return true;
+    }
+
+    internal static string FormatNumber(float s) => !float.IsFinite(s) ? $"{s}" : MathF.Abs(s) > 1e10 ? $"{s:E9}" : $"{s:F0}";
 }
+
+

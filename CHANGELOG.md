@@ -457,8 +457,6 @@ The Lua action, trigger, and gate are equivalent with the FrostHelper Session Ex
 - **Tweak**: Special Session Variables no longer save to the Session without an Eager Special Session Variable Controller in the room
 - **Overhaul**: Text entities now have a font set by the mapper
 
-This is a breaking change for anyone who's using Special Session Variables at the moment. Please update responsibly, and if need be, add an Eager Special Session Variable Controller to your maps.
-
 ## Text Entity Hotfix and Additions (2.33.1)
 - **Optimization**: Text Entities now prebake their texture on change to prevent renderer churn
 - **Addition**: More builtin Text Entity fonts are now available in Lönn
@@ -485,8 +483,6 @@ This is a breaking change for anyone who's using Special Session Variables at th
 ## Hotfix - Optimize Acceleration Fields (2.35.1)
 - **Optimization**: Heavily optimize acceleration fields
 
-Switched from scanning the scene every frame to checking on entity add and adding a component that does stuff for me. Remember, kids, push, not pull.
-
 ## Hotfix - Strange crash with Acceleration Fields (2.35.2)
 - **Bugfix**: Fix strange crash that happens sometimes with Accleration Fields somehow not being tracked
 
@@ -499,8 +495,6 @@ Switched from scanning the scene every frame to checking on entity add and addin
 - **Addition**: Arbitrary Angle Spring
 - **Addition**: Holdable Trajectory Controller
 - **Addition**: Boost Refill
-
-Ran out of room on the first map.
 
 ## Hotfix - ModInterop.cs (2.36.1)
 - **Addition**: Added a ModInterop API for other mods
@@ -516,12 +510,8 @@ Ran out of room on the first map.
 - **Bugfix**: Pinball Boosters no longer stick to the ground when hitting at shallow angles
 - **Improvement**: Refill Crystals now properly play their refill sound when shattered
 
-Had to set up a Windows VM to compile the shaders. Go check out https://github.com/dockur/windows/, it's great.
-
 ## Hotfix - Waiting for Godot (2.37.1)
 - **Improvement**: Added support for MotionSmoothing to prevent jitter on procedural tilemaps
-
-The build of MotionSmoothing that adds the mod interop that fixes the jittering is not public yet. It will be Motion Smoothing v1.5.4 or v1.6.0 that adds compatibility.
 
 ## Hotfix - Culling go BRRRRR (2.37.3)
 - **Optimization**: Wobbly barriers now do camera culling for performance
@@ -535,8 +525,6 @@ The build of MotionSmoothing that adds the mod interop that fixes the jittering 
 
 ## Let's Have A Watch (2.38.0)
 - **Addition**: Seekable Playback Watchtower
-
-Ivory, eat your heart out. /ref
 
 ## Hotfix - Let's Fix A Bug (2.38.1)
 - **Bugfix**: Seekable Playback Watchtowers no longer teleport to their start position on repeated level loads
@@ -598,16 +586,12 @@ I can never just have a .0 without having to immediately fix something, huh.
 - **Improvement**: Can now throw from inside a Dream Field
 - **Bugfix**: Demodashing out of a Dream Field now works properly
 
-The Hall of Mirrors styleground is so simple but so so so powerful and I am SHOCKED nobody has done it yet. It displays the last rendered frame as a background, optionally with some rotation, translation, scaling, or tint.
-
 ## Hotfix - Save States Break Everything (2.41.1)
 - **Bugfix**: Hopefully fixed Hall of Mirrors with savestates
 
 ## Patch - Madeline They Put Me In A Cube (2.41.2)
 - **Addition**: Tungsten Cubes can now be retextured
 - **Addition**: Tungsten Cubes now have the KillOnDestroy, NoLeaveBehind, and CrystalSounds fields
-
-hehe theo cube
 
 ## Patch - GPU go BRR (2.41.3)
 - **Optimization**: GPU Spinners are now a lot faster
@@ -623,8 +607,6 @@ hehe theo cube
 - **Addition**: Baked Spinners Controller
 - **Addition**: Mod setting - Always Bake Spinners
 
-Don't turn this setting on without knowing what it breaks. Look at the in-game description.
-
 ## Patch - GPU Go BRRRR (again) (2.42.1)
 - **Addition**: Readded the Replace Vanilla Spinners mod option alongside the Always Bake Spinners mod option
 - **Improvement**: GPU spinners can now properly shatter
@@ -635,4 +617,60 @@ Don't turn this setting on without knowing what it breaks. Look at the in-game d
 - **Bugfix**: Fixed a crash with GPU spinners and vanilla spinners placed next to each other
 - **Bugfix**: Flag refills should hopefully not crash the game anymore under circumstances when the level isn't fully initialized yet
 - **Improvement**: Refill Rectangles now have a customizable respawn timer
+
+## The Funny (2.43.0)
+- **Addition**: Fuck Block (yes it's actually called that)
+- **Addition**: Jump Through Block
+
+## 2x Release Combo!! (2.44.0)
+- **Addition**: Balatro Styleground
+- **Addition**: Unforgiving Lava/Ice
+
+## Wibbly Wobbly Timey Wimey (2.45.0)
+- **Addition**: Custom Distort
+- **Addition**: Instant Transition Controller
+- **Improvement**: Instant Transitions now skip the darkness fadee and player NoControl frames
+
+## Pumber Line Decals My Beloathed (2.46.1)
+- **Addition**: Polyline
+- **Improvement**: Major code cleanup under the hood
+
+## Hotfix - FUCJ (2.46.3)
+- **Bugfix**: Fix game crash on startup
+
+## Patch - «mmm soup» (2.46.4)
+- **Improvement**: Add a few new fields to Polylines
+
+## rain worl (2.47.0)
+- **Addition**: Spear
+
+## Patch - Okay that's a bit too broken actually (2.47.1)
+- **Tweak**: Made infinite spears only replenish when dash does
+
+## Patch - It's NERF or Nothing (2.47.2)
+- **Addition**: ScugHelper.InfiniteSpearCooldown slider
+
+## Patch - haha spearflip go brr (2.47.3)
+- **Addition**: Added 'spear' debug command to give a spear on command
+
+## Hotfix - Bonk! (2.47.4)
+- **Bugfix**: Made downthrown Spears properly hit dash colliders/switches
+
+## Hotfix - it's always the edge cases (2.47.6)
+- **Bugfix**: Fix crash with Session Variable Trigger when dying while inside the trigger
+- **Addition**: Added Replace Vanilla Spinners Lönn script
+- **Bugfix**: Fix bloom strength 0 causing certain foreground stylegrounds to fail to render
+
+## Hotfix - GPU Specific Rendering Bugs My Beloathed (2.47.7)
+- **Addition**: 'Bake Outlines' mod option
+
+## StrerryBerry Jerry (2.48.0)
+- **Addition**: Custom Winged Berry
+- **Addition**: Jumpless Golden Berry
+
+## Wet-Dry Mountain (2.49.0)
+- **Addition**: Slider-Controlled Water
+- **Addition**: Slider Approach Controller
+- **Addition**: Water Color Controller
+- **Improvement**: Spears now interact with Water
 

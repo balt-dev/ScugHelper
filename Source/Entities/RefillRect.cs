@@ -135,6 +135,7 @@ public class RefillRectangle : Entity
     }
 
     public void OnPlayer(Player player) {
+        if (player.Dead) return;
         if (refill is null) return;
         if (refill.respawnTimer > 0f) return;
         foreach (PlayerCollider collider in refill.Components.GetAll<PlayerCollider>().ToArray())

@@ -645,3 +645,18 @@ entities.ScugHelper/ActionWingedBerry.placements.name.land=Custom Winged Berry (
 entities.ScugHelper/ActionWingedBerry.placements.name.custom=Custom Winged Berry (Blank)
 
 entities.ScugHelper/JumplessGoldenBerry.placements.name.golden=Jumpless Golden Berry
+
+entities.ScugHelper/SliderApproachController.placements.name.normal=Slider Approach Controller
+entities.ScugHelper/SliderApproachController.placements.description.normal=Makes a slider approach a value at a given speed when a flag is set.
+
+entities.ScugHelper/HeightControllableWater.placements.name.water=Height-Controllable Water
+entities.ScugHelper/HeightControllableWater.placements.description.water=Water that changes its height dynamically based on a session slider.
+
+entities.ScugHelper/WaterColorController.placements.name.normal=Water Color Controller
+entities.ScugHelper/WaterColorController.placements.description.normal=Sets the color of water in the current room. Priority is in addition order.
+
+entities.ScugHelper/ControllableTempleFallController.placements.name.normal=Controllable Temple Fall Controller
+entities.ScugHelper/ControllableTempleFallController.placements.description.normal=Lets you control the player horizontally during StTempleFall.
+
+entities.ScugHelper/DiscreteMovementController.placements.name.normal=Discrete Movement Controller
+entities.ScugHelper/DiscreteMovementController.placements.description.normal=> Changes movement code to only check for a solid at every Nth subdivision along Madeline's movement vector, and fall back to normal movement code if a solid is found. Will entirely break jumpthrus, and can let Madeline clip through walls if going fast enough.
