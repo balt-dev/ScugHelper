@@ -62,6 +62,7 @@ public class CustomKevinController(EntityData data, Vector2 _) : Entity()
     static Action<Vector2, Vector2, Platform> LoadKevinCollide() => OnKevinCollide;
     private static void OnKevinCollide(Vector2 direction, Vector2 delta, Platform hit) {
         if (SmuggledKevin is not CrushBlock self) return;
+        if (SmuggledKevin is SeekerCrushBlock scb) scb.OnBonk(direction, delta, hit);
         if (self.Scene.Tracker.GetEntity<CustomKevinController>() is not CustomKevinController ctrl) return;
         if (ctrl.HitDashColliders && hit.OnDashCollide is not null) {
             Player player = new(Vector2.Zero, PlayerSpriteMode.Playback);

@@ -38,7 +38,7 @@ public class LevelTeleportTrigger : Trigger {
             IntroType = data.Enum("IntroType", Player.IntroTypes.Respawn),
             Flag = data.String("IfFlag"),
             FlagState = data.Bool("FlagState", true),
-            SpawnLocation = data.FirstNodeNullable(offset),
+            SpawnLocation = data.FirstNodeNullable(offset - data.Level.Position),
         };
     }
     public override void OnEnter(Player player) {

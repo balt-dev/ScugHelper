@@ -602,10 +602,6 @@ entities.ScugHelper/DreamField.placements.description.normal=Non-solid dream blo
 
 style.effects.ScugHelper/HallOfMirrors.name=Hall of Mirrors
 
-entities.ScugHelper/FlagRefill.placements.name.normal=Flag Refill
-entities.ScugHelper/FlagRefill.attributes.name.ParticleColor1=Primary Particle Color
-entities.ScugHelper/FlagRefill.attributes.name.ParticleColor2=Secondary Particle Color
-
 entities.ScugHelper/BakedSpinnerController.placements.name.normal=Baked Spinner Controller
 entities.ScugHelper/BakedSpinnerController.placements.description.normal=Bakes all spinners in the room to a texture.
 
@@ -660,3 +656,9 @@ entities.ScugHelper/ControllableTempleFallController.placements.description.norm
 
 entities.ScugHelper/DiscreteMovementController.placements.name.normal=Discrete Movement Controller
 entities.ScugHelper/DiscreteMovementController.placements.description.normal=> Changes movement code to only check for a solid at every Nth subdivision along Madeline's movement vector, and fall back to normal movement code if a solid is found. Will entirely break jumpthrus, and can let Madeline clip through walls if going fast enough.
+
+entities.ScugHelper/SliderSwapBlock.placements.name.normal=Slider Swap Block
+entities.ScugHelper/SliderSwapBlock.placements.description.normal=Swap block that interpolates its position between its endpoints based on a slider.
+
+entities.ScugHelper/SeekerCrushBlock.placements.name.normal=Seeker Kevin
+entities.ScugHelper/SeekerCrushBlock.placements.description.normal=Only activated by seekers. Collides with Seeker Barriers.

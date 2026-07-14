@@ -68,7 +68,7 @@ class BrassBerry : Strawberry, IStrawberry {
             }
         }
 
-        foreach (var comp in Components)
+        foreach (var comp in Components.ToArray())
             comp.Update();
     }
 

@@ -118,13 +118,24 @@ public class Gripwall : Entity
 
     [OnLoad]
     internal static void LoadHooks() {
+        On.Celeste.Player.WindMove += OnWindMove;
         IL.Celeste.Player.ClimbUpdate += ClimbUpdateHook;
     }
 
 
     [OnUnload]
     internal static void UnloadHooks() {
+        On.Celeste.Player.WindMove -= OnWindMove;
         IL.Celeste.Player.ClimbUpdate -= ClimbUpdateHook;
+    }
+
+    private static void OnWindMove(On.Celeste.Player.orig_WindMove orig, Player self, Vector2 move) {
+        if (self.StateMachine.State == Player.StClimb)
+            foreach (Gripwall gripwall in self.Scene.Tracker.GetEntities<Gripwall>())
+                if (gripwall.Facing == self.Facing && self.CollideCheck(gripwall))
+                    return;
+
+        orig(self, move);
     }
 
     private static void ClimbUpdateHook(ILContext il) {
