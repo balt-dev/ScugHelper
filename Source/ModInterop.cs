@@ -54,4 +54,9 @@ public static class ScugHelperModInterop {
     public delegate bool AngledSpringCallback(Vector2 launchDirection, float launchSpeed, bool noRefillDash, bool noRefillStamina);
     public static void RegisterAngledSpringCallback(Player player, AngledSpringCallback callback)
         => player.Add(new Entities.ArbitraryAngleSpring.AngledSpringCallbackComponent(callback));
+
+    public static Entity? GetSliderWindController(Scene? scene)
+        => scene?.Tracker?.GetEntity<Entities.SliderWindController>();
+    public static Vector2? GetSliderWindControllerStrength(Entity? entity)
+        => (entity as Entities.SliderWindController)?.Strength;
 }

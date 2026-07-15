@@ -662,3 +662,6 @@ entities.ScugHelper/SliderSwapBlock.placements.description.normal=Swap block tha
 
 entities.ScugHelper/SeekerCrushBlock.placements.name.normal=Seeker Kevin
 entities.ScugHelper/SeekerCrushBlock.placements.description.normal=Only activated by seekers. Collides with Seeker Barriers.
+
+entities.ScugHelper/SliderWindController.placements.name.normal=Slider Wind Controller
+entities.ScugHelper/SliderWindController.placements.description.normal=Controller that makes wind direction controlled by two session sliders, plus some base offset.
