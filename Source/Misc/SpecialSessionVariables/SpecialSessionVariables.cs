@@ -98,10 +98,10 @@ public static class SSV
         On.Celeste.Session.IncrementCounter += OnIncrementCounter;
         OnSliderObjectGetValue = new(typeof(Session.Slider).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance)!, OnSliderObjectGet);
         OnSliderObjectSetValue = new(typeof(Session.Slider).GetMethod("set_Value", BindingFlags.Public | BindingFlags.Instance)!, OnSliderObjectSet);
-        Everest.Events.LevelLoader.OnLoadingThread += OnLevelInit;
+        //Everest.Events.LevelLoader.OnLoadingThread += OnLevelInit;
     }
 
-    private static void OnLevelInit(Level level) => FlushSSVStates(level);
+    //private static void OnLevelInit(Level level) => FlushSSVStates(level);
 
     public static void FlushSSVStates(Level level) {
         foreach (var kvp in flags)
@@ -122,7 +122,7 @@ public static class SSV
         On.Celeste.Session.IncrementCounter -= OnIncrementCounter;
         OnSliderObjectGetValue?.Dispose();
         OnSliderObjectSetValue?.Dispose();
-        Everest.Events.LevelLoader.OnLoadingThread -= OnLevelInit;
+        //Everest.Events.LevelLoader.OnLoadingThread -= OnLevelInit;
     }
 
     private static bool OnGetFlag(On.Celeste.Session.orig_GetFlag orig, Session self, string flag) {
