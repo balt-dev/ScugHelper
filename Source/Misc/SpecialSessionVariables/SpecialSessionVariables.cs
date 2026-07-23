@@ -43,6 +43,7 @@ public static class SSV
             new("ScugHelper.GrabHeld", new ButtonHeldFlag(Input.Grab)),
             new("ScugHelper.CrouchDashHeld", new ButtonHeldFlag(Input.CrouchDash)),
             new("ScugHelper.TalkHeld", new ButtonHeldFlag(Input.Talk)),
+            new("ScugHelper.GameFocused", new GameFocusedFlag()),
         ]);
         counters = new([
             new("ScugHelper.DeathCount", new DeathCounter()),

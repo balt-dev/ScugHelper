@@ -112,6 +112,7 @@ public class ScugHelperModule : EverestModule
     internal static Effect? HallOfMirrorsFX;
     internal static Effect? BalatroFX;
     internal static Effect? PixelDistortionFX;
+    internal static Effect? BlankFX;
     internal static bool PreventDeath;
 
     public override void LoadContent(bool firstLoad) {
@@ -126,5 +127,6 @@ public class ScugHelperModule : EverestModule
         HallOfMirrorsFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/hallOfMirrors.cso", true).Data);
         BalatroFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/balatro.cso", true).Data);
         PixelDistortionFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/pixelDistort.cso", true).Data);
+        BlankFX = new Effect(Engine.Graphics.GraphicsDevice, Everest.Content.Get($"Effects/ScugHelper/blank.cso", true).Data);
     }
 }

@@ -13,3 +13,6 @@ ScugHelper_TUTORIAL_SIDEFLIP=SIDEFLIP
 ScugHelper_postcard_toobigroom={big}Oops!{/big}{n}This room is too big for{n}the {#80a0c0}Baked Spinner Controller{#}!{n}Please shrink the room to{n}below {#F94A4A}((maxSize))x((maxSize)){#} tiles,{n}increase the limit in the{n}{#80a0c0}ScugHelper{#} mod settings,{n}or remove the controller.
 ScugHelper_postcard_invalidWeight={big}Oops!{/big}{n}There was a malformed{n}weight entry in your{n}{#80a0c0}Weight Controller{#}:{n}'{#60a040}((entry)){#}'{n}{n}Please fix the entry{n}and reload the map.
 ScugHelper_HideShowcaseMaps=Hide In Map Select
+
+ScugHelper_PopupTitle=Example Popup
+ScugHelper_PopupMessage=smots gaming!

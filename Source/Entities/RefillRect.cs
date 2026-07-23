@@ -59,28 +59,32 @@ public class RefillRectangle : Entity
         Add(new CustomBloom(OnRenderBloom));
         Add(new PlayerCollider(OnPlayer));
     }
+    
+    internal void DrawOutline(Vector2 pos) {
+        for (int x = 0; x < Width; x++) {
+            if (IsFilled((int)Width, x)) {
+                Draw.Pixel.Draw(new Vector2(x, 0) + pos);
+                Draw.Pixel.Draw(new Vector2(x, Height - 1) + pos);
+            }
+        }
+
+        for (int y = 0; y < Height; y++) {
+            if (IsFilled((int)Height, y)) {
+                Draw.Pixel.Draw(new Vector2(0, y) + pos);
+                Draw.Pixel.Draw(new Vector2(Width - 1, y) + pos);
+            }
+        }
+    }
 
     internal void BakeTexture() {
-        if (bakedTexture is null) {
+        if (bakedTexture is null && ScugHelperModule.Settings.BakeOutlines) {
             var oldTargets = Engine.Graphics.GraphicsDevice.GetRenderTargets();
 
             Engine.Graphics.GraphicsDevice.SetRenderTarget(bakedTexture = VirtualContent.CreateRenderTarget($"outlinePrerender_{ID}", (int)Width, (int)Height));
 
             Draw.SpriteBatch.Begin();
 
-            for (int x = 0; x <= Width; x++) {
-                if (IsFilled((int)Width, x)) {
-                    Draw.Pixel.Draw(new(x, 0));
-                    Draw.Pixel.Draw(new(x, Height - 1));
-                }
-            }
-
-            for (int y = 0; y <= Height; y++) {
-                if (IsFilled((int)Height, y)) {
-                    Draw.Pixel.Draw(new(0, y));
-                    Draw.Pixel.Draw(new(Width - 1, y));
-                }
-            }
+            DrawOutline(Vector2.Zero);
 
             Draw.SpriteBatch.End();
 
@@ -161,7 +165,10 @@ public class RefillRectangle : Entity
         if (refill is null) return;
         if (!(refill.sprite.Visible || refill.outline.Visible)) { return; }
         if (!refill.sprite.Visible) {
-            if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White);
+            if (ScugHelperModule.Settings.BakeOutlines) {
+                if (bakedTexture is not null) Draw.SpriteBatch.Draw(bakedTexture, Position, Color.White);
+            } else
+                DrawOutline(Position.Floor());
         } else {
             Draw.HollowRect(Collider, OutlineColor);
             Draw.Rect(Left + 2, Top + 2, Width - 4, Height - 4, InfillColor * InfillOpacity);

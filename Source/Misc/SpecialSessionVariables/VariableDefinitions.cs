@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Celeste.Mod.ScugHelper.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -135,9 +136,12 @@ internal class PlayerDuckingFlag : SpecialFlag
 {
     public override bool GetValue(Level level) => level.GetPlayer()?.Ducking ?? false;
 }
-
 internal class ButtonHeldFlag(VirtualButton button) : SpecialFlag {
     public override bool GetValue(Level level) => button?.Check ?? false;
+}
+internal class GameFocusedFlag : SpecialFlag
+{
+    public override bool GetValue(Level level) => Engine.Instance.IsActive;
 }
 
 internal class PlayerStateCounter : SpecialCounter
@@ -273,3 +277,4 @@ internal class CameraAngleSlider : SpecialSlider {
     public override float GetValue(Level level) => level.Camera.Angle;
     public override void SetValue(Level level, float value) => level.Camera.Angle = value;
 }
+

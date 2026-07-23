@@ -665,3 +665,8 @@ entities.ScugHelper/SeekerCrushBlock.placements.description.normal=Only activate
 
 entities.ScugHelper/SliderWindController.placements.name.normal=Slider Wind Controller
 entities.ScugHelper/SliderWindController.placements.description.normal=Controller that makes wind direction controlled by two session sliders, plus some base offset.
+
+entities.ScugHelper/RimLightController.placements.name.composite=Rim Light Controller (Composite)
+entities.ScugHelper/RimLightController.placements.description.composite=Controller that draws a rim-lit shadow over the gameplay buffer.
+entities.ScugHelper/RimLightController.placements.name.multiply=Rim Light Controller (Multiply)
+entities.ScugHelper/RimLightController.placements.description.multiply=Controller that multiplies a rim-lit shadow with the gameplay buffer.

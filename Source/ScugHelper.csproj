@@ -9,7 +9,7 @@
         <CelestePrefix Condition="'$(CelestePrefix)' == ''">lib-stripped</CelestePrefix>
         <ZippedFiles>..\everest.yaml;..\Assets\**\*.*;..\Maps\**\*.*;..\Config\**\*.*;..\Tutorials\**\*.*;..\bin\**\*.*;..\Effects\**\*.*;..\Audio\**\*.*;..\Dialog\**\*.*;..\Graphics\**\*.*;..\Ahorn\**\*.*;..\Loenn\**\*.*</ZippedFiles>
 
-        <NoWarn>CL0001;CS9113;CS8524;IDE0130</NoWarn>
+        <NoWarn>CL0001;CS9113;CS8524;IDE0130;CS0436</NoWarn>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -30,9 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
         <PackageReference Include="CelesteMod.Publicizer" Version="*" CelesteAssembly="$(CelestePrefix)\Celeste.dll" />
         <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll" Private="false" />
-        <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
+        <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" Publicize="true" />
         <Reference Include="$(CelestePrefix)\YamlDotNet.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\KeraLua.dll" Private="false" />
         <Reference Include="FrostHelper">
