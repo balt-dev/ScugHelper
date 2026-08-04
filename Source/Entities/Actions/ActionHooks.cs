@@ -1,19 +1,26 @@
 using System;
+using System.Reflection;
+using System.Collections;
 using Celeste.Mod.Entities;
 using Celeste.Mod.Helpers;
 using Celeste.Mod.Roslyn.ModLifecycleAttributes;
 using Microsoft.Xna.Framework;
+using Monocle;
+using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
+using MonoMod.Utils;
 
 namespace Celeste.Mod.ScugHelper.Entities.Actions;
 #nullable enable
 
-public static class ActionHooks
-{
+public static class ActionHooks {
+    static ILHook? ILGliderDestroyAnimationRoutineHook;
+
     [OnLoad]
     public static void LoadHooks() {
         if (!HookUtils.TryDisableInlining(typeof(CassetteBlockManager).GetMethod("SetActiveIndex", [typeof(int)])))
             throw new Utils.HookException("Failed to disable inlining.");
-        
+
         On.Celeste.Player.Jump += OnJump_Action;
         On.Celeste.Player.WallJump += OnWallJump;
         On.Celeste.Player.SuperJump += OnSuperJump;
@@ -36,7 +43,13 @@ public static class ActionHooks
         On.Celeste.Player.Throw += OnThrow;
         On.Celeste.Player.Rebound += OnRebound;
         On.Celeste.Player.ReflectBounce += OnReflectBounce;
+
+        ILGliderDestroyAnimationRoutineHook = new ILHook(
+            typeof(Glider).GetMethod(nameof(Glider.DestroyAnimationRoutine), BindingFlags.NonPublic | BindingFlags.Instance)!.GetStateMachineTarget()!,
+            ILGliderDestroyAnimationRoutine
+        );
     }
+
     [OnUnload]
     public static void UnloadHooks() {
         On.Celeste.Player.Jump -= OnJump_Action;
@@ -62,6 +75,9 @@ public static class ActionHooks
         On.Celeste.DashSwitch.OnDashed -= OnDashSwitch;
         On.Celeste.TouchSwitch.TurnOn -= OnTouchSwitch;
         On.Celeste.Torch.OnPlayer -= OnTorch;
+
+        ILGliderDestroyAnimationRoutineHook?.Dispose();
+        ILGliderDestroyAnimationRoutineHook = null;
     }
 
     private static void OnReflectBounce(On.Celeste.Player.orig_ReflectBounce orig, Player self, Vector2 direction) {
@@ -145,8 +161,8 @@ public static class ActionHooks
             ActionManager.AlertActions(["#PlayerGrab"], self.level);
         orig(self);
         bool onGround = self.OnGround();
-        if (!self.wasOnGround && onGround)
-             ActionManager.AlertActions(["#PlayerLand"], self.level);
+        if (self.wasOnGround && onGround)
+            ActionManager.AlertActions(["#PlayerLand"], self.level);
         else if (self.wasOnGround && !onGround)
             ActionManager.AlertActions(["#PlayerAirborne"], self.level);
     }
@@ -205,5 +221,22 @@ public static class ActionHooks
     private static void OnJump_Action(On.Celeste.Player.orig_Jump orig, Player self, bool particles, bool playSfx) {
         orig(self, particles, playSfx);
         ActionManager.AlertActions(["#PlayerJump"], self.level);
+    }
+
+    private static void ILGliderDestroyAnimationRoutine(ILContext il) {
+        ILCursor cur = new(il);
+        if (!cur.TryGotoNextBestFit(MoveType.After,
+            static match => match.MatchLdstr("death"),
+            static match => match.MatchLdcI4(0),
+            static match => match.MatchLdcI4(0),
+            static match => match.MatchCallOrCallvirt<Sprite>(nameof(Sprite.Play))
+        )) throw new Utils.HookException("Failed to hook Glider.DestroyAnimationRoutine::MoveNext for #JellyfishFizzle hook.");
+        
+        static void AlertJellyAction(Glider self) {
+            ActionManager.AlertActions(["#JellyfishFizzle"], self.level);
+        }
+        
+        cur.EmitLdloc1();
+        cur.EmitDelegate(AlertJellyAction);
     }
 }

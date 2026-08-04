@@ -37,8 +37,9 @@ local builtins = {
     "#PlayerThrow",
     "#PlayerRebound",
     "#PlayerReflectBounce",
+    "#JellyfishFizzle",
 }
-T.actionGroups = {options = {}, searchable = true, editable = true}
+T.actionGroups = { options = {}, searchable = true, editable = true }
 for _, val in ipairs(builtins) do
     T.actionGroups.options[val] = val
 end
@@ -143,7 +144,7 @@ local builtinFlags = {
     "ScugHelper.ExtendedVariantMode.WalllessWallbounce",
     "ScugHelper.ExtendedVariantMode.WindCrouchMove",
 }
-T.builtinFlags = {options = {}, searchable = true, editable = true}
+T.builtinFlags = { options = {}, searchable = true, editable = true }
 for _, val in ipairs(builtinFlags) do
     T.builtinFlags.options[val] = val
 end
@@ -166,7 +167,7 @@ end
 
 function T.parseColor(color)
     local success, r, g, b = utils.parseHexColor(color)
-    return success and {r, g, b} or {0, 1, 1}
+    return success and { r, g, b } or { 0, 1, 1 }
 end
 
 T.colors = function(name)

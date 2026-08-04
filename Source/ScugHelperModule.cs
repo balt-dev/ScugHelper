@@ -36,37 +36,19 @@ public class ScugHelperModule : EverestModule
 #endif
     }
 
-    static Exception? QueuedException;
-
     public override void Load() {
-        On.Celeste.Overworld.Update += OnOverworldUpdate;
-        On.Celeste.Level.Update += OnLevelUpdate;
-        try {
-            typeof(FrostHelperImports).ModInterop();
-            typeof(GravityHelperImports).ModInterop();
-            typeof(ExtendedVariantModeImports).ModInterop();
-            typeof(MotionSmoothingImportHandler).ModInterop();
-            LifecycleMethods.OnLoad();
+        typeof(FrostHelperImports).ModInterop();
+        typeof(GravityHelperImports).ModInterop();
+        typeof(ExtendedVariantModeImports).ModInterop();
+        typeof(MotionSmoothingImportHandler).ModInterop();
+        LifecycleMethods.OnLoad();
+        { // TODO: move these into a controller
             On.Celeste.PlayerSeeker.OnCollide += OnPlayerSeekerCollideHook;
             On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int += OnSquishWiggle;
-        } catch (Exception e) {
-            QueuedException = e;
         }
-    }
-    
-    private static void OnOverworldUpdate(On.Celeste.Overworld.orig_Update orig, Overworld self) {
-        if (QueuedException is {} exc) { QueuedException = null; throw exc; }
-        else orig(self);
-    }
-
-    private static void OnLevelUpdate(On.Celeste.Level.orig_Update orig, Level self) {
-        if (QueuedException is {} exc) { QueuedException = null; throw exc; }
-        else orig(self);
     }
 
     public override void Unload() {
-        On.Celeste.Overworld.Update -= OnOverworldUpdate;
-        On.Celeste.Level.Update -= OnLevelUpdate;
         LifecycleMethods.OnUnload();
         On.Celeste.PlayerSeeker.OnCollide -= OnPlayerSeekerCollideHook;
         On.Celeste.Actor.TrySquishWiggle_CollisionData_int_int -= OnSquishWiggle;
