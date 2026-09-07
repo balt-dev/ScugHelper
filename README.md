@@ -1,6 +1,8 @@
 # ScugHelper
 a few new entities to mess with :3
 
+![](https://tokei.rs/b1/github/balt-dev/ScugHelper)
+
 check the [wiki](https://github.com/balt-dev/ScugHelper/wiki) for details on the entities themselves
 
 also fixes player seekers not being able to hit dash switches
