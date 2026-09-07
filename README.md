@@ -1,7 +1,7 @@
 # ScugHelper
 a few new entities to mess with :3
 
-![](https://tokei.rs/b1/github/balt-dev/ScugHelper)
+24000 loc as of 9/7/2026
 
 check the [wiki](https://github.com/balt-dev/ScugHelper/wiki) for details on the entities themselves
 
